@@ -1,0 +1,62 @@
+<project name="sitemesh" default="main">
+
+    <property name="version" value="3.0-SNAPSHOT"/>
+    <property name="jdk" value="1.6"/>
+
+    <path id="main.classpath">
+        <fileset dir="lib/main">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="build.classpath">
+        <fileset dir="lib/build">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="test.classpath">
+        <fileset dir="lib/main">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="lib/test">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="codegen" description="Generate code">
+        <mkdir dir="build/main/java"/>
+        <!-- TODO: ant task? Don't regenerate unless necessary. -->
+        <java classname="JFlex.Main" fork="yes" classpathref="build.classpath">
+            <arg value="-d"/>
+            <arg value="build/main/java/com/opensymphony/sitemesh/tagprocessor"/>
+            <arg value="src/main/java/com/opensymphony/sitemesh/tagprocessor/lexer.flex"/>
+        </java>
+        <delete file="build/main/java/com/opensymphony/sitemesh/tagprocessor/Lexer.java~"/>
+    </target>
+
+    <target name="main" depends="codegen" description="Build main library">
+        <mkdir dir="build/main/classes"/>
+        <javac srcdir="src/main/java;build/main/java"
+               destdir="build/main/classes"
+               classpathref="main.classpath"
+               debug="on" source="${jdk}" target="${jdk}"/>
+        <mkdir dir="dist"/>
+        <jar destfile="dist/sitemesh-${version}.jar" basedir="build/main/classes"/>
+    </target>
+
+    <target name="test" depends="main" description="Run unit tests">
+        <mkdir dir="build/test/classes"/>
+        <javac srcdir="src/test/java"
+               destdir="build/test/classes"
+               classpath="build/main/classes"
+               classpathref="test.classpath"
+               debug="on" source="${jdk}" target="${jdk}"/>
+    </target>
+
+    <target name="clean" description="Clean up">
+        <delete dir="build"/>
+        <delete dir="dist"/>
+    </target>
+
+</project>

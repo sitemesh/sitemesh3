@@ -1,0 +1,13 @@
+=== Building SiteMesh 3 ===
+
+Requirements: JDK 1.6, Ant 1.6
+
+From this directory, run:
+  ant
+
+This compiles the libraries, runs the tests and generates
+the distribution files (in the 'dist' directory).
+
+For more options:
+  ant -projecthelp
+
