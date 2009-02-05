@@ -1,0 +1,31 @@
+<h1>The SiteMesh TagProcessor</h1>
+
+<p>This package is for processing <i>tag-like</i> markup languages - things with anglybrackets.
+    HTML, XHTML, WML, XML and other SGML dialects.</p>
+
+<p>Strengths:</p>
+
+<ul>
+    <li><strong>Speed</strong>: Rather than attempting to parse the entire page into tags, attributes, etc, it
+        skims through only partially parsing until it comes across a tag that it's interested in, at which point
+        it does a more thorough parse of just that tag.
+    </li>
+    <li><strong>Tolerance</strong>: Because it's not attempting to build a tree, it doesn't care about malformed,
+        or unbalanced tags. It just treats these as text and keeps going.
+    </li>
+</ul>
+
+<p>It has 2 APIs you can use:</p>
+
+<h1>Low level: TagTokenizer</h1>
+
+<p>The {@link TagTokenizer} scans through a document and fires events as it encounters {@link Tag}s of
+    interest. Anything that does not qualify as a {@link Tag} will be treated as a {@link Text} token.</p>
+
+<p>This is a similar approach to the SAX API for XML processing.</p>
+
+<h2>High level: TagProcessor</h2>
+<p>The {@link TagProcessor} is built on top of the {@link TagTokenizer} and acts as a registry for {@link TagRule}s and
+    {@link TextFilter}s.
+    It also supports multiple {@link State}s, allowing different rules to be applied in different sections of
+    document.</p>
