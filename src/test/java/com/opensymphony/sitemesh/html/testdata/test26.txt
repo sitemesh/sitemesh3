@@ -1,0 +1,12 @@
+~~~ INPUT ~~~
+<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
+<html>
+<body>
+blahblah
+</body>
+</html>
+~~~ TITLE ~~~
+~~~ PROPERTIES ~~~
+~~~ HEAD ~~~
+~~~ BODY ~~~
+blahblah

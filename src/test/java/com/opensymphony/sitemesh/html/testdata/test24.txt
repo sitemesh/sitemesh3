@@ -1,0 +1,47 @@
+~~~ INPUT ~~~
+
+<html>
+ <head>
+  <title>Some page</title>
+  <meta name=author content=Someone>
+  <style>
+    body { font-family: arial; }
+  </style>
+
+  <meta http-equiv="content-type" content=text/html>
+ </head>
+ <body bgcolor=black>
+  
+   <p>This is a pretty simple page.</p>
+   
+   <p>Bye.</p>
+ 
+ </body>
+</html>
+
+~~~ TITLE ~~~
+
+Some page
+
+~~~ PROPERTIES ~~~
+
+title=Some page
+meta.author=Someone
+body.bgcolor=black
+meta.http-equiv.content-type=text/html
+
+~~~ HEAD ~~~
+
+  <meta name=author content=Someone>
+  <style>
+    body { font-family: arial; }
+  </style>
+
+  <meta http-equiv="content-type" content=text/html>
+~~~ BODY ~~~
+  
+   <p>This is a pretty simple page.</p>
+   
+   <p>Bye.</p>
+ 
+

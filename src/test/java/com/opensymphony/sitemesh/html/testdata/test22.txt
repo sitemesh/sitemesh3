@@ -1,0 +1,45 @@
+~~~ INPUT ~~~
+
+<html decorator="something" language="en">
+ <head>
+  <title>Some page</title>
+  <meta name=author content=Someone>
+  <style>
+    body { font-family: arial; }
+  </style>
+ </head>
+ <body bgcolor=black>
+  
+   <p>This is a pretty simple page.</p>
+   
+   <p>Bye.</p>
+ 
+ </body>
+</html>
+
+~~~ TITLE ~~~
+
+Some page
+
+~~~ PROPERTIES ~~~
+
+title=Some page
+meta.author=Someone
+body.bgcolor=black
+decorator=something
+language=en
+
+~~~ HEAD ~~~
+
+  <meta name=author content=Someone>
+  <style>
+    body { font-family: arial; }
+  </style>
+
+~~~ BODY ~~~
+  
+   <p>This is a pretty simple page.</p>
+   
+   <p>Bye.</p>
+ 
+

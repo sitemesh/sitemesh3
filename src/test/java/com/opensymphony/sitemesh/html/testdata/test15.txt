@@ -1,0 +1,26 @@
+~~~ INPUT ~~~
+
+   <meta name="blah" content="cheese">
+   
+   <p>This is a pretty simple page.</p>
+   
+   <p>Bye.</p>
+
+~~~ TITLE ~~~
+
+~~~ PROPERTIES ~~~
+
+meta.blah=cheese
+
+~~~ HEAD ~~~
+
+~~~ BODY ~~~
+
+   <meta name="blah" content="cheese">
+   
+   <p>This is a pretty simple page.</p>
+   
+   <p>Bye.</p>
+
+  
+

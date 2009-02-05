@@ -1,0 +1,58 @@
+~~~ INPUT ~~~
+<html><head><meta http-equiv="content-type" content="text/html; charset=UTF-8"><title>Google</title><style><!--
+body,td,a,p,.h{font-family:arial,sans-serif;}
+.h{font-size: 20px;}
+.q{color:#0000cc;}
+//-->
+</style>
+<script>
+<!--
+function sf(){document.f.q.focus();}
+// -->
+</script>
+</head><body bgcolor=#ffffff text=#000000 link=#0000cc vlink=#551a8b alink=#ff0000 onLoad=sf()><center><img src="/intl/en_uk/images/logo.gif" width=276 height=110 alt="Google"><br><br>
+<form action="/search" name=f><script><!--
+function qs(el) {if (window.RegExp && window.encodeURIComponent) {var qe=encodeURIComponent(document.f.q.value);if (el.href.indexOf("q=")!=-1) {el.href=el.href.replace(new RegExp("q=[^&$]*"),"q="+qe);} else {el.href+="&q="+qe;}}return 1;}
+// -->
+</script><table border=0 cellspacing=0 cellpadding=4><tr><td nowrap class=q><font size=-1><b><font color=#000000>Web</font></b>&nbsp;&nbsp;&nbsp;&nbsp;<a id=1a class=q href="/imghp?hl=en&tab=wi" onClick="return qs(this);">
+Images</a>&nbsp;&nbsp;&nbsp;&nbsp;<a id=2a class=q href="/grphp?hl=en&tab=wg" onClick="return qs(this);">Groups</a>&nbsp;&nbsp;&nbsp;&nbsp;<a id=4a class=q href="/nwshp?hl=en&tab=wn" onClick="return qs(this);">News</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<b><a href="/options/index.html" class=q>more&nbsp;&raquo;</a></b></font></td></tr></table><table cellspacing=0 cellpadding=0><tr><td width=25%>&nbsp;</td><td align=center><input type=hidden name=hl value=en>
+<input type=hidden name=ie value="UTF-8"><input maxLength=256 size=55 name=q value=""><br><input type=submit value="Google Search" name=btnG><input type=submit value="I'm Feeling Lucky" name=btnI></td><td valign=top nowrap width=25%><font size=-2>&nbsp;&nbsp;<a href=/advanced_search?hl=en>Advanced Search</a><br>&nbsp;&nbsp;<a href=/preferences?hl=en>Preferences</a><br>&nbsp;&nbsp;<a href=/language_tools?hl=en>Language Tools</a></font></td></tr><tr><td colspan=3 align=center><font size=-1>Search:
+<input id=all type=radio name=meta value="" checked><label for=all> the web</label><input id=cty type=radio name=meta value="cr=countryUK|countryGB" ><label for=cty>pages from the UK</label></font></td></tr></table></form><p><font size=-1> </font><br><br><font size=-1><a href="/ads/">Advertising&nbsp;Programmes</a> - <a href=/about.html>About Google</a> - <a href=http://www.google.com/ncr>Go to Google.com</a></font><p><font size=-2>
+&copy;2004 Google - Searching 4,285,199,774 web pages</font></p></center></body></html>
+
+~~~ TITLE ~~~
+Google
+~~~ PROPERTIES ~~~
+title=Google
+meta.http-equiv.content-type=text/html; charset=UTF-8
+body.bgcolor=#ffffff
+body.text=#000000
+body.link=#0000cc
+body.vlink=#551a8b
+body.alink=#ff0000
+body.onLoad=sf()
+
+~~~ HEAD ~~~
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><style><!--
+body,td,a,p,.h{font-family:arial,sans-serif;}
+.h{font-size: 20px;}
+.q{color:#0000cc;}
+//-->
+</style>
+<script>
+<!--
+function sf(){document.f.q.focus();}
+// -->
+</script>
+~~~ BODY ~~~
+<center><img src="/intl/en_uk/images/logo.gif" width=276 height=110 alt="Google"><br><br>
+<form action="/search" name=f><script><!--
+function qs(el) {if (window.RegExp && window.encodeURIComponent) {var qe=encodeURIComponent(document.f.q.value);if (el.href.indexOf("q=")!=-1) {el.href=el.href.replace(new RegExp("q=[^&$]*"),"q="+qe);} else {el.href+="&q="+qe;}}return 1;}
+// -->
+</script><table border=0 cellspacing=0 cellpadding=4><tr><td nowrap class=q><font size=-1><b><font color=#000000>Web</font></b>&nbsp;&nbsp;&nbsp;&nbsp;<a id=1a class=q href="/imghp?hl=en&tab=wi" onClick="return qs(this);">
+Images</a>&nbsp;&nbsp;&nbsp;&nbsp;<a id=2a class=q href="/grphp?hl=en&tab=wg" onClick="return qs(this);">Groups</a>&nbsp;&nbsp;&nbsp;&nbsp;<a id=4a class=q href="/nwshp?hl=en&tab=wn" onClick="return qs(this);">News</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<b><a href="/options/index.html" class=q>more&nbsp;&raquo;</a></b></font></td></tr></table><table cellspacing=0 cellpadding=0><tr><td width=25%>&nbsp;</td><td align=center><input type=hidden name=hl value=en>
+<input type=hidden name=ie value="UTF-8"><input maxLength=256 size=55 name=q value=""><br><input type=submit value="Google Search" name=btnG><input type=submit value="I'm Feeling Lucky" name=btnI></td><td valign=top nowrap width=25%><font size=-2>&nbsp;&nbsp;<a href=/advanced_search?hl=en>Advanced Search</a><br>&nbsp;&nbsp;<a href=/preferences?hl=en>Preferences</a><br>&nbsp;&nbsp;<a href=/language_tools?hl=en>Language Tools</a></font></td></tr><tr><td colspan=3 align=center><font size=-1>Search:
+<input id=all type=radio name=meta value="" checked><label for=all> the web</label><input id=cty type=radio name=meta value="cr=countryUK|countryGB" ><label for=cty>pages from the UK</label></font></td></tr></table></form><p><font size=-1> </font><br><br><font size=-1><a href="/ads/">Advertising&nbsp;Programmes</a> - <a href=/about.html>About Google</a> - <a href=http://www.google.com/ncr>Go to Google.com</a></font><p><font size=-2>
+&copy;2004 Google - Searching 4,285,199,774 web pages</font></p></center>

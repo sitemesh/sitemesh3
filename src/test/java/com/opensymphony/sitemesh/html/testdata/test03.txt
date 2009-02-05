@@ -1,0 +1,30 @@
+~~~ INPUT ~~~
+<html>
+	<head>
+		<title>SiteMesh test suite</title>
+	</head>
+	<body>
+
+		<p>SiteMesh test suite!</p>
+
+		<p id="time">Now</p>
+
+	</body>
+</html>
+
+~~~ TITLE ~~~
+
+SiteMesh test suite
+
+~~~ PROPERTIES ~~~
+
+title=SiteMesh test suite
+
+~~~ HEAD ~~~
+
+
+~~~ BODY ~~~
+
+		<p>SiteMesh test suite!</p>
+
+		<p id="time">Now</p>

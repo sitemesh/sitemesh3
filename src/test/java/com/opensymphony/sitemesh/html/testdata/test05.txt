@@ -1,0 +1,19 @@
+~~~ INPUT ~~~
+<title>Simple page2</title>
+
+<p id="p2">Hello world 2</p>
+
+~~~ TITLE ~~~
+
+Simple page2
+
+~~~ PROPERTIES ~~~
+
+title=Simple page2
+
+~~~ HEAD ~~~
+
+
+~~~ BODY ~~~
+
+<p id="p2">Hello world 2</p>

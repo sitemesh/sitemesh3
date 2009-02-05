@@ -1,0 +1,27 @@
+~~~ INPUT ~~~
+<html>
+	<head>
+		< >
+		<title>page title</title>
+		<title>second title - THIS IS WRONG</title>
+	</head>
+	< ><>
+	<body>
+		< ><>
+		<h1>PAGE BODY</h1>
+	</body>
+</html>
+~~~ TITLE ~~~
+
+page title
+
+~~~ PROPERTIES ~~~
+
+title=page title
+
+~~~ HEAD ~~~
+
+
+~~~ BODY ~~~
+
+		<h1>PAGE BODY</h1>

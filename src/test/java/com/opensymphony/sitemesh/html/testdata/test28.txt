@@ -1,0 +1,37 @@
+~~~ INPUT ~~~
+<html>
+  <head>
+    <title>Application Test</title>
+  </head>
+  <body>
+
+    <h1>Application Test</h1>
+
+    <form method="get" action=".">
+
+      <input type="text" name="amount" size="25"/>
+      <input type="submit" value="submit"/>
+      <input type="reset" value="reset"/>
+    </form>
+
+  </body>
+</html>
+~~~ TITLE ~~~
+
+Application Test
+
+~~~ PROPERTIES ~~~
+
+title=Application Test
+
+~~~ HEAD ~~~
+~~~ BODY ~~~
+
+    <h1>Application Test</h1>
+
+    <form method="get" action=".">
+
+      <input type="text" name="amount" size="25"/>
+      <input type="submit" value="submit"/>
+      <input type="reset" value="reset"/>
+    </form>

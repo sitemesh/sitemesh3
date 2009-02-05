@@ -1,0 +1,65 @@
+~~~ INPUT ~~~
+
+<html>
+ <head>
+  <title>Some page</title>
+  <meta name=author content=Someone>
+  <style>
+    body { font-family: arial; }
+  </style>
+ </head>
+ <body bgcolor=black>
+  
+   <p>Here's some src code:</p>
+
+   <xml>
+     <html>
+       <head>
+         <title>XXX</title>
+       </head>
+       <body>
+         This is something.
+       </body>
+     </html>
+   </xml>
+   
+   <p>Bye.</p>
+ 
+ </body>
+ ignore this!
+</html>
+
+~~~ TITLE ~~~
+
+Some page
+
+~~~ PROPERTIES ~~~
+
+title=Some page
+meta.author=Someone
+body.bgcolor=black
+
+~~~ HEAD ~~~
+
+  <meta name=author content=Someone>
+  <style>
+    body { font-family: arial; }
+  </style>
+
+~~~ BODY ~~~
+  
+   <p>Here's some src code:</p>
+
+   <xml>
+     <html>
+       <head>
+         <title>XXX</title>
+       </head>
+       <body>
+         This is something.
+       </body>
+     </html>
+   </xml>
+   
+   <p>Bye.</p>
+ 

@@ -1,0 +1,33 @@
+This test proves that http://jira.opensymphony.com/browse/SIM-206 isn't a problem anymore.
+
+~~~ INPUT ~~~
+
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+       "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+ <head>
+  <title>Some page</title>
+ </head>
+ <body>
+  
+   <p>This is a pretty simple page with an XML processing instruction header.</p>
+
+ </body>
+</html>
+
+~~~ TITLE ~~~
+
+Some page
+
+~~~ PROPERTIES ~~~
+
+title=Some page
+
+~~~ HEAD ~~~
+
+
+~~~ BODY ~~~
+
+   <p>This is a pretty simple page with an XML processing instruction header.</p>
+

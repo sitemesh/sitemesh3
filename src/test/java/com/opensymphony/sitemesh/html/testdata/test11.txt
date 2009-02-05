@@ -1,0 +1,34 @@
+~~~ INPUT ~~~
+
+<html>
+ <head>
+  <title>Some page</title>
+  <title>WRONG TITLE</title>
+ </head>
+ <body bgcolor=black>
+  
+   <p>This is a pretty simple page.</p>
+   
+   <p>Bye.</p>
+ 
+ </body>
+</html>
+
+~~~ TITLE ~~~
+
+Some page
+
+~~~ PROPERTIES ~~~
+
+title=Some page
+body.bgcolor=black
+
+~~~ HEAD ~~~
+
+~~~ BODY ~~~
+  
+   <p>This is a pretty simple page.</p>
+   
+   <p>Bye.</p>
+ 
+

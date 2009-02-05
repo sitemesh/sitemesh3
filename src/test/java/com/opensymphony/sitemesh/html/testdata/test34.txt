@@ -1,0 +1,22 @@
+~~~ INPUT ~~~
+<HTML> 
+<HEAD> 
+<TITLE>Hello World! HTML</TITLE> 
+</HEAD> 
+<BODY> 
+<H2>Hello World! HTML</H2> 
+</BODY> 
+</HTML>
+~~~ TITLE ~~~
+
+Hello World! HTML
+
+~~~ PROPERTIES ~~~
+
+title=Hello World! HTML
+
+~~~ HEAD ~~~
+
+~~~ BODY ~~~
+
+<H2>Hello World! HTML</H2> 

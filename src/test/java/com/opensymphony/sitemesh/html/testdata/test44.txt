@@ -1,0 +1,21 @@
+This test illustrates http://jira.opensymphony.com/browse/SIM-241
+Closing the HEAD tag without a corresponding opening tag throws and ArrayOutOfBoundsException
+
+~~~ INPUT ~~~
+<HTML>
+</HEAD>
+</HTML>
+~~~ TITLE ~~~
+
+
+~~~ PROPERTIES ~~~
+
+~~~ HEAD ~~~
+
+
+~~~ BODY ~~~
+
+
+
+
+

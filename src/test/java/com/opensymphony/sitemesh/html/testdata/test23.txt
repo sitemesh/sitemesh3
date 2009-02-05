@@ -1,0 +1,56 @@
+~~~ INPUT ~~~
+
+<html>
+ <head>
+  <title>Some page</title>
+  <meta name=author content=Someone>
+  <style>
+    body { font-family: arial; }
+  </style>
+ </head>
+ <body bgcolor=black>
+  
+   <p>This is a pretty simple page.</p>
+
+   x<parameter name="icon" value="thing.gif" />y
+   x<PARAMETER NAME=category value=news>y
+
+   x<content tag=somecontent>
+     This is some more content.... <!-- comment -->
+     <b>Woo.</b></content><content tag="more">xxx</content>y
+   <p>Bye.</p>
+ 
+ </body>
+</html>
+
+~~~ TITLE ~~~
+
+Some page
+
+~~~ PROPERTIES ~~~
+
+title=Some page
+meta.author=Someone
+body.bgcolor=black
+page.icon=thing.gif
+page.category=news
+page.somecontent=This is some more content.... <!-- comment -->\n     <b>Woo.</b>
+page.more=xxx
+
+~~~ HEAD ~~~
+
+  <meta name=author content=Someone>
+  <style>
+    body { font-family: arial; }
+  </style>
+
+~~~ BODY ~~~
+
+   <p>This is a pretty simple page.</p>
+
+   xy
+   xy
+
+   xy
+   <p>Bye.</p>
+

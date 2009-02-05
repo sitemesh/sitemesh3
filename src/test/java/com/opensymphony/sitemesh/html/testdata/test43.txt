@@ -1,0 +1,27 @@
+This test illustrates http://jira.opensymphony.com/browse/SIM-172
+Unclosed quotes cause parsing problem (note unclosed quote after the first 'area' tag)
+
+~~~ INPUT ~~~
+<map name="tlMap">
+<area href="http://www.sheltercentre.org/sheltercentre/"">
+<area href="http://www.sheltercentre.org/sheltermeeting/">
+<area href="http://www.sheltercentre.org/shelterlibrary/">
+<area href="http://www.sheltercentre.org/sheltertraining/">
+</map>
+~~~ TITLE ~~~
+
+
+
+~~~ PROPERTIES ~~~
+
+
+~~~ HEAD ~~~
+
+
+~~~ BODY ~~~
+<map name="tlMap">
+<area href="http://www.sheltercentre.org/sheltercentre/"">
+<area href="http://www.sheltercentre.org/sheltermeeting/">
+<area href="http://www.sheltercentre.org/shelterlibrary/">
+<area href="http://www.sheltercentre.org/sheltertraining/">
+</map>

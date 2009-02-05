@@ -1,0 +1,21 @@
+~~~ INPUT ~~~
+<html xmlns:prefix="www.opensymphony.com">
+<head><title>Here's some title</title>
+<meta name="author" content="Joe"/></head>
+<body/>
+</html>
+~~~ TITLE ~~~
+
+Here's some title
+
+~~~ PROPERTIES ~~~
+
+xmlns\:prefix=www.opensymphony.com
+title=Here's some title
+meta.author=Joe
+
+~~~ HEAD ~~~
+
+<meta name="author" content="Joe"/>
+
+~~~ BODY ~~~

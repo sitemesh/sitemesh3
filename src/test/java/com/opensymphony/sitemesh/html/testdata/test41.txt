@@ -1,0 +1,18 @@
+This test illustrates http://jira.opensymphony.com/browse/SIM-216.
+If tags are not matched, Sitemesh used to throw a NoSuchElementException.  Handle unmatched tags
+
+~~~ INPUT ~~~
+    Tongor</title>
+
+~~~ TITLE ~~~
+
+
+~~~ PROPERTIES ~~~
+
+
+~~~ HEAD ~~~
+
+
+
+~~~ BODY ~~~
+  Tongor

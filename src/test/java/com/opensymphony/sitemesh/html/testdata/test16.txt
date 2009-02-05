@@ -1,0 +1,36 @@
+~~~ INPUT ~~~
+
+   <head>
+     <script>
+       var x = 1;
+     </script>
+   </head>
+
+   <meta name="blah" content="cheese">
+
+   <p>This is a pretty simple page.</p>
+   
+   <p>Bye.</p>
+
+~~~ TITLE ~~~
+
+~~~ PROPERTIES ~~~
+
+meta.blah=cheese
+
+~~~ HEAD ~~~
+
+     <script>
+       var x = 1;
+     </script>
+
+~~~ BODY ~~~
+
+   <meta name="blah" content="cheese">
+
+   <p>This is a pretty simple page.</p>
+   
+   <p>Bye.</p>
+
+  
+

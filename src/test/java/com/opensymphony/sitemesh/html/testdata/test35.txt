@@ -1,0 +1,25 @@
+~~~ INPUT ~~~
+<HTML notonnewline=yo newline=
+hello anotherline=
+"bye">
+<title>my title</title>
+<BODY>
+hi
+</BODY>
+</HTML>
+~~~ TITLE ~~~
+
+my title
+
+~~~ PROPERTIES ~~~
+
+title=my title
+notonnewline=yo
+newline=hello
+anotherline=bye
+
+~~~ HEAD ~~~
+
+~~~ BODY ~~~
+
+hi

@@ -1,0 +1,42 @@
+~~~ INPUT ~~~
+<html>
+   <head>
+     <script>
+        function someFunction() {
+            for(var i = 2; i < 5; i++){
+                // do something smart
+            }
+        }
+
+        function someOtherFunction() {
+            for(var i = 2; i > 5; i++){
+                // do something smart
+            }
+        }
+     </script>
+
+   </head>
+</html>
+~~~ TITLE ~~~
+
+~~~ PROPERTIES ~~~
+
+~~~ HEAD ~~~
+
+     <script>
+        function someFunction() {
+            for(var i = 2; i < 5; i++){
+                // do something smart
+            }
+        }
+
+        function someOtherFunction() {
+            for(var i = 2; i > 5; i++){
+                // do something smart
+            }
+        }
+     </script>
+
+~~~ BODY ~~~
+
+

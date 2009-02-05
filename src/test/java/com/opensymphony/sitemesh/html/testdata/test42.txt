@@ -1,0 +1,34 @@
+This test illustrates http://jira.opensymphony.com/browse/SIM-180.
+Header content after a <content> tag gets treated as part of the body
+
+~~~ INPUT ~~~
+<html>
+<head>
+<title>Blah</title>
+<content tag="contentblah">Etc.</content>
+<style>
+    style content
+</style>
+</head>
+<body>
+Blah blah blah
+</body>
+</html>
+~~~ TITLE ~~~
+
+Blah
+
+~~~ PROPERTIES ~~~
+
+title=Blah
+page.contentblah=Etc.
+
+~~~ HEAD ~~~
+
+<style>
+    style content
+</style>
+
+
+~~~ BODY ~~~
+Blah blah blah

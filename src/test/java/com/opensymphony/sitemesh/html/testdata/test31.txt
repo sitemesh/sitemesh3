@@ -1,0 +1,16 @@
+~~~ INPUT ~~~
+<html>
+<head />
+<body bgcolor="black"/>
+</html>
+~~~ TITLE ~~~
+
+
+~~~ PROPERTIES ~~~
+
+body.bgcolor=black
+
+~~~ HEAD ~~~
+
+
+~~~ BODY ~~~

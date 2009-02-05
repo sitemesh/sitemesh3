@@ -1,0 +1,30 @@
+~~~ INPUT ~~~
+<title>Here's some title</title>
+<meta name=author content=Joe>
+<form action="blah">
+<input type=text name=thing>
+<input TYPE="submit"/>
+</FORM>
+
+Bye<br>
+~~~ TITLE ~~~
+
+Here's some title
+
+~~~ PROPERTIES ~~~
+
+title=Here's some title
+meta.author=Joe
+
+~~~ HEAD ~~~
+
+
+~~~ BODY ~~~
+
+<meta name=author content=Joe>
+<form action="blah">
+<input type=text name=thing>
+<input TYPE="submit"/>
+</FORM>
+
+Bye<br>

@@ -1,0 +1,701 @@
+~~~ INPUT ~~~
+<html>
+<head>
+<title>OpenSymphony - Welcome To OpenSymphony</title>
+<link rel="stylesheet" href="/styles/main-css.txt">
+
+</head>
+
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+	
+ <table width="100%" border="0" cellspacing="0" cellpadding="0"><tr>
+	<td bgcolor="#164A7D"><a href="/"><IMG src="/images/logo.gif" width="268" height="55" border="0"></a></td>
+	<td bgcolor="#164A7D" valign="middle" align="right">
+<a href="http://www.atlassian.com/">
+<img 
+  src="/images/atlassian.gif"
+  width=250 
+  height=55 
+  border=0>
+</a>
+</td>
+</tr></table>
+	
+
+
+	
+<table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor=eeeef8>
+	<tr>
+		<td bgcolor="#ffffcc" width=100%><font color="#000000" face="Verdana, Sans-Serif" size="-1">
+        	&nbsp;
+
+		
+		
+		
+		<a href="/"><b><font color="#000000">Home</font></b></a> | 
+<a href="/news"><b><font color="#000000">News</font></b></a> | 
+
+<a href="/guidelines"><b><font color="#000000">Guidelines</font></b></a> |
+
+<a href="/contribute.jsp"><b><font color="#000000">Contribute</font></b></a> |
+
+<a href="/team.jsp"><b><font color="#000000">The Team</font></b></a> |
+
+<a href="/contact.jsp"><b><font color="#000000">Contact</font></b></a> 
+
+
+		</font></B></td> 
+		<td valign="middle" nowrap width=1%>
+			<font face="Verdana, Sans-Serif" size="-1">
+				&nbsp;<b><A href="http://sourceforge.net/projects/opensymphony"><font color=000000>SourceForge Project:</font></a></b>&nbsp;
+			</font>
+		</td>
+	
+		<td width=1%><a href="/"><img src="/images/icons/sf_home.png" width=20 height=20 border=0 alt="Homepage"></a></td>
+		<td width=1%><a href="http://sourceforge.net/bugs/?group_id=9890"><img src="/images/icons/sf_bugs.png" width=20 height=20 border=0 alt="Bugs @ Sourceforge"></a></td>
+		<td width=1%><a href="http://sourceforge.net/mail/?group_id=9890"><img src="/images/icons/sf_mailinglists.png" width=20 height=20 border=0 alt="Mailing Lists @ Sourceforge"></a></td>
+		<td width=1%><a href="http://sourceforge.net/pm/?group_id=9890"><img src="/images/icons/sf_tasks.png" width=20 height=20 border=0 alt="Task Manager @ Sourceforge"></a></td>
+		<td width=1%><a href="http://sourceforge.net/cvs/?group_id=9890"><img src="/images/icons/sf_cvs.png" width=20 height=20 border=0 alt="CVS @ Sourceforge"></a></td>
+	</tr> 
+</table>	
+
+<TABLE width="100%" border="0" cellspacing="0" cellpadding="0"><TR><TD height="1" bgcolor="#000000"><IMG src="/images/pixel.gif" width="1" height="1"></TD></TR></TABLE>	
+	
+
+
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<td>
+				<td bgcolor="#eeeeee" width="5"><IMG src="/images/pixel.gif" width="5" height="1"></TD>
+				<td bgcolor="#eeeeee" width="140" valign="top">
+
+					
+					
+
+					
+
+<table cellpadding=1 border=0 cellspacing=0 ><tr><td>
+<table cellpadding=2 border=0 cellspacing=0><tr><td bgcolor="#164A7D">
+<b><font size="3" color="#ffffff" face="Verdana, Arial, Helvetica, sans-serif"> Modules </font></b>
+</td></tr></table>
+</td></tr></table>
+
+<font size="2">
+	<b>Production Quality</b><br>
+&nbsp;&raquo; <a href="/oscache/">OSCache</a><br>
+&nbsp;&raquo; <a href="/sitemesh/">SiteMesh</a><br>
+&nbsp;&raquo; <a href="/formtags/">FormTags</a><br>
+&nbsp;&raquo; <a href="/transformtags/">TransformTags</a><br>
+&nbsp;&raquo; <a href="/oscore/">OSCore</a><br>
+<br>
+<b>Beta / Developing</b><br>
+&nbsp;&raquo; <a href="/osuser/">OSUser</a><br>
+&nbsp;&raquo; <a href="/webcompass/">WebCompass</a><br>
+&nbsp;&raquo; <a href="/richtags/">RichTags</a><br>
+&nbsp;&raquo; <a href="/osaccess/">OSAccess</a><br>
+&nbsp;&raquo; <a href="/osworkflow/">OSWorkflow</a><br>
+<br>
+<font size=1>
+<b>Attic</b> (Old components that are no longer actively developed)<br>
+&nbsp;&raquo; <a href="/oscontent/">OSContent</a><br>
+&nbsp;&raquo; <a href="/clickstream/">Clickstream</a><br>
+&nbsp;&raquo; <a href="/oscontact/">OSContact</a><br>
+</font>
+
+<p>
+<b>Project Documentation</b><br>
+&nbsp;&raquo; <a href="/whatis.html">What Is OpenSymphony?</a></b><br>
+&nbsp;&raquo; <a href="/architecture.html">Architectural Overview</a></b><br>
+&nbsp;&raquo; <a href="/components.html">The
+Components</a></b><br>
+<p>
+<TABLE width="95%" border="0" cellspacing="0" cellpadding="1" bgcolor="bbbbaa" align="center"><TR><TD>
+<table cellpadding=5 width=100% bgcolor="ffffee" border=0"><tr>
+          <td>
+            <p><font face="Verdana, Sans-Serif" size="-1"> <a href="/mirrors.html"><b>Mirrors/Sponsor Companies</a><br>
+              </b><i><font size="1">These companies have contributed a lot to 
+              OpenSymphony and we thank them. </font></i> <br>
+              </p>
+            </td></tr></table>
+</TD></TR></TABLE>
+</font>
+
+
+					
+					<br>
+
+					<p>
+<TABLE width="95%" border="0" cellspacing="0" cellpadding="1" bgcolor="bbbbaa" align="center"><TR><TD>
+<table cellpadding=5 width=100% bgcolor="ffffee" border=0"><tr><td>
+<font face="Verdana, Sans-Serif" size="-1">
+<font size="3"><b><a href="/contact.jsp">Want to keep informed?</a></b></font><br>
+Why not subscribe to our <b><a href="/contact.jsp">mailing lists</a></b>?<p>
+Keep up to date with the <i>latest announcements</i>, <i>ask questions</i> and discuss <i>future directions</i> of the project.
+</td></tr></table>
+</TD></TR></TABLE>	
+</p>
+
+					&nbsp;
+				</TD>
+				<td bgcolor="#eeeeee" width="5"><IMG src="/images/pixel.gif" width="5" height="1"></TD>
+				<td bgcolor="#000000" width="1"><IMG src="/images/pixel.gif" width="1" height="1"></TD>
+				<td width="5"><IMG src="/images/pixel.gif" width="5" height="1"></TD>
+				<td valign="top">
+					<font face="Arial, Sans-Serif" size="+2">
+					{
+						<font size="+1"><b>Welcome To OpenSymphony</b></font>
+					}
+					</font><br>
+
+					<font size="-1">
+					<font size="2" face="Verdana, Arial, Helvetica, sans-serif">
+<table cellpadding=10 border=0 cellspacing=0>
+  <tr>
+    <td valign="top">
+    <font size="2" face="Verdana, Arial, Helvetica, sans-serif">
+<i>The Open Source J2EE component project</i>
+<p>OpenSymphony is an Open Source project dedicated to providing enterprise class
+  J2EE applications and components. Our components aim to be specification compliant,
+  and should work in any J2EE compliant application server. (Although some components
+  only require a servlet container rather than a full J2EE app server).</p>
+<p>See <a href="whatis.html;jsessionid=BCEAHBFFKKMD">What Is OpenSymphony?</a> and the OpenSymphony <a href="architecture.html;jsessionid=BCEAHBFFKKMD">Architectural
+  Overview</a> <font size="2" face="Verdana, Arial, Helvetica, sans-serif">for
+  more detail.</font></p>
+</font>
+
+    <font size="2" face="Verdana, Arial, Helvetica, sans-serif">
+      <h3><a href="components.html;jsessionid=BCEAHBFFKKMD">Components</a></h3>
+	  <h4>Production Quality</h4>
+		<ul>
+		  <li><b><a href="oscache/;jsessionid=BCEAHBFFKKMD">OSCache</a></b> - A JSP tag library and set of
+          classes to perform fine grained dynamic caching of JSP content. It also
+          has persistent on disk caches, and can allow your site to have graceful
+          error tolerance (eg if an error occurs like your db goes down, you can
+          serve the cached content so people can still surf the site almost without
+          knowing). [requires Servlet 2.2 / JSP 1.1] </li>
+		<li><b><a href="sitemesh/;jsessionid=BCEAHBFFKKMD">SiteMesh</a></b> - This is a servlet filter
+          + tag library component that uses decorators to allow for excellent
+          site layout and web app integration (ie you can integrate legacy web
+          apps that are perl or CF based with your current J2EE apps - very cool)
+          [requires Servlet 2.3 / JSP 1.1] </li>
+		<li><b><a href="formtags/;jsessionid=BCEAHBFFKKMD">FormTags</a></b> -
+          A JSP taglib designed to make integration of HTML forms and Javabeans
+          relatively orthogonal and convenient. </li>
+        <li><b><a href="transformtags/;jsessionid=BCEAHBFFKKMD">Transformtags</a></b>
+          - A JSP taglib designed to provide tags to transform source content
+          from one form to another. For example, it contains a tag to apply XSL
+          to XML content, as well as a tag to escape HTML text and search/replace
+          content.</li>
+        <li><b><a href="oscore/;jsessionid=BCEAHBFFKKMD">OSCore</a></b> - Core components that are useful
+          in any J2EE application. The most used component here is the PropertySet
+          EJB, an EJB properties object that's very flexible and can be constrained
+          by a PropertySetSchema.</li>
+	  </ul>
+	  <h4>Beta (Developing Components)</h4>
+      <ul>
+
+        <li><b><a href="osuser/;jsessionid=BCEAHBFFKKMD">OSUser</a></b> - A set of user management EJB
+          components that will work on any EJB server. At the moment every server
+          has its own user management API. This project is an attempt to unite
+          them to make your applications <i>truly</i> portable between app servers.
+          [requires EJB 1.1 / OSCore components] </li>
+        <li><b><a href="richtags/;jsessionid=BCEAHBFFKKMD">RichTags</a></b> -
+		  A JSP taglib designed to allow rich GUI user-interface and data-entry
+		  widgets to be used in HTML based web-applications.
+        <li><b><a href="webcompass/;jsessionid=BCEAHBFFKKMD">WebCompass</a></b> - A combination
+          of an EJB package and a tag library to provide site navigation and organization.
+        </li>
+        <li><b><a href="osworkflow/;jsessionid=BCEAHBFFKKMD">OSWorkflow</a></b> - A very flexible workflow system that can be plugged in to
+		almost any need or existing application. Uses can range from document management
+		to order processing to project management. [requires EJB 1.1 / OSCore & OSUser components] </li>
+      </ul>
+      </font> </td>
+    <!-- CENTER DIVIDER -->
+    <td valign="top" width="180">
+    	<table cellpadding=1 cellspacing=0 border=0 bgcolor=cccccc><tr><td>
+	<table cellspacing=0 cellpadding=4 border=0 bgcolor=eeeeee><tr><td>
+	<font face="Verdana,Sans-Serif" size="-1">
+      <h3>Latest News</h3>
+      
+        <p>
+<b><a href="news/default.jsp#1">OSCore 1.1 Released</a></b>
+			
+			-
+			
+			2002/04/30</p>
+<p>
+<b><a href="news/default.jsp#2">New OSCache Release</a></b>
+			
+			-
+			
+			2002/01/08</p>
+<p>
+<b><a href="news/default.jsp#3">Project Refactoring, OSCache Class Diagrams</a></b>
+			
+			-
+			
+			2001/12/14</p>
+<p>
+<b><a href="news/default.jsp#4">TransformTags updated</a></b>
+			
+			-
+			
+			2001/11/19</p>
+<p>
+<b><a href="news/default.jsp#5">Radical new OSCache release!</a></b>
+			
+			-
+			
+			2001/11/07</p>
+<p>
+<b><a href="news/default.jsp#6">TransformTags released!</a></b>
+			
+			-
+			
+			2001/10/25</p>
+<p>
+<b><a href="news/default.jsp#7">Website Updates</a></b>
+			
+			-
+			
+			2001/10/04</p>
+<p>
+<b><a href="news/default.jsp#8">OSUser Docs online</a></b>
+			
+			-
+			
+			2001/09/28</p>
+<p>
+<b><a href="news/default.jsp#9">TransformTags 1.0 RC1 available!</a></b>
+			
+			-
+			
+			2001/09/24</p>
+<p>
+<b><a href="news/default.jsp#10">WebCompass, TransformTags docs moved</a></b>
+			
+			-
+			
+			2001/09/24</p>
+<p>
+<b><a href="news/default.jsp#11">SiteMesh 1.3 released</a></b>
+			
+			-
+			
+			2001/09/23</p>
+<p>
+<b><a href="news/default.jsp#12">OSCache 1.6.1 released</a></b>
+			
+			-
+			
+			2001/09/17</p>
+
+       </font>
+      	</td></tr></table>
+	</td></tr></table>
+  </tr>
+</table>
+</font>
+					</font>
+					<br>
+				</td>
+			</tr>
+	</table>
+
+	<TABLE width="100%" border="0" cellspacing="0" cellpadding="0"><TR><TD height="1" bgcolor="#000000"><IMG src="/images/pixel.gif" width="1" height="1"></TD></TR></TABLE>	
+	
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td bgcolor="#ffffcc">
+		<font color="#000000" face="Verdana, Sans-Serif" size="-1">
+        	&nbsp;
+		
+		<a href="/"><b><font color="#000000">Home</font></b></a> | 
+<a href="/news"><b><font color="#000000">News</font></b></a> | 
+
+<a href="/guidelines"><b><font color="#000000">Guidelines</font></b></a> |
+
+<a href="/contribute.jsp"><b><font color="#000000">Contribute</font></b></a> |
+
+<a href="/team.jsp"><b><font color="#000000">The Team</font></b></a> |
+
+<a href="/contact.jsp"><b><font color="#000000">Contact</font></b></a> 
+
+		
+		</font>
+		
+		</td> 
+		<td bgcolor="#ffffcc" valign="middle" align="right"><font color="#000000" face="Verdana, Sans-Serif" size="-1">
+		<b>Project managed at:</b> 
+		<A href="http://sourceforge.net/projects/opensymphony"><IMG src="http://sourceforge.net/sflogo.php?group_id=9890&type=1" width="88" height="31" border="0" alt="SourceForge Logo" hspace=0 vspace=0 align="absmiddle"></A></font></td>
+	</tr> 
+</table>	
+
+<TABLE width="100%" border="0" cellspacing="0" cellpadding="0"><TR><TD height="1" bgcolor="#000000"><IMG src="/images/pixel.gif" width="1" height="1"></TD></TR></TABLE>	
+	
+
+
+	<center>
+	<font size="-2" face="Verdana, Sans-Serif">
+	Copyright 2000-2001 - <a href="/team.jsp">The Team</a> - <a href="/contact.jsp">Contact Us &amp Mailing Lists</a>
+	</font>
+	</center>
+	<p>
+
+	
+	</body>
+</html>
+
+~~~ TITLE ~~~
+
+OpenSymphony - Welcome To OpenSymphony
+
+~~~ PROPERTIES ~~~
+
+title=OpenSymphony - Welcome To OpenSymphony
+body.bgcolor=#FFFFFF
+body.leftmargin=0
+body.topmargin=0
+body.marginwidth=0
+body.marginheight=0
+
+~~~ HEAD ~~~
+
+<link rel="stylesheet" href="/styles/main-css.txt">
+
+~~~ BODY ~~~
+  
+ <table width="100%" border="0" cellspacing="0" cellpadding="0"><tr>
+	<td bgcolor="#164A7D"><a href="/"><IMG src="/images/logo.gif" width="268" height="55" border="0"></a></td>
+	<td bgcolor="#164A7D" valign="middle" align="right">
+<a href="http://www.atlassian.com/">
+<img 
+  src="/images/atlassian.gif"
+  width=250 
+  height=55 
+  border=0>
+</a>
+</td>
+</tr></table>
+	
+
+
+	
+<table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor=eeeef8>
+	<tr>
+		<td bgcolor="#ffffcc" width=100%><font color="#000000" face="Verdana, Sans-Serif" size="-1">
+        	&nbsp;
+
+		
+		
+		
+		<a href="/"><b><font color="#000000">Home</font></b></a> | 
+<a href="/news"><b><font color="#000000">News</font></b></a> | 
+
+<a href="/guidelines"><b><font color="#000000">Guidelines</font></b></a> |
+
+<a href="/contribute.jsp"><b><font color="#000000">Contribute</font></b></a> |
+
+<a href="/team.jsp"><b><font color="#000000">The Team</font></b></a> |
+
+<a href="/contact.jsp"><b><font color="#000000">Contact</font></b></a> 
+
+
+		</font></B></td> 
+		<td valign="middle" nowrap width=1%>
+			<font face="Verdana, Sans-Serif" size="-1">
+				&nbsp;<b><A href="http://sourceforge.net/projects/opensymphony"><font color=000000>SourceForge Project:</font></a></b>&nbsp;
+			</font>
+		</td>
+	
+		<td width=1%><a href="/"><img src="/images/icons/sf_home.png" width=20 height=20 border=0 alt="Homepage"></a></td>
+		<td width=1%><a href="http://sourceforge.net/bugs/?group_id=9890"><img src="/images/icons/sf_bugs.png" width=20 height=20 border=0 alt="Bugs @ Sourceforge"></a></td>
+		<td width=1%><a href="http://sourceforge.net/mail/?group_id=9890"><img src="/images/icons/sf_mailinglists.png" width=20 height=20 border=0 alt="Mailing Lists @ Sourceforge"></a></td>
+		<td width=1%><a href="http://sourceforge.net/pm/?group_id=9890"><img src="/images/icons/sf_tasks.png" width=20 height=20 border=0 alt="Task Manager @ Sourceforge"></a></td>
+		<td width=1%><a href="http://sourceforge.net/cvs/?group_id=9890"><img src="/images/icons/sf_cvs.png" width=20 height=20 border=0 alt="CVS @ Sourceforge"></a></td>
+	</tr> 
+</table>	
+
+<TABLE width="100%" border="0" cellspacing="0" cellpadding="0"><TR><TD height="1" bgcolor="#000000"><IMG src="/images/pixel.gif" width="1" height="1"></TD></TR></TABLE>	
+	
+
+
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<td>
+				<td bgcolor="#eeeeee" width="5"><IMG src="/images/pixel.gif" width="5" height="1"></TD>
+				<td bgcolor="#eeeeee" width="140" valign="top">
+
+					
+					
+
+					
+
+<table cellpadding=1 border=0 cellspacing=0 ><tr><td>
+<table cellpadding=2 border=0 cellspacing=0><tr><td bgcolor="#164A7D">
+<b><font size="3" color="#ffffff" face="Verdana, Arial, Helvetica, sans-serif"> Modules </font></b>
+</td></tr></table>
+</td></tr></table>
+
+<font size="2">
+	<b>Production Quality</b><br>
+&nbsp;&raquo; <a href="/oscache/">OSCache</a><br>
+&nbsp;&raquo; <a href="/sitemesh/">SiteMesh</a><br>
+&nbsp;&raquo; <a href="/formtags/">FormTags</a><br>
+&nbsp;&raquo; <a href="/transformtags/">TransformTags</a><br>
+&nbsp;&raquo; <a href="/oscore/">OSCore</a><br>
+<br>
+<b>Beta / Developing</b><br>
+&nbsp;&raquo; <a href="/osuser/">OSUser</a><br>
+&nbsp;&raquo; <a href="/webcompass/">WebCompass</a><br>
+&nbsp;&raquo; <a href="/richtags/">RichTags</a><br>
+&nbsp;&raquo; <a href="/osaccess/">OSAccess</a><br>
+&nbsp;&raquo; <a href="/osworkflow/">OSWorkflow</a><br>
+<br>
+<font size=1>
+<b>Attic</b> (Old components that are no longer actively developed)<br>
+&nbsp;&raquo; <a href="/oscontent/">OSContent</a><br>
+&nbsp;&raquo; <a href="/clickstream/">Clickstream</a><br>
+&nbsp;&raquo; <a href="/oscontact/">OSContact</a><br>
+</font>
+
+<p>
+<b>Project Documentation</b><br>
+&nbsp;&raquo; <a href="/whatis.html">What Is OpenSymphony?</a></b><br>
+&nbsp;&raquo; <a href="/architecture.html">Architectural Overview</a></b><br>
+&nbsp;&raquo; <a href="/components.html">The
+Components</a></b><br>
+<p>
+<TABLE width="95%" border="0" cellspacing="0" cellpadding="1" bgcolor="bbbbaa" align="center"><TR><TD>
+<table cellpadding=5 width=100% bgcolor="ffffee" border=0"><tr>
+          <td>
+            <p><font face="Verdana, Sans-Serif" size="-1"> <a href="/mirrors.html"><b>Mirrors/Sponsor Companies</a><br>
+              </b><i><font size="1">These companies have contributed a lot to 
+              OpenSymphony and we thank them. </font></i> <br>
+              </p>
+            </td></tr></table>
+</TD></TR></TABLE>
+</font>
+
+
+					
+					<br>
+
+					<p>
+<TABLE width="95%" border="0" cellspacing="0" cellpadding="1" bgcolor="bbbbaa" align="center"><TR><TD>
+<table cellpadding=5 width=100% bgcolor="ffffee" border=0"><tr><td>
+<font face="Verdana, Sans-Serif" size="-1">
+<font size="3"><b><a href="/contact.jsp">Want to keep informed?</a></b></font><br>
+Why not subscribe to our <b><a href="/contact.jsp">mailing lists</a></b>?<p>
+Keep up to date with the <i>latest announcements</i>, <i>ask questions</i> and discuss <i>future directions</i> of the project.
+</td></tr></table>
+</TD></TR></TABLE>	
+</p>
+
+					&nbsp;
+				</TD>
+				<td bgcolor="#eeeeee" width="5"><IMG src="/images/pixel.gif" width="5" height="1"></TD>
+				<td bgcolor="#000000" width="1"><IMG src="/images/pixel.gif" width="1" height="1"></TD>
+				<td width="5"><IMG src="/images/pixel.gif" width="5" height="1"></TD>
+				<td valign="top">
+					<font face="Arial, Sans-Serif" size="+2">
+					{
+						<font size="+1"><b>Welcome To OpenSymphony</b></font>
+					}
+					</font><br>
+
+					<font size="-1">
+					<font size="2" face="Verdana, Arial, Helvetica, sans-serif">
+<table cellpadding=10 border=0 cellspacing=0>
+  <tr>
+    <td valign="top">
+    <font size="2" face="Verdana, Arial, Helvetica, sans-serif">
+<i>The Open Source J2EE component project</i>
+<p>OpenSymphony is an Open Source project dedicated to providing enterprise class
+  J2EE applications and components. Our components aim to be specification compliant,
+  and should work in any J2EE compliant application server. (Although some components
+  only require a servlet container rather than a full J2EE app server).</p>
+<p>See <a href="whatis.html;jsessionid=BCEAHBFFKKMD">What Is OpenSymphony?</a> and the OpenSymphony <a href="architecture.html;jsessionid=BCEAHBFFKKMD">Architectural
+  Overview</a> <font size="2" face="Verdana, Arial, Helvetica, sans-serif">for
+  more detail.</font></p>
+</font>
+
+    <font size="2" face="Verdana, Arial, Helvetica, sans-serif">
+      <h3><a href="components.html;jsessionid=BCEAHBFFKKMD">Components</a></h3>
+	  <h4>Production Quality</h4>
+		<ul>
+		  <li><b><a href="oscache/;jsessionid=BCEAHBFFKKMD">OSCache</a></b> - A JSP tag library and set of
+          classes to perform fine grained dynamic caching of JSP content. It also
+          has persistent on disk caches, and can allow your site to have graceful
+          error tolerance (eg if an error occurs like your db goes down, you can
+          serve the cached content so people can still surf the site almost without
+          knowing). [requires Servlet 2.2 / JSP 1.1] </li>
+		<li><b><a href="sitemesh/;jsessionid=BCEAHBFFKKMD">SiteMesh</a></b> - This is a servlet filter
+          + tag library component that uses decorators to allow for excellent
+          site layout and web app integration (ie you can integrate legacy web
+          apps that are perl or CF based with your current J2EE apps - very cool)
+          [requires Servlet 2.3 / JSP 1.1] </li>
+		<li><b><a href="formtags/;jsessionid=BCEAHBFFKKMD">FormTags</a></b> -
+          A JSP taglib designed to make integration of HTML forms and Javabeans
+          relatively orthogonal and convenient. </li>
+        <li><b><a href="transformtags/;jsessionid=BCEAHBFFKKMD">Transformtags</a></b>
+          - A JSP taglib designed to provide tags to transform source content
+          from one form to another. For example, it contains a tag to apply XSL
+          to XML content, as well as a tag to escape HTML text and search/replace
+          content.</li>
+        <li><b><a href="oscore/;jsessionid=BCEAHBFFKKMD">OSCore</a></b> - Core components that are useful
+          in any J2EE application. The most used component here is the PropertySet
+          EJB, an EJB properties object that's very flexible and can be constrained
+          by a PropertySetSchema.</li>
+	  </ul>
+	  <h4>Beta (Developing Components)</h4>
+      <ul>
+
+        <li><b><a href="osuser/;jsessionid=BCEAHBFFKKMD">OSUser</a></b> - A set of user management EJB
+          components that will work on any EJB server. At the moment every server
+          has its own user management API. This project is an attempt to unite
+          them to make your applications <i>truly</i> portable between app servers.
+          [requires EJB 1.1 / OSCore components] </li>
+        <li><b><a href="richtags/;jsessionid=BCEAHBFFKKMD">RichTags</a></b> -
+		  A JSP taglib designed to allow rich GUI user-interface and data-entry
+		  widgets to be used in HTML based web-applications.
+        <li><b><a href="webcompass/;jsessionid=BCEAHBFFKKMD">WebCompass</a></b> - A combination
+          of an EJB package and a tag library to provide site navigation and organization.
+        </li>
+        <li><b><a href="osworkflow/;jsessionid=BCEAHBFFKKMD">OSWorkflow</a></b> - A very flexible workflow system that can be plugged in to
+		almost any need or existing application. Uses can range from document management
+		to order processing to project management. [requires EJB 1.1 / OSCore & OSUser components] </li>
+      </ul>
+      </font> </td>
+    <!-- CENTER DIVIDER -->
+    <td valign="top" width="180">
+    	<table cellpadding=1 cellspacing=0 border=0 bgcolor=cccccc><tr><td>
+	<table cellspacing=0 cellpadding=4 border=0 bgcolor=eeeeee><tr><td>
+	<font face="Verdana,Sans-Serif" size="-1">
+      <h3>Latest News</h3>
+      
+        <p>
+<b><a href="news/default.jsp#1">OSCore 1.1 Released</a></b>
+			
+			-
+			
+			2002/04/30</p>
+<p>
+<b><a href="news/default.jsp#2">New OSCache Release</a></b>
+			
+			-
+			
+			2002/01/08</p>
+<p>
+<b><a href="news/default.jsp#3">Project Refactoring, OSCache Class Diagrams</a></b>
+			
+			-
+			
+			2001/12/14</p>
+<p>
+<b><a href="news/default.jsp#4">TransformTags updated</a></b>
+			
+			-
+			
+			2001/11/19</p>
+<p>
+<b><a href="news/default.jsp#5">Radical new OSCache release!</a></b>
+			
+			-
+			
+			2001/11/07</p>
+<p>
+<b><a href="news/default.jsp#6">TransformTags released!</a></b>
+			
+			-
+			
+			2001/10/25</p>
+<p>
+<b><a href="news/default.jsp#7">Website Updates</a></b>
+			
+			-
+			
+			2001/10/04</p>
+<p>
+<b><a href="news/default.jsp#8">OSUser Docs online</a></b>
+			
+			-
+			
+			2001/09/28</p>
+<p>
+<b><a href="news/default.jsp#9">TransformTags 1.0 RC1 available!</a></b>
+			
+			-
+			
+			2001/09/24</p>
+<p>
+<b><a href="news/default.jsp#10">WebCompass, TransformTags docs moved</a></b>
+			
+			-
+			
+			2001/09/24</p>
+<p>
+<b><a href="news/default.jsp#11">SiteMesh 1.3 released</a></b>
+			
+			-
+			
+			2001/09/23</p>
+<p>
+<b><a href="news/default.jsp#12">OSCache 1.6.1 released</a></b>
+			
+			-
+			
+			2001/09/17</p>
+
+       </font>
+      	</td></tr></table>
+	</td></tr></table>
+  </tr>
+</table>
+</font>
+					</font>
+					<br>
+				</td>
+			</tr>
+	</table>
+
+	<TABLE width="100%" border="0" cellspacing="0" cellpadding="0"><TR><TD height="1" bgcolor="#000000"><IMG src="/images/pixel.gif" width="1" height="1"></TD></TR></TABLE>	
+	
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td bgcolor="#ffffcc">
+		<font color="#000000" face="Verdana, Sans-Serif" size="-1">
+        	&nbsp;
+		
+		<a href="/"><b><font color="#000000">Home</font></b></a> | 
+<a href="/news"><b><font color="#000000">News</font></b></a> | 
+
+<a href="/guidelines"><b><font color="#000000">Guidelines</font></b></a> |
+
+<a href="/contribute.jsp"><b><font color="#000000">Contribute</font></b></a> |
+
+<a href="/team.jsp"><b><font color="#000000">The Team</font></b></a> |
+
+<a href="/contact.jsp"><b><font color="#000000">Contact</font></b></a> 
+
+		
+		</font>
+		
+		</td> 
+		<td bgcolor="#ffffcc" valign="middle" align="right"><font color="#000000" face="Verdana, Sans-Serif" size="-1">
+		<b>Project managed at:</b> 
+		<A href="http://sourceforge.net/projects/opensymphony"><IMG src="http://sourceforge.net/sflogo.php?group_id=9890&type=1" width="88" height="31" border="0" alt="SourceForge Logo" hspace=0 vspace=0 align="absmiddle"></A></font></td>
+	</tr> 
+</table>	
+
+<TABLE width="100%" border="0" cellspacing="0" cellpadding="0"><TR><TD height="1" bgcolor="#000000"><IMG src="/images/pixel.gif" width="1" height="1"></TD></TR></TABLE>	
+	
+
+
+	<center>
+	<font size="-2" face="Verdana, Sans-Serif">
+	Copyright 2000-2001 - <a href="/team.jsp">The Team</a> - <a href="/contact.jsp">Contact Us &amp Mailing Lists</a>
+	</font>
+	</center>
+	<p>
+
