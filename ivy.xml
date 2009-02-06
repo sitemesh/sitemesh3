@@ -1,0 +1,21 @@
+<ivy-module version="2.0">
+
+  <info organisation="com.opensymphony" module="sitemesh"/>
+
+  <configurations>
+    <conf name="main" description="Main library."/>
+    <conf name="buildtools" visibility="private" description="Tools used at build time."/>
+    <conf name="test" extends="main" visibility="private" description="Tests."/>
+  </configurations>
+
+  <dependencies>
+    <!-- Build tools -->
+    <dependency org="de.jflex" name="jflex" rev="1.4.2" conf="buildtools->default"/>
+    <dependency org="org.apache.ant" name="ant-junit" rev="1.7.1" conf="buildtools->default"/>
+    <!-- Main library dependencies -->
+    <dependency org="javax.servlet" name="servlet-api" rev="2.5" conf="main->default"/>
+    <!-- Testing dependencies -->
+    <dependency org="junit" name="junit" rev="3.8.2" conf="test->default"/>
+  </dependencies>
+
+</ivy-module>
