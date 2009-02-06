@@ -5,9 +5,14 @@ Requirements: JDK 1.6, Ant 1.6
 From this directory, run:
   ant
 
-This compiles the libraries, runs the tests and generates
-the distribution files (in the 'dist' directory).
+This:
+* installs Ivy (for dependency management)
+* retrieves all dependencies
+* compiles the libraries
+* runs the tests
+* generates the distribution files
 
 For more options:
   ant -projecthelp
 
+It also creates a 'lib' directory which contains all the dependencies. Handy if you want to build in your IDE.
