@@ -25,14 +25,9 @@
     </path>
 
     <target name="codegen" description="Generate code">
+	<taskdef name="jflex" classname="JFlex.anttask.JFlexTask" classpathref="build.classpath" />
         <mkdir dir="build/main/java"/>
-        <!-- TODO: ant task? Don't regenerate unless necessary. -->
-        <java classname="JFlex.Main" fork="yes" classpathref="build.classpath">
-            <arg value="-d"/>
-            <arg value="build/main/java/com/opensymphony/sitemesh/tagprocessor"/>
-            <arg value="src/main/java/com/opensymphony/sitemesh/tagprocessor/lexer.flex"/>
-        </java>
-        <delete file="build/main/java/com/opensymphony/sitemesh/tagprocessor/Lexer.java~"/>
+	<jflex file="src/main/java/com/opensymphony/sitemesh/tagprocessor/lexer.flex" destdir="build/main/java"/>
     </target>
 
     <target name="main" depends="codegen" description="Build main library">
