@@ -1,6 +1,14 @@
 syntax: regexp
 
+# Build output.
 ^lib/
 ^build/
 ^dist/
 
+# IDE project files.
+\.eml
+\.iml
+\.ipr
+\.iws
+\.classpath
+\.project
