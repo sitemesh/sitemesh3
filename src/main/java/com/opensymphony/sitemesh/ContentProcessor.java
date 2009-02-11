@@ -1,16 +1,14 @@
 package com.opensymphony.sitemesh;
 
 import java.io.IOException;
+import java.nio.CharBuffer;
 
 /**
  * @author Joe Walnes
  * @since SiteMesh 3
  */
-public interface ContentProcessor<T> {
+public interface ContentProcessor<C extends Context> {
 
-    boolean handles(T context);
-    
-    boolean handles(String contentType);
+    Content build(CharBuffer data, C context) throws IOException;
 
-    Content build(String data, T context) throws IOException;
 }
