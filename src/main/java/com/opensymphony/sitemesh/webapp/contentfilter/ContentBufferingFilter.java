@@ -60,8 +60,6 @@ public abstract class ContentBufferingFilter implements Filter {
                                            HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException;
 
-    private static final String ALREADY_APPLIED_KEY = ContentBufferingFilter.class.getName() + ".APPLIED_ONCE";
-
     private FilterConfig filterConfig;
     private ContainerTweaks containerTweaks;
 
@@ -105,13 +103,6 @@ public abstract class ContentBufferingFilter implements Filter {
 
         Selector selector = getSelector(request);
 
-        if (filterAlreadyAppliedForRequest(request)) {
-            // Prior to Servlet 2.4 spec, it was unspecified whether the filter
-            // should be called again upon an include().
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         if (!selector.shouldBufferForRequest(request)) {
             // Optimization: If the content doesn't need to be buffered,
             // skip the rest of this filter.
@@ -142,9 +133,6 @@ public abstract class ContentBufferingFilter implements Filter {
                 // Some containers (such as Tomcat 4) swallow RuntimeExceptions in filters.
                 servletContext.log("Unhandled exception occurred whilst decorating page", e);
             }
-            throw e;
-        } catch (ServletException e) {
-            request.removeAttribute(ALREADY_APPLIED_KEY);
             throw e;
         }
     }
@@ -186,15 +174,6 @@ public abstract class ContentBufferingFilter implements Filter {
             PrintWriter writer = response.getWriter();
             writer.append(buffer);
             response.getWriter().flush();
-        }
-    }
-
-    protected boolean filterAlreadyAppliedForRequest(HttpServletRequest request) {
-        if (Boolean.TRUE.equals(request.getAttribute(ALREADY_APPLIED_KEY))) {
-            return true;
-        } else {
-            request.setAttribute(ALREADY_APPLIED_KEY, true);
-            return false;
         }
     }
 
