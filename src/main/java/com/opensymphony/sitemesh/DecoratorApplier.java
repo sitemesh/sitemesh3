@@ -8,8 +8,11 @@ import java.io.IOException;
  * @author Joe Walnes
  * @since SiteMesh 3
  */
-public interface DecoratorApplier<T> {
+public interface DecoratorApplier<C extends Context> {
 
-    void decorate(Content content, T context) throws IOException;
+    /**
+     * @return Whether decorator was applied.
+     */
+    boolean decorate(Content content, C context) throws IOException;
 
 }
