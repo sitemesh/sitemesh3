@@ -4,8 +4,8 @@ import com.opensymphony.sitemesh.webapp.BaseSiteMeshFilter;
 import com.opensymphony.sitemesh.webapp.WebAppContext;
 import com.opensymphony.sitemesh.webapp.WebEnvironment;
 import com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector;
-import com.opensymphony.sitemesh.webapp.decorator.SimpleDecoratorApplier;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
+import com.opensymphony.sitemesh.decorator.simple.SimpleDecoratorApplier;
 
 import javax.servlet.Filter;
 
