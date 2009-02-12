@@ -8,6 +8,8 @@ import javax.servlet.ServletException;
 import java.nio.CharBuffer;
 import java.io.IOException;
 
+import com.opensymphony.sitemesh.webapp.WebEnvironment;
+
 /**
  * This test sets up a complete {@link WebEnvironment} and tests the {@link ContentBufferingFilter}
  * end to end.
@@ -24,7 +26,7 @@ public class ContentBufferingFilterTest extends TestCase {
     }
 
     public void testCanRewriteContent() throws Exception {
-        WebEnvironment webEnvironment = WebEnvironment.createWebEnvironment()
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addStaticContent("/filtered", "text/html", "Hello world!")
                 .addStaticContent("/not-filtered", "text/html", "Hello world!")
                 .addFilter("/filtered", new MyContentBufferingFilter() {
@@ -37,7 +39,7 @@ public class ContentBufferingFilterTest extends TestCase {
                         return true;
                     }
                 })
-                .start();
+                .create();
 
         webEnvironment.doGet("/not-filtered");
         assertEquals(
@@ -60,7 +62,7 @@ public class ContentBufferingFilterTest extends TestCase {
     }
 
     public void testUpdatesContentLengthHeader() throws Exception {
-        WebEnvironment webEnvironment = WebEnvironment.createWebEnvironment()
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addStaticContent("/filtered", "text/html", "1")
                 .addFilter("/filtered", new MyContentBufferingFilter() {
                     @Override
@@ -69,7 +71,7 @@ public class ContentBufferingFilterTest extends TestCase {
                         return true;
                     }
                 })
-                .start();
+                .create();
 
         webEnvironment.doGet("/filtered");
         assertEquals(
@@ -82,7 +84,7 @@ public class ContentBufferingFilterTest extends TestCase {
     }
 
     public void testOnlyFiltersContentTypesUsedBySelector() throws Exception {
-        WebEnvironment webEnvironment = WebEnvironment.createWebEnvironment()
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addStaticContent("/html", "text/html", "Hello")
                 .addStaticContent("/text", "text/plain", "Hello")
                 .addFilter("/*", new MyContentBufferingFilter() {
@@ -94,7 +96,7 @@ public class ContentBufferingFilterTest extends TestCase {
                         return true;
                     }
                 })
-                .start();
+                .create();
 
         webEnvironment.doGet("/html");
         assertEquals(
