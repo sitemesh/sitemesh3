@@ -8,6 +8,7 @@ import com.opensymphony.sitemesh.tagprocessor.StateTransitionRule;
 import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
 
 import java.io.IOException;
+import java.nio.CharBuffer;
 
 /**
  * {@link com.opensymphony.sitemesh.Content} implementation that will build itself from
@@ -26,6 +27,10 @@ public class HtmlContent extends BaseContent implements PageBuilder {
 
     public HtmlContent(String data) throws IOException {
         super(data);
+    }
+
+    public HtmlContent(CharBuffer data) throws IOException {
+        super(data.toString()); // TODO: Avoid allocation.
     }
 
     @Override
