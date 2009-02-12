@@ -46,6 +46,7 @@ import java.nio.CharBuffer;
  * </pre>
  *
  * @author Joe Walnes
+ * @author Scott Farquhar
  */
 public abstract class ContentBufferingFilter implements Filter {
 
