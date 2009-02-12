@@ -16,7 +16,7 @@ import java.nio.CharBuffer;
  * Core Filter for integrating SiteMesh into a Java web application.
  *
  * <p>For this to be functional it requires a {@link Selector}, {@link ContentProcessor},
- * and {@link DecoratorApplier}. These can be passed in through the constructor
+ * and {@link DecoratorApplier}. These must be passed in through the constructor
  * or setter methods.</p>
  *
  * <p>This filter will not work on its own in a typical Servlet container as the container
@@ -28,19 +28,41 @@ import java.nio.CharBuffer;
  * @author Scott Farquhar
  */
 public class BaseSiteMeshFilter extends ContentBufferingFilter {
+
+    private Selector selector;
     private ContentProcessor<WebAppContext> contentProcessor;
     private DecoratorApplier<WebAppContext> decoratorApplier;
-    private Selector selector;
 
+    /**
+     * Default constructor. If this is used, it is the caller's
+     * responsibility to call {@link #setSelector(Selector)},
+     * {@link #setContentProcessor(ContentProcessor)} and
+     * {@link #setDecoratorApplier(DecoratorApplier)}.
+     */
     public BaseSiteMeshFilter() {
     }
 
-    public BaseSiteMeshFilter(ContentProcessor<WebAppContext> contentProcessor,
-                              DecoratorApplier<WebAppContext> decoratorApplier,
-                              Selector selector) {
+    /**
+     * Will call {@link #setSelector(Selector)},
+     * {@link #setContentProcessor(ContentProcessor)} and
+     * {@link #setDecoratorApplier(DecoratorApplier)}.
+     * @param decoratorApplier
+     */
+    public BaseSiteMeshFilter(Selector selector,
+                              ContentProcessor<WebAppContext> contentProcessor,
+                              DecoratorApplier<WebAppContext> decoratorApplier) {
+        setSelector(selector);
         setContentProcessor(contentProcessor);
         setDecoratorApplier(decoratorApplier);
-        setSelector(selector);
+    }
+
+    /**
+     * The {@link Selector} provides the rules for whether SiteMesh should be
+     * used for a specific request. For a basic implementation, use
+     * {@link com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector}.
+     */
+    public void setSelector(Selector selector) {
+        this.selector = selector;
     }
 
     public void setContentProcessor(ContentProcessor<WebAppContext> contentProcessor) {
@@ -49,10 +71,6 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
 
     public void setDecoratorApplier(DecoratorApplier<WebAppContext> decoratorApplier) {
         this.decoratorApplier = decoratorApplier;
-    }
-
-    public void setSelector(Selector selector) {
-        this.selector = selector;
     }
 
     @Override
