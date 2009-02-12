@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh.webapp.decorator;
+package com.opensymphony.sitemesh.decorator.simple;
 
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.Context;
@@ -12,8 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Very simple {@link DecoratorApplier} implementation that is passed a template and will
- * substitute tokens that look like <code>{{xxx}}</code> for the equivalent {@link Content}
+ * Very simple {@link com.opensymphony.sitemesh.DecoratorApplier} implementation that is passed a template and will
+ * substitute tokens that look like <code>{{xxx}}</code> for the equivalent {@link com.opensymphony.sitemesh.Content}
  * properties. The functionality of this is very limited and is mostly used for quick
  * examples and tests.
  *

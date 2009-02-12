@@ -1,7 +1,8 @@
-package com.opensymphony.sitemesh.webapp.decorator;
+package com.opensymphony.sitemesh.decorator.simple;
 
 import com.opensymphony.sitemesh.ContentStub;
 import com.opensymphony.sitemesh.ContextStub;
+import com.opensymphony.sitemesh.webapp.decorator.SimpleDecoratorApplier;
 import junit.framework.TestCase;
 
 import java.io.IOException;
