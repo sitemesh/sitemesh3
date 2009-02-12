@@ -49,17 +49,15 @@ import java.nio.CharBuffer;
  */
 public abstract class ContentBufferingFilter implements Filter {
 
+    protected abstract Selector getSelector(HttpServletRequest request);
+
     /**
-     * Subclasses should
-     *
      * @return Whether the content was processed. If false, the original content shall
      *         be written back out.
      */
     protected abstract boolean postProcess(String contentType, CharBuffer buffer,
                                            HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException;
-
-    protected abstract Selector getSelector(HttpServletRequest request);
 
     private static final String ALREADY_APPLIED_KEY = ContentBufferingFilter.class.getName() + ".APPLIED_ONCE";
 
@@ -70,6 +68,12 @@ public abstract class ContentBufferingFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
         this.containerTweaks = initContainerTweaks();
+    }
+
+    @Override
+    public void destroy() {
+        filterConfig = null;
+        containerTweaks = null;
     }
 
     protected ContainerTweaks initContainerTweaks() {
@@ -83,11 +87,6 @@ public abstract class ContentBufferingFilter implements Filter {
 
     protected ContainerTweaks getContainerTweaks() {
         return containerTweaks;
-    }
-
-    @Override
-    public void destroy() {
-        // No-op.
     }
 
     @Override
