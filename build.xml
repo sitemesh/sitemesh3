@@ -5,25 +5,27 @@
     <property name="ivy.version" value="2.0.0"/>
 
     <target name="download-ivy" unless="ivy.available">
-      <mkdir dir="lib/buildtools" />
-      <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar" 
-           dest="lib/buildtools/ivy-${ivy.version}.jar" usetimestamp="true"/>
+        <mkdir dir="lib/buildtools"/>
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"
+             dest="lib/buildtools/ivy-${ivy.version}.jar" usetimestamp="true"/>
     </target>
 
     <target name="dependencies" description="Download dependencies">
         <available file="lib/buildtools/ivy-${ivy.version}.jar" property="ivy.available"/>
         <antcall target="download-ivy"/>
-        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="lib/buildtools/ivy-${ivy.version}.jar"/>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant"
+                 classpath="lib/buildtools/ivy-${ivy.version}.jar"/>
         <ivy:retrieve pattern="lib/[conf]/[artifact]-[revision].[ext]" log="quiet"/>
         <ivy:cachepath pathid="buildtools.classpath" conf="buildtools"/>
         <ivy:cachepath pathid="main.classpath" conf="main"/>
+        <ivy:cachepath pathid="extras.classpath" conf="extras"/>
         <ivy:cachepath pathid="test.classpath" conf="test"/>
     </target>
 
     <target name="codegen" depends="dependencies" description="Generate code">
         <mkdir dir="build/main/java"/>
-	<taskdef name="jflex" classname="JFlex.anttask.JFlexTask" classpathref="buildtools.classpath" />
-	<jflex file="src/main/java/com/opensymphony/sitemesh/tagprocessor/lexer.flex" destdir="build/main/java"/>
+        <taskdef name="jflex" classname="JFlex.anttask.JFlexTask" classpathref="buildtools.classpath"/>
+        <jflex file="src/main/java/com/opensymphony/sitemesh/tagprocessor/lexer.flex" destdir="build/main/java"/>
     </target>
 
     <target name="main" depends="codegen" description="Build main library">
@@ -36,15 +38,27 @@
         <jar destfile="dist/sitemesh-${version}.jar" basedir="build/main/classes"/>
     </target>
 
-    <target name="test" depends="main" description="Run unit tests">
+    <target name="extras" depends="main" description="Build optional extras">
+        <mkdir dir="build/extras/classes"/>
+        <javac srcdir="src/extras/java"
+               destdir="build/extras/classes"
+               classpath="build/main/classes"
+               classpathref="extras.classpath"
+               debug="on" source="${jdk}" target="${jdk}"/>
+        <mkdir dir="dist"/>
+        <jar destfile="dist/sitemesh-extras-${version}.jar" basedir="build/extras/classes"/>
+    </target>
+
+    <target name="test" depends="main,extras" description="Run unit tests">
         <mkdir dir="build/test/classes"/>
         <javac srcdir="src/test/java"
                destdir="build/test/classes"
-               classpath="build/main/classes"
+               classpath="build/main/classes;build/extras/classes"
                classpathref="test.classpath"
                debug="on" source="${jdk}" target="${jdk}"/>
         <mkdir dir="build/test-results"/>
-        <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" classpathref="buildtools.classpath"/>
+        <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"
+                 classpathref="buildtools.classpath"/>
         <junit printsummary="no" haltonfailure="yes" fork="yes" forkmode="once" dir=".">
             <classpath refid="test.classpath"/>
             <classpath>

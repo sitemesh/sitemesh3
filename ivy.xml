@@ -6,6 +6,7 @@
     <conf name="main" description="Main library."/>
     <conf name="buildtools" visibility="private" description="Tools used at build time."/>
     <conf name="test" extends="main" visibility="private" description="Tests."/>
+    <conf name="extras" extends="main" visibility="private" description="Optional extras."/>
   </configurations>
 
   <dependencies>
@@ -17,6 +18,9 @@
     <!-- Testing dependencies -->
     <dependency org="junit" name="junit" rev="3.8.2" conf="test->default"/>
     <dependency org="org.mortbay.jetty" name="jetty" rev="6.1.14" conf="test->default"/>
+    <!-- Extras -->
+    <dependency org="org.freemarker" name="freemarker" rev="2.3.15" conf="extras->default"/>
+    <dependency org="org.apache.velocity" name="velocity" rev="1.6.1" conf="extras->default"/>
   </dependencies>
 
 </ivy-module>
