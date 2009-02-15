@@ -18,6 +18,7 @@
     <!-- Extras -->
     <dependency org="org.freemarker" name="freemarker" rev="2.3.15" conf="extras->default"/>
     <dependency org="org.apache.velocity" name="velocity" rev="1.6.1" conf="extras->default"/>
+    <dependency org="org.antlr" name="stringtemplate" rev="3.2" conf="extras->default"/>
     <!-- Testing dependencies -->
     <dependency org="junit" name="junit" rev="3.8.2" conf="test->default"/>
     <dependency org="org.mortbay.jetty" name="jetty" rev="6.1.14" conf="test->default"/>
