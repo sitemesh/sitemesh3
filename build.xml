@@ -63,6 +63,7 @@
             <classpath refid="test.classpath"/>
             <classpath>
                 <pathelement location="build/main/classes"/>
+                <pathelement location="build/extras/classes"/>
                 <pathelement location="build/test/classes"/>
             </classpath>
             <formatter type="brief" usefile="no"/>
