@@ -1,0 +1,31 @@
+<testSuite name="SiteMesh ContentProcessor Benchmark" xmlns="http://www.sun.com/japex/testSuite">
+
+    <!-- See https://japex.dev.java.net/docs/manual.html -->
+
+    <param name="dataDir" value="src/benchmark/data/contentprocessor"/>
+    <param name="japex.classPath" value="dist/*.jar:build/benchmark/classes"/>
+    <param name="japex.reportsDirectory" value="build/benchmark-reports/contentprocessor"/>
+
+    <param name="japex.warmupTime" value="1"/>
+    <param name="japex.runTime" value="5"/>
+    <param name="japex.numberOfThreads" value="5"/>
+
+    <!-- possible values: barchart, linechart, scatterchart -->
+    <param name="japex.chartType" value="barchart"/>
+
+    <!-- possible values: tps, mps, mbps -->
+    <param name="japex.resultUnit" value="ms"/>
+
+    <driver name="com.opensymphony.sitemesh.microbenchmark.contentprocessor.HtmlContentProcessorDriver">
+        <param name="Description" value="HtmlContentProcessor"/>
+    </driver>
+
+    <testCase name="tiny">
+        <param name="japex.inputFile" value="${dataDir}/tiny.html"/>
+    </testCase>
+
+    <testCase name="large">
+        <param name="japex.inputFile" value="${dataDir}/large.html"/>
+    </testCase>
+
+</testSuite>

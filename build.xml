@@ -20,6 +20,7 @@
         <ivy:cachepath pathid="main.classpath" conf="main"/>
         <ivy:cachepath pathid="extras.classpath" conf="extras"/>
         <ivy:cachepath pathid="test.classpath" conf="test"/>
+        <ivy:cachepath pathid="benchmark.classpath" conf="benchmark"/>
     </target>
 
     <target name="codegen" depends="dependencies" description="Generate code">
@@ -74,6 +75,20 @@
                 </fileset>
             </batchtest>
         </junit>
+    </target>
+
+    <target name="benchmark" depends="main" description="Run benchmarks">
+        <mkdir dir="build/benchmark/classes"/>
+        <javac srcdir="src/benchmark/java"
+               destdir="build/benchmark/classes"
+               classpath="build/main/classes"
+               classpathref="benchmark.classpath"
+               debug="on" source="${jdk}" target="${jdk}"/>
+        <java classname="com.sun.japex.Japex"
+              classpathref="benchmark.classpath"
+              fork="true">
+            <arg value="src/benchmark/config/contentprocessor.xml"/>
+        </java>
     </target>
 
     <target name="clean" description="Clean up">
