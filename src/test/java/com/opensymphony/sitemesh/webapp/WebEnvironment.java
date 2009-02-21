@@ -1,19 +1,22 @@
 package com.opensymphony.sitemesh.webapp;
 
+import org.mortbay.io.Buffer;
+import org.mortbay.io.ByteArrayBuffer;
+import org.mortbay.jetty.Handler;
+import org.mortbay.jetty.HttpParser;
 import org.mortbay.jetty.LocalConnector;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.servlet.FilterHolder;
+import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.log.Log;
 
+import javax.servlet.Filter;
+import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-import javax.servlet.Filter;
-
 import java.io.IOException;
 
 /**
@@ -34,7 +37,7 @@ import java.io.IOException;
  * &nbsp;    .create();
  *
  * webEnvironment.doGet("/help");
- * System.out.println(webEnvironment.getRawResponse());
+ * System.out.println(webEnvironment.getBody());
  * </pre>
  *
  * @author Joe Walnes
@@ -43,6 +46,8 @@ public class WebEnvironment {
 
     private final LocalConnector connector;
     private String rawResponse;
+    private int status;
+    private String body;
 
     /**
      * Use {@link WebEnvironment.Builder} to create a WebEnvironment.
@@ -59,7 +64,26 @@ public class WebEnvironment {
      */
     public void doGet(String path) throws Exception {
         connector.reopen();
-        rawResponse = unixLineEndings(connector.getResponses("GET " + path + " HTTP/1.1\r\nHost: localhost\r\n\r\n"));
+        String request = "GET " + path + " HTTP/1.1\r\nHost: localhost\r\n\r\n";
+        String response = connector.getResponses(request);
+        rawResponse = unixLineEndings(response);
+
+        new HttpParser(new ByteArrayBuffer(response), new HttpParser.EventHandler() {
+            @Override
+            public void content(Buffer buffer) throws IOException {
+                body = buffer.toString();
+            }
+
+            @Override
+            public void startRequest(Buffer method, Buffer url, Buffer version) throws IOException {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void startResponse(Buffer version, int status, Buffer reason) throws IOException {
+                WebEnvironment.this.status = status;
+            }
+        }).parse();
     }
 
     /**
@@ -68,6 +92,13 @@ public class WebEnvironment {
      */
     public String getRawResponse() {
         return rawResponse;
+    }
+
+    public String getBody() {
+        if (status != 200) {
+            throw new IllegalStateException("Bad response status: " + status);
+        }
+        return body;
     }
 
     private String unixLineEndings(String string) {
@@ -83,7 +114,7 @@ public class WebEnvironment {
             Log.setLog(null);
             server = new Server();
             connector = new LocalConnector();
-            context = new Context();
+            context = new Context(Context.SESSIONS);
             server.setSendServerVersion(false);
             server.addConnector(connector);
             server.addHandler(context);
@@ -106,8 +137,18 @@ public class WebEnvironment {
             return this;
         }
 
+        public Builder serveResourcesFrom(String path) {
+            context.setResourceBase(path);
+            return this;
+        }
+
         public Builder addFilter(String path, Filter filter) {
             context.addFilter(new FilterHolder(filter), path, Handler.DEFAULT);
+            return this;
+        }
+
+        public Builder addListener(ServletContextListener listener) {
+            context.addEventListener(listener);
             return this;
         }
 

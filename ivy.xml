@@ -16,6 +16,7 @@
     <dependency org="org.apache.ant" name="ant-junit" rev="1.7.1" conf="buildtools->default"/>
     <!-- Main library dependencies -->
     <dependency org="javax.servlet" name="servlet-api" rev="2.5" conf="main->default"/>
+    <dependency org="javax.servlet.jsp" name="jsp-api" rev="2.1" conf="main->default"/>
     <!-- Extras -->
     <dependency org="org.freemarker" name="freemarker" rev="2.3.15" conf="extras->default"/>
     <dependency org="org.apache.velocity" name="velocity" rev="1.6.1" conf="extras->default"/>
@@ -23,6 +24,7 @@
     <!-- Testing dependencies -->
     <dependency org="junit" name="junit" rev="3.8.2" conf="test->default"/>
     <dependency org="org.mortbay.jetty" name="jetty" rev="6.1.14" conf="test->default"/>
+    <dependency org="org.apache.tomcat" name="jasper" rev="6.0.18" conf="test->default"/>
     <!-- Benchmarks -->
     <dependency org="com.sun.japex" name="japex" rev="1.0.25" conf="benchmark->default"/>
     <dependency org="jfree" name="jfreechart" rev="1.0.8a" conf="benchmark->default"/>

@@ -36,7 +36,9 @@
                classpathref="main.classpath"
                debug="on" source="${jdk}" target="${jdk}"/>
         <mkdir dir="dist"/>
-        <jar destfile="dist/sitemesh-${version}.jar" basedir="build/main/classes"/>
+        <jar destfile="dist/sitemesh-${version}.jar" basedir="build/main/classes">
+            <zipfileset dir="src/main/taglib" prefix="META-INF"/>
+        </jar>
     </target>
 
     <target name="extras" depends="main" description="Build optional extras">

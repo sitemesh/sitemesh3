@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2eeweb-jsptaglibrary_2_0.xsd"
+        version="2.0">
+
+    <description>SiteMesh JSP tag library</description>
+    <tlib-version>1.0</tlib-version>
+    <short-name>sitemesh</short-name>
+    <uri>http://www.opensymphony.com/sitemesh/</uri>
+
+    <tag>
+        <name>content</name>
+        <tag-class>com.opensymphony.sitemesh.decorator.jsp.ContentTag</tag-class>
+        <body-content>tagdependent</body-content>
+        <attribute>
+            <name>property</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>title</name>
+        <tag-class>com.opensymphony.sitemesh.decorator.jsp.ContentTag$TitleTag</tag-class>
+        <body-content>tagdependent</body-content>
+    </tag>
+
+    <tag>
+        <name>head</name>
+        <tag-class>com.opensymphony.sitemesh.decorator.jsp.ContentTag$HeadTag</tag-class>
+        <body-content>tagdependent</body-content>
+    </tag>
+
+    <tag>
+        <name>body</name>
+        <tag-class>com.opensymphony.sitemesh.decorator.jsp.ContentTag$BodyTag</tag-class>
+        <body-content>tagdependent</body-content>
+    </tag>
+
+</taglib>
