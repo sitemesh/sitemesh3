@@ -1,6 +1,7 @@
 package com.opensymphony.sitemesh.examples.webapp;
 
 import com.opensymphony.sitemesh.decorator.dispatch.DispatchingDecoratorApplier;
+import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh.html.HtmlContent;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh.webapp.BaseSiteMeshFilter;
@@ -51,8 +52,9 @@ public class WebAppExample2 {
                 new BasicSelector("text/html"),
                 // Process the data as HTML, exposing relevant properties.
                 new HtmlContentProcessor<WebAppContext>(),
-                // Dispatch to another 
-                new DispatchingDecoratorApplier("/my-decorator"));
+                new PathBasedDecoratorSelector().put("/*", "/mydecorator"),
+                // Dispatch to another
+                new DispatchingDecoratorApplier());
 
         // Configure an in-process Servlet container.
         WebEnvironment webEnvironment = new WebEnvironment.Builder()

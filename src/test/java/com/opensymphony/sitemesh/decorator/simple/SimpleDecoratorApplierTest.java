@@ -11,43 +11,65 @@ import java.io.IOException;
  */
 public class SimpleDecoratorApplierTest extends TestCase {
 
-    public void testSubstitutesTokensWithContentProperties() throws IOException {
-        SimpleDecoratorApplier decoratorApplier = new SimpleDecoratorApplier(
-                "Hello {{name.first}} {{name.last}}!\n{{message}}");
+    private ContentStub content;
+    private SimpleDecoratorApplier decoratorApplier;
 
-        ContentStub content = new ContentStub();
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        content = new ContentStub();
+        decoratorApplier = new SimpleDecoratorApplier();
+    }
+
+    public void testSubstitutesTokensWithContentProperties() throws IOException {
+        setupDecorator("Hello {{name.first}} {{name.last}}!\n{{message}}");
+
         content.addProperty("name.first", "You");
         content.addProperty("name.last", "There");
         content.addProperty("message", "How are you?");
 
-        assertDecoratedContent("Hello You There!\nHow are you?", decoratorApplier, content);
+        assertEquals("Hello You There!\nHow are you?", applyDecorator());
     }
 
     public void testSkipsMissingProperties() throws IOException {
-        SimpleDecoratorApplier decoratorApplier = new SimpleDecoratorApplier(
-                "Hello {{unknown}} {{this.too}}!");
+        setupDecorator("Hello {{unknown}} {{this.too}}!");
 
-        ContentStub content = new ContentStub();
-        assertDecoratedContent("Hello  !", decoratorApplier, content);
+        assertEquals("Hello  !", applyDecorator());
     }
 
     public void testHandlesEdgeCasingParsing() throws IOException {
-        ContentStub content = new ContentStub();
         content.addProperty("t", "T");
-        assertDecoratedContent("", new SimpleDecoratorApplier(""), content);
-        assertDecoratedContent("\n", new SimpleDecoratorApplier("\n"), content);
-        assertDecoratedContent("  ", new SimpleDecoratorApplier("  "), content);
-        assertDecoratedContent("T", new SimpleDecoratorApplier("{{t}}"), content);
-        assertDecoratedContent(" T", new SimpleDecoratorApplier(" {{t}}"), content);
-        assertDecoratedContent("T ", new SimpleDecoratorApplier("{{t}} "), content);
-        assertDecoratedContent("TT", new SimpleDecoratorApplier("{{t}}{{t}}"), content);
+
+        setupDecorator("");
+        assertEquals("", applyDecorator());
+
+        setupDecorator("\n");
+        assertEquals("\n", applyDecorator());
+
+        setupDecorator("  ");
+        assertEquals("  ", applyDecorator());
+
+        setupDecorator("{{t}}");
+        assertEquals("T", applyDecorator());
+
+        setupDecorator(" {{t}}");
+        assertEquals(" T", applyDecorator());
+
+        setupDecorator("{{t}} ");
+        assertEquals("T ", applyDecorator());
+
+        setupDecorator("{{t}}{{t}}");
+        assertEquals("TT", applyDecorator());
     }
 
-    private void assertDecoratedContent(String expected, SimpleDecoratorApplier decoratorApplier,
-                                        ContentStub content) throws IOException {
+    private void setupDecorator(String templateContents) {
+        decoratorApplier.put("mydecorator", templateContents);
+    }
+
+    private String applyDecorator() throws IOException {
         ContextStub context = new ContextStub();
-        decoratorApplier.decorate(content, context);
-        assertEquals(expected, context.toString());
+        decoratorApplier.decorate("mydecorator", content, context);
+        return context.toString();
     }
 
 }

@@ -3,10 +3,13 @@ package com.opensymphony.sitemesh.decorator.freemarker;
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.DecoratorApplier;
-import freemarker.template.*;
+import freemarker.template.Configuration;
+import freemarker.template.SimpleHash;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateModel;
 
 import java.io.IOException;
-import java.io.Reader;
 
 /**
  * Uses <a href="http://freemarker.org/">FreeMarker</a> to apply a decorator.
@@ -36,43 +39,27 @@ public class FreeMarkerDecoratorApplier implements DecoratorApplier {
      */
     public static final String CONTEXT_KEY = "sitemeshContext";
 
-    private final Template template;
+    private final Configuration configuration;
 
     /**
-     * Applies decorator using supplied FreeMarker {@link Template}.
+     * Applies decorators using a FreeMarker configuration.
+     * It is the caller's responsibility to provide a valid configuration.
      */
-    public FreeMarkerDecoratorApplier(Template template) {
-        this.template = template;
-    }
-
-    /**
-     * Looks up named FreeMarker {@link Template} from the FreeMarker {@link Configuration}
-     * and uses that to apply the decorator. It is the caller's responsibility to provide
-     * a valid configuration.
-     */
-    public FreeMarkerDecoratorApplier(Configuration configuration, String templateName) throws IOException {
-        this(configuration.getTemplate(templateName));
-    }
-
-    /**
-     * Applies decorator by building a FreeMarker {@link Template}. This template is standalone
-     * and cannot perform includes on other templates.
-     */
-    public FreeMarkerDecoratorApplier(Reader templateContents)
-            throws IOException {
-        this(new Template("Decorator", templateContents, new Configuration()));
+    public FreeMarkerDecoratorApplier(Configuration configuration) throws IOException {
+        this.configuration = configuration;
     }
 
     /**
      * Applies the FreeMarker template.
      */
     @Override
-    public boolean decorate(Content content, Context siteMeshContext) throws IOException {
+    public boolean decorate(String decoratorPath, Content content, Context siteMeshContext) throws IOException {
         try {
+            Template template = configuration.getTemplate(decoratorPath);
             template.process(createTemplateModel(content, siteMeshContext), siteMeshContext.getWriter());
             return true;
         } catch (TemplateException e) {
-            throw new IOException("Could not render template " + template.getName(), e);
+            throw new IOException("Could not render template " + decoratorPath, e);
         }
     }
 

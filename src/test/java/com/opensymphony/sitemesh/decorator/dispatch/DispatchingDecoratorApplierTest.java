@@ -1,6 +1,6 @@
 package com.opensymphony.sitemesh.decorator.dispatch;
 
-import com.opensymphony.sitemesh.DecoratorApplier;
+import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh.html.HtmlContent;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh.webapp.BaseSiteMeshFilter;
@@ -38,13 +38,12 @@ public class DispatchingDecoratorApplierTest extends TestCase {
             }
         };
 
-        DecoratorApplier<WebAppContext> decoratorApplier = new DispatchingDecoratorApplier("/mydecorator");
-
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new BaseSiteMeshFilter(
                         new BasicSelector("text/html"),
                         new HtmlContentProcessor<WebAppContext>(),
-                        decoratorApplier))
+                        new PathBasedDecoratorSelector().put("/*", "/mydecorator"),
+                        new DispatchingDecoratorApplier()))
                 .addStaticContent("/mycontent", "text/html", "<title>Some title</title>")
                 .addServlet("/mydecorator", decoratorServlet)
                 .create();

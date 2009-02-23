@@ -15,6 +15,8 @@ public class ContextStub implements Context {
     private final StringWriter buffer = new StringWriter();
     private final PrintWriter writer = new PrintWriter(buffer);
 
+    private String requestPath;
+
     @Override
     public PrintWriter getWriter() throws IOException {
         return writer;
@@ -28,5 +30,15 @@ public class ContextStub implements Context {
     @Override
     public String toString() {
         return getWrittenData();
+    }
+
+    @Override
+    public String getRequestPath() {
+        return requestPath;
+    }
+
+    public ContextStub withRequestPath(String requestPath) {
+        this.requestPath = requestPath;
+        return this;
     }
 }

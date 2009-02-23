@@ -14,6 +14,7 @@ import java.io.IOException;
  * {@link ServletContext} available to web-app specific SiteMesh components.
  *
  * @author Joe Walnes
+ * @author Mike Cannon-Brookes
  */
 public class WebAppContext implements Context {
 
@@ -51,4 +52,23 @@ public class WebAppContext implements Context {
         return contentType;
     }
 
+    @Override
+    public String getRequestPath() {
+        String result = request.getServletPath();
+        // getServletPath() returns null unless the mapping corresponds to a servlet
+        if (result == null) {
+            String requestURI = request.getRequestURI();
+            if (request.getPathInfo() != null) {
+                // strip the pathInfo from the requestURI
+                return requestURI.substring(0, requestURI.indexOf(request.getPathInfo()));
+            } else {
+                return requestURI;
+            }
+        } else if ("".equals(result)) {
+            // in servlet 2.4, if a request is mapped to '/*', getServletPath returns null (SIM-130)
+            return request.getPathInfo();
+        } else {
+            return result;
+        }
+    }
 }

@@ -8,6 +8,7 @@ import com.opensymphony.sitemesh.webapp.WebAppContext;
 import com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh.decorator.dispatch.DispatchingDecoratorApplier;
+import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
 import org.apache.jasper.servlet.JspServlet;
 
 import java.io.File;
@@ -43,7 +44,8 @@ public class ContentTagTest extends TestCase {
                 .addFilter("/*", new BaseSiteMeshFilter(
                         new BasicSelector("text/html"),
                         new HtmlContentProcessor<WebAppContext>(),
-                        new DispatchingDecoratorApplier("/" + DECORATOR_JSP)))
+                        new PathBasedDecoratorSelector().put("/*", "/" + DECORATOR_JSP),
+                        new DispatchingDecoratorApplier()))
                 .addServlet("*.jsp", new JspServlet())
                 .serveResourcesFrom(dir.getFullPath())
                 .create();

@@ -1,10 +1,15 @@
 package com.opensymphony.sitemesh.decorator.velocity;
 
 import com.opensymphony.sitemesh.ContentStub;
-import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.ContextStub;
 import com.opensymphony.sitemesh.DecoratorApplier;
 import junit.framework.TestCase;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.log.NullLogChute;
+import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
+import org.apache.velocity.runtime.resource.util.StringResourceRepository;
+import org.apache.velocity.runtime.resource.util.StringResourceRepositoryImpl;
 
 import java.io.IOException;
 
@@ -13,34 +18,59 @@ import java.io.IOException;
  */
 public class VelocityDecoratorApplierTest extends TestCase {
 
-    public void testSubstitutesTokensWithContentProperties() throws IOException {
-        VelocityDecoratorApplier decoratorApplier = new VelocityDecoratorApplier(
-                "Hello $content.name.\n$content.message");
+    private StringResourceRepository velocityRepository;
 
-        ContentStub content = new ContentStub();
+    private DecoratorApplier decoratorApplier;
+    private ContentStub content;
+    private ContextStub context;
+
+    private static final String DECORATOR_NAME = "mydecorator.vm";
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        // Velocity setup for in-memory use.
+        velocityRepository = new StringResourceRepositoryImpl();
+        VelocityEngine velocityEngine = new VelocityEngine();
+        String repositoryName = "inmemoryrepository";
+        velocityEngine.setProperty("resource.loader", "string");
+        velocityEngine.setProperty("string.resource.loader.class", StringResourceLoader.class.getName());
+        velocityEngine.setProperty("string.resource.loader.repository.static", false);
+        velocityEngine.setProperty("string.resource.loader.repository.name", repositoryName);
+        velocityEngine.setApplicationAttribute(repositoryName, velocityRepository);
+        velocityEngine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, NullLogChute.class.getName());
+        velocityEngine.init();
+
+        // SiteMesh test objects.
+        content = new ContentStub();
+        context = new ContextStub();
+        decoratorApplier = new VelocityDecoratorApplier(velocityEngine);
+    }
+
+    public void testSubstitutesTokensWithContentProperties() throws IOException {
+        setupDecorator("Hello $content.name.\n$content.message");
+
         content.addProperty("name", "You");
         content.addProperty("message", "How are you?");
 
-        assertDecoratedContent("Hello You.\nHow are you?", decoratorApplier, content);
+        assertEquals("Hello You.\nHow are you?", applyDecorator());
     }
 
     public void testSkipsMissingProperties() throws IOException {
-        VelocityDecoratorApplier decoratorApplier = new VelocityDecoratorApplier(
-                "Hello $content.unknowna $!content.unknownb!");
+        setupDecorator("Hello $content.unknowna $!content.unknownb!");
 
-        ContentStub content = new ContentStub();
-        assertDecoratedContent("Hello  !", decoratorApplier, content);
+        assertEquals("Hello  !", applyDecorator());
     }
 
     public void testDealsWithPropertiesWithDots() throws IOException {
-        VelocityDecoratorApplier decoratorApplier = new VelocityDecoratorApplier(
-                "Hello ${content.name.first} ${content.name.last}. ${content.name.missing} ${content.missing.name}");
+        setupDecorator("Hello ${content.name.first} ${content.name.last}. " +
+                "${content.name.missing} ${content.missing.name}");
 
-        ContentStub content = new ContentStub();
         content.addProperty("name.first", "You");
         content.addProperty("name.last", "There");
 
-        assertDecoratedContent("Hello You There.  ", decoratorApplier, content);
+        assertEquals("Hello You There.  ", applyDecorator());
     }
 
     public static class MyContext extends ContextStub {
@@ -50,31 +80,28 @@ public class VelocityDecoratorApplierTest extends TestCase {
     }
 
     public void testExposesValuesOfSitemeshContextToTemplate() throws IOException {
-        VelocityDecoratorApplier decoratorApplier = new VelocityDecoratorApplier(
-                "$sitemeshContext.stuff");
+        setupDecorator("$sitemeshContext.stuff");
 
-        ContentStub content = new ContentStub();
-        ContextStub context = new MyContext();
-        decoratorApplier.decorate(content, context);
-        assertEquals("Some stuff", context.toString());
+        context = new MyContext();
+
+        assertEquals("Some stuff", applyDecorator());
     }
 
     public void testDoesNotEscapeValues() throws IOException {
-        VelocityDecoratorApplier decoratorApplier = new VelocityDecoratorApplier(
-                "Hello ${content.thing}");
+        setupDecorator("Hello ${content.thing}");
 
-        ContentStub content = new ContentStub();
         content.addProperty("thing", "<tag/>\\ \"&'");
 
-        assertDecoratedContent("Hello <tag/>\\ \"&'", decoratorApplier, content);
+        assertEquals("Hello <tag/>\\ \"&'", applyDecorator());
     }
 
-    private void assertDecoratedContent(String expected,
-                                        DecoratorApplier<Context> decoratorApplier,
-                                        ContentStub content) throws IOException {
-        ContextStub context = new ContextStub();
-        decoratorApplier.decorate(content, context);
-        assertEquals(expected, context.toString());
+    private String applyDecorator() throws IOException {
+        decoratorApplier.decorate(DECORATOR_NAME, content, context);
+        return context.getWrittenData();
+    }
+
+    private void setupDecorator(String templateContents) {
+        velocityRepository.putStringResource(DECORATOR_NAME, templateContents);
     }
 
 }

@@ -1,48 +1,60 @@
 package com.opensymphony.sitemesh.decorator.freemarker;
 
 import com.opensymphony.sitemesh.ContentStub;
-import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.ContextStub;
 import com.opensymphony.sitemesh.DecoratorApplier;
+import freemarker.cache.StringTemplateLoader;
+import freemarker.template.Configuration;
 import junit.framework.TestCase;
 
 import java.io.IOException;
-import java.io.StringReader;
 
 /**
  * @author Joe Walnes
  */
 public class FreeMarkerDecoratorApplierTest extends TestCase {
 
-    public void testSubstitutesTokensWithContentProperties() throws IOException {
-        FreeMarkerDecoratorApplier decoratorApplier = new FreeMarkerDecoratorApplier(
-                new StringReader("Hello ${content.name}.\n${content.message}"));
+    private DecoratorApplier decoratorApplier;
+    private ContentStub content;
+    private ContextStub context;
+    private StringTemplateLoader templateLoader;
 
-        ContentStub content = new ContentStub();
+    private static final String DECORATOR_NAME = "mydecorator.ftl";
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        Configuration configuration = new Configuration();
+        templateLoader = new StringTemplateLoader();
+        configuration.setTemplateLoader(templateLoader);
+        decoratorApplier = new FreeMarkerDecoratorApplier(configuration);
+        content = new ContentStub();
+        context = new ContextStub();
+    }
+
+    public void testSubstitutesTokensWithContentProperties() throws IOException {
+        setupDecorator("Hello ${content.name}.\n${content.message}");
+
         content.addProperty("name", "You");
         content.addProperty("message", "How are you?");
 
-        assertDecoratedContent("Hello You.\nHow are you?", decoratorApplier, content);
+        assertEquals("Hello You.\nHow are you?", applyDecorator());
     }
 
     public void testSkipsMissingProperties() throws IOException {
-        FreeMarkerDecoratorApplier decoratorApplier = new FreeMarkerDecoratorApplier(
-                new StringReader("Hello ${content.unknown}!"));
+        setupDecorator("Hello ${content.unknown}!");
 
-        ContentStub content = new ContentStub();
-        assertDecoratedContent("Hello !", decoratorApplier, content);
+        assertEquals("Hello !", applyDecorator());
     }
 
     public void testDealsWithPropertiesWithDots() throws IOException {
-        FreeMarkerDecoratorApplier decoratorApplier = new FreeMarkerDecoratorApplier(
-                new StringReader("Hello ${content.name.first} ${content.name.last}. " +
-                        "${content.name.missing} ${content.missing.name}"));
+        setupDecorator("Hello ${content.name.first} ${content.name.last}. " +
+                        "${content.name.missing} ${content.missing.name}");
 
-        ContentStub content = new ContentStub();
         content.addProperty("name.first", "You");
         content.addProperty("name.last", "There");
 
-        assertDecoratedContent("Hello You There.  ", decoratorApplier, content);
+        assertEquals("Hello You There.  ", applyDecorator());
     }
 
     public static class MyContext extends ContextStub {
@@ -52,31 +64,28 @@ public class FreeMarkerDecoratorApplierTest extends TestCase {
     }
 
     public void testExposesValuesOfSitemeshContextToTemplate() throws IOException {
-        FreeMarkerDecoratorApplier decoratorApplier = new FreeMarkerDecoratorApplier(
-                new StringReader("${sitemeshContext.stuff}"));
+        setupDecorator("${sitemeshContext.stuff}");
 
-        ContentStub content = new ContentStub();
-        ContextStub context = new MyContext();
-        decoratorApplier.decorate(content, context);
-        assertEquals("Some stuff", context.toString());
+        context = new MyContext();
+        assertEquals("Some stuff", applyDecorator());
     }
 
     public void testDoesNotEscapeValues() throws IOException {
-        FreeMarkerDecoratorApplier decoratorApplier = new FreeMarkerDecoratorApplier(
-                new StringReader("Hello ${content.thing}"));
+        setupDecorator("Hello ${content.thing}");
 
-        ContentStub content = new ContentStub();
         content.addProperty("thing", "<tag/>\\ \"&'");
 
-        assertDecoratedContent("Hello <tag/>\\ \"&'", decoratorApplier, content);
+        assertEquals("Hello <tag/>\\ \"&'", applyDecorator());
     }
 
-    private void assertDecoratedContent(String expected,
-                                        DecoratorApplier<Context> decoratorApplier,
-                                        ContentStub content) throws IOException {
-        ContextStub context = new ContextStub();
-        decoratorApplier.decorate(content, context);
-        assertEquals(expected, context.toString());
+    private void setupDecorator(String templateContents) {
+        templateLoader.putTemplate(DECORATOR_NAME, templateContents);
     }
+
+    private String applyDecorator() throws IOException {
+        decoratorApplier.decorate(DECORATOR_NAME, content, context);
+        return context.toString();
+    }
+
 
 }

@@ -18,21 +18,21 @@ public class PathMapperTest extends TestCase {
         pathMapper = new PathMapper();
 
         // exact matches come first
-        pathMapper.put("exact1", "/myexactfile.html");
-        pathMapper.put("exact2", "/mydir/myexactfile.html");
-        pathMapper.put("exact3", "/mydir/myexactfile.jsp");
-        pathMapper.put("exact4", "/mydir/dodo");
+        pathMapper.put("/myexactfile.html", "exact1");
+        pathMapper.put("/mydir/myexactfile.html", "exact2");
+        pathMapper.put("/mydir/myexactfile.jsp", "exact3");
+        pathMapper.put("/mydir/dodo", "exact4");
 
         // then the complex matches
-        pathMapper.put("complex1", "/mydir/*");
-        pathMapper.put("complex2", "/mydir/otherdir/*.jsp");
-        pathMapper.put("complex3", "/otherdir/*.??p");
-        pathMapper.put("complex4", "*.xml");
-        pathMapper.put("complex5", "/*/admin/*.??ml");
-        pathMapper.put("complex6", "/*/complexx/a*b.x?tml");
+        pathMapper.put("/mydir/*", "complex1");
+        pathMapper.put("/mydir/otherdir/*.jsp", "complex2");
+        pathMapper.put("/otherdir/*.??p", "complex3");
+        pathMapper.put("*.xml", "complex4");
+        pathMapper.put("/*/admin/*.??ml", "complex5");
+        pathMapper.put("/*/complexx/a*b.x?tml", "complex6");
 
         // if all the rest fails, use the default matches
-        pathMapper.put("default", "*");
+        pathMapper.put("*", "default");
     }
 
     public void testHardening() throws Exception {

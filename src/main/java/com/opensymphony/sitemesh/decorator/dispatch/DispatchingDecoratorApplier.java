@@ -13,7 +13,7 @@ import javax.servlet.RequestDispatcher;
 import java.io.IOException;
 
 /**
- * Dispatches to another path in the Servlet engine to render a decorator.
+ * Dispatches to another path to render a decorator.
  *
  * <p>This path may anything that handles a standard request (e.g. Servlet,
  * JSP, MVC framework, etc).</p>
@@ -23,10 +23,8 @@ import java.io.IOException;
  * {@link DispatchingDecoratorApplier#CONTENT_KEY} and
  * {@link DispatchingDecoratorApplier#CONTEXT_KEY} respectively.</p>
  *
- * <p>Optionally, this may also dispatch to servlets in another web application
- * context in the same container. This allows multiple web apps to share the
- * same decorator. In order to do this, it's important that the SiteMesh library
- * is loaded in a shared class loader so the objects can be passed across.</p>
+ * <p>It is also possible to dispatch to other web-applications running in
+ * the same server, using {@link ExternalDispatchingDecoratorApplier}.
  *
  * @author Joe Walnes
  */
@@ -44,38 +42,13 @@ public class DispatchingDecoratorApplier implements DecoratorApplier<WebAppConte
      */
     public static final String CONTEXT_KEY = Context.class.getName();
 
-    private final String path;
-    private final String webApp;
-
-    /**
-     * Dispatch to a path in the same web-app.
-     *
-     * @param path e.g. "/my-servet", "/some/action.do", "/foo.jsp"...
-     */
-    public DispatchingDecoratorApplier(String path) {
-        this(path, null);
-    }
-
-    /**
-     * Dispatch to a path in a different web-app (though it has to be running in
-     * the same container).
-     *
-     * @param path e.g. "/my-servet", "/some/action.do", "/foo.jsp"...
-     * @param webApp e.g. "/anotherapp"
-     */
-    public DispatchingDecoratorApplier(String path, String webApp) {
-        this.path = path;
-        this.webApp = webApp;
-    }
-
     /**
      * See class JavaDoc.
      */
     @Override
-    public boolean decorate(Content content, WebAppContext context) throws IOException {
+    public boolean decorate(String decoratorPath, Content content, WebAppContext context) throws IOException {
         HttpServletRequest request = context.getRequest();
         HttpServletResponse response = context.getResponse();
-        ServletContext servletContext = context.getServletContext();
 
         // It's possible that this is reentrant, so we need to take a copy
         // of additional request attributes so we can restore them afterwards.
@@ -87,8 +60,8 @@ public class DispatchingDecoratorApplier implements DecoratorApplier<WebAppConte
 
         try {
             // Main dispatch.
-            ServletContext destinationServletContext = getContextForWebApp(servletContext, webApp);
-            dispatch(request, response, destinationServletContext, path);
+            ServletContext destinationServletContext = getContextForWebApp(context);
+            dispatch(request, response, destinationServletContext, decoratorPath);
         } catch (ServletException e) {
             throw new IOException("Could not dispatch to decorator: ", e);
         } finally {
@@ -101,21 +74,10 @@ public class DispatchingDecoratorApplier implements DecoratorApplier<WebAppConte
     }
 
     /**
-     * Look up the appropriate ServletContext. If webApp is null, the standard ServletContext
-     * is returned. Otherwise it will attempt to look up the context of another path.
+     * Find ServletContext to dispatch requests to.
      */
-    protected ServletContext getContextForWebApp(ServletContext servletContext, String webApp) {
-        if (webApp == null) {
-            return servletContext;
-        } else {
-            ServletContext result = servletContext.getContext(webApp);
-            if (result == null) {
-                // in a security conscious environment, the servlet container
-                // may return null for a given URL
-                throw new SecurityException("Cannot obtain ServletContext for web-app : " + webApp);
-            }
-            return result;
-        }
+    protected ServletContext getContextForWebApp(WebAppContext webAppContext) {
+        return webAppContext.getServletContext();
     }
 
     /**

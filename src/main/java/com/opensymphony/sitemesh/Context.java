@@ -6,4 +6,6 @@ import java.io.IOException;
 public interface Context {
 
     PrintWriter getWriter() throws IOException;
+
+    String getRequestPath();
 }

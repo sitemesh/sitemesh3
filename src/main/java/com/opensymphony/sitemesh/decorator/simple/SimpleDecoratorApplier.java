@@ -8,14 +8,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Very simple {@link com.opensymphony.sitemesh.DecoratorApplier} implementation that is passed a template and will
- * substitute tokens that look like <code>{{xxx}}</code> for the equivalent {@link com.opensymphony.sitemesh.Content}
+ * Very simple {@link DecoratorApplier} implementation that is passed a template and will
+ * substitute tokens that look like <code>{{xxx}}</code> for the equivalent {@link Content}
  * properties. The functionality of this is very limited and is mostly used for quick
  * examples and tests.
+ *
+ * <p>Templates must be registered with {@link #put(String, CharSequence)}.
  *
  * @author Joe Walnes
  */
@@ -23,22 +27,30 @@ public class SimpleDecoratorApplier implements DecoratorApplier {
 
     private static final Pattern TOKEN_PATTERN = Pattern.compile("\\{\\{([\\w\\.\\-]+)\\}\\}");
 
-    private final Node parsedTemplate;
+    private final Map<String, Node> templates = new ConcurrentHashMap<String, Node>();
 
-    public SimpleDecoratorApplier(CharSequence template) {
-        parsedTemplate = parse(template, TOKEN_PATTERN);
+    /**
+     * Register a named template.
+     */
+    public SimpleDecoratorApplier put(String templateName, CharSequence templateContents) {
+        templates.put(templateName, parse(templateContents, TOKEN_PATTERN));
+        return this;
     }
 
     @Override
-    public boolean decorate(Content content, Context context) throws IOException {
-        parsedTemplate.render(content, context.getWriter());
+    public boolean decorate(String decoratorPath, Content content, Context context) throws IOException {
+        Node template = templates.get(decoratorPath);
+        if (template == null) {
+            return false;
+        }
+        template.render(content, context.getWriter());
         return true;
     }
 
     /**
      * Parse the template into an AST. This is done once at construction time, and the AST
      * is reused each time the decorator is applied. Makes it pretty quick.
-     *
+     * <p/>
      * Actually the template capabilities are so basic, that this could technically be represented
      * as a list instead of a tree. However the tree strucuture will make it trivial to plug in
      * additional constructs such as conditionals, loops, etc, if ever needed.

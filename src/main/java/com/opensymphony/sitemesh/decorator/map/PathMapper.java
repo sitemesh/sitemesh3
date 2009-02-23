@@ -14,54 +14,49 @@ import java.util.Map;
  * <blockquote><code>
  * PathMapper pm = new PathMapper();<br>
  * <br>
- * pm.put("one","/");<br>
- * pm.put("two","/mydir/*");<br>
- * pm.put("three","*.xml");<br>
- * pm.put("four","/myexactfile.html");<br>
- * pm.put("five","/*\/admin/*.??ml");<br>
+ * pm.put("/", one);<br>
+ * pm.put("/mydir/*", two);<br>
+ * pm.put("*.xml", three);<br>
+ * pm.put(""/myexactfile.html", four);<br>
+ * pm.put("/*\/admin/*.??ml", five);<br>
  * <br>
- * String result1 = pm.get("/mydir/myfile.xml"); // returns "two";<br>
- * String result2 = pm.get("/mydir/otherdir/admin/myfile.html"); // returns "five";<br>
+ * result1 = pm.get("/mydir/myfile.xml"); // returns two;<br>
+ * result2 = pm.get("/mydir/otherdir/admin/myfile.html"); // returns five;<br>
  * </code></blockquote>
  *
  * @author Joe Walnes
  * @author Mike Cannon-Brookes
  * @author Hani Suleiman
  */
-public class PathMapper {
+public class PathMapper<T> {
 
-    private final Map<String, String> mappings = new HashMap<String, String>();
+    private final Map<String, T> mappings = new HashMap<String, T>();
 
     /** Add a key and appropriate matching pattern. */
-    public void put(String key, String pattern) {
-        if (key != null) {
-            mappings.put(pattern, key);
+    public void put(String pattern, T value) {
+        if (value != null) {
+            mappings.put(pattern, value);
         }
     }
 
     /** Retrieve appropriate key by matching patterns with supplied path. */
-    public String get(String path) {
+    public T get(String path) {
         if (path == null) path = "/";
-        String mapped = findKey(path, mappings);
+        String result = findExactKey(path);
+        if (result == null) result = findComplexKey(path);
+        if (result == null) result = findDefaultKey();
+        String mapped = result;
         if (mapped == null) return null;
         return mappings.get(mapped);
     }
 
-    /** Find exact key in mappings. */
-    private static String findKey(String path, Map<String, String> mappings) {
-        String result = findExactKey(path, mappings);
-        if (result == null) result = findComplexKey(path, mappings);
-        if (result == null) result = findDefaultKey(mappings);
-        return result;
-    }
-
     /** Check if path matches exact pattern ( /blah/blah.jsp ). */
-    private static String findExactKey(String path, Map<String, String> mappings) {
+    private String findExactKey(String path) {
         if (mappings.containsKey(path)) return path;
         return null;
     }
 
-    private static String findComplexKey(String path, Map<String, String> mappings) {
+    private String findComplexKey(String path) {
         String result = null;
 
         for (String key : mappings.keySet()) {
@@ -76,7 +71,7 @@ public class PathMapper {
     }
 
     /** Look for root pattern ( / ). */
-    private static String findDefaultKey(Map mappings) {
+    private String findDefaultKey() {
         String[] defaultKeys = {"/", "*", "/*"};
         for (String defaultKey : defaultKeys) {
             if (mappings.containsKey(defaultKey)) return defaultKey;

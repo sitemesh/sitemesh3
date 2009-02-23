@@ -5,15 +5,7 @@ import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.DecoratorApplier;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.velocity.runtime.log.NullLogChute;
-import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
-import org.apache.velocity.runtime.resource.util.StringResourceRepository;
-import org.apache.velocity.runtime.resource.util.StringResourceRepositoryImpl;
 
 import java.io.IOException;
 
@@ -32,7 +24,7 @@ import java.io.IOException;
  */
 public class VelocityDecoratorApplier implements DecoratorApplier {
 
-    private final Template template;
+    private final VelocityEngine velocityEngine;
 
     /**
      * Name of Velocity value under which {@link Content} instance
@@ -47,55 +39,25 @@ public class VelocityDecoratorApplier implements DecoratorApplier {
     public static final String CONTEXT_KEY = "sitemeshContext";
 
     /**
-     * Applies decorator using supplied Velocity {@link Template}.
-     */
-    public VelocityDecoratorApplier(Template template) {
-        this.template = template;
-    }
-
-    /**
      * Looks up named FreeMarker {@link Template} from the {@link VelocityEngine}
      * and uses that to apply the decorator. It is the caller's responsibility to provide
      * a valid configuration.
      */
-    public VelocityDecoratorApplier(VelocityEngine velocityEngine, String templateName) throws IOException {
-        try {
-            template = velocityEngine.getTemplate(templateName);
-        } catch (IOException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IOException("Could not build Velocity template.", e);
-        }
-    }
-
-    /**
-     * Applies decorator by building a Velocity {@link Template}. This template is standalone
-     * and cannot perform includes on other templates.
-     */
-    public VelocityDecoratorApplier(String templateContents) throws IOException {
-        try {
-            template = createInMemoryTemplate(templateContents);
-        } catch (IOException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IOException("Could not build Velocity template.", e);
-        }
+    public VelocityDecoratorApplier(VelocityEngine velocityEngine) throws IOException {
+        this.velocityEngine = velocityEngine;
     }
 
     /**
      * Applies the Velocity template.
      */
     @Override
-    public boolean decorate(Content content, Context siteMeshContext) throws IOException {
+    public boolean decorate(String decoratorPath, Content content, Context siteMeshContext) throws IOException {
         try {
+            Template template = velocityEngine.getTemplate(decoratorPath);
             template.merge(createVelocityContext(content, siteMeshContext), siteMeshContext.getWriter());
             return true;
-        } catch (ResourceNotFoundException e) {
-            throw new IOException("Could not render template " + template.getName(), e);
-        } catch (ParseErrorException e) {
-            throw new IOException("Could not render template " + template.getName(), e);
-        } catch (MethodInvocationException e) {
-            throw new IOException("Could not render template " + template.getName(), e);
+        } catch (Exception e) {
+            throw new IOException("Could not render template " + decoratorPath, e);
         }
     }
 
@@ -108,28 +70,6 @@ public class VelocityDecoratorApplier implements DecoratorApplier {
         velocityContext.put(CONTENT_KEY, new ContentMap(content));
         velocityContext.put(CONTEXT_KEY, siteMeshContext);
         return velocityContext;
-    }
-
-    /**
-     * Create in-memory Velocity {@link Template} from supplied template.
-     */
-    protected Template createInMemoryTemplate(String templateContents) throws Exception {
-        String templateName = "decorator.vm";
-        String repositoryName = "inmemoryrepository";
-
-        StringResourceRepository repository = new StringResourceRepositoryImpl();
-        repository.putStringResource(templateName, templateContents);
-
-        VelocityEngine velocityEngine = new VelocityEngine();
-        velocityEngine.setProperty("resource.loader", "string");
-        velocityEngine.setProperty("string.resource.loader.class", StringResourceLoader.class.getName());
-        velocityEngine.setProperty("string.resource.loader.repository.static", false);
-        velocityEngine.setProperty("string.resource.loader.repository.name", repositoryName);
-        velocityEngine.setApplicationAttribute(repositoryName, repository);
-        velocityEngine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, NullLogChute.class.getName());
-        velocityEngine.init();
-
-        return velocityEngine.getTemplate(templateName);
     }
 
 }

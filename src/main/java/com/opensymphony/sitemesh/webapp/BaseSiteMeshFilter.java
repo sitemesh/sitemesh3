@@ -3,6 +3,7 @@ package com.opensymphony.sitemesh.webapp;
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.ContentProcessor;
 import com.opensymphony.sitemesh.DecoratorApplier;
+import com.opensymphony.sitemesh.DecoratorSelector;
 import com.opensymphony.sitemesh.webapp.contentfilter.ContentBufferingFilter;
 import com.opensymphony.sitemesh.webapp.contentfilter.Selector;
 
@@ -31,28 +32,33 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
 
     private Selector selector;
     private ContentProcessor<WebAppContext> contentProcessor;
+    private DecoratorSelector<WebAppContext> decoratorSelector;
     private DecoratorApplier<WebAppContext> decoratorApplier;
 
     /**
      * Default constructor. If this is used, it is the caller's
      * responsibility to call {@link #setSelector(Selector)},
-     * {@link #setContentProcessor(ContentProcessor)} and
-     * {@link #setDecoratorApplier(DecoratorApplier)}.
+     * {@link #setContentProcessor(ContentProcessor)},
+     * {@link #setContentProcessor(ContentProcessor)},
+     * and {@link #setDecoratorApplier(DecoratorApplier)}.
      */
     public BaseSiteMeshFilter() {
     }
 
     /**
      * Will call {@link #setSelector(Selector)},
-     * {@link #setContentProcessor(ContentProcessor)} and
-     * {@link #setDecoratorApplier(DecoratorApplier)}.
+     * {@link #setContentProcessor(ContentProcessor)},
+     * {@link #setDecoratorSelector(DecoratorSelector)}.
+     * and {@link #setDecoratorApplier(DecoratorApplier)}.
      * @param decoratorApplier
      */
     public BaseSiteMeshFilter(Selector selector,
                               ContentProcessor<WebAppContext> contentProcessor,
+                              DecoratorSelector<WebAppContext> decoratorSelector,
                               DecoratorApplier<WebAppContext> decoratorApplier) {
         setSelector(selector);
         setContentProcessor(contentProcessor);
+        setDecoratorSelector(decoratorSelector);
         setDecoratorApplier(decoratorApplier);
     }
 
@@ -67,6 +73,10 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
 
     public void setContentProcessor(ContentProcessor<WebAppContext> contentProcessor) {
         this.contentProcessor = contentProcessor;
+    }
+
+    public void setDecoratorSelector(DecoratorSelector<WebAppContext> decoratorSelector) {
+        this.decoratorSelector = decoratorSelector;
     }
 
     public void setDecoratorApplier(DecoratorApplier<WebAppContext> decoratorApplier) {
@@ -89,7 +99,8 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
         verify();
         WebAppContext context = createContext(contentType, request, response);
         Content content = contentProcessor.build(buffer, context);
-        return content != null && decoratorApplier.decorate(content, context);
+        String decoratorPath = decoratorSelector.selectDecoratorPath(content, context);
+        return content != null && decoratorApplier.decorate(decoratorPath, content, context);
     }
 
     /**
@@ -103,6 +114,10 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
         if (contentProcessor == null) {
             throw new ServletException(getClass().getName()
                     + " not initialized correctly. setContentProcessor() not called");
+        }
+        if (decoratorSelector == null) {
+            throw new ServletException(getClass().getName()
+                    + " not initialized correctly. setDecoratorSelector() not called");
         }
         if (decoratorApplier == null) {
             throw new ServletException(getClass().getName()

@@ -13,6 +13,6 @@ public interface DecoratorApplier<C extends Context> {
     /**
      * @return Whether decorator was applied.
      */
-    boolean decorate(Content content, C context) throws IOException;
+    boolean decorate(String decoratorPath, Content content, C context) throws IOException;
 
 }

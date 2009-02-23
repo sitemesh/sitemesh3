@@ -1,14 +1,16 @@
 package com.opensymphony.sitemesh.examples.webapp.extras;
 
 import com.opensymphony.sitemesh.decorator.freemarker.FreeMarkerDecoratorApplier;
+import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh.webapp.BaseSiteMeshFilter;
 import com.opensymphony.sitemesh.webapp.WebAppContext;
 import com.opensymphony.sitemesh.webapp.WebEnvironment;
 import com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector;
+import freemarker.cache.StringTemplateLoader;
+import freemarker.template.Configuration;
 
 import javax.servlet.Filter;
-import java.io.StringReader;
 
 /**
  * Demonstrates using a <a href="http://freemarker.org/">FreeMarker</a> template
@@ -37,6 +39,11 @@ public class FreeMarkerExample {
             "</html>\n";
 
     public static void main(String[] args) throws Exception {
+        // Configure FreeMarker
+        Configuration freemarkerConfig = new Configuration();
+        StringTemplateLoader templateLoader = new StringTemplateLoader();
+        templateLoader.putTemplate("mydecorator.ftl", SIMPLE_DECORATOR);
+        freemarkerConfig.setTemplateLoader(templateLoader);
 
         // Configure SiteMesh filter.
         Filter siteMeshFilter = new BaseSiteMeshFilter(
@@ -44,8 +51,10 @@ public class FreeMarkerExample {
                 new BasicSelector("text/html"),
                 // Process the data as HTML, exposing relevant properties.
                 new HtmlContentProcessor<WebAppContext>(),
+                new PathBasedDecoratorSelector()
+                    .put("/*", "mydecorator.ftl"),
                 // Apply the simple decorator (defined above).
-                new FreeMarkerDecoratorApplier(new StringReader(SIMPLE_DECORATOR)));
+                new FreeMarkerDecoratorApplier(freemarkerConfig));
 
         // Configure an in-process Servlet container.
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
