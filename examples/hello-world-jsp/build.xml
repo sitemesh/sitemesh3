@@ -1,0 +1,39 @@
+<project name="sitemesh-examples-hello-world-jsp" default="webapp">
+
+    <property name="version" value="3.0-SNAPSHOT"/>
+    <property name="project.name" value="hello-world-jsp"/>
+    <property name="build.dir" value="../../build/examples/${project.name}"/>
+    <property name="src.dir" value="src/main"/>
+
+    <path id="runtime.classpath">
+        <path path="../../dist/sitemesh-${version}.jar"/>
+    </path>
+
+    <path id="compile.classpath">
+        <path location="../../dist/sitemesh-${version}.jar"/>
+        <fileset dir="../../lib/main/">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="webapp" description="Build web-app">
+
+        <!-- Copy main web app resources -->
+        <mkdir dir="${build.dir}"/>
+        <copy todir="${build.dir}">
+            <fileset dir="${src.dir}/webapp"/>
+        </copy>
+
+        <!-- Copy libraries -->
+        <mkdir dir="${build.dir}/WEB-INF/lib"/>
+        <copy todir="${build.dir}/WEB-INF/lib" file="../../dist/sitemesh-${version}.jar"/>
+
+        <!-- Build Java -->
+        <mkdir dir="${build.dir}/WEB-INF/classes"/>
+        <javac srcdir="${src.dir}/java"
+               destdir="${build.dir}/WEB-INF/classes"
+               classpath="${build.dir}/WEB-INF/lib/*.jar"
+               classpathref="compile.classpath"/>
+    </target>
+
+</project>
