@@ -28,12 +28,6 @@
         <mkdir dir="${build.dir}/WEB-INF/lib"/>
         <copy todir="${build.dir}/WEB-INF/lib" file="../../dist/sitemesh-${version}.jar"/>
 
-        <!-- Build Java -->
-        <mkdir dir="${build.dir}/WEB-INF/classes"/>
-        <javac srcdir="${src.dir}/java"
-               destdir="${build.dir}/WEB-INF/classes"
-               classpath="${build.dir}/WEB-INF/lib/*.jar"
-               classpathref="compile.classpath"/>
     </target>
 
 </project>

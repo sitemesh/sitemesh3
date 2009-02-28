@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Sets up a complete web-environment in-process. This includes a Servlet container, Filters, static
@@ -105,6 +106,10 @@ public class WebEnvironment {
         return string.replaceAll("\r\n", "\n").trim();
     }
 
+    public int getStatus() {
+        return status;
+    }
+
     public static class Builder {
         private final Server server;
         private final Context context;
@@ -122,6 +127,13 @@ public class WebEnvironment {
 
         public Builder addServlet(String path, HttpServlet servlet) {
             context.addServlet(new ServletHolder(servlet), path);
+            return this;
+        }
+
+        public Builder addServlet(String path, Class<? extends HttpServlet> servletClass, Map<String,String> params) {
+            ServletHolder servletHolder = new ServletHolder(servletClass);
+            servletHolder.setInitParameters(params);
+            context.addServlet(servletHolder, path);
             return this;
         }
 
@@ -144,6 +156,13 @@ public class WebEnvironment {
 
         public Builder addFilter(String path, Filter filter) {
             context.addFilter(new FilterHolder(filter), path, Handler.DEFAULT);
+            return this;
+        }
+
+        public Builder addFilter(String path, Class<? extends Filter> filterClass, Map<String,String> params) {
+            FilterHolder filterHolder = new FilterHolder(filterClass);
+            filterHolder.setInitParameters(params);
+            context.addFilter(filterHolder, path, Handler.DEFAULT);
             return this;
         }
 
