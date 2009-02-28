@@ -1,18 +1,17 @@
 package com.opensymphony.sitemesh.decorator.stringtemplate;
 
-import com.opensymphony.sitemesh.ContentStub;
 import com.opensymphony.sitemesh.ContextStub;
+import com.opensymphony.sitemesh.InMemoryContent;
 import junit.framework.TestCase;
+import org.antlr.stringtemplate.StringTemplate;
 
 import java.io.IOException;
-
-import org.antlr.stringtemplate.StringTemplate;
 
 /**
  * @author Joe Walnes
  */
 public class StringTemplateDecoratorApplierTest extends TestCase {
-    private ContentStub content;
+    private InMemoryContent content;
     private StringTemplateDecoratorApplier decoratorApplier;
 
     private static final String DECORATOR_NAME = "mydecorator";
@@ -21,7 +20,7 @@ public class StringTemplateDecoratorApplierTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         decoratorApplier = new StringTemplateDecoratorApplier();
-        content = new ContentStub();
+        content = new InMemoryContent();
     }
 
     public void testSubstitutesTokensWithContentProperties() throws IOException {

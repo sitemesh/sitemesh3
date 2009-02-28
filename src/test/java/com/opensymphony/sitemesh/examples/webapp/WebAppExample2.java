@@ -2,12 +2,12 @@ package com.opensymphony.sitemesh.examples.webapp;
 
 import com.opensymphony.sitemesh.decorator.dispatch.DispatchingDecoratorApplier;
 import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
-import com.opensymphony.sitemesh.html.HtmlContent;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh.webapp.BaseSiteMeshFilter;
 import com.opensymphony.sitemesh.webapp.WebAppContext;
 import com.opensymphony.sitemesh.webapp.WebEnvironment;
 import com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector;
+import com.opensymphony.sitemesh.Content;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
@@ -36,11 +36,11 @@ public class WebAppExample2 {
             // Fetch the Content to be decorated. Because HtmlContentProcessor is used
             // in the SiteMesh filter, it can be casted directly to HtmlContent, giving
             // us some convenient methods.
-            HtmlContent content = (HtmlContent) request.getAttribute(DispatchingDecoratorApplier.CONTENT_KEY);
+            Content content = (Content) request.getAttribute(Content.class.getName());
 
             response.getWriter().printf("Title: %s\nBody:\n%s",
-                    content.getTitle().value(),
-                    content.getBody().value());
+                    content.getProperty("head").value(),
+                    content.getProperty("body").value());
         }
     }
 

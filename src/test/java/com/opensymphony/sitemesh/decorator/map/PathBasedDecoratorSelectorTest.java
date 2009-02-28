@@ -1,14 +1,12 @@
 package com.opensymphony.sitemesh.decorator.map;
 
-import com.opensymphony.sitemesh.DecoratorSelector;
 import com.opensymphony.sitemesh.Content;
-import com.opensymphony.sitemesh.ContentStub;
-import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.ContextStub;
+import com.opensymphony.sitemesh.DecoratorSelector;
+import com.opensymphony.sitemesh.InMemoryContent;
+import junit.framework.TestCase;
 
 import java.io.IOException;
-
-import junit.framework.TestCase;
 
 /**
  * @author Joe Walnes
@@ -16,7 +14,7 @@ import junit.framework.TestCase;
 public class PathBasedDecoratorSelectorTest extends TestCase {
 
     public void testSelectsDecoratorBasedOnContentRequestPath() throws IOException {
-        Content content = new ContentStub();
+        Content content = new InMemoryContent();
         DecoratorSelector selector = new PathBasedDecoratorSelector()
                 .put("/*", "/decorators/default.jsp")
                 .put("/admin/*", "/decorators/admin.jsp")

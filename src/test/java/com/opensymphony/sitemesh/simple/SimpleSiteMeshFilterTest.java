@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh.simple;
 
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.ContentProcessor;
-import com.opensymphony.sitemesh.ContentStub;
+import com.opensymphony.sitemesh.InMemoryContent;
 import com.opensymphony.sitemesh.webapp.WebAppContext;
 import com.opensymphony.sitemesh.webapp.WebEnvironment;
 import junit.framework.TestCase;
@@ -28,7 +28,6 @@ public class SimpleSiteMeshFilterTest extends TestCase {
                 .create();
 
         webEnvironment.doGet("/content");
-        System.out.println(webEnvironment.getRawResponse());
         assertEquals("Decorated: Hello world", webEnvironment.getBody());
     }
 
@@ -88,7 +87,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
     public static class MyContentProcessor implements ContentProcessor<WebAppContext> {
         @Override
         public Content build(CharBuffer data, WebAppContext context) throws IOException {
-            ContentStub content = new ContentStub();
+            InMemoryContent content = new InMemoryContent();
             content.addProperty("title", "MyContentProcessedTitle");
             return content;
         }

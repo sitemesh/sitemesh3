@@ -1,7 +1,7 @@
 package com.opensymphony.sitemesh.decorator.dispatch;
 
+import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
-import com.opensymphony.sitemesh.html.HtmlContent;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh.webapp.BaseSiteMeshFilter;
 import com.opensymphony.sitemesh.webapp.WebAppContext;
@@ -32,9 +32,9 @@ public class DispatchingDecoratorApplierTest extends TestCase {
             @Override
             protected void doGet(HttpServletRequest request, HttpServletResponse response)
                     throws ServletException, IOException {
-                HtmlContent content = (HtmlContent) request.getAttribute(DispatchingDecoratorApplier.CONTENT_KEY);
+                Content content = (Content) request.getAttribute(DispatchingDecoratorApplier.CONTENT_KEY);
                 PrintWriter out = response.getWriter();
-                out.println("Title = " + content.getTitle());
+                out.println("Title = " + content.getProperty("title"));
             }
         };
 

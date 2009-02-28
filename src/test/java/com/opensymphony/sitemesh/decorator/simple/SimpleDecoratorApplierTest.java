@@ -1,7 +1,7 @@
 package com.opensymphony.sitemesh.decorator.simple;
 
-import com.opensymphony.sitemesh.ContentStub;
 import com.opensymphony.sitemesh.ContextStub;
+import com.opensymphony.sitemesh.InMemoryContent;
 import junit.framework.TestCase;
 
 import java.io.IOException;
@@ -11,13 +11,13 @@ import java.io.IOException;
  */
 public class SimpleDecoratorApplierTest extends TestCase {
 
-    private ContentStub content;
+    private InMemoryContent content;
     private SimpleDecoratorApplier decoratorApplier;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        content = new ContentStub();
+        content = new InMemoryContent();
         decoratorApplier = new SimpleDecoratorApplier();
     }
 

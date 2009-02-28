@@ -5,17 +5,27 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public abstract class BaseContent implements Content {
+/**
+ * {@link Content} implementation that stores properties in memory in a hashtable.
+ *
+ * @author Joe Walnes
+ */
+public class InMemoryContent implements Content {
 
     private final Property original;
     private final Map<String, Property> properties = new HashMap<String, Property>();
 
-    public BaseContent(String original) throws IOException {
-        this.original = new StringProperty(original);
-        processContent(original);
+    public InMemoryContent(Property original) throws IOException {
+        this.original = original;
     }
 
-    protected abstract void processContent(String original) throws IOException;
+    public InMemoryContent(String original) throws IOException {
+        this(new StringProperty(original));
+    }
+
+    public InMemoryContent() throws IOException {
+        this(EMPTY_PROPERTY);
+    }
 
     public void addProperty(String name, Property property) {
         properties.put(name, property);
