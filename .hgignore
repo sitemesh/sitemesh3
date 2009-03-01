@@ -10,5 +10,7 @@ syntax: regexp
 \.iml
 \.ipr
 \.iws
+\.log
 \.classpath
 \.project
+^out/
