@@ -1,14 +1,11 @@
 package com.opensymphony.sitemesh.html.rules;
 
+import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
+import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
 import junit.framework.TestCase;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.Writer;
-import java.io.StringWriter;
 import java.io.IOException;
-
-import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
+import java.nio.CharBuffer;
 
 /**
  * @author Joe Walnes
@@ -16,8 +13,8 @@ import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
 public class RegexReplacementTextFilterTest extends TestCase {
 
     public void testReplacesTextContentMatchedByRegularExpression() throws IOException {
-        Reader in = new StringReader("<hello>Today is DATE so hi</hello>");
-        Writer out = new StringWriter();
+        CharBuffer in = CharBuffer.wrap("<hello>Today is DATE so hi</hello>");
+        CharArray out = new CharArray();
 
         TagProcessor processor = new TagProcessor(in, out);
         processor.addTextFilter(new RegexReplacementTextFilter("DATE", "1-jan-2009"));
@@ -27,8 +24,8 @@ public class RegexReplacementTextFilterTest extends TestCase {
     }
 
     public void testAllowsMatchedGroupToBeUsedInSubsitution() throws IOException {
-        Reader in = new StringReader("<hello>I think JIRA:SIM-1234 is the way forward</hello>");
-        Writer out = new StringWriter();
+        CharBuffer in = CharBuffer.wrap("<hello>I think JIRA:SIM-1234 is the way forward</hello>");
+        CharArray out = new CharArray();
 
         TagProcessor processor = new TagProcessor(in, out);
         processor.addTextFilter(new RegexReplacementTextFilter(

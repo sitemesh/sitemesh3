@@ -31,6 +31,10 @@ public class CharArray {
         buffer = new char[size];
     }
 
+    public CharArray() {
+        this(1024);
+    }
+
     /**
      * Returns a String represenation of the character array.
      */

@@ -2,6 +2,8 @@ package com.opensymphony.sitemesh.tagprocessor;
 
 import junit.framework.TestCase;
 
+import java.nio.CharBuffer;
+
 /**
  * @author Joe Walnes
  */
@@ -22,7 +24,7 @@ public class TagTokenizerTest extends TestCase {
         handler.expectTag(Tag.Type.OPEN, "and");
         handler.expectText("some stuff");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("<hello>cruel<world><and>some stuff", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<hello>cruel<world><and>some stuff"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -34,7 +36,7 @@ public class TagTokenizerTest extends TestCase {
         handler.expectTag(Tag.Type.CLOSE, "close");
         handler.expectTag(Tag.Type.EMPTY, "empty");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("<open></close><empty/>", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<open></close><empty/>"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -49,8 +51,8 @@ public class TagTokenizerTest extends TestCase {
         handler.expectText("good\n bye.");
         handler.expectTag(Tag.Type.OPEN, "br");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("hello world <!-- how are<we> \n -doing? --><!-- -->" +
-                "<!---->good\n bye.<br>", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello world <!-- how are<we> \n -doing? --><!-- -->" +
+                        "<!---->good\n bye.<br>"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -60,7 +62,7 @@ public class TagTokenizerTest extends TestCase {
         // expectations
         handler.expectTag(Tag.Type.OPEN, "hello", new String[]{"name", "world", "foo", "boo"});
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("<hello name=world foo=boo>", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<hello name=world foo=boo>"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -70,7 +72,7 @@ public class TagTokenizerTest extends TestCase {
         // expectations
         handler.expectTag(Tag.Type.OPEN, "hello", new String[]{"name", "the world", "foo", "boo"});
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("<hello name=\"the world\" foo=\"boo\">", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<hello name=\"the world\" foo=\"boo\">"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -80,7 +82,7 @@ public class TagTokenizerTest extends TestCase {
         // expectations
         handler.expectTag(Tag.Type.OPEN, "hello", new String[]{"name", "it's good", "foo", "say \"boo\""});
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("<hello name=\"it's good\" foo=\'say \"boo\"'>", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<hello name=\"it's good\" foo=\'say \"boo\"'>"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -90,7 +92,7 @@ public class TagTokenizerTest extends TestCase {
         // expectations
         handler.expectTag(Tag.Type.OPEN, "hello", new String[]{"isgood", null, "and", null, "stuff", null});
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("<hello isgood and stuff>", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<hello isgood and stuff>"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -103,12 +105,12 @@ public class TagTokenizerTest extends TestCase {
         handler.expectTag(Tag.Type.OPEN, "HTML",
                 new String[]{"notonnewline", "yo", "newline", "hello", "anotherline", "bye"});
         // execute
-        TagTokenizer tokenizer = new TagTokenizer(""
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap(""
                 + "<hello \n somestuff = \ngood \n   foo \nx=\"long\n string\"   >"
-                + "<empty      />"
-                + "<HTML notonnewline=yo newline=\n"
-                + "hello anotherline=\n"
-                + "\"bye\">", handler);
+                        + "<empty      />"
+                        + "<HTML notonnewline=yo newline=\n"
+                        + "hello anotherline=\n"
+                        + "\"bye\">"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -121,26 +123,25 @@ public class TagTokenizerTest extends TestCase {
         // add a new dependency for the sake of a single test.
         final String originalTag = "<hello \n somestuff = \ngood \n   foo \nx=\"long\n string\"   >";
         final boolean[] called = {false}; // has to be final array so anonymous inner class can change the value.
-        TagTokenizer tokenizer = new TagTokenizer("some text" + originalTag + "more text",
-                new TagTokenizer.TokenHandler() {
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("some text" + originalTag + "more text"), new TagTokenizer.TokenHandler() {
 
-                    public boolean shouldProcessTag(String name) {
-                        return true;
-                    }
+                            public boolean shouldProcessTag(String name) {
+                                return true;
+                            }
 
-                    public void tag(Tag tag) {
-                        assertEquals(originalTag, tag.getContents());
-                        called[0] = true;
-                    }
+                            public void tag(Tag tag) {
+                                assertEquals(originalTag, tag.getContents());
+                                called[0] = true;
+                            }
 
-                    public void text(Text text) {
-                        // ignoring text for this test
-                    }
+                            public void text(Text text) {
+                                // ignoring text for this test
+                            }
 
-                    public void warning(String message, int line, int column) {
-                        fail("Encountered error " + message);
-                    }
-                });
+                            public void warning(String message, int line, int column) {
+                                fail("Encountered error " + message);
+                            }
+                        });
 
         tokenizer.start();
 
@@ -151,7 +152,7 @@ public class TagTokenizerTest extends TestCase {
         // expectations
         handler.expectTag(Tag.Type.OPEN, "something", new String[]{"type", "text/html"});
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("<something type=text/html>", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<something type=text/html>"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -161,7 +162,7 @@ public class TagTokenizerTest extends TestCase {
         // expectations
         handler.expectTag(Tag.Type.OPEN, "something", new String[]{"type", "bl'ah\""});
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("<something type=bl'ah\">", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<something type=bl'ah\">"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -175,11 +176,11 @@ public class TagTokenizerTest extends TestCase {
                 "026-2634699-7306802?opt=a&page=misc/login/flex-sign-in-secure.html&response=tg/new-for-you" +
                 "/new-for-you/-/main"});
         // execute
-        TagTokenizer tokenizer = new TagTokenizer(""
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap(""
                 + "<name:space foo:bar=x:y%>"
-                + "<a_b-c$d b_b-c$d=c_b=c$d />"
-                + "<a href=/exec/obidos/flex-sign-in/ref=pd_nfy_gw_si/026-2634699-7306802?opt=a&page=misc/" +
-                "login/flex-sign-in-secure.html&response=tg/new-for-you/new-for-you/-/main>", handler);
+                        + "<a_b-c$d b_b-c$d=c_b=c$d />"
+                        + "<a href=/exec/obidos/flex-sign-in/ref=pd_nfy_gw_si/026-2634699-7306802?opt=a&page=misc/" +
+                        "login/flex-sign-in-secure.html&response=tg/new-for-you/new-for-you/-/main>"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -195,13 +196,13 @@ public class TagTokenizerTest extends TestCase {
         handler.expectText("<SCRIPT>stuff</SCRIPT>");
         handler.expectText("<!DOCTYPE html PUBLIC \\\"-//W3C//DTD HTML 4.01 Transitional//EN\\\">");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer(""
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap(""
                 + "<script language=jscript> if (a < b & > c)\n alert(); </script>"
-                + "<xmp><evil \n<stuff<</xmp>"
-                + "<?some stuff ?>"
-                + "<![CDATA[ evil<>> <\n    ]]>"
-                + "<SCRIPT>stuff</SCRIPT>"
-                + "<!DOCTYPE html PUBLIC \\\"-//W3C//DTD HTML 4.01 Transitional//EN\\\">", handler);
+                        + "<xmp><evil \n<stuff<</xmp>"
+                        + "<?some stuff ?>"
+                        + "<![CDATA[ evil<>> <\n    ]]>"
+                        + "<SCRIPT>stuff</SCRIPT>"
+                        + "<!DOCTYPE html PUBLIC \\\"-//W3C//DTD HTML 4.01 Transitional//EN\\\">"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -212,7 +213,7 @@ public class TagTokenizerTest extends TestCase {
         handler.expectText("hello");
         handler.expectText("<world");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("hello<world", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<world"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -223,7 +224,7 @@ public class TagTokenizerTest extends TestCase {
         handler.expectText("hello");
         handler.expectText("<");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("hello<", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -234,7 +235,7 @@ public class TagTokenizerTest extends TestCase {
         handler.expectText("hello");
         handler.expectText("<world x");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("hello<world x", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<world x"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -258,7 +259,7 @@ public class TagTokenizerTest extends TestCase {
         handler.expectText("hello");
         handler.expectText("<world x=");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("hello<world x=", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<world x="), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -269,7 +270,7 @@ public class TagTokenizerTest extends TestCase {
         handler.expectText("hello");
         handler.expectText("<world x=fff");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("hello<world x=fff", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<world x=fff"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -280,7 +281,7 @@ public class TagTokenizerTest extends TestCase {
         handler.expectText("hello");
         handler.expectText("<world /");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("hello<world /", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<world /"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -290,7 +291,7 @@ public class TagTokenizerTest extends TestCase {
         // expectations
         handler.expectTag(Tag.Type.OPEN, "good");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("<>< ><good><>", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<>< ><good><>"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -310,7 +311,7 @@ public class TagTokenizerTest extends TestCase {
         handler.expectText("<![bad]-->");
         handler.expectText("<unfinished");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("<good><bad></good><![bad]--><unfinished", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<good><bad></good><![bad]--><unfinished"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -322,7 +323,7 @@ public class TagTokenizerTest extends TestCase {
         handler.expectTag(Tag.Type.OPEN, "stuff");
         handler.expectTag(Tag.Type.CLOSE_CONDITIONAL_COMMENT, "endif");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("<!--[if gte mso 9]><stuff><![endif]-->", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<!--[if gte mso 9]><stuff><![endif]-->"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -338,7 +339,7 @@ public class TagTokenizerTest extends TestCase {
         };
         handler.expectTag(Tag.Type.OPEN, "a", new String[]{"href", "something-with-a-naughty-quote"});
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("<a href=\"something-with-a-naughty-quote\"\">", handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<a href=\"something-with-a-naughty-quote\"\">"), handler);
         tokenizer.start();
         // verify
         handler.verify();

@@ -8,9 +8,10 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
 import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
-import com.opensymphony.sitemesh.tagprocessor.util.CharArrayReader;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.nio.CharBuffer;
 
 /**
  * Splits a chunk of HTML into 'text' and 'tag' tokens, for easy processing. Is very tolerant to badly formed HTML.
@@ -80,7 +81,7 @@ public class TagTokenizer {
         LT_OPEN_MAGIC_COMMENT, LT_CLOSE_MAGIC_COMMENT, EOF
     }
 
-    private final char[] input;
+    private final CharBuffer input;
 
     private int position;
     private int length;
@@ -89,15 +90,11 @@ public class TagTokenizer {
     private Tag.Type type;
     private final TokenHandler handler;
 
-    public TagTokenizer(char[] input, TokenHandler handler) {
+    public TagTokenizer(final CharBuffer input, TokenHandler handler) {
         this.handler = handler;
-        lexer = new Lexer(new CharArrayReader(input));
+        lexer = new Lexer(new CharBufferReader(input));
         lexer.setHandler(handler);
         this.input = input;
-    }
-
-    public TagTokenizer(String input, TokenHandler handler) {
-        this(input.toCharArray(), handler);
     }
 
     public void start() {
@@ -379,12 +376,12 @@ public class TagTokenizer {
 
         @Override
         public String getContents() {
-            return new String(input, position, length);
+            return input.subSequence(position, position + length).toString(); // TODO
         }
 
         @Override
         public void writeTo(CharArray out) {
-            out.append(input, position, length);
+            out.append(getContents()); // TODO
         }
 
         @Override
@@ -441,6 +438,32 @@ public class TagTokenizer {
         }
     }
 
+    /**
+     * Reader that wraps a CharBuffer.
+     */
+    private static class CharBufferReader extends Reader {
+        private final CharBuffer input;
 
+        public CharBufferReader(CharBuffer input) {
+            this.input = input.duplicate(); // Allow to move independently, but share the same underying data.
+        }
+
+        @Override
+        public int read(char[] chars, int offset, int length) throws IOException {
+            int read = Math.min(input.remaining(), length);
+            input.get(chars, offset, read);
+            return read;
+        }
+
+        @Override
+        public int read() throws IOException {
+            return input.position() < input.limit() ? input.get() : -1;
+        }
+
+        @Override
+        public void close() throws IOException {
+            // No op.
+        }
+    }
 }
 

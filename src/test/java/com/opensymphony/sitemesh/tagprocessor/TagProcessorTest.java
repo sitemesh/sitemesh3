@@ -5,6 +5,7 @@ import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
 import junit.framework.TestCase;
 
 import java.io.*;
+import java.nio.CharBuffer;
 
 /**
  * @author Joe Walnes
@@ -12,8 +13,8 @@ import java.io.*;
 public class TagProcessorTest extends TestCase {
 
     public void testSupportsConventionalReaderAndWriter() throws IOException {
-        Reader in = new StringReader("<hello><b id=\"something\">world</b></hello>");
-        Writer out = new StringWriter();
+        CharBuffer in = CharBuffer.wrap("<hello><b id=\"something\">world</b></hello>");
+        CharArray out = new CharArray();
 
         TagProcessor processor = new TagProcessor(in, out);
         processor.addRule(new TagReplaceRule("b", "strong"));
@@ -23,8 +24,8 @@ public class TagProcessorTest extends TestCase {
     }
 
     public void testAllowsRulesToModifyAttributes() throws IOException {
-        Reader in = new StringReader("<hello><a href=\"modify-me\">world</a></hello>");
-        Writer out = new StringWriter();
+        CharBuffer in = CharBuffer.wrap("<hello><a href=\"modify-me\">world</a></hello>");
+        CharArray out = new CharArray();
 
         TagProcessor processor = new TagProcessor(in, out);
         processor.addRule(new BasicRule("a") {
@@ -45,8 +46,8 @@ public class TagProcessorTest extends TestCase {
     }
 
     public void testSupportsChainedFilteringOfTextContent() throws IOException {
-        Reader in = new StringReader("<hello>world</hello>");
-        Writer out = new StringWriter();
+        CharBuffer in = CharBuffer.wrap("<hello>world</hello>");
+        CharArray out = new CharArray();
 
         TagProcessor processor = new TagProcessor(in, out);
         processor.addTextFilter(new TextFilter() {
@@ -67,8 +68,8 @@ public class TagProcessorTest extends TestCase {
     }
 
     public void testSupportsTextFiltersForSpecificStates() throws IOException {
-        Reader in = new StringReader("la la<br> la la <capitalism>laaaa<br> laaaa</capitalism> la la");
-        Writer out = new StringWriter();
+        CharBuffer in = CharBuffer.wrap("la la<br> la la <capitalism>laaaa<br> laaaa</capitalism> la la");
+        CharArray out = new CharArray();
 
         TagProcessor processor = new TagProcessor(in, out);
 
@@ -87,9 +88,9 @@ public class TagProcessorTest extends TestCase {
     }
 
     public void testCanAddAttributesToCustomTag() throws IOException {
+        CharBuffer in = CharBuffer.wrap("<h1>Headline</h1>");
         CharArray buffer = new CharArray(64);
-        String html = "<h1>Headline</h1>";
-        TagProcessor tagProcessor = new TagProcessor(html.toCharArray(), buffer);
+        TagProcessor tagProcessor = new TagProcessor(in, buffer);
         tagProcessor.addRule(new BasicRule() {
             @Override
             public boolean shouldProcess(String tag) {

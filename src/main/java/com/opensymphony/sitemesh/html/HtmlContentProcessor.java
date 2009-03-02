@@ -46,7 +46,7 @@ public class HtmlContentProcessor<C extends Context> implements ContentProcessor
 
         final InMemoryContent content = new InMemoryContent(original);
 
-        TagProcessor processor = new TagProcessor(original.toCharArray() /* TODO */, body);
+        TagProcessor processor = new TagProcessor(data, body);
         State html = processor.defaultState();
 
         PageBuilder builder = new PageBuilder() {

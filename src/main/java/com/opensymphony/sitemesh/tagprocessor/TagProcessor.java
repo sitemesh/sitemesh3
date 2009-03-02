@@ -1,11 +1,9 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
 import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
-import com.opensymphony.sitemesh.tagprocessor.util.CharArrayWriter;
 
-import java.io.Writer;
-import java.io.Reader;
 import java.io.IOException;
+import java.nio.CharBuffer;
 
 /**
  * Copies a document from a source to a destination, applying rules on the way
@@ -20,29 +18,16 @@ import java.io.IOException;
  * @author Joe Walnes
  */
 public class TagProcessor {
-    private final char[] in;
+    private final CharBuffer in;
     private final CharArray out;
 
     private final State defaultState = new State();
 
     private State currentState = defaultState;
-    private Writer outStream;
 
-    public TagProcessor(char[] source, CharArray destination) {
+    public TagProcessor(CharBuffer source, CharArray destination) {
         this.in = source;
         this.out = destination;
-    }
-
-    public TagProcessor(Reader source, Writer destination) throws IOException {
-        CharArrayWriter inBuffer = new CharArrayWriter();
-        char[] buffer = new char[2048];
-        int n;
-        while (-1 != (n = source.read(buffer))) {
-            inBuffer.write(buffer, 0, n);
-        }
-        this.in = inBuffer.toCharArray();
-        this.out = new CharArray(2048);
-        this.outStream = destination;
     }
 
     /**
@@ -98,9 +83,6 @@ public class TagProcessor {
             }
         });
         tokenizer.start();
-        if (outStream != null) {
-            outStream.write(out.toString());
-        }
     }
 
     private class Context implements TagProcessorContext {
