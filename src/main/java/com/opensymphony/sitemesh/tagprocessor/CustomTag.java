@@ -3,6 +3,7 @@ package com.opensymphony.sitemesh.tagprocessor;
 import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
 
 import java.util.Arrays;
+import java.io.IOException;
 
 /**
  * A CustomTag provides a mechanism to manipulate the contents of a Tag. The standard Tag implementations
@@ -53,14 +54,7 @@ public class CustomTag implements Tag {
     }
 
     @Override
-    public String getContents() {
-        CharArray c = new CharArray(64);
-        writeTo(c);
-        return c.toString();
-    }
-
-    @Override
-    public void writeTo(CharArray out) {
+    public void writeTo(Appendable out) throws IOException {
         if (type == Tag.Type.CLOSE) {
             out.append("</");
         } else {
@@ -108,7 +102,13 @@ public class CustomTag implements Tag {
 
     @Override
     public String toString() {
-        return getContents();
+        try {
+            CharArray c = new CharArray(64);
+            writeTo(c);
+            return c.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // ---------- Standard methods to implement Tag interface ------

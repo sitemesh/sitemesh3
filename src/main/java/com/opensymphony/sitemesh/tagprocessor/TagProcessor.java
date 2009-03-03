@@ -9,8 +9,7 @@ import java.nio.CharBuffer;
  * Copies a document from a source to a destination, applying rules on the way
  * to extract content and/or transform the content.
  *
- * <p>{@link TagRule}s and {@link TextFilter}s can be added to perform the
- * extractions/transformations.</p>
+ * <p>{@link TagRule}s can be added to perform the extractions/transformations.</p>
  *
  * <p>The processor can have different rules applied to different {@link State}s.
  * A rule may switch the current state using {@link TagProcessorContext#changeState(State)}. 
@@ -47,16 +46,7 @@ public class TagProcessor {
     }
 
     /**
-     * Equivalent of TagProcessor.defaultState().addTextFilter()
-     *
-     * @see State#addTextFilter(TextFilter)
-     */
-    public void addTextFilter(TextFilter textFilter) {
-        currentState.addTextFilter(textFilter);
-    }
-
-    /**
-     * Process the document, applying {@link TagRule}s and {@link TextFilter}s.
+     * Process the document, applying {@link TagRule}s.
      */
     public void process() throws IOException {
         final TagProcessorContext context = new Context();
@@ -67,13 +57,13 @@ public class TagProcessor {
                 return currentState.shouldProcessTag(name.toLowerCase());
             }
 
-            public void tag(Tag tag) {
+            public void tag(Tag tag) throws IOException {
                 TagRule tagRule = currentState.getRule(tag.getName().toLowerCase());
                 tagRule.setContext(context);
                 tagRule.process(tag);
             }
 
-            public void text(Text text) {
+            public void text(Text text) throws IOException {
                 currentState.handleText(text, context);
             }
 

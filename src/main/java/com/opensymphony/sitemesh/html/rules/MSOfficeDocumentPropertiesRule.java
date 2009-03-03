@@ -3,6 +3,8 @@ package com.opensymphony.sitemesh.html.rules;
 import com.opensymphony.sitemesh.tagprocessor.BlockExtractingRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
 
+import java.io.IOException;
+
 /**
  * Extracts the extra properties saved in HTML from MS Office applications (Word and Excel),
  * such as Author, Company, Version, etc.
@@ -28,7 +30,7 @@ public class MSOfficeDocumentPropertiesRule extends BlockExtractingRule {
     }
 
     @Override
-    public void process(Tag tag) {
+    public void process(Tag tag) throws IOException {
         if (tag.getName().equals("o:DocumentProperties")) {
             inDocumentProperties = (tag.getType() == Tag.Type.OPEN);
             tag.writeTo(currentBuffer());

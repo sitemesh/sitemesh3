@@ -3,6 +3,8 @@ package com.opensymphony.sitemesh.html.rules;
 import com.opensymphony.sitemesh.tagprocessor.BasicRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
 
+import java.io.IOException;
+
 /**
  * Exports any <code>&lt;meta&gt;</code> tags as properties in the page.
  *
@@ -21,7 +23,7 @@ public class MetaTagRule extends BasicRule {
     }
 
     @Override
-    public void process(Tag tag) {
+    public void process(Tag tag) throws IOException {
         if (tag.hasAttribute("name", false)) {
             page.addProperty("meta." + tag.getAttributeValue("name", false),
                     tag.getAttributeValue("content", false));

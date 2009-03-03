@@ -30,7 +30,7 @@ public class TagProcessorTest extends TestCase {
         TagProcessor processor = new TagProcessor(in, out);
         processor.addRule(new BasicRule("a") {
             @Override
-            public void process(Tag tag) {
+            public void process(Tag tag) throws IOException {
                 CustomTag customTag = new CustomTag(tag);
                 String href = customTag.getAttributeValue("href", false);
                 if (href != null) {
@@ -45,48 +45,6 @@ public class TagProcessorTest extends TestCase {
         assertEquals("<hello><a href=\"MODIFY-ME\">world</a></hello>", out.toString());
     }
 
-    public void testSupportsChainedFilteringOfTextContent() throws IOException {
-        CharBuffer in = CharBuffer.wrap("<hello>world</hello>");
-        CharArray out = new CharArray();
-
-        TagProcessor processor = new TagProcessor(in, out);
-        processor.addTextFilter(new TextFilter() {
-            @Override
-            public String filter(String text) {
-                return text.toUpperCase();
-            }
-        });
-        processor.addTextFilter(new TextFilter() {
-            @Override
-            public String filter(String text) {
-                return text.replaceAll("O", "o");
-            }
-        });
-
-        processor.process();
-        assertEquals("<HELLo>WoRLD</HELLo>", out.toString());
-    }
-
-    public void testSupportsTextFiltersForSpecificStates() throws IOException {
-        CharBuffer in = CharBuffer.wrap("la la<br> la la <capitalism>laaaa<br> laaaa</capitalism> la la");
-        CharArray out = new CharArray();
-
-        TagProcessor processor = new TagProcessor(in, out);
-
-        State capsState = new State();
-        processor.addRule(new StateTransitionRule("capitalism", capsState, true));
-
-        capsState.addTextFilter(new TextFilter() {
-            @Override
-            public String filter(String text) {
-                return text.toUpperCase();
-            }
-        });
-
-        processor.process();
-        assertEquals("la la<br> la la <capitalism>LAAAA<BR> LAAAA</capitalism> la la", out.toString());
-    }
-
     public void testCanAddAttributesToCustomTag() throws IOException {
         CharBuffer in = CharBuffer.wrap("<h1>Headline</h1>");
         CharArray buffer = new CharArray(64);
@@ -98,7 +56,7 @@ public class TagProcessorTest extends TestCase {
             }
 
             @Override
-            public void process(Tag tag) {
+            public void process(Tag tag) throws IOException {
                 if (tag.getType() == Tag.Type.OPEN) {
                     CustomTag ctag = new CustomTag(tag);
                     ctag.addAttribute("class", "y");

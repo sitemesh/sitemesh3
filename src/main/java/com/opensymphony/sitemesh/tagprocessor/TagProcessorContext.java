@@ -3,7 +3,7 @@ package com.opensymphony.sitemesh.tagprocessor;
 import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
 
 /**
- * Defines a set of methods that allows {@link TagRule}s and {@link TextFilter}s to
+ * Defines a set of methods that allows {@link TagRule}s to
  * interact with the {@link TagProcessor}.
  *
  * @author Joe Walnes
@@ -17,7 +17,7 @@ public interface TagProcessorContext {
 
     /**
      * Change the {@link State} of the processor, which will result in
-     * different {@link TagRule}s and {@link TextFilter}s being applied.
+     * different {@link TagRule}s being applied.
      */
     void changeState(State newState);
 

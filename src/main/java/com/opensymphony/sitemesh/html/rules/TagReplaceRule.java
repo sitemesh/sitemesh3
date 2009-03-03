@@ -4,6 +4,8 @@ import com.opensymphony.sitemesh.tagprocessor.BasicRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
 import com.opensymphony.sitemesh.tagprocessor.CustomTag;
 
+import java.io.IOException;
+
 /**
  * Very simple rule for replacing all occurences of one tag with another.
  *
@@ -22,7 +24,7 @@ public class TagReplaceRule extends BasicRule {
     }
 
     @Override
-    public void process(Tag tag) {
+    public void process(Tag tag) throws IOException {
         CustomTag customTag = new CustomTag(tag);
         customTag.setName(newTagName);
         customTag.writeTo(currentBuffer());

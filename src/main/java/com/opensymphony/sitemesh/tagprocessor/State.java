@@ -1,10 +1,9 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.io.IOException;
 
 /**
- * Acts a registry of {@link TagRule}s and {@link TextFilter}s to apply whilst the {@link TagProcessor}
+ * Acts a registry of {@link TagRule}s to apply whilst the {@link TagProcessor}
  * is processing the document in this particular state.
  *
  * @author Joe Walnes
@@ -13,7 +12,6 @@ public class State {
 
     private TagRule[] rules = new TagRule[16]; // List is too slow, according to profiler
     private int ruleCount = 0;
-    private List<TextFilter> textFilters = null; // Lazily instantiated. In most cases it's not used.
 
     /**
      * Adds a {@link TagRule} that will be called for
@@ -28,13 +26,6 @@ public class State {
             rules = longerArray;
         }
         rules[ruleCount++] = rule;
-    }
-
-    public void addTextFilter(TextFilter textFilter) {
-        if (textFilters == null) {
-            textFilters = new ArrayList<TextFilter>(); // lazy instantiation
-        }
-        textFilters.add(textFilter);
     }
 
     public boolean shouldProcessTag(String tagName) {
@@ -57,16 +48,8 @@ public class State {
         return null;
     }
 
-    public void handleText(Text text, TagProcessorContext context) {
-        if (textFilters == null) {
-            text.writeTo(context.currentBuffer());
-        } else {
-            String asString = text.getContents();
-            for (TextFilter textFilter : textFilters) {
-                asString = textFilter.filter(asString);
-            }
-            context.currentBuffer().append(asString);
-        }
+    public void handleText(Text text, TagProcessorContext context) throws IOException {
+        text.writeTo(context.currentBuffer());
     }
 
 }

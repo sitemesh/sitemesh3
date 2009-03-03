@@ -1,5 +1,7 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
+import java.io.IOException;
+
 public class StateTransitionRule extends BasicRule {
 
     private final State newState;
@@ -18,7 +20,7 @@ public class StateTransitionRule extends BasicRule {
     }
 
     @Override
-    public void process(Tag tag) {
+    public void process(Tag tag) throws IOException {
         if (tag.getType() == Tag.Type.OPEN) {
             lastState = context.currentState();
             context.changeState(newState);

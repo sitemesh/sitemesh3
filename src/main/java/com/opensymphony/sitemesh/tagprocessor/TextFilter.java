@@ -1,5 +1,7 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
+import java.io.IOException;
+
 /**
  * TextFilters can be added to the {@link TagProcessor} (or specific {@link State}s) to
  * allow a simple means of filtering text content.
@@ -9,6 +11,6 @@ package com.opensymphony.sitemesh.tagprocessor;
  */
 public interface TextFilter {
 
-    String filter(String content);
+    CharSequence filter(CharSequence text) throws IOException;
 
 }

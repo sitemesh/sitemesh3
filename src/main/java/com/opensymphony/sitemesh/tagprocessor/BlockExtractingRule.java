@@ -2,6 +2,8 @@ package com.opensymphony.sitemesh.tagprocessor;
 
 import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
 
+import java.io.IOException;
+
 /**
  * This is the base class for a {@link TagRule} that will extract the contents
  * of a block (pair of opening and closing tags, otherwise known as an element)
@@ -18,8 +20,8 @@ public abstract class BlockExtractingRule extends BasicRule {
     // else the parser throws a NoSuchElementException (SIM-216)
     private boolean seenOpeningTag;
 
-    protected BlockExtractingRule(boolean includeEnclosingTags, String acceptableTagName) {
-        super(acceptableTagName);
+    protected BlockExtractingRule(boolean includeEnclosingTags, String... acceptableTagNames) {
+        super(acceptableTagNames);
         this.includeEnclosingTags = includeEnclosingTags;
     }
 
@@ -28,7 +30,7 @@ public abstract class BlockExtractingRule extends BasicRule {
     }
 
     @Override
-    public void process(Tag tag) {
+    public void process(Tag tag) throws IOException {
         if (tag.getType() == Tag.Type.OPEN) {
             if (includeEnclosingTags) {
                 tag.writeTo(context.currentBuffer());
@@ -45,10 +47,10 @@ public abstract class BlockExtractingRule extends BasicRule {
         }
     }
 
-    protected void start(Tag tag) {
+    protected void start(Tag tag) throws IOException {
     }
 
-    protected void end(Tag tag) {
+    protected void end(Tag tag) throws IOException {
     }
 
     protected CharArray createBuffer() {

@@ -2,6 +2,8 @@ package com.opensymphony.sitemesh.tagprocessor;
 
 import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
 
+import java.io.IOException;
+
 /**
  * Basic implementation of {@link TagRule}.
  *
@@ -13,12 +15,8 @@ public abstract class BasicRule implements TagRule {
 
     protected TagProcessorContext context;
 
-    protected BasicRule(String[] acceptableTagNames) {
+    protected BasicRule(String... acceptableTagNames) {
         this.acceptableTagNames = acceptableTagNames;
-    }
-
-    protected BasicRule(String acceptableTagName) {
-        this.acceptableTagNames = new String[] {acceptableTagName};
     }
 
     protected BasicRule() {
@@ -26,7 +24,7 @@ public abstract class BasicRule implements TagRule {
     }
 
     @Override
-    public abstract void process(Tag tag);
+    public abstract void process(Tag tag) throws IOException;
 
     @Override
     public void setContext(TagProcessorContext context) {

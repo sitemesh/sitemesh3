@@ -3,6 +3,7 @@ package com.opensymphony.sitemesh.tagprocessor;
 import junit.framework.TestCase;
 
 import java.nio.CharBuffer;
+import java.io.IOException;
 
 /**
  * @author Joe Walnes
@@ -130,7 +131,7 @@ public class TagTokenizerTest extends TestCase {
                             }
 
                             public void tag(Tag tag) {
-                                assertEquals(originalTag, tag.getContents());
+                                assertEquals(originalTag, tag.toString());
                                 called[0] = true;
                             }
 
@@ -380,8 +381,8 @@ public class TagTokenizerTest extends TestCase {
             actual.append(' ').append(typeAsString(tag.getType())).append("}}");
         }
 
-        public void text(Text text) {
-            actual.append(text.getContents());
+        public void text(Text text) throws IOException {
+            text.writeTo(actual);
         }
 
         public void warning(String message, int line, int column) {

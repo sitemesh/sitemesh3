@@ -47,7 +47,7 @@ public class TagTokenizer {
          * <p/>The Tag instance passed in should not be kept beyond the scope of this method as the tokenizer will
          * attempt to reuse it.</p>
          */
-        void tag(Tag tag);
+        void tag(Tag tag) throws IOException;
 
         /**
          * Called when tokenizer encounters anything other than a well-formed HTML tag.
@@ -55,7 +55,7 @@ public class TagTokenizer {
          * <p>The Text instance passed in should not be kept beyond the scope of this method as the tokenizer will
          * attempt to reuse it.</p>
          */
-        void text(Text text);
+        void text(Text text) throws IOException;
 
         /**
          * Called when tokenizer encounters something it cannot correctly parse. Typically the parsing will continue
@@ -326,13 +326,13 @@ public class TagTokenizer {
         }
     }
 
-    private void parsedText(int position, int length) {
+    private void parsedText(int position, int length) throws IOException {
         this.position = position;
         this.length = length;
         handler.text(reusableToken);
     }
 
-    private void parsedTag(Tag.Type type, String name, int start, int length) {
+    private void parsedTag(Tag.Type type, String name, int start, int length) throws IOException {
         this.type = type;
         this.name = name;
         this.position = start;
@@ -375,13 +375,8 @@ public class TagTokenizer {
         }
 
         @Override
-        public String getContents() {
-            return input.subSequence(position, position + length).toString(); // TODO
-        }
-
-        @Override
-        public void writeTo(CharArray out) {
-            out.append(getContents()); // TODO
+        public void writeTo(Appendable out) throws IOException {
+            out.append(input.subSequence(position, position + length));
         }
 
         @Override
@@ -434,7 +429,7 @@ public class TagTokenizer {
 
         @Override
         public String toString() {
-            return getContents();
+            return input.subSequence(position, position + length).toString();
         }
     }
 

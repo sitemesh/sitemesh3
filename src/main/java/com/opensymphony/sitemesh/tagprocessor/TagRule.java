@@ -1,5 +1,7 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
+import java.io.IOException;
+
 /**
  * User defined rule for processing {@link Tag}s encountered by the {@link TagProcessor}.
  *
@@ -25,5 +27,5 @@ public interface TagRule {
      * Implementations can use this to do any necessary work on the {@link Tag} such as extracting
      * values or transforming it.
      */
-    void process(Tag tag);
+    void process(Tag tag) throws IOException;
 }

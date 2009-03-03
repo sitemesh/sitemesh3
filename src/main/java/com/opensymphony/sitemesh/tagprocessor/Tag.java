@@ -1,6 +1,6 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
-import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
+import java.io.IOException;
 
 /**
  * Tag returned by {@link TagTokenizer}. Allows easy access to element name and attributes.
@@ -43,19 +43,9 @@ public interface Tag {
     }
 
     /**
-     * Get the complete tag in its original form, preserving original formatting.
-     *
-     * <p>This has a slight overhead in that it needs to construct a String. For improved
-     * performance, use writeTo() instead.</p>
-     *
-     * @see #writeTo(CharArray)
-     */
-    String getContents();
-
-    /**
      * Write out the complete tag in its original form, preserving original formatting.
      */
-    void writeTo(CharArray out);
+    void writeTo(Appendable out) throws IOException;
 
     /**
      * Name of tag (ie. element name).
@@ -100,7 +90,12 @@ public interface Tag {
     boolean hasAttribute(String name, boolean caseSensitive);
 
     /**
-     * @see #getContents()
+     * Get the complete tag in its original form, preserving original formatting.
+     *
+     * <p>This has a slight overhead in that it needs to construct a String. For improved
+     * performance, use writeTo() instead.</p>
+     *
+     * @see #writeTo(Appendable)
      */
     String toString();
 }

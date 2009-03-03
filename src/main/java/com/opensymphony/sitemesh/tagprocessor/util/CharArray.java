@@ -1,7 +1,7 @@
 package com.opensymphony.sitemesh.tagprocessor.util;
 
-import java.io.PrintWriter;
 import java.io.IOException;
+import java.nio.CharBuffer;
 
 /**
  * A leaner, meaner version of StringBuilder.
@@ -9,18 +9,12 @@ import java.io.IOException;
  * char arrays as quickly as possible. This class is not threadsafe.</p>
  *
  * @author Chris Miller
+ * @author Joe Walnes
  */
-public class CharArray {
+public class CharArray implements Appendable {
 
-    int size = 0;
-    char[] buffer;
-
-    // These properties allow us to specify a substring within the character array
-    // that we can perform comparisons against. This is here purely for performance -
-    // the comparisons are at the heart of the FastPageParser loop and any speed increase
-    // we can get at this level has a huge impact on performance.
-    int subStrStart = 0;
-    int subStrLen = 0;
+    private int size = 0;
+    private char[] buffer;
 
     /**
      * Constructs a CharArray that is initialized to the specified size.
@@ -38,46 +32,9 @@ public class CharArray {
     /**
      * Returns a String represenation of the character array.
      */
+    @Override
     public String toString() {
         return new String(buffer, 0, size);
-    }
-
-    /**
-     * Returns the character that is at the specified position in the array.
-     * <p/>
-     * There is no bounds checking on this method so be sure to pass in a
-     * sensible value.
-     */
-    public char charAt(int pos) {
-        return buffer[pos];
-    }
-
-    /**
-     * Changes the size of the character array to the value specified.
-     * <p/>
-     * If the new size is less than the current size, the data in the
-     * internal array will be truncated. If the new size is &lt;= 0,
-     * the array will be reset to empty (but, unlike StringBuffer, the
-     * internal array will NOT be shrunk). If the new size is &gt the
-     * current size, the array will be padded out with null characters
-     * (<tt>'&#92;u0000'</tt>).
-     *
-     * @param newSize the new size of the character array
-     */
-    public void setLength(int newSize) {
-        if (newSize < 0) {
-            newSize = 0;
-        }
-
-        if (newSize <= size) {
-            size = newSize;
-        } else {
-            if (newSize >= buffer.length)
-                grow(newSize);
-            // Pad the array
-            for (; size < newSize; size++)
-                buffer[size] = '\0';
-        }
     }
 
     /**
@@ -87,6 +44,30 @@ public class CharArray {
         return size;
     }
 
+    @Override
+    public Appendable append(CharSequence csq) throws IOException {
+        append(csq, 0, csq.length());
+        return this;
+    }
+
+    @Override
+    public Appendable append(CharSequence csq, int start, int end) throws IOException {
+        // Optimizations: Messy, but considerably boosts performance.
+        if (csq instanceof CharBuffer) {
+            return append((CharBuffer) csq);
+        }
+        if (csq instanceof String) {
+            return append((String) csq);
+        }
+
+        // Optimization can't be applied... do it the clean way.
+        for (int i = start; i < end; i++) {
+            append(csq.charAt(i));
+        }
+
+        return this;
+    }
+
     /**
      * Appends an existing CharArray on to this one.
      * <p/>
@@ -94,6 +75,19 @@ public class CharArray {
      */
     public CharArray append(CharArray chars) {
         return append(chars.buffer, 0, chars.size);
+    }
+
+    /**
+     * Appends an existing CharBuffer on to this one.
+     */
+    public CharArray append(CharBuffer charBuffer) {
+        int length = charBuffer.remaining();
+        int requiredSize = length + size;
+        if (requiredSize >= buffer.length)
+            grow(requiredSize);
+        charBuffer.get(buffer, size, length);
+        size = requiredSize;
+        return this;
     }
 
     /**
@@ -132,104 +126,10 @@ public class CharArray {
         if (requiredSize >= buffer.length)
             grow(requiredSize);
 
-        for (int i = 0; i < str.length(); i++)
-            buffer[size + i] = str.charAt(i);
+        str.getChars(0, str.length(), buffer, size);
 
         size = requiredSize;
         return this;
-    }
-
-    /**
-     * Returns a substring from within this character array.
-     * <p/>
-     * Note that NO range checking is performed!
-     */
-    public String substring(int begin, int end) {
-        return new String(buffer, begin, end - begin);
-    }
-
-    /**
-     * Allows an arbitrary substring of this character array to be specified.
-     * This method should be called prior to calling {@link #compareLowerSubstr(String)}
-     * to set the range of the substring comparison.
-     *
-     * @param begin the starting offset into the character array.
-     * @param end   the ending offset into the character array.
-     */
-    public void setSubstr(int begin, int end) {
-        subStrStart = begin;
-        subStrLen = end - begin;
-    }
-
-    /**
-     * Returns the substring that was specified by the {@link #setSubstr(int, int)} call.
-     */
-    public String getLowerSubstr() {
-        for (int i = subStrStart; i < subStrStart + subStrLen; i++)
-            buffer[i] |= 32;
-        return new String(buffer, subStrStart, subStrLen);
-    }
-
-    /**
-     * This compares a substring of this character array (as specified
-     * by the {@link #setSubstr(int, int)} method call) with the supplied
-     * string. The supplied string <em>must</em> be lowercase, otherwise
-     * the comparison will fail.
-     */
-    public boolean compareLowerSubstr(String lowerStr) {
-        // Range check
-        if (lowerStr.length() != subStrLen || subStrLen <= 0)
-            return false;
-
-        for (int i = 0; i < lowerStr.length(); i++) {
-            // | 32 converts from ASCII uppercase to ASCII lowercase
-            if ((buffer[subStrStart + i] | 32) != lowerStr.charAt(i))
-                return false;
-        }
-        return true;
-    }
-
-    /**
-     * Returns the hashcode for a <em>lowercase</em> version of the array's substring
-     * (as set by the {@link #setSubstr(int, int)} method).
-     * <p/>
-     * This uses the same calculation as the <tt>String.hashCode()</tt> method
-     * so that it remains compatible with the hashcodes of normal strings.
-     */
-    public int substrHashCode() {
-        int hash = 0;
-        int offset = subStrStart;
-        for (int i = 0; i < subStrLen; i++) {
-            hash = 31 * hash + (buffer[offset++] | 32);
-        }
-        return hash;
-    }
-
-    /**
-     * Compares the supplied uppercase string with the contents of
-     * the character array, starting at the offset specified.
-     * <p/>
-     * This is a specialized method to help speed up the FastPageParser
-     * slightly.
-     * <p/>
-     * The supplied string is assumed to contain only uppercase ASCII
-     * characters. The offset indicates the offset into the character
-     * array that the comparison should start from.
-     * <p/>
-     * If (and only if) the supplied string and the relevant portion of the
-     * character array are considered equal, this method will return <tt>true</tt>.
-     */
-    public boolean compareLower(String lowerStr, int offset) {
-        // Range check
-        if (offset < 0 || offset + lowerStr.length() > size)
-            return false;
-
-        for (int i = 0; i < lowerStr.length(); i++) {
-            // | 32 converts from ASCII uppercase to ASCII lowercase
-            if ((buffer[offset + i] | 32) != lowerStr.charAt(i))
-                return false;
-        }
-        return true;
     }
 
     /**
@@ -253,10 +153,6 @@ public class CharArray {
      */
     public final void clear() {
         size = 0;
-    }
-
-    public void writeTo(PrintWriter writer) {
-        writer.write(buffer, 0, size);
     }
 
 }
