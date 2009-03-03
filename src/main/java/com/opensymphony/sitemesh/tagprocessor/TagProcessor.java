@@ -53,20 +53,24 @@ public class TagProcessor {
         context.pushBuffer(out);
         TagTokenizer tokenizer = new TagTokenizer(in, new TagTokenizer.TokenHandler() {
 
+            @Override
             public boolean shouldProcessTag(String name) {
                 return currentState.shouldProcessTag(name.toLowerCase());
             }
 
+            @Override
             public void tag(Tag tag) throws IOException {
                 TagRule tagRule = currentState.getRule(tag.getName().toLowerCase());
                 tagRule.setContext(context);
                 tagRule.process(tag);
             }
 
-            public void text(Text text) throws IOException {
+            @Override
+            public void text(CharBuffer text) throws IOException {
                 currentState.handleText(text, context);
             }
 
+            @Override
             public void warning(String message, int line, int column) {
                 // TODO
                 // System.out.println(line + "," + column + ": " + message);

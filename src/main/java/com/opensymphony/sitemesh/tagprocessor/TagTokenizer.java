@@ -38,7 +38,7 @@ public class TagTokenizer {
          * If true is returned, the tokenizer will fully parse the tag and pass it into the
          * {@link #tag(Tag)} method.
          * Otherwise, the tokenizer will not try to parse the tag and pass it to the
-         * {@link #text(Text)} method, untouched.
+         * {@link #text(CharBuffer)} method, untouched.
          */
         boolean shouldProcessTag(String name);
 
@@ -51,11 +51,8 @@ public class TagTokenizer {
 
         /**
          * Called when tokenizer encounters anything other than a well-formed HTML tag.
-         * <p>The Text object is used instead of a String to allow the String to be lazy-loaded.</p>
-         * <p>The Text instance passed in should not be kept beyond the scope of this method as the tokenizer will
-         * attempt to reuse it.</p>
          */
-        void text(Text text) throws IOException;
+        void text(CharBuffer text) throws IOException;
 
         /**
          * Called when tokenizer encounters something it cannot correctly parse. Typically the parsing will continue
@@ -329,7 +326,7 @@ public class TagTokenizer {
     private void parsedText(int position, int length) throws IOException {
         this.position = position;
         this.length = length;
-        handler.text(reusableToken);
+        handler.text((CharBuffer) input.subSequence(position, position + length));
     }
 
     private void parsedTag(Tag.Type type, String name, int start, int length) throws IOException {
@@ -359,7 +356,7 @@ public class TagTokenizer {
         handler.warning(message, line, column);
     }
 
-    public class ReusableToken implements Tag, Text {
+    public class ReusableToken implements Tag {
 
         public int attributeCount = 0;
         public String[] attributes = new String[10]; // name1, value1, name2, value2...

@@ -1,6 +1,7 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
 import java.io.IOException;
+import java.nio.CharBuffer;
 
 /**
  * Acts a registry of {@link TagRule}s to apply whilst the {@link TagProcessor}
@@ -48,8 +49,8 @@ public class State {
         return null;
     }
 
-    public void handleText(Text text, TagProcessorContext context) throws IOException {
-        text.writeTo(context.currentBuffer());
+    public void handleText(CharBuffer text, TagProcessorContext context) throws IOException {
+        context.currentBuffer().append(text);
     }
 
 }

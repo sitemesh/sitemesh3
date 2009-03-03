@@ -126,23 +126,27 @@ public class TagTokenizerTest extends TestCase {
         final boolean[] called = {false}; // has to be final array so anonymous inner class can change the value.
         TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("some text" + originalTag + "more text"), new TagTokenizer.TokenHandler() {
 
-                            public boolean shouldProcessTag(String name) {
-                                return true;
-                            }
+            @Override
+            public boolean shouldProcessTag(String name) {
+                return true;
+            }
 
-                            public void tag(Tag tag) {
-                                assertEquals(originalTag, tag.toString());
-                                called[0] = true;
-                            }
+            @Override
+            public void tag(Tag tag) {
+                assertEquals(originalTag, tag.toString());
+                called[0] = true;
+            }
 
-                            public void text(Text text) {
-                                // ignoring text for this test
-                            }
+            @Override
+            public void text(CharBuffer text) {
+                // ignoring text for this test
+            }
 
-                            public void warning(String message, int line, int column) {
-                                fail("Encountered error " + message);
-                            }
-                        });
+            @Override
+            public void warning(String message, int line, int column) {
+                fail("Encountered error " + message);
+            }
+        });
 
         tokenizer.start();
 
@@ -367,11 +371,13 @@ public class TagTokenizerTest extends TestCase {
             expected.append(' ').append(typeAsString(type)).append("}}");
         }
 
+        @Override
         public boolean shouldProcessTag(String name) {
             assertNotNull("Name should not be null", name);
             return true;
         }
 
+        @Override
         public void tag(Tag tag) {
             actual.append("{{TAG : ").append(tag.getName());
             for (int i = 0; i < tag.getAttributeCount(); i++) {
@@ -381,8 +387,9 @@ public class TagTokenizerTest extends TestCase {
             actual.append(' ').append(typeAsString(tag.getType())).append("}}");
         }
 
-        public void text(Text text) throws IOException {
-            text.writeTo(actual);
+        @Override
+        public void text(CharBuffer text) throws IOException {
+            actual.append(text);
         }
 
         public void warning(String message, int line, int column) {
