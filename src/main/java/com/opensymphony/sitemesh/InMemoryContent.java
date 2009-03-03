@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.nio.CharBuffer;
 
 /**
  * {@link Content} implementation that stores properties in memory in a hashtable.
@@ -23,6 +24,10 @@ public class InMemoryContent implements Content {
         this(new StringProperty(original));
     }
 
+    public InMemoryContent(CharBuffer original) throws IOException {
+        this(new CharBufferProperty(original));
+    }
+
     public InMemoryContent() throws IOException {
         this(EMPTY_PROPERTY);
     }
@@ -33,6 +38,10 @@ public class InMemoryContent implements Content {
 
     public void addProperty(String name, String value) {
         addProperty(name, new StringProperty(value));
+    }
+
+    public void addProperty(String name, CharBuffer value) {
+        addProperty(name, new CharBufferProperty(value));
     }
 
     @Override
@@ -77,6 +86,45 @@ public class InMemoryContent implements Content {
         @Override
         public String valueNeverNull() {
             return value == null ? "" : value;
+        }
+
+        @Override
+        public void writeTo(Appendable out) throws IOException {
+            out.append(value);
+        }
+
+        @Override
+        public String toString() {
+            return value();
+        }
+    }
+
+    public static class CharBufferProperty implements Content.Property {
+
+        private final CharBuffer value;
+
+        public CharBufferProperty(CharBuffer value) {
+            this.value = value;
+        }
+
+        @Override
+        public boolean exists() {
+            return true;
+        }
+
+        @Override
+        public int length() {
+            return value.length();
+        }
+
+        @Override
+        public String value() {
+            return value == null ? null : value.toString();
+        }
+
+        @Override
+        public String valueNeverNull() {
+            return value == null ? "" : value.toString();
         }
 
         @Override

@@ -42,9 +42,7 @@ public class HtmlContentProcessor<C extends Context> implements ContentProcessor
         CharArray head = new CharArray(64);
         CharArray body = new CharArray(4096);
 
-        String original = data.toString(); // TODO: Avoid this additional allocation.
-
-        final InMemoryContent content = new InMemoryContent(original);
+        final InMemoryContent content = new InMemoryContent(data);
 
         TagProcessor processor = new TagProcessor(data, body);
         State html = processor.defaultState();
