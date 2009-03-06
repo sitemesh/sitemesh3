@@ -14,7 +14,6 @@ import com.opensymphony.sitemesh.html.rules.MetaTagRule;
 import com.opensymphony.sitemesh.html.rules.ParameterExtractingRule;
 import com.opensymphony.sitemesh.html.rules.ContentBlockExtractingRule;
 import com.opensymphony.sitemesh.html.rules.MSOfficeDocumentPropertiesRule;
-import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
 import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
 import com.opensymphony.sitemesh.tagprocessor.State;
 import com.opensymphony.sitemesh.tagprocessor.StateTransitionRule;
@@ -35,11 +34,9 @@ public class HtmlContentProcessor<C extends Context> implements ContentProcessor
 
     @Override
     public Content build(CharBuffer data, C context) throws IOException {
-        CharArray body = new CharArray(4096);
-
         final InMemoryContent content = new InMemoryContent(data);
 
-        TagProcessor processor = new TagProcessor(data, body);
+        TagProcessor processor = new TagProcessor(data);
         State html = processor.defaultState();
 
         PageBuilder builder = new PageBuilder() {
@@ -50,8 +47,7 @@ public class HtmlContentProcessor<C extends Context> implements ContentProcessor
         };
         // Core rules for SiteMesh to be functional.
         html.addRule(new HeadExtractingRule(builder)); // contents of <head>
-        html.addRule(new BodyTagRule(builder, body)); // contents of <body>
-        content.addProperty("body", body);
+        html.addRule(new BodyTagRule(builder)); // contents of <body>
 
         html.addRule(new TitleExtractingRule(builder)); // the <title>
         html.addRule(new FramesetRule(builder)); // if the page is a frameset
@@ -64,7 +60,14 @@ public class HtmlContentProcessor<C extends Context> implements ContentProcessor
         // Additional rules - designed to be tweaked.
         addUserDefinedRules(html, xml, builder);
 
+        // Run the processor.
         processor.process();
+
+        // In the event that no <body> tag was captured, use the default buffer contents instead
+        // (i.e. the whole document, except anything that was written to other buffers).
+        if (!content.getProperty("body").exists()) {
+          content.addProperty("body", processor.getDefaultBufferContents());
+        }
 
         return content;
 

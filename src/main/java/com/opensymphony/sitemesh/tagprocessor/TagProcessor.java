@@ -24,9 +24,17 @@ public class TagProcessor {
 
     private State currentState = defaultState;
 
-    public TagProcessor(CharBuffer source, CharArray destination) {
+    public TagProcessor(CharBuffer source) {
         this.in = source;
-        this.out = destination;
+        this.out = new CharArray(4096);
+    }
+
+    /**
+     * Return the contents of the default buffer used during TagProcessing. By default,
+     * everything will be written to this, except when new buffers are pushed on to the stack.
+     */
+    public CharSequence getDefaultBufferContents() {
+        return out;
     }
 
     /**

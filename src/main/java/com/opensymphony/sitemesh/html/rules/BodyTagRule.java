@@ -2,7 +2,6 @@ package com.opensymphony.sitemesh.html.rules;
 
 import com.opensymphony.sitemesh.tagprocessor.BasicRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
-import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
 
 /**
  * Extracts the contents of the &lt;body&gt; tag, writing into the passed in buffer.
@@ -18,12 +17,10 @@ import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
 public class BodyTagRule extends BasicRule {
 
     private final PageBuilder page;
-    private final CharArray body;
 
-    public BodyTagRule(PageBuilder page, CharArray body) {
+    public BodyTagRule(PageBuilder page) {
         super("body");
         this.page = page;
-        this.body = body;
     }
 
     @Override
@@ -32,10 +29,11 @@ public class BodyTagRule extends BasicRule {
             for (int i = 0; i < tag.getAttributeCount(); i++) {
                 page.addProperty("body." + tag.getAttributeName(i), tag.getAttributeValue(i));
             }
-            body.clear();
-        } else {
-             // unused buffer: everything after </body> is discarded.
             context.pushBuffer();
+        }
+        if (tag.getType() == Tag.Type.CLOSE || tag.getType() == Tag.Type.EMPTY) {
+            page.addProperty("body", context.currentBufferContents());
+            context.popBuffer();
         }
     }
 
