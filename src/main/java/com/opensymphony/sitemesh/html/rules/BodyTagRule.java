@@ -35,8 +35,7 @@ public class BodyTagRule extends BasicRule {
             body.clear();
         } else {
              // unused buffer: everything after </body> is discarded.
-            CharArray unused = new CharArray(64); // TODO: Don't actually buffer the remaining content.
-            context.pushBuffer(unused);
+            context.pushBuffer();
         }
     }
 

@@ -11,7 +11,7 @@ import java.nio.CharBuffer;
  * @author Chris Miller
  * @author Joe Walnes
  */
-public class CharArray implements Appendable {
+public class CharArray implements Appendable, CharSequence {
 
     private int size = 0;
     private char[] buffer;
@@ -40,18 +40,37 @@ public class CharArray implements Appendable {
     /**
      * Returns the current length of the character array.
      */
+    @Override
     public int length() {
         return size;
     }
 
     @Override
-    public Appendable append(CharSequence csq) throws IOException {
-        append(csq, 0, csq.length());
+    public char charAt(int index) {
+        return buffer[index];
+    }
+
+    @Override
+    public CharSequence subSequence(int start, int end) {
+        if (start < 0 || end < 0 || end > size || start > end) {
+            throw new IndexOutOfBoundsException("start=" + start + ",end=" + end + ",length=" + size);
+        }
+        return new SubSequence(start, end);
+    }
+
+    /**
+     * Appends a single character to the end of the character array.
+     */
+    @Override
+    public Appendable append(char c) {
+        if (buffer.length == size)
+            grow(0);
+        buffer[size++] = c;
         return this;
     }
 
     @Override
-    public Appendable append(CharSequence csq, int start, int end) throws IOException {
+    public Appendable append(CharSequence csq) throws IOException {
         // Optimizations: Messy, but considerably boosts performance.
         if (csq instanceof CharBuffer) {
             return append((CharBuffer) csq);
@@ -59,8 +78,20 @@ public class CharArray implements Appendable {
         if (csq instanceof String) {
             return append((String) csq);
         }
+        if (csq instanceof CharArray) {
+            return append((CharArray) csq);
+        }
 
         // Optimization can't be applied... do it the clean way.
+        for (int i = 0; i < csq.length(); i++) {
+            append(csq.charAt(i));
+        }
+
+        return this;
+    }
+
+    @Override
+    public Appendable append(CharSequence csq, int start, int end) throws IOException {
         for (int i = start; i < end; i++) {
             append(csq.charAt(i));
         }
@@ -73,14 +104,14 @@ public class CharArray implements Appendable {
      * <p/>
      * Passing in a <tt>null</tt> CharArray will result in a <tt>NullPointerException</tt>.
      */
-    public CharArray append(CharArray chars) {
+    private Appendable append(CharArray chars) {
         return append(chars.buffer, 0, chars.size);
     }
 
     /**
      * Appends an existing CharBuffer on to this one.
      */
-    public CharArray append(CharBuffer charBuffer) {
+    private Appendable append(CharBuffer charBuffer) {
         int length = charBuffer.remaining();
         int requiredSize = length + size;
         if (requiredSize >= buffer.length)
@@ -90,14 +121,7 @@ public class CharArray implements Appendable {
         return this;
     }
 
-    /**
-     * Appends the supplied characters to the end of the array.
-     */
-    public CharArray append(char[] chars) {
-        return append(chars, 0, chars.length);
-    }
-
-    public CharArray append(char[] chars, int position, int length) {
+    private Appendable append(char[] chars, int position, int length) {
         int requiredSize = length + size;
         if (requiredSize >= buffer.length)
             grow(requiredSize);
@@ -107,21 +131,11 @@ public class CharArray implements Appendable {
     }
 
     /**
-     * Appends a single character to the end of the character array.
-     */
-    public CharArray append(char c) {
-        if (buffer.length == size)
-            grow(0);
-        buffer[size++] = c;
-        return this;
-    }
-
-    /**
      * Appends the supplied string to the end of this character array.
      * <p/>
      * Passing in a <tt>null</tt> string will result in a <tt>NullPointerException</tt>.
      */
-    public CharArray append(String str) {
+    private CharArray append(String str) {
         int requiredSize = str.length() + size;
         if (requiredSize >= buffer.length)
             grow(requiredSize);
@@ -153,6 +167,34 @@ public class CharArray implements Appendable {
      */
     public final void clear() {
         size = 0;
+    }
+
+    private class SubSequence implements CharSequence {
+        private int start;
+        private int end;
+
+        public SubSequence(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        public int length() {
+            return end - start;
+        }
+
+        @Override
+        public char charAt(int index) {
+            return buffer[index + start];
+        }
+
+        @Override
+        public CharSequence subSequence(int start, int end) {
+            if (start < 0 || end < 0 || end > this.end - size || start > end) {
+                throw new IndexOutOfBoundsException("start=" + start + ",end=" + end + ",length=" + size);
+            }
+            return new SubSequence(this.start + start, this.start + end);
+        }
     }
 
 }

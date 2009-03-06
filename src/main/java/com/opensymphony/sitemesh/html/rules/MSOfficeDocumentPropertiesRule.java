@@ -1,6 +1,6 @@
 package com.opensymphony.sitemesh.html.rules;
 
-import com.opensymphony.sitemesh.tagprocessor.BlockExtractingRule;
+import com.opensymphony.sitemesh.tagprocessor.BasicRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
 
 import java.io.IOException;
@@ -14,13 +14,12 @@ import java.io.IOException;
  *
  * @author Joe Walnes
  */
-public class MSOfficeDocumentPropertiesRule extends BlockExtractingRule {
+public class MSOfficeDocumentPropertiesRule extends BasicRule {
 
     private final PageBuilder page;
     private boolean inDocumentProperties;
 
     public MSOfficeDocumentPropertiesRule(PageBuilder page) {
-        super(true);
         this.page = page;
     }
 
@@ -33,21 +32,20 @@ public class MSOfficeDocumentPropertiesRule extends BlockExtractingRule {
     public void process(Tag tag) throws IOException {
         if (tag.getName().equals("o:DocumentProperties")) {
             inDocumentProperties = (tag.getType() == Tag.Type.OPEN);
-            tag.writeTo(currentBuffer());
+            tag.writeTo(context.currentBuffer());
         } else {
-            super.process(tag);
+            if (tag.getType() == Tag.Type.OPEN) {
+                tag.writeTo(context.currentBuffer());
+                context.pushBuffer();
+            } else if (tag.getType() == Tag.Type.CLOSE) {
+                String name = tag.getName().substring(2);
+                page.addProperty("office.DocumentProperties." + name, context.currentBufferContents());
+                CharSequence contents = context.currentBufferContents();
+                context.popBuffer();
+                context.currentBuffer().append(contents);
+                tag.writeTo(context.currentBuffer());
+            }
         }
-    }
-
-    @Override
-    protected void start(Tag tag) {
-    }
-
-    @Override
-    protected void end(Tag tag) {
-        String name = tag.getName().substring(2);
-        page.addProperty("office.DocumentProperties." + name, currentBuffer().toString());
-        context.mergeBuffer();
     }
 
 }

@@ -1,20 +1,20 @@
 package com.opensymphony.sitemesh.html.rules;
 
 import com.opensymphony.sitemesh.tagprocessor.BlockExtractingRule;
-import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
+import com.opensymphony.sitemesh.tagprocessor.Tag;
 
 public class HeadExtractingRule extends BlockExtractingRule {
 
-    private final CharArray head;
+    private final PageBuilder page;
 
-    public HeadExtractingRule(CharArray head) {
+    public HeadExtractingRule(PageBuilder page) {
         super(false, "head");
-        this.head = head;
+        this.page = page;
     }
 
     @Override
-    protected CharArray createBuffer() {
-        return head;
+    protected void end(Tag tag) {
+        page.addProperty("head", context.currentBufferContents());
     }
 
 }

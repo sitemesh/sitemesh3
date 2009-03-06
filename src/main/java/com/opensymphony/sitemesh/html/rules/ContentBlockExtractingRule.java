@@ -26,13 +26,12 @@ public class ContentBlockExtractingRule extends BlockExtractingRule {
 
     @Override
     protected void start(Tag tag) {
-        // TODO: Also support 'id' as an alternative to 'tag'.
         contentBlockId = tag.getAttributeValue("tag", false);
     }
 
     @Override
     protected void end(Tag tag) {
-        page.addProperty("page." + contentBlockId, currentBuffer().toString());
+        page.addProperty("page." + contentBlockId, context.currentBufferContents());
     }
 
 }

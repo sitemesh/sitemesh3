@@ -49,8 +49,7 @@ public class TagProcessor {
      * Process the document, applying {@link TagRule}s.
      */
     public void process() throws IOException {
-        final TagProcessorContext context = new Context();
-        context.pushBuffer(out);
+        final TagProcessorContext context = new Context(out);
         TagTokenizer tokenizer = new TagTokenizer(in, new TagTokenizer.TokenHandler() {
 
             @Override
@@ -80,6 +79,15 @@ public class TagProcessor {
     }
 
     private class Context implements TagProcessorContext {
+
+        private CharArray[] buffers = new CharArray[10];
+        private int size;
+
+        public Context(CharArray defaultBuffer) {
+            buffers[0] = defaultBuffer;
+            size = 1;
+        }
+
         @Override
         public State currentState() {
             return currentState;
@@ -90,37 +98,31 @@ public class TagProcessor {
             currentState = newState;
         }
 
-        private CharArray[] buffers = new CharArray[10];
-        private int size;
-
         @Override
-        public void pushBuffer(CharArray buffer) {
+        public void pushBuffer() {
             if(size == buffers.length) {
               CharArray[] newBuffers = new CharArray[buffers.length * 2];
               System.arraycopy(buffers, 0, newBuffers, 0, buffers.length);
               buffers = newBuffers;
             }
-            buffers[size++] = buffer;
+            buffers[size++] = new CharArray(512);
         }
 
         @Override
-        public CharArray currentBuffer() {
+        public Appendable currentBuffer() {
             return buffers[size - 1];
         }
 
         @Override
-        public CharArray popBuffer() {
-            CharArray last = buffers[size - 1];
-            buffers[--size] = null;
-            return last;
+        public CharSequence currentBufferContents() {
+            return buffers[size - 1];
         }
 
         @Override
-        public void mergeBuffer() {
-            CharArray top = buffers[size - 1];
-            CharArray nextDown = buffers[size - 2];
-            nextDown.append(top);
+        public void popBuffer() {
+            buffers[--size] = null;
         }
+
     }
 }
 

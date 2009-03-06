@@ -1,7 +1,5 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
-import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
-
 /**
  * Defines a set of methods that allows {@link TagRule}s to
  * interact with the {@link TagProcessor}.
@@ -24,24 +22,24 @@ public interface TagProcessorContext {
     /**
      * Get the current destination output buffer.
      */
-    CharArray currentBuffer();
+    Appendable currentBuffer();
+
+    /**
+     * Get the contents of the current destination output buffer.
+     */
+    CharSequence currentBufferContents();
 
     /**
      * Push a new destination output buffer onto the stack. All content in the
      * document from this point forwards will be written to this buffer instead
      * of the default destination, until {@link #popBuffer()} is called.
      */
-    void pushBuffer(CharArray buffer);
+    void pushBuffer();
 
     /**
-     * @see #pushBuffer(CharArray)
-     * @return
+     * @see #pushBuffer()
      */
-    CharArray popBuffer();
+    void popBuffer();
 
-    /**
-     * Write the current buffer to the buffer next down in the stack.
-     */
-    void mergeBuffer();
 }
 

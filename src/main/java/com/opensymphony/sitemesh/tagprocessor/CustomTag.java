@@ -1,7 +1,5 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
-import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
-
 import java.util.Arrays;
 import java.io.IOException;
 
@@ -103,9 +101,9 @@ public class CustomTag implements Tag {
     @Override
     public String toString() {
         try {
-            CharArray c = new CharArray(64);
-            writeTo(c);
-            return c.toString();
+            StringBuilder out = new StringBuilder(64);
+            writeTo(out);
+            return out.toString();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

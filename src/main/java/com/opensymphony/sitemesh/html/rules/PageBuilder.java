@@ -9,5 +9,5 @@ package com.opensymphony.sitemesh.html.rules;
  * @author Joe Walnes
  */
 public interface PageBuilder {
-    void addProperty(String key, String value);
+    void addProperty(String key, CharSequence value);
 }

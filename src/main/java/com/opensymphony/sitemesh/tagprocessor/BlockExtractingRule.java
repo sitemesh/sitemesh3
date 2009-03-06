@@ -1,7 +1,5 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
-import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
-
 import java.io.IOException;
 
 /**
@@ -35,7 +33,7 @@ public abstract class BlockExtractingRule extends BasicRule {
             if (includeEnclosingTags) {
                 tag.writeTo(context.currentBuffer());
             }
-            context.pushBuffer(createBuffer());
+            context.pushBuffer();
             start(tag);
             seenOpeningTag = true;
         } else if (tag.getType() == Tag.Type.CLOSE && seenOpeningTag) {
@@ -51,10 +49,6 @@ public abstract class BlockExtractingRule extends BasicRule {
     }
 
     protected void end(Tag tag) throws IOException {
-    }
-
-    protected CharArray createBuffer() {
-        return new CharArray(512);
     }
 
 }

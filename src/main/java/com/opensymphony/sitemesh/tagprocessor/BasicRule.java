@@ -1,7 +1,5 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
-import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
-
 import java.io.IOException;
 
 /**
@@ -42,10 +40,6 @@ public abstract class BasicRule implements TagRule {
             if (name.equals(acceptableTagNames[i])) return true;
         }
         return false;
-    }
-
-    protected CharArray currentBuffer() {
-        return context.currentBuffer();
     }
 
 }

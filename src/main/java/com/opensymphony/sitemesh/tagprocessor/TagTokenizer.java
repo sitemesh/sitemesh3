@@ -7,8 +7,6 @@
 
 package com.opensymphony.sitemesh.tagprocessor;
 
-import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.CharBuffer;
@@ -67,7 +65,6 @@ public class TagTokenizer {
     }
 
     private final Lexer lexer; // If you are getting a compilation error on this line, see note above.
-    private final CharArray attributeBuffer = new CharArray(64);
     private final ReusableToken reusableToken = new ReusableToken();
 
     private Token pushbackToken = Token.UNKNOWN;
@@ -290,8 +287,7 @@ public class TagTokenizer {
                 parsedAttribute(attributeName, text(), true);
             } else if (token == Token.WORD || token == Token.SLASH) {
                 // unquoted word
-                attributeBuffer.clear();
-                attributeBuffer.append(text());
+                String attributeValue = text();
                 while (true) {
                     Token next;
                     if (pushbackToken == Token.UNKNOWN) {
@@ -301,13 +297,16 @@ public class TagTokenizer {
                         pushbackToken = Token.UNKNOWN;
                     }
                     if (next == Token.WORD || next == Token.EQUALS || next == Token.SLASH) {
-                        attributeBuffer.append(text());
+                        // This is such a rare case, that it's more efficient to concatenate a string
+                        // like this, rather than use a StringBuilder each time. 99.99% of the time,
+                        // this will never be called.
+                        attributeValue += text();
                     } else {
                         pushBack(next);
                         break;
                     }
                 }
-                parsedAttribute(attributeName, attributeBuffer.toString(), false);
+                parsedAttribute(attributeName, attributeValue, false);
             } else if (token == Token.SLASH || token == Token.GT) {
                 // no more attributes
                 pushBack(token);
