@@ -21,7 +21,9 @@ title=page title
 
 ~~~ HEAD ~~~
 
+		< >
 
 ~~~ BODY ~~~
 
+		< ><>
 		<h1>PAGE BODY</h1>

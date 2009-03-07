@@ -36,7 +36,7 @@ public class TagTokenizer {
          * If true is returned, the tokenizer will fully parse the tag and pass it into the
          * {@link #tag(Tag)} method.
          * Otherwise, the tokenizer will not try to parse the tag and pass it to the
-         * {@link #text(CharBuffer)} method, untouched.
+         * {@link #text(CharSequence)} method, untouched.
          */
         boolean shouldProcessTag(String name);
 
@@ -50,7 +50,7 @@ public class TagTokenizer {
         /**
          * Called when tokenizer encounters anything other than a well-formed HTML tag.
          */
-        void text(CharBuffer text) throws IOException;
+        void text(CharSequence text) throws IOException;
 
         /**
          * Called when tokenizer encounters something it cannot correctly parse. Typically the parsing will continue
@@ -75,11 +75,15 @@ public class TagTokenizer {
         LT_OPEN_MAGIC_COMMENT, LT_CLOSE_MAGIC_COMMENT, EOF
     }
 
-    private final CharBuffer input;
+    private final CharSequence input;
 
     private int position;
     private int length;
 
+    private boolean bufferingText;
+    private int bufferedTextStart;
+    private int bufferedTextEnd;
+    
     private String name;
     private Tag.Type type;
     private final TokenHandler handler;
@@ -102,10 +106,12 @@ public class TagTokenizer {
                     pushbackToken = Token.UNKNOWN;
                 }
                 if (token == Token.EOF) {
+                    flushText();
                     return;
                 } else if (token == Token.TEXT) {
                     // Got some text
-                    parsedText(lexer.position(), lexer.length());
+                    int start = lexer.position();
+                    parsedText(start, start + lexer.length());
                 } else if (token == Token.LT) {
                     // Token "<" - start of tag
                     parseTag(Tag.Type.OPEN);
@@ -123,7 +129,6 @@ public class TagTokenizer {
             throw new RuntimeException(e);
         }
     }
-
 
     private String text() {
         if (pushbackToken == Token.UNKNOWN) {
@@ -193,12 +198,13 @@ public class TagTokenizer {
             } else {
                 lexer.resetLexerState();
                 pushBack(lexer.nextToken()); // take and replace the next token, so the position is correct
-                parsedText(start, lexer.position() - start);
+                parsedText(start, lexer.position());
             }
         } else if (token == Token.GT) {
-            // Token ">" - an illegal <> or <  > tag. Ignore
+            // Token ">" - an illegal <> or <  > tag. Treat as text.
+            parsedText(start, lexer.position() + 1); // eof
         } else if (token == Token.EOF) {
-            parsedText(start, lexer.position() - start); // eof
+            parsedText(start, lexer.position()); // eof
         } else {
             reportError("Could not recognise tag", lexer.line(), lexer.column());
         }
@@ -221,7 +227,7 @@ public class TagTokenizer {
             } else if (token == Token.WORD) {
                 parseAttribute(); // start of an attribute
             } else if (token == Token.EOF) {
-                parsedText(start, lexer.position() - start); // eof
+                parsedText(start, lexer.position()); // eof
                 return;
             } else {
                 reportError("Illegal tag", lexer.line(), lexer.column());
@@ -250,7 +256,7 @@ public class TagTokenizer {
             // Token ">" - YAY! end of tag.. process it!
             parsedTag(type, name, start, lexer.position() - start + 1);
         } else if (token == Token.EOF) {
-            parsedText(start, lexer.position() - start); // eof
+            parsedText(start, lexer.position()); // eof
         } else {
             reportError("Expected end of tag", lexer.line(), lexer.column());
             parsedTag(type, name, start, lexer.position() - start + 1);
@@ -322,13 +328,26 @@ public class TagTokenizer {
         }
     }
 
-    private void parsedText(int position, int length) throws IOException {
-        this.position = position;
-        this.length = length;
-        handler.text((CharBuffer) input.subSequence(position, position + length));
+    private void flushText() throws IOException {
+        if (bufferingText) {
+            handler.text(input.subSequence(bufferedTextStart, bufferedTextEnd));
+            bufferingText = false;
+        }
+    }
+
+    private void parsedText(int start, int end) throws IOException {
+        if (!bufferingText) {
+            bufferingText = true;
+            bufferedTextStart = start;
+            bufferedTextEnd = end;
+        } else {
+            assert bufferedTextEnd == start : "Parser missed something. Please report this bug to SiteMesh team.";
+            bufferedTextEnd = end;
+        }
     }
 
     private void parsedTag(Tag.Type type, String name, int start, int length) throws IOException {
+        flushText();
         this.type = type;
         this.name = name;
         this.position = start;
@@ -436,7 +455,7 @@ public class TagTokenizer {
         private final CharBuffer input;
 
         public CharBufferReader(CharBuffer input) {
-            this.input = input.duplicate(); // Allow to move independently, but share the same underying data.
+            this.input = input.duplicate(); // Allow to move independently, but share the same underlying data.
         }
 
         @Override

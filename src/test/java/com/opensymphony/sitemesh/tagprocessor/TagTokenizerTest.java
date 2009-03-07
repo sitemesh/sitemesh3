@@ -45,11 +45,7 @@ public class TagTokenizerTest extends TestCase {
 
     public void testTreatsCommentsAsText() {
         // expectations
-        handler.expectText("hello world ");
-        handler.expectText("<!-- how are<we> \n -doing? -->");
-        handler.expectText("<!-- -->");
-        handler.expectText("<!---->");
-        handler.expectText("good\n bye.");
+        handler.expectText("hello world <!-- how are<we> \n -doing? --><!-- --><!---->good\n bye.");
         handler.expectTag(Tag.Type.OPEN, "br");
         // execute
         TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello world <!-- how are<we> \n -doing? --><!-- -->" +
@@ -138,7 +134,7 @@ public class TagTokenizerTest extends TestCase {
             }
 
             @Override
-            public void text(CharBuffer text) {
+            public void text(CharSequence text) {
                 // ignoring text for this test
             }
 
@@ -194,20 +190,20 @@ public class TagTokenizerTest extends TestCase {
 
     public void testTreatsXmpCdataScriptAndProcessingInstructionsAsText() {
         // expectations
-        handler.expectText("<script language=jscript> if (a < b & > c)\n alert(); </script>");
-        handler.expectText("<xmp><evil \n<stuff<</xmp>");
-        handler.expectText("<?some stuff ?>");
-        handler.expectText("<![CDATA[ evil<>> <\n    ]]>");
-        handler.expectText("<SCRIPT>stuff</SCRIPT>");
-        handler.expectText("<!DOCTYPE html PUBLIC \\\"-//W3C//DTD HTML 4.01 Transitional//EN\\\">");
+        handler.expectText("<script language=jscript> if (a < b & > c)\n alert(); </script>"
+                + "<xmp><evil \n<stuff<</xmp>"
+                + "<?some stuff ?>"
+                + "<![CDATA[ evil<>> <\n    ]]>"
+                + "<SCRIPT>stuff</SCRIPT>"
+                + "<!DOCTYPE html PUBLIC \\\"-//W3C//DTD HTML 4.01 Transitional//EN\\\">");
         // execute
         TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap(""
                 + "<script language=jscript> if (a < b & > c)\n alert(); </script>"
-                        + "<xmp><evil \n<stuff<</xmp>"
-                        + "<?some stuff ?>"
-                        + "<![CDATA[ evil<>> <\n    ]]>"
-                        + "<SCRIPT>stuff</SCRIPT>"
-                        + "<!DOCTYPE html PUBLIC \\\"-//W3C//DTD HTML 4.01 Transitional//EN\\\">"), handler);
+                + "<xmp><evil \n<stuff<</xmp>"
+                + "<?some stuff ?>"
+                + "<![CDATA[ evil<>> <\n    ]]>"
+                + "<SCRIPT>stuff</SCRIPT>"
+                + "<!DOCTYPE html PUBLIC \\\"-//W3C//DTD HTML 4.01 Transitional//EN\\\">"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -215,8 +211,7 @@ public class TagTokenizerTest extends TestCase {
 
     public void testTreatsUnterminatedTagAtEofAsText() {
         // expectations
-        handler.expectText("hello");
-        handler.expectText("<world");
+        handler.expectText("hello<world");
         // execute
         TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<world"), handler);
         tokenizer.start();
@@ -226,8 +221,7 @@ public class TagTokenizerTest extends TestCase {
 
     public void testTreatsLtAtEofAsText() {
         // expectations
-        handler.expectText("hello");
-        handler.expectText("<");
+        handler.expectText("hello<");
         // execute
         TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<"), handler);
         tokenizer.start();
@@ -237,8 +231,7 @@ public class TagTokenizerTest extends TestCase {
 
     public void testTreatsUnterminatedAttributeNameAtEofAsText() {
         // expectations
-        handler.expectText("hello");
-        handler.expectText("<world x");
+        handler.expectText("hello<world x");
         // execute
         TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<world x"), handler);
         tokenizer.start();
@@ -249,10 +242,9 @@ public class TagTokenizerTest extends TestCase {
     /* TODO
     public void testTreatsUnterminatedQuotedAttributeValueAtEofAsText() {
         // expectations
-        handler.expectText("hello");
-        handler.expectText("<world x=\"fff");
+        handler.expectText("hello<world x=\"fff");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer("hello<world x=\"fff");
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<world x=\"fff"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -261,8 +253,7 @@ public class TagTokenizerTest extends TestCase {
 
     public void testTreatsUnterminatedAttributeAtEofAsText() {
         // expectations
-        handler.expectText("hello");
-        handler.expectText("<world x=");
+        handler.expectText("hello<world x=");
         // execute
         TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<world x="), handler);
         tokenizer.start();
@@ -272,8 +263,7 @@ public class TagTokenizerTest extends TestCase {
 
     public void testTreatsUnterminatedUnquotedAttributeValueAtEofAsText() {
         // expectations
-        handler.expectText("hello");
-        handler.expectText("<world x=fff");
+        handler.expectText("hello<world x=fff");
         // execute
         TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<world x=fff"), handler);
         tokenizer.start();
@@ -283,8 +273,7 @@ public class TagTokenizerTest extends TestCase {
 
     public void testTreatsUnterminatedClosingTagAtEofAsText() {
         // expectations
-        handler.expectText("hello");
-        handler.expectText("<world /");
+        handler.expectText("hello<world /");
         // execute
         TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("hello<world /"), handler);
         tokenizer.start();
@@ -292,11 +281,13 @@ public class TagTokenizerTest extends TestCase {
         handler.verify();
     }
 
-    public void testIgnoresEvilMalformedPairOfAngleBrackets() {
+    public void testTreatsEvilMalformedPairOfAngleBracketsAsText() {
         // expectations
+        handler.expectText("<></>< >");
         handler.expectTag(Tag.Type.OPEN, "good");
+        handler.expectText("<>END<><");
         // execute
-        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<>< ><good><>"), handler);
+        TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<></>< ><good><>END<><"), handler);
         tokenizer.start();
         // verify
         handler.verify();
@@ -313,8 +304,7 @@ public class TagTokenizerTest extends TestCase {
         handler.expectTag(Tag.Type.OPEN, "good");
         handler.expectText("<bad>");
         handler.expectTag(Tag.Type.CLOSE, "good");
-        handler.expectText("<![bad]-->");
-        handler.expectText("<unfinished");
+        handler.expectText("<![bad]--><unfinished");
         // execute
         TagTokenizer tokenizer = new TagTokenizer(CharBuffer.wrap("<good><bad></good><![bad]--><unfinished"), handler);
         tokenizer.start();
@@ -356,7 +346,7 @@ public class TagTokenizerTest extends TestCase {
         private StringBuffer actual = new StringBuffer();
 
         public void expectText(String tag) {
-            expected.append(tag);
+            expected.append("{{").append(tag).append("}}");
         }
 
         public void expectTag(Tag.Type type, String tag) {
@@ -388,8 +378,8 @@ public class TagTokenizerTest extends TestCase {
         }
 
         @Override
-        public void text(CharBuffer text) throws IOException {
-            actual.append(text);
+        public void text(CharSequence text) throws IOException {
+            actual.append("{{").append(text).append("}}");
         }
 
         public void warning(String message, int line, int column) {

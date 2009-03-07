@@ -73,7 +73,7 @@ public class TagProcessor {
             }
 
             @Override
-            public void text(CharBuffer text) throws IOException {
+            public void text(CharSequence text) throws IOException {
                 currentState.handleText(text, context);
             }
 
