@@ -63,6 +63,9 @@
         <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"
                  classpathref="buildtools.classpath"/>
         <junit printsummary="no" haltonfailure="yes" fork="yes" forkmode="once" dir=".">
+            <assertions>
+                <enable/>
+            </assertions>
             <classpath refid="test.classpath"/>
             <classpath>
                 <pathelement location="build/main/classes"/>
