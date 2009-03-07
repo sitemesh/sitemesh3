@@ -65,11 +65,6 @@ public class InMemoryContent implements Content {
         }
 
         @Override
-        public int length() {
-            return value.length();
-        }
-
-        @Override
         public String value() {
             return value.toString();
         }
@@ -94,11 +89,6 @@ public class InMemoryContent implements Content {
         @Override
         public boolean exists() {
             return false;
-        }
-
-        @Override
-        public int length() {
-            return 0;
         }
 
         @Override

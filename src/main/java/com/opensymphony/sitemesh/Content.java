@@ -11,7 +11,6 @@ public interface Content extends Iterable<Map.Entry<String,Content.Property>> {
 
     interface Property {
         boolean exists();
-        int length();
         String value();
         String valueNeverNull();
         void writeTo(Appendable out) throws IOException;

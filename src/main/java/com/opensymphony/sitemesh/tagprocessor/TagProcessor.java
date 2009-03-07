@@ -1,6 +1,6 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
-import com.opensymphony.sitemesh.tagprocessor.util.CharArray;
+import com.opensymphony.sitemesh.tagprocessor.util.CharSequenceList;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
@@ -18,7 +18,7 @@ import java.nio.CharBuffer;
  */
 public class TagProcessor {
     private final CharBuffer in;
-    private final CharArray out;
+    private final CharSequenceList out;
 
     private final State defaultState = new State();
 
@@ -26,7 +26,7 @@ public class TagProcessor {
 
     public TagProcessor(CharBuffer source) {
         this.in = source;
-        this.out = new CharArray(4096);
+        this.out = new CharSequenceList();
     }
 
     /**
@@ -88,10 +88,10 @@ public class TagProcessor {
 
     private class Context implements TagProcessorContext {
 
-        private CharArray[] buffers = new CharArray[10];
+        private CharSequenceList[] buffers = new CharSequenceList[10];
         private int size;
 
-        public Context(CharArray defaultBuffer) {
+        public Context(CharSequenceList defaultBuffer) {
             buffers[0] = defaultBuffer;
             size = 1;
         }
@@ -109,11 +109,11 @@ public class TagProcessor {
         @Override
         public void pushBuffer() {
             if(size == buffers.length) {
-              CharArray[] newBuffers = new CharArray[buffers.length * 2];
+              CharSequenceList[] newBuffers = new CharSequenceList[buffers.length * 2];
               System.arraycopy(buffers, 0, newBuffers, 0, buffers.length);
               buffers = newBuffers;
             }
-            buffers[size++] = new CharArray(512);
+            buffers[size++] = new CharSequenceList();
         }
 
         @Override

@@ -34,17 +34,12 @@ public class HtmlContentProcessor<C extends Context> implements ContentProcessor
 
     @Override
     public Content build(CharBuffer data, C context) throws IOException {
-        final InMemoryContent content = new InMemoryContent(data);
+        InMemoryContent content = new InMemoryContent(data);
+        PageBuilder builder = new InMemoryContentBuilder(content);
 
         TagProcessor processor = new TagProcessor(data);
         State html = processor.defaultState();
 
-        PageBuilder builder = new PageBuilder() {
-            @Override
-            public void addProperty(String key, CharSequence value) {
-                content.addProperty(key, value);
-            }
-        };
         // Core rules for SiteMesh to be functional.
         html.addRule(new HeadExtractingRule(builder)); // contents of <head>
         html.addRule(new BodyTagRule(builder)); // contents of <body>
@@ -70,7 +65,6 @@ public class HtmlContentProcessor<C extends Context> implements ContentProcessor
         }
 
         return content;
-
     }
 
     protected void addUserDefinedRules(State html, State xml, PageBuilder page) {
