@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh.tagprocessor;
 
 import java.util.Arrays;
 import java.io.IOException;
+import java.nio.CharBuffer;
 
 /**
  * A CustomTag provides a mechanism to manipulate the contents of a Tag. The standard Tag implementations
@@ -53,30 +54,45 @@ public class CustomTag implements Tag {
 
     @Override
     public void writeTo(Appendable out) throws IOException {
-        if (type == Tag.Type.CLOSE) {
-            out.append("</");
-        } else {
-            out.append('<');
+        // Calculate length of written tag up front, so we can allocate a
+        // buffer of the correct size.
+        int length = 0;
+        length += type == Tag.Type.CLOSE ? 2 : 1;
+        length += name.length();
+        for (int i = 0; i < this.attributeCount; i += 2) {
+            length += 1 + attributes[i].length();
+            if (attributes[i + 1] != null) {
+                length += 3 + attributes[i + 1].length();
+            }
         }
+        length += type == Tag.Type.EMPTY ? 2 : 1;
 
-        out.append(name);
-        final int len = attributeCount;
+        // Allocate buffer for tag.
+        CharBuffer tag = CharBuffer.allocate(length);
 
-        for (int i = 0; i < len; i += 2) {
-            final String name = attributes[i];
-            final String value = attributes[i + 1];
-            if (value == null) {
-                out.append(' ').append(name);
-            } else {
-                out.append(' ').append(name).append("=\"").append(value).append("\"");
+        tag.put('<');
+        if (type == Tag.Type.CLOSE) {
+            tag.put('/');
+        }
+        tag.put(name);
+
+        for (int i = 0; i < this.attributeCount; i += 2) {
+            tag.put(' ').put(attributes[i]);
+            if (attributes[i + 1] != null) {
+                tag.put('=').put('"').put(attributes[i + 1]).put('"');
             }
         }
 
         if (type == Tag.Type.EMPTY) {
-            out.append("/>");
-        } else {
-            out.append('>');
+            tag.put('/');
         }
+        tag.put('>');
+
+        assert tag.remaining() == 0 : "Incorrect buffer length for tag. Please report this to the SiteMesh team.";
+
+        // Output the buffer.
+        tag.flip();
+        out.append(tag);
     }
 
     @Override
