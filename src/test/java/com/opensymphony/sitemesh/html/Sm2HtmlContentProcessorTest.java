@@ -10,13 +10,13 @@ import java.io.IOException;
  *
  * @author Joe Walnes
  */
-public class HtmlContentProcessorTest {
+public class Sm2HtmlContentProcessorTest {
 
     public static Test suite() throws IOException {
-        TestSuite suite = new TestSuite(HtmlContentProcessorTest.class.getName());
+        TestSuite suite = new TestSuite(Sm2HtmlContentProcessorTest.class.getName());
         DataDrivenSuiteBuilder.buildSuite(
                 suite,
-                new HtmlContentProcessor(),
+                new Sm2HtmlContentProcessor(),
                 "test01.txt",
                 "test02.txt",
                 "test03.txt",
@@ -38,29 +38,29 @@ public class HtmlContentProcessorTest {
                 "test19.txt",
                 "test20.txt",
                 "test21.txt",
-                // "test22.txt", Unsupported SM2 features.
-                // "test23.txt", Unsupported SM2 features.
+                "test22.txt",
+                "test23.txt",
                 "test24.txt",
-                // "test25.txt", Unsupported SM2 features.
+                "test25.txt",
                 "test26.txt",
                 "test27.txt",
                 "test28.txt",
-                // "test29.txt", Unsupported SM2 features.
-                // "test30.txt",
+                "test29.txt",
+                "test30.txt",
                 "test31.txt",
-                // "test32.txt", Unsupported SM2 features.
-                // "test33.txt", Unsupported SM2 features.
+                "test32.txt",
+                "test33.txt",
                 "test34.txt",
-                // "test35.txt", Unsupported SM2 features.
+                "test35.txt",
                 "test36.txt",
                 "test37.txt",
-                // "test38.txt", Unsupported MSOffice rule.
+                // "test38.txt", This uses MSOffice properties, which has been moved to MsOfficeHtmlContentProcessor.
                 "test39.txt",
-                // "test40.txt", Unsupported SM2 features.
+                "test40.txt",
                 "test41.txt",
-                // "test42.txt", Unsupported SM2 features.
-                "test43.txt"
-                // "test44.txt" Unsupported SM2 features.
+                "test42.txt",
+                "test43.txt",
+                "test44.txt"
         );
         return suite;
     }

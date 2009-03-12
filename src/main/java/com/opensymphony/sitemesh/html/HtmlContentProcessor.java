@@ -1,82 +1,68 @@
 package com.opensymphony.sitemesh.html;
 
-import com.opensymphony.sitemesh.ContentProcessor;
-import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.Content;
-import com.opensymphony.sitemesh.InMemoryContent;
-import com.opensymphony.sitemesh.html.rules.HeadExtractingRule;
+import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.html.rules.BodyTagRule;
-import com.opensymphony.sitemesh.html.rules.TitleExtractingRule;
-import com.opensymphony.sitemesh.html.rules.FramesetRule;
-import com.opensymphony.sitemesh.html.rules.PageBuilder;
-import com.opensymphony.sitemesh.html.rules.HtmlAttributesRule;
+import com.opensymphony.sitemesh.html.rules.HeadExtractingRule;
 import com.opensymphony.sitemesh.html.rules.MetaTagRule;
-import com.opensymphony.sitemesh.html.rules.ParameterExtractingRule;
-import com.opensymphony.sitemesh.html.rules.ContentBlockExtractingRule;
-import com.opensymphony.sitemesh.html.rules.MSOfficeDocumentPropertiesRule;
-import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
+import com.opensymphony.sitemesh.html.rules.PageBuilder;
+import com.opensymphony.sitemesh.html.rules.TitleExtractingRule;
 import com.opensymphony.sitemesh.tagprocessor.State;
 import com.opensymphony.sitemesh.tagprocessor.StateTransitionRule;
-
-import java.nio.CharBuffer;
-import java.io.IOException;
+import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
 
 /**
- * {@link Content} implementation that will build itself from
- * an HTML page, built on {@link TagProcessor}.
- * <p/>
- * Users can override {@link #addUserDefinedRules(State, State, PageBuilder)} to customize
- * the tag processing rules.
+ * {@link Content} implementation that will build itself from an HTML document.
  *
+ * <p>The following properties will be extracted from the document:</p>
+ * <ul>
+ * <li><b><code>body</code></b>: The contents of the <code>&lt;body&gt;</code> element.</li>
+ * <li><b><code>title</code></b>: The contents of the <code>&lt;title&gt;</code> element.</li>
+ * <li><b><code>head</code></b>: The contents of the <code>&lt;head&gt;</code> element,
+ * <li><b><code>meta.XXX</code></b>: Each <code>&lt;meta&gt;</code> tag,
+ * where <code>XXX</code> is the <code>name</code> of the tag.</li>
+ * <li><b><code>meta.http-equiv.XXX</code></b>: Each <code>&lt;meta http-equiv&gt;</code> tag,
+ * where <code>XXX</code> is the <code>http-equiv</code> attribute of the tag.</li>
+ * <li><b><code>body.XXX</code></b>: Each attribute of the <code>&lt;body&gt;</code> tag,
+ * where <code>XXX</code> is attribute name (e.g. body.bgcolor=white).</li>
+ * </ul>
+ *
+ * <p>In the event that no <code>&lt;body&gt;</code> tag is found in the document, the <code>body</code>
+ * attribute will instead be everything in the document that is not matched by any other rule. This is useful
+ * for documents that are not wrapped in a <code>&lt;body&gt;</code> tag.</p>
+ *
+ * <p>To add custom rules, override {@link #setupRules(State, PageBuilder)}, ensuring that super.setupRules()
+ *  is called.</p>
+ *
+ * @see Sm2HtmlContentProcessor
+ * @see MsOfficeHtmlContentProcessor
+ * @see TagBasedContentProcessor
  * @author Joe Walnes
  */
-public class HtmlContentProcessor<C extends Context> implements ContentProcessor<C> {
+public class HtmlContentProcessor<C extends Context> extends TagBasedContentProcessor<C> {
 
     @Override
-    public Content build(CharBuffer data, C context) throws IOException {
-        InMemoryContent content = new InMemoryContent(data);
-        PageBuilder builder = new InMemoryContentBuilder(content);
-
-        TagProcessor processor = new TagProcessor(data);
-        State html = processor.defaultState();
+    protected void setupRules(State defaultState, PageBuilder builder) {
+        super.setupRules(defaultState, builder);
 
         // Core rules for SiteMesh to be functional.
-        html.addRule(new HeadExtractingRule(builder)); // contents of <head>
-        html.addRule(new BodyTagRule(builder)); // contents of <body>
-
-        html.addRule(new TitleExtractingRule(builder)); // the <title>
-        html.addRule(new FramesetRule(builder)); // if the page is a frameset
+        defaultState.addRule(new HeadExtractingRule(builder)); // contents of <head>
+        defaultState.addRule(new TitleExtractingRule(builder)); // the <title>
+        defaultState.addRule(new BodyTagRule(builder)); // contents of <body>
+        defaultState.addRule(new MetaTagRule(builder)); // <meta> tags.
 
         // Ensure that while in <xml> tag, none of the other rules kick in.
         // For example <xml><book><title>hello</title></book></xml> should not affect the title of the page.
-        State xml = new State();
-        html.addRule(new StateTransitionRule("xml", xml));
+        defaultState.addRule(new StateTransitionRule("xml", new State()));
+    }
 
-        // Additional rules - designed to be tweaked.
-        addUserDefinedRules(html, xml, builder);
-
-        // Run the processor.
-        processor.process();
-
+    @Override
+    protected void postProcess(Content content, PageBuilder builder, TagProcessor processor) {
         // In the event that no <body> tag was captured, use the default buffer contents instead
         // (i.e. the whole document, except anything that was written to other buffers).
         if (!content.getProperty("body").exists()) {
-          content.addProperty("body", processor.getDefaultBufferContents());
+            builder.addProperty("body", processor.getDefaultBufferContents());
         }
-
-        return content;
-    }
-
-    protected void addUserDefinedRules(State html, State xml, PageBuilder page) {
-        // Useful properties
-        html.addRule(new HtmlAttributesRule(page));         // attributes in <html> element
-        html.addRule(new MetaTagRule(page));                // all <meta> tags
-        html.addRule(new ParameterExtractingRule(page));    // <parameter> blocks
-        html.addRule(new ContentBlockExtractingRule(page)); // <content> blocks
-
-        // Capture properties written to documents by MS Office (author, version, company, etc).
-        // Note: These properties are from the xml state, not the html state.
-        xml.addRule(new MSOfficeDocumentPropertiesRule(page));
     }
 
 }

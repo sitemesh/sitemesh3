@@ -14,12 +14,12 @@ import java.io.IOException;
  *
  * @author Joe Walnes
  */
-public class MSOfficeDocumentPropertiesRule extends BasicRule {
+public class MsOfficeDocumentPropertiesRule extends BasicRule {
 
     private final PageBuilder page;
     private boolean inDocumentProperties;
 
-    public MSOfficeDocumentPropertiesRule(PageBuilder page) {
+    public MsOfficeDocumentPropertiesRule(PageBuilder page) {
         this.page = page;
     }
 

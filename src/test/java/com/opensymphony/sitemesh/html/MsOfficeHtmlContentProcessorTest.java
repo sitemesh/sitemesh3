@@ -5,18 +5,17 @@ import junit.framework.TestSuite;
 
 import java.io.IOException;
 
-/**
- * This is a data driven test suite. See testdata/readme.txt.
- *
- * @author Joe Walnes
- */
-public class HtmlContentProcessorTest {
+public class MsOfficeHtmlContentProcessorTest {
 
+    /**
+     * This test case builds a custom suite, containing a collection of smaller suites
+     * (one for each file of testdata/text??.txt).
+     */
     public static Test suite() throws IOException {
-        TestSuite suite = new TestSuite(HtmlContentProcessorTest.class.getName());
+        TestSuite suite = new TestSuite(MsOfficeHtmlContentProcessorTest.class.getName());
         DataDrivenSuiteBuilder.buildSuite(
                 suite,
-                new HtmlContentProcessor(),
+                new MsOfficeHtmlContentProcessor(),
                 "test01.txt",
                 "test02.txt",
                 "test03.txt",
@@ -54,7 +53,7 @@ public class HtmlContentProcessorTest {
                 // "test35.txt", Unsupported SM2 features.
                 "test36.txt",
                 "test37.txt",
-                // "test38.txt", Unsupported MSOffice rule.
+                "test38.txt", // <-- Specific MSOffice test.
                 "test39.txt",
                 // "test40.txt", Unsupported SM2 features.
                 "test41.txt",
