@@ -99,8 +99,7 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
         verify();
         WebAppContext context = createContext(contentType, request, response);
         Content content = contentProcessor.build(buffer, context);
-        String decoratorPath = decoratorSelector.selectDecoratorPath(content, context);
-        return content != null && decoratorApplier.decorate(decoratorPath, content, context);
+        return context.applyDecorator(content);
     }
 
     /**
@@ -131,6 +130,7 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
      */
     protected WebAppContext createContext(String contentType, HttpServletRequest request,
                                           HttpServletResponse response) {
-        return new WebAppContext(contentType, request, response, getFilterConfig().getServletContext());
+        return new WebAppContext(contentType, request, response,
+                getFilterConfig().getServletContext(), decoratorApplier, decoratorSelector);
     }
 }

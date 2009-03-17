@@ -8,4 +8,7 @@ public interface Context {
     PrintWriter getWriter() throws IOException;
 
     String getRequestPath();
+
+    boolean applyDecorator(Content content) throws IOException;
+
 }

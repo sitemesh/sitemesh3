@@ -41,4 +41,9 @@ public class ContextStub implements Context {
         this.requestPath = requestPath;
         return this;
     }
+
+    @Override
+    public boolean applyDecorator(Content content) throws IOException {
+        throw new UnsupportedOperationException("Not supported by ContextStub");
+    }
 }
