@@ -23,8 +23,8 @@ import com.opensymphony.sitemesh.tagprocessor.StateTransitionRule;
 public class MsOfficeHtmlContentProcessor<C extends Context> extends HtmlContentProcessor<C> {
 
     @Override
-    protected void setupRules(State htmlState, PageBuilder pageBuilder) {
-        super.setupRules(htmlState, pageBuilder);
+    protected void setupRules(State htmlState, PageBuilder pageBuilder, C context) {
+        super.setupRules(htmlState, pageBuilder, context);
 
         // Capture properties written to documents by MS Office (author, version, company, etc).
         // Note: These properties can only appear between <xml>..</xml> tags.

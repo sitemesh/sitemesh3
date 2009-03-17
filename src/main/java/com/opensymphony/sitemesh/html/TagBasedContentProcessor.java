@@ -28,7 +28,7 @@ public abstract class TagBasedContentProcessor<C extends Context> implements Con
         TagProcessor processor = new TagProcessor(data);
 
         // Additional rules - designed to be tweaked.
-        setupRules(processor.defaultState(), builder);
+        setupRules(processor.defaultState(), builder, context);
 
         // Run the processor.
         processor.process();
@@ -40,7 +40,7 @@ public abstract class TagBasedContentProcessor<C extends Context> implements Con
     /**
      * Override this to add custom rules.
      */
-    protected void setupRules(State defaultState, PageBuilder builder) {
+    protected void setupRules(State defaultState, PageBuilder builder, C context) {
         // No op.
     }
 

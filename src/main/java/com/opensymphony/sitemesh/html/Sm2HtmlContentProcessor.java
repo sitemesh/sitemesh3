@@ -28,8 +28,8 @@ import com.opensymphony.sitemesh.tagprocessor.State;
 public class Sm2HtmlContentProcessor<C extends Context> extends HtmlContentProcessor<C> {
 
     @Override
-    protected void setupRules(State htmlState, PageBuilder pageBuilder) {
-        super.setupRules(htmlState, pageBuilder);
+    protected void setupRules(State htmlState, PageBuilder pageBuilder, C context) {
+        super.setupRules(htmlState, pageBuilder, context);
         htmlState.addRule(new FramesetRule(pageBuilder));               // Detect framesets.
         htmlState.addRule(new HtmlAttributesRule(pageBuilder));         // attributes in <html> element
         htmlState.addRule(new ParameterExtractingRule(pageBuilder));    // <parameter> blocks

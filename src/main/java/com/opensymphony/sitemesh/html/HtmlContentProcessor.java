@@ -31,8 +31,8 @@ import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
  * attribute will instead be everything in the document that is not matched by any other rule. This is useful
  * for documents that are not wrapped in a <code>&lt;body&gt;</code> tag.</p>
  *
- * <p>To add custom rules, override {@link #setupRules(State, PageBuilder)}, ensuring that super.setupRules()
- *  is called.</p>
+ * <p>To add custom rules, override {@link TagBasedContentProcessor#setupRules(State, PageBuilder, Context)} },
+ * ensuring that super.setupRules() is called.</p>
  *
  * @see Sm2HtmlContentProcessor
  * @see MsOfficeHtmlContentProcessor
@@ -42,8 +42,8 @@ import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
 public class HtmlContentProcessor<C extends Context> extends TagBasedContentProcessor<C> {
 
     @Override
-    protected void setupRules(State defaultState, PageBuilder builder) {
-        super.setupRules(defaultState, builder);
+    protected void setupRules(State defaultState, PageBuilder builder, C context) {
+        super.setupRules(defaultState, builder, context);
 
         // Core rules for SiteMesh to be functional.
         defaultState.addRule(new HeadExtractingRule(builder)); // contents of <head>

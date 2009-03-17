@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh.html.rules;
 
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.ContentProcessor;
+import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh.tagprocessor.State;
 import junit.framework.TestCase;
@@ -21,8 +22,8 @@ public class DivExtractingRuleTest extends TestCase {
         super.setUp();
         contentProcessor = new HtmlContentProcessor() {
             @Override
-            protected void setupRules(State defaultState, PageBuilder builder) {
-                super.setupRules(defaultState, builder);
+            protected void setupRules(State defaultState, PageBuilder builder, Context context) {
+                super.setupRules(defaultState, builder, context);
                 defaultState.addRule(new DivExtractingRule(builder));
             }
         };
