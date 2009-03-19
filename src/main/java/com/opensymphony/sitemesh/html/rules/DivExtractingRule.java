@@ -1,18 +1,16 @@
 package com.opensymphony.sitemesh.html.rules;
 
-import com.opensymphony.sitemesh.tagprocessor.BasicRule;
+import com.opensymphony.sitemesh.tagprocessor.BasicBlockRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
 
 import java.io.IOException;
-import java.util.Stack;
 
 /**
  * @author Daniel Bodart
  */
-public class DivExtractingRule extends BasicRule {
+public class DivExtractingRule extends BasicBlockRule<String> {
 
     private final PageBuilder pageBuilder;
-    private final Stack<String> ids = new Stack<String>();
 
     public DivExtractingRule(PageBuilder pageBuilder) {
         super("div");
@@ -20,25 +18,22 @@ public class DivExtractingRule extends BasicRule {
     }
 
     @Override
-    public void process(Tag tag) throws IOException {
-        switch (tag.getType()) {
-            case OPEN:
-                ensureTagIsNotConsumed(tag);
-                if (shouldCapture(tag)) {
-                    pushContent();
-                }
-                pushId(tag);
-                break;
-            case CLOSE:
-                String id = popId();
-                if (capturing(id)) {
-                    CharSequence content = popContent();
-                    pageBuilder.addProperty("div." + id, content);
-                    ensureContentIsNotConsumed(content);
-                }
-                ensureTagIsNotConsumed(tag);
-                break;
+    protected String processStart(Tag tag) throws IOException {
+        ensureTagIsNotConsumed(tag);
+        if (shouldCapture(tag)) {
+            pushContent();
         }
+        return getId(tag);
+    }
+
+    @Override
+    protected void processEnd(Tag tag, String id) throws IOException {
+        if (capturing(id)) {
+            CharSequence content = popContent();
+            pageBuilder.addProperty("div." + id, content);
+            ensureContentIsNotConsumed(content);
+        }
+        ensureTagIsNotConsumed(tag);
     }
 
     private void ensureContentIsNotConsumed(CharSequence content) throws IOException {
@@ -55,16 +50,12 @@ public class DivExtractingRule extends BasicRule {
         return id != null;
     }
 
-    private String popId() {
-        return ids.pop();
-    }
-
-    private void pushId(Tag tag) {
-        ids.push(tag.getAttributeValue("id", false));
-    }
-
     private void pushContent() {
         context.pushBuffer();
+    }
+
+    private String getId(Tag tag) {
+        return tag.getAttributeValue("id", false);
     }
 
     private boolean shouldCapture(Tag tag) {

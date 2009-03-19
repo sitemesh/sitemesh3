@@ -9,7 +9,7 @@ import com.opensymphony.sitemesh.tagprocessor.Tag;
  *
  * @author Joe Walnes
  */
-public class HtmlAttributesRule extends BasicRule{
+public class HtmlAttributesRule extends BasicRule {
 
     private final PageBuilder page;
 

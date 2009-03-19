@@ -1,7 +1,9 @@
 package com.opensymphony.sitemesh.html.rules;
 
-import com.opensymphony.sitemesh.tagprocessor.BasicRule;
+import com.opensymphony.sitemesh.tagprocessor.BasicBlockRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
+
+import java.io.IOException;
 
 /**
  * Extracts the contents of the &lt;body&gt; tag, writing into the passed in buffer.
@@ -14,7 +16,7 @@ import com.opensymphony.sitemesh.tagprocessor.Tag;
  *
  * @author Joe Walnes
  */
-public class BodyTagRule extends BasicRule {
+public class BodyTagRule extends BasicBlockRule {
 
     private final PageBuilder page;
 
@@ -24,17 +26,18 @@ public class BodyTagRule extends BasicRule {
     }
 
     @Override
-    public void process(Tag tag) {
-        if (tag.getType() == Tag.Type.OPEN || tag.getType() == Tag.Type.EMPTY) {
-            for (int i = 0; i < tag.getAttributeCount(); i++) {
-                page.addProperty("body." + tag.getAttributeName(i), tag.getAttributeValue(i));
-            }
-            context.pushBuffer();
+    protected Object processStart(Tag tag) throws IOException {
+        for (int i = 0; i < tag.getAttributeCount(); i++) {
+            page.addProperty("body." + tag.getAttributeName(i), tag.getAttributeValue(i));
         }
-        if (tag.getType() == Tag.Type.CLOSE || tag.getType() == Tag.Type.EMPTY) {
-            page.addProperty("body", context.currentBufferContents());
-            context.popBuffer();
-        }
+        context.pushBuffer();
+        return null;
+    }
+
+    @Override
+    protected void processEnd(Tag tag, Object data) throws IOException {
+        page.addProperty("body", context.currentBufferContents());
+        context.popBuffer();
     }
 
 }

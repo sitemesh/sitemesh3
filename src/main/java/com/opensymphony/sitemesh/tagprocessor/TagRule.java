@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * User defined rule for processing {@link Tag}s encountered by the {@link TagProcessor}.
  *
- * See {@link BasicRule} and {@link BlockExtractingRule} for base implementations that
+ * See {@link BasicRule} and {@link BasicBlockRule} for implementations that
  * provide basic functionality.
  *
  * @author Joe Walnes

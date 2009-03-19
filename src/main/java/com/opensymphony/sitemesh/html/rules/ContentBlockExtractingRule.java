@@ -1,7 +1,9 @@
 package com.opensymphony.sitemesh.html.rules;
 
-import com.opensymphony.sitemesh.tagprocessor.BlockExtractingRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
+import com.opensymphony.sitemesh.tagprocessor.BasicBlockRule;
+
+import java.io.IOException;
 
 /**
  * Extracts the contents of any elements that look like
@@ -13,25 +15,25 @@ import com.opensymphony.sitemesh.tagprocessor.Tag;
  *
  * @author Joe Walnes
  */
-public class ContentBlockExtractingRule extends BlockExtractingRule {
+public class ContentBlockExtractingRule extends BasicBlockRule<String> {
 
     private final PageBuilder page;
 
-    private String contentBlockId;
-
     public ContentBlockExtractingRule(PageBuilder page) {
-        super(false, "content");
+        super("content");
         this.page = page;
     }
 
     @Override
-    protected void start(Tag tag) {
-        contentBlockId = tag.getAttributeValue("tag", false);
+    protected String processStart(Tag tag) throws IOException {
+        context.pushBuffer();
+        return tag.getAttributeValue("tag", false);
     }
 
     @Override
-    protected void end(Tag tag) {
-        page.addProperty("page." + contentBlockId, context.currentBufferContents());
+    protected void processEnd(Tag tag, String tagId) throws IOException {
+        page.addProperty("page." + tagId, context.currentBufferContents());
+        context.popBuffer();
     }
 
 }
