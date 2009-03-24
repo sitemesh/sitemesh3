@@ -1,6 +1,7 @@
 package com.opensymphony.sitemesh;
 
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Selects an appropriate Decorator for the Content.
@@ -13,6 +14,6 @@ public interface DecoratorApplier<C extends Context> {
     /**
      * @return Whether decorator was applied.
      */
-    boolean decorate(String decoratorPath, Content content, C context) throws IOException;
+    boolean decorate(String decoratorPath, Content content, C context, Writer out) throws IOException;
 
 }

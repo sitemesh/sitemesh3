@@ -8,6 +8,7 @@ import freemarker.template.Configuration;
 import junit.framework.TestCase;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 /**
  * @author Joe Walnes
@@ -83,8 +84,9 @@ public class FreeMarkerDecoratorApplierTest extends TestCase {
     }
 
     private String applyDecorator() throws IOException {
-        decoratorApplier.decorate(DECORATOR_NAME, content, context);
-        return context.toString();
+        StringWriter out = new StringWriter();
+        decoratorApplier.decorate(DECORATOR_NAME, content, context, out);
+        return out.toString();
     }
 
 

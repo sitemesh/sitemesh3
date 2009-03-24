@@ -7,6 +7,7 @@ import org.antlr.stringtemplate.NoIndentWriter;
 import org.antlr.stringtemplate.StringTemplate;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,14 +51,15 @@ public class StringTemplateDecoratorApplier implements DecoratorApplier {
      * Applies the StringTemplate.
      */
     @Override
-    public boolean decorate(String decoratorPath, Content content, Context siteMeshContext) throws IOException {
+    public boolean decorate(String decoratorPath, Content content, Context siteMeshContext, Writer out)
+            throws IOException {
         StringTemplate masterTemplate = getMasterTemplate(decoratorPath);
         if (masterTemplate == null) {
             return false;
         }
         StringTemplate instanceTemplate = masterTemplate.getInstanceOf();
         setAttributes(instanceTemplate, content, siteMeshContext);
-        instanceTemplate.write(new NoIndentWriter(siteMeshContext.getWriter()));
+        instanceTemplate.write(new NoIndentWriter(out));
         return true;
     }
 

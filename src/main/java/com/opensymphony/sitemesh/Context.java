@@ -1,14 +1,14 @@
 package com.opensymphony.sitemesh;
 
-import java.io.PrintWriter;
 import java.io.IOException;
+import java.io.Writer;
 
 public interface Context {
 
-    PrintWriter getWriter() throws IOException;
-
     String getRequestPath();
 
-    boolean applyDecorator(Content content) throws IOException;
+    boolean applyDecorator(Content content, Writer out) throws IOException;
+
+    boolean applyDecorator(String decoratorName, Content content, Writer out) throws IOException;
 
 }

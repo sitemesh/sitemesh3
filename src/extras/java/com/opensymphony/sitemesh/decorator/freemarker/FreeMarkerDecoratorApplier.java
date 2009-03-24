@@ -10,6 +10,7 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
 
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Uses <a href="http://freemarker.org/">FreeMarker</a> to apply a decorator.
@@ -53,10 +54,11 @@ public class FreeMarkerDecoratorApplier implements DecoratorApplier {
      * Applies the FreeMarker template.
      */
     @Override
-    public boolean decorate(String decoratorPath, Content content, Context siteMeshContext) throws IOException {
+    public boolean decorate(String decoratorPath, Content content, Context siteMeshContext, Writer out)
+            throws IOException {
         try {
             Template template = configuration.getTemplate(decoratorPath);
-            template.process(createTemplateModel(content, siteMeshContext), siteMeshContext.getWriter());
+            template.process(createTemplateModel(content, siteMeshContext), out);
             return true;
         } catch (TemplateException e) {
             throw new IOException("Could not render template " + decoratorPath, e);

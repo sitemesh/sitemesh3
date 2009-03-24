@@ -11,6 +11,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.RequestDispatcher;
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Dispatches to another path to render a decorator.
@@ -46,9 +47,15 @@ public class DispatchingDecoratorApplier implements DecoratorApplier<WebAppConte
      * See class JavaDoc.
      */
     @Override
-    public boolean decorate(String decoratorPath, Content content, WebAppContext context) throws IOException {
+    public boolean decorate(String decoratorPath, Content content, WebAppContext context, Writer out)
+            throws IOException {
         HttpServletRequest request = context.getRequest();
         HttpServletResponse response = context.getResponse();
+
+        if (response.getWriter() != out) {
+            // TODO: This needs to be supported.
+            throw new UnsupportedOperationException();
+        }
 
         // It's possible that this is reentrant, so we need to take a copy
         // of additional request attributes so we can restore them afterwards.

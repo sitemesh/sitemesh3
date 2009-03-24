@@ -12,19 +12,27 @@ import java.util.Map;
  */
 public class InMemoryContent implements Content {
 
-    private final Property original;
+    private Property original;
     private final Map<String, Property> properties = new HashMap<String, Property>();
 
     public InMemoryContent(Property original) throws IOException {
-        this.original = original;
+        setOriginal(original);
     }
 
     public InMemoryContent(CharSequence original) throws IOException {
-        this(original == null ? EMPTY_PROPERTY : new CharSequenceProperty(original));
+        setOriginal(original);
     }
 
     public InMemoryContent() throws IOException {
-        this(EMPTY_PROPERTY);
+        setOriginal(EMPTY_PROPERTY);
+    }
+
+    public void setOriginal(CharSequence original) {
+        this.original = original == null ? EMPTY_PROPERTY : new CharSequenceProperty(original);
+    }
+
+    public void setOriginal(Property original) {
+        this.original = original;
     }
 
     public void addProperty(String name, Property property) {

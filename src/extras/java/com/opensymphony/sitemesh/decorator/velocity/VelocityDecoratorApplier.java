@@ -8,6 +8,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Uses <a href="http://velocity.apache.org/">Apache Velocity</a> to apply a decorator.
@@ -51,10 +52,11 @@ public class VelocityDecoratorApplier implements DecoratorApplier {
      * Applies the Velocity template.
      */
     @Override
-    public boolean decorate(String decoratorPath, Content content, Context siteMeshContext) throws IOException {
+    public boolean decorate(String decoratorPath, Content content, Context siteMeshContext, Writer out)
+            throws IOException {
         try {
             Template template = velocityEngine.getTemplate(decoratorPath);
-            template.merge(createVelocityContext(content, siteMeshContext), siteMeshContext.getWriter());
+            template.merge(createVelocityContext(content, siteMeshContext), out);
             return true;
         } catch (Exception e) {
             throw new IOException("Could not render template " + decoratorPath, e);

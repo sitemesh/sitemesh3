@@ -97,7 +97,8 @@ public class WebEnvironment {
 
     public String getBody() {
         if (status != 200) {
-            throw new IllegalStateException("Bad response status: " + status);
+            throw new IllegalStateException("Bad response status: " + status
+                    + "\n----- Raw HTTP response -----\n" + getRawResponse());
         }
         return body;
     }

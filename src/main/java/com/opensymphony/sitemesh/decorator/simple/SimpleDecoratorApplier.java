@@ -5,7 +5,7 @@ import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.DecoratorApplier;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,12 +38,13 @@ public class SimpleDecoratorApplier implements DecoratorApplier {
     }
 
     @Override
-    public boolean decorate(String decoratorPath, Content content, Context context) throws IOException {
+    public boolean decorate(String decoratorPath, Content content, Context context, Writer out)
+            throws IOException {
         Node template = templates.get(decoratorPath);
         if (template == null) {
             return false;
         }
-        template.render(content, context.getWriter());
+        template.render(content, out);
         return true;
     }
 
@@ -73,14 +74,14 @@ public class SimpleDecoratorApplier implements DecoratorApplier {
     // -- Abstract Syntax Tree --
 
     private static interface Node {
-        void render(Content content, PrintWriter out) throws IOException;
+        void render(Content content, Writer out) throws IOException;
     }
 
     private static class ContainerNode implements Node {
         private final List<Node> children = new ArrayList<Node>();
 
         @Override
-        public void render(Content content, PrintWriter out) throws IOException {
+        public void render(Content content, Writer out) throws IOException {
             for (Node child : children) {
                 child.render(content, out);
             }
@@ -99,7 +100,7 @@ public class SimpleDecoratorApplier implements DecoratorApplier {
         }
 
         @Override
-        public void render(Content content, PrintWriter out) throws IOException {
+        public void render(Content content, Writer out) throws IOException {
             out.append(text);
         }
     }
@@ -112,7 +113,7 @@ public class SimpleDecoratorApplier implements DecoratorApplier {
         }
 
         @Override
-        public void render(Content content, PrintWriter out) throws IOException {
+        public void render(Content content, Writer out) throws IOException {
             Content.Property property = content.getProperty(name);
             property.writeTo(out);
         }

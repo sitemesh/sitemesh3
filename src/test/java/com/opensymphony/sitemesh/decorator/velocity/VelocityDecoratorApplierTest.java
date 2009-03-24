@@ -12,6 +12,7 @@ import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.apache.velocity.runtime.resource.util.StringResourceRepositoryImpl;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 /**
  * @author Joe Walnes
@@ -96,8 +97,9 @@ public class VelocityDecoratorApplierTest extends TestCase {
     }
 
     private String applyDecorator() throws IOException {
-        decoratorApplier.decorate(DECORATOR_NAME, content, context);
-        return context.getWrittenData();
+        StringWriter out = new StringWriter();
+        decoratorApplier.decorate(DECORATOR_NAME, content, context, out);
+        return out.toString();
     }
 
     private void setupDecorator(String templateContents) {

@@ -49,13 +49,7 @@ public class DispatchingDecoratorApplierTest extends TestCase {
                 .create();
 
         webEnvironment.doGet("/mycontent");
-        assertEquals(
-                "HTTP/1.1 200 OK\n" +
-                        "Content-Type: text/html\n" +
-                        "Content-Length: 19\n" +
-                        "\n" +
-                        "Title = Some title",
-                webEnvironment.getRawResponse());
+        assertEquals("Title = Some title", webEnvironment.getBody().trim());
     }
 
 }

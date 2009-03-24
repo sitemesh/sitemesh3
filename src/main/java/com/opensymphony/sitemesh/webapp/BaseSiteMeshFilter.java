@@ -99,7 +99,7 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
         verify();
         WebAppContext context = createContext(contentType, request, response);
         Content content = contentProcessor.build(buffer, context);
-        return context.applyDecorator(content);
+        return context.applyDecorator(content, response.getWriter());
     }
 
     /**

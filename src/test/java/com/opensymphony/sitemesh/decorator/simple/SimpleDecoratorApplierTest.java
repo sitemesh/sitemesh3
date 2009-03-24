@@ -5,6 +5,7 @@ import com.opensymphony.sitemesh.InMemoryContent;
 import junit.framework.TestCase;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 /**
  * @author Joe Walnes
@@ -67,9 +68,10 @@ public class SimpleDecoratorApplierTest extends TestCase {
     }
 
     private String applyDecorator() throws IOException {
+        StringWriter out = new StringWriter();
         ContextStub context = new ContextStub();
-        decoratorApplier.decorate("mydecorator", content, context);
-        return context.toString();
+        decoratorApplier.decorate("mydecorator", content, context, out);
+        return out.toString();
     }
 
 }

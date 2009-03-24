@@ -8,8 +8,8 @@ import com.opensymphony.sitemesh.DecoratorSelector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletContext;
-import java.io.PrintWriter;
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * SiteMesh {@link Context} implementation specifically for webapps running in a Servlet
@@ -38,11 +38,6 @@ public class WebAppContext implements Context {
         this.servletContext = servletContext;
         this.decoratorApplier = decoratorApplier;
         this.decoratorSelector = decoratorSelector;
-    }
-
-    @Override
-    public PrintWriter getWriter() throws IOException {
-        return getResponse().getWriter();
     }
 
     public HttpServletRequest getRequest() {
@@ -82,8 +77,14 @@ public class WebAppContext implements Context {
     }
 
     @Override
-    public boolean applyDecorator(Content content) throws IOException {
-        String decoratorPath = decoratorSelector.selectDecoratorPath(content, this);        
-        return content != null && decoratorApplier.decorate(decoratorPath, content, this);
+    public boolean applyDecorator(Content content, Writer out) throws IOException {
+        return content != null
+                && applyDecorator(decoratorSelector.selectDecoratorPath(content, this), content, out);
+    }
+
+    @Override
+    public boolean applyDecorator(String decoratorName, Content content, Writer out) throws IOException {
+        return decoratorName != null
+                && decoratorApplier.decorate(decoratorName, content, this, out);
     }
 }
