@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh.html.rules;
 
 import com.opensymphony.sitemesh.tagprocessor.BasicRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
+import com.opensymphony.sitemesh.Content;
 
 import java.io.IOException;
 
@@ -15,20 +16,20 @@ import java.io.IOException;
  */
 public class MetaTagRule extends BasicRule {
 
-    private final PageBuilder page;
+    private final Content content;
 
-    public MetaTagRule(PageBuilder page) {
+    public MetaTagRule(Content content) {
         super("meta");
-        this.page = page;
+        this.content = content;
     }
 
     @Override
     public void process(Tag tag) throws IOException {
         if (tag.hasAttribute("name", false)) {
-            page.addProperty("meta." + tag.getAttributeValue("name", false),
+            content.addProperty("meta." + tag.getAttributeValue("name", false),
                     tag.getAttributeValue("content", false));
         } else if (tag.hasAttribute("http-equiv", false)) {
-            page.addProperty("meta.http-equiv." + tag.getAttributeValue("http-equiv", false),
+            content.addProperty("meta.http-equiv." + tag.getAttributeValue("http-equiv", false),
                     tag.getAttributeValue("content", false));
         }
         tag.writeTo(context.currentBuffer());

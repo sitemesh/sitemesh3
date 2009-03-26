@@ -3,11 +3,11 @@ package com.opensymphony.sitemesh.webapp;
 import junit.framework.TestCase;
 import com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
-import com.opensymphony.sitemesh.html.rules.PageBuilder;
 import com.opensymphony.sitemesh.html.rules.DecorateRule;
 import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh.decorator.simple.SimpleDecoratorApplier;
 import com.opensymphony.sitemesh.ContentProcessor;
+import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.tagprocessor.State;
 
 /**
@@ -19,8 +19,8 @@ public class WebAppContextTest extends TestCase {
 
         ContentProcessor<WebAppContext> processor = new HtmlContentProcessor<WebAppContext>() {
             @Override
-            protected void setupRules(State defaultState, PageBuilder builder, WebAppContext context) {
-                super.setupRules(defaultState, builder, context);
+            protected void setupRules(State defaultState, Content content, WebAppContext context) {
+                super.setupRules(defaultState, content, context);
                 defaultState.addRule(new DecorateRule(context));
             }
         };
@@ -62,8 +62,8 @@ public class WebAppContextTest extends TestCase {
 
         ContentProcessor<WebAppContext> processor = new HtmlContentProcessor<WebAppContext>() {
             @Override
-            protected void setupRules(State defaultState, PageBuilder builder, WebAppContext context) {
-                super.setupRules(defaultState, builder, context);
+            protected void setupRules(State defaultState, Content content, WebAppContext context) {
+                super.setupRules(defaultState, content, context);
                 defaultState.addRule(new DecorateRule(context));
             }
         };

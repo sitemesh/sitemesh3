@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh.html.rules;
 
 import com.opensymphony.sitemesh.tagprocessor.Tag;
 import com.opensymphony.sitemesh.tagprocessor.BasicBlockRule;
+import com.opensymphony.sitemesh.Content;
 
 import java.io.IOException;
 
@@ -17,11 +18,11 @@ import java.io.IOException;
  */
 public class ContentBlockExtractingRule extends BasicBlockRule<String> {
 
-    private final PageBuilder page;
+    private final Content content;
 
-    public ContentBlockExtractingRule(PageBuilder page) {
+    public ContentBlockExtractingRule(Content content) {
         super("content");
-        this.page = page;
+        this.content = content;
     }
 
     @Override
@@ -32,7 +33,7 @@ public class ContentBlockExtractingRule extends BasicBlockRule<String> {
 
     @Override
     protected void processEnd(Tag tag, String tagId) throws IOException {
-        page.addProperty("page." + tagId, context.currentBufferContents());
+        content.addProperty("page." + tagId, context.currentBufferContents());
         context.popBuffer();
     }
 

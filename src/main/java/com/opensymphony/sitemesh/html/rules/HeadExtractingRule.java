@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh.html.rules;
 
 import com.opensymphony.sitemesh.tagprocessor.BasicBlockRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
+import com.opensymphony.sitemesh.Content;
 
 import java.io.IOException;
 
@@ -13,11 +14,11 @@ import java.io.IOException;
  */
 public class HeadExtractingRule extends BasicBlockRule {
 
-    private final PageBuilder page;
+    private final Content content;
 
-    public HeadExtractingRule(PageBuilder page) {
+    public HeadExtractingRule(Content content) {
         super("head");
-        this.page = page;
+        this.content = content;
     }
 
     @Override
@@ -28,7 +29,7 @@ public class HeadExtractingRule extends BasicBlockRule {
 
     @Override
     protected void processEnd(Tag tag, Object data) throws IOException {
-        page.addProperty("head", context.currentBufferContents());
+        content.addProperty("head", context.currentBufferContents());
         context.popBuffer();
     }
 

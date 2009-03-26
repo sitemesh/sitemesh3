@@ -1,5 +1,7 @@
 package com.opensymphony.sitemesh;
 
+import com.opensymphony.sitemesh.tagprocessor.util.CharSequenceList;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,20 +29,35 @@ public class InMemoryContent implements Content {
         setOriginal(EMPTY_PROPERTY);
     }
 
-    public void setOriginal(CharSequence original) {
-        this.original = original == null ? EMPTY_PROPERTY : new CharSequenceProperty(original);
+    protected Property toProperty(CharSequence charSequence) {
+        if (charSequence == null) {
+            return EMPTY_PROPERTY;
+        } else if (charSequence instanceof CharSequenceList) {
+            // Optimization.
+            return new CharSequenceListProperty((CharSequenceList) charSequence);
+        } else {
+            return new CharSequenceProperty(charSequence);
+        }
     }
 
+    @Override
+    public void setOriginal(CharSequence original) {
+        setOriginal(toProperty(original));
+    }
+
+    @Override
     public void setOriginal(Property original) {
         this.original = original;
     }
 
+    @Override
     public void addProperty(String name, Property property) {
         properties.put(name, property);
     }
 
+    @Override
     public void addProperty(String name, CharSequence value) {
-        addProperty(name, value == null ? EMPTY_PROPERTY : new CharSequenceProperty(value));
+        addProperty(name, toProperty(value));
     }
 
     @Override
@@ -85,6 +102,43 @@ public class InMemoryContent implements Content {
         @Override
         public void writeTo(Appendable out) throws IOException {
             out.append(value);
+        }
+
+        @Override
+        public String toString() {
+            return value.toString();
+        }
+    }
+
+    /**
+     * Implementation of {@link Content.Property} that is optimized for
+     * {@link com.opensymphony.sitemesh.tagprocessor.util.CharSequenceList}.
+     */
+    private static class CharSequenceListProperty implements Content.Property {
+        private final CharSequenceList value;
+
+        public CharSequenceListProperty(CharSequenceList value) {
+            this.value = value;
+        }
+
+        @Override
+        public boolean exists() {
+            return true;
+        }
+
+        @Override
+        public String value() {
+            return value.toString();
+        }
+
+        @Override
+        public String valueNeverNull() {
+            return value.toString();
+        }
+
+        @Override
+        public void writeTo(Appendable out) throws IOException {
+            value.writeTo(out);
         }
 
         @Override

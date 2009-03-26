@@ -87,7 +87,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
     public static class MyContentProcessor implements ContentProcessor<WebAppContext> {
         @Override
         public Content build(CharBuffer data, WebAppContext context) throws IOException {
-            InMemoryContent content = new InMemoryContent();
+            Content content = new InMemoryContent();
             content.addProperty("title", "MyContentProcessedTitle");
             return content;
         }

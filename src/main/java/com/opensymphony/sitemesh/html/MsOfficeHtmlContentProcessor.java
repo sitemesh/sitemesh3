@@ -1,8 +1,8 @@
 package com.opensymphony.sitemesh.html;
 
 import com.opensymphony.sitemesh.Context;
+import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.html.rules.MsOfficeDocumentPropertiesRule;
-import com.opensymphony.sitemesh.html.rules.PageBuilder;
 import com.opensymphony.sitemesh.tagprocessor.State;
 import com.opensymphony.sitemesh.tagprocessor.StateTransitionRule;
 
@@ -23,14 +23,14 @@ import com.opensymphony.sitemesh.tagprocessor.StateTransitionRule;
 public class MsOfficeHtmlContentProcessor<C extends Context> extends HtmlContentProcessor<C> {
 
     @Override
-    protected void setupRules(State htmlState, PageBuilder pageBuilder, C context) {
-        super.setupRules(htmlState, pageBuilder, context);
+    protected void setupRules(State htmlState, Content content, C context) {
+        super.setupRules(htmlState, content, context);
 
         // Capture properties written to documents by MS Office (author, version, company, etc).
         // Note: These properties can only appear between <xml>..</xml> tags.
         State xmlState = new State();
         htmlState.addRule(new StateTransitionRule("xml", xmlState));
-        xmlState.addRule(new MsOfficeDocumentPropertiesRule(pageBuilder));
+        xmlState.addRule(new MsOfficeDocumentPropertiesRule(content));
     }
 
 }

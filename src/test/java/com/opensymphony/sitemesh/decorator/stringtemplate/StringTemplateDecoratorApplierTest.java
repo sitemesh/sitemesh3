@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh.decorator.stringtemplate;
 
 import com.opensymphony.sitemesh.ContextStub;
 import com.opensymphony.sitemesh.InMemoryContent;
+import com.opensymphony.sitemesh.Content;
 import junit.framework.TestCase;
 import org.antlr.stringtemplate.StringTemplate;
 
@@ -12,7 +13,7 @@ import java.io.StringWriter;
  * @author Joe Walnes
  */
 public class StringTemplateDecoratorApplierTest extends TestCase {
-    private InMemoryContent content;
+    private Content content;
     private StringTemplateDecoratorApplier decoratorApplier;
 
     private static final String DECORATOR_NAME = "mydecorator";

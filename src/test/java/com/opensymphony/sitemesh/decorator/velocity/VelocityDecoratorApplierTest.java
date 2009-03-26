@@ -3,6 +3,7 @@ package com.opensymphony.sitemesh.decorator.velocity;
 import com.opensymphony.sitemesh.ContextStub;
 import com.opensymphony.sitemesh.DecoratorApplier;
 import com.opensymphony.sitemesh.InMemoryContent;
+import com.opensymphony.sitemesh.Content;
 import junit.framework.TestCase;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
@@ -22,7 +23,7 @@ public class VelocityDecoratorApplierTest extends TestCase {
     private StringResourceRepository velocityRepository;
 
     private DecoratorApplier decoratorApplier;
-    private InMemoryContent content;
+    private Content content;
     private ContextStub context;
 
     private static final String DECORATOR_NAME = "mydecorator.vm";

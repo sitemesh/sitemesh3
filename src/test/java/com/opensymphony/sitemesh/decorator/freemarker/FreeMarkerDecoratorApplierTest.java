@@ -3,6 +3,7 @@ package com.opensymphony.sitemesh.decorator.freemarker;
 import com.opensymphony.sitemesh.ContextStub;
 import com.opensymphony.sitemesh.DecoratorApplier;
 import com.opensymphony.sitemesh.InMemoryContent;
+import com.opensymphony.sitemesh.Content;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import junit.framework.TestCase;
@@ -16,7 +17,7 @@ import java.io.StringWriter;
 public class FreeMarkerDecoratorApplierTest extends TestCase {
 
     private DecoratorApplier decoratorApplier;
-    private InMemoryContent content;
+    private Content content;
     private ContextStub context;
     private StringTemplateLoader templateLoader;
 

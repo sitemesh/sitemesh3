@@ -16,8 +16,12 @@ public interface Content extends Iterable<Map.Entry<String,Content.Property>> {
         void writeTo(Appendable out) throws IOException;
     }
 
-    Property getProperty(String name);
-
     Property getOriginal();
+    void setOriginal(CharSequence original);
+    void setOriginal(Property original);
+
+    Property getProperty(String name);
+    void addProperty(String name, Property property);
+    void addProperty(String name, CharSequence value);
 
 }

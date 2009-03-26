@@ -5,7 +5,6 @@ import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.html.rules.BodyTagRule;
 import com.opensymphony.sitemesh.html.rules.HeadExtractingRule;
 import com.opensymphony.sitemesh.html.rules.MetaTagRule;
-import com.opensymphony.sitemesh.html.rules.PageBuilder;
 import com.opensymphony.sitemesh.html.rules.TitleExtractingRule;
 import com.opensymphony.sitemesh.tagprocessor.State;
 import com.opensymphony.sitemesh.tagprocessor.StateTransitionRule;
@@ -31,7 +30,7 @@ import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
  * attribute will instead be everything in the document that is not matched by any other rule. This is useful
  * for documents that are not wrapped in a <code>&lt;body&gt;</code> tag.</p>
  *
- * <p>To add custom rules, override {@link TagBasedContentProcessor#setupRules(State, PageBuilder, Context)} },
+ * <p>To add custom rules, override {@link TagBasedContentProcessor#setupRules(State, Content, Context)} },
  * ensuring that super.setupRules() is called.</p>
  *
  * @see Sm2HtmlContentProcessor
@@ -42,14 +41,14 @@ import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
 public class HtmlContentProcessor<C extends Context> extends TagBasedContentProcessor<C> {
 
     @Override
-    protected void setupRules(State defaultState, PageBuilder builder, C context) {
-        super.setupRules(defaultState, builder, context);
+    protected void setupRules(State defaultState, Content content, C context) {
+        super.setupRules(defaultState, content, context);
 
         // Core rules for SiteMesh to be functional.
-        defaultState.addRule(new HeadExtractingRule(builder)); // contents of <head>
-        defaultState.addRule(new TitleExtractingRule(builder)); // the <title>
-        defaultState.addRule(new BodyTagRule(builder)); // contents of <body>
-        defaultState.addRule(new MetaTagRule(builder)); // <meta> tags.
+        defaultState.addRule(new HeadExtractingRule(content)); // contents of <head>
+        defaultState.addRule(new TitleExtractingRule(content)); // the <title>
+        defaultState.addRule(new BodyTagRule(content)); // contents of <body>
+        defaultState.addRule(new MetaTagRule(content)); // <meta> tags.
 
         // Ensure that while in <xml> tag, none of the other rules kick in.
         // For example <xml><book><title>hello</title></book></xml> should not affect the title of the page.
@@ -57,11 +56,11 @@ public class HtmlContentProcessor<C extends Context> extends TagBasedContentProc
     }
 
     @Override
-    protected void postProcess(Content content, PageBuilder builder, TagProcessor processor) {
+    protected void postProcess(Content content, TagProcessor processor) {
         // In the event that no <body> tag was captured, use the default buffer contents instead
         // (i.e. the whole document, except anything that was written to other buffers).
         if (!content.getProperty("body").exists()) {
-            builder.addProperty("body", processor.getDefaultBufferContents());
+            content.addProperty("body", processor.getDefaultBufferContents());
         }
     }
 

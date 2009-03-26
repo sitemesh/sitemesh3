@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh.html.rules;
 
 import com.opensymphony.sitemesh.tagprocessor.BasicRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
+import com.opensymphony.sitemesh.Content;
 
 /**
  * Identifies whether a page contains frames (as these would typically
@@ -12,16 +13,16 @@ import com.opensymphony.sitemesh.tagprocessor.Tag;
  */
 public class FramesetRule extends BasicRule {
 
-    private final PageBuilder page;
+    private final Content content;
 
-    public FramesetRule(PageBuilder page) {
+    public FramesetRule(Content content) {
         super("frame", "frameset");
-        this.page = page;
+        this.content = content;
     }
 
     @Override
     public void process(Tag tag) {
-        page.addProperty("frameset", "true");
+        content.addProperty("frameset", "true");
     }
 
 }

@@ -50,7 +50,7 @@ public class DecorateRuleTest extends TestCase {
         tagProcessor.addRule(new DecorateRule(new ContextStub() {
             @Override
             public Content decorate(String decoratorName, Content content) throws IOException {
-                InMemoryContent result = new InMemoryContent();
+                Content result = new InMemoryContent();
                 result.addProperty("body", "-DECORATED-");
                 return result;
             }

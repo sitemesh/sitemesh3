@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh.html.rules;
 
 import com.opensymphony.sitemesh.tagprocessor.BasicBlockRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
+import com.opensymphony.sitemesh.Content;
 
 import java.io.IOException;
 
@@ -13,13 +14,13 @@ import java.io.IOException;
  */
 public class TitleExtractingRule extends BasicBlockRule {
 
-    private final PageBuilder page;
+    private final Content content;
 
     private boolean seenAtLeastOneTitle;
 
-    public TitleExtractingRule(PageBuilder page) {
+    public TitleExtractingRule(Content content) {
         super("title");
-        this.page = page;
+        this.content = content;
     }
 
     @Override
@@ -31,7 +32,7 @@ public class TitleExtractingRule extends BasicBlockRule {
     @Override
     protected void processEnd(Tag tag, Object data) throws IOException {
         if (!seenAtLeastOneTitle) {
-            page.addProperty("title", context.currentBufferContents());
+            content.addProperty("title", context.currentBufferContents());
             seenAtLeastOneTitle = true;
         }
         context.popBuffer();

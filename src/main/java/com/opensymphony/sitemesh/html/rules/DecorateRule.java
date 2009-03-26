@@ -32,7 +32,7 @@ import java.io.IOException;
  *
  * @author Joe Walnes
  */
-public class DecorateRule extends BasicBlockRule<InMemoryContent> {
+public class DecorateRule extends BasicBlockRule<Content> {
 
     private final Context siteMeshContext;
 
@@ -42,10 +42,10 @@ public class DecorateRule extends BasicBlockRule<InMemoryContent> {
     }
 
     @Override
-    protected InMemoryContent processStart(Tag tag) throws IOException {
+    protected Content processStart(Tag tag) throws IOException {
         context.pushBuffer();
 
-        InMemoryContent content = new InMemoryContent();
+        Content content = new InMemoryContent();
 
         for (int i = 0, count = tag.getAttributeCount(); i < count; i++) {
             content.addProperty(
@@ -57,7 +57,7 @@ public class DecorateRule extends BasicBlockRule<InMemoryContent> {
     }
 
     @Override
-    protected void processEnd(Tag tag, InMemoryContent content) throws IOException {
+    protected void processEnd(Tag tag, Content content) throws IOException {
         CharSequence body = context.currentBufferContents();
         context.popBuffer();
 

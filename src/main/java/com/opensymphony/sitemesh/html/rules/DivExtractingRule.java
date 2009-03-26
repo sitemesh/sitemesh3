@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh.html.rules;
 
 import com.opensymphony.sitemesh.tagprocessor.BasicBlockRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
+import com.opensymphony.sitemesh.Content;
 
 import java.io.IOException;
 
@@ -10,11 +11,11 @@ import java.io.IOException;
  */
 public class DivExtractingRule extends BasicBlockRule<String> {
 
-    private final PageBuilder pageBuilder;
+    private final Content content;
 
-    public DivExtractingRule(PageBuilder pageBuilder) {
+    public DivExtractingRule(Content content) {
         super("div");
-        this.pageBuilder = pageBuilder;
+        this.content = content;
     }
 
     @Override
@@ -30,7 +31,7 @@ public class DivExtractingRule extends BasicBlockRule<String> {
     protected void processEnd(Tag tag, String id) throws IOException {
         if (capturing(id)) {
             CharSequence content = popContent();
-            pageBuilder.addProperty("div." + id, content);
+            this.content.addProperty("div." + id, content);
             ensureContentIsNotConsumed(content);
         }
         ensureTagIsNotConsumed(tag);

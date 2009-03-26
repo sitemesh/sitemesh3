@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh.html.rules;
 
 import com.opensymphony.sitemesh.tagprocessor.BasicBlockRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
+import com.opensymphony.sitemesh.Content;
 
 import java.io.IOException;
 
@@ -18,17 +19,17 @@ import java.io.IOException;
  */
 public class BodyTagRule extends BasicBlockRule {
 
-    private final PageBuilder page;
+    private final Content content;
 
-    public BodyTagRule(PageBuilder page) {
+    public BodyTagRule(Content content) {
         super("body");
-        this.page = page;
+        this.content = content;
     }
 
     @Override
     protected Object processStart(Tag tag) throws IOException {
         for (int i = 0; i < tag.getAttributeCount(); i++) {
-            page.addProperty("body." + tag.getAttributeName(i), tag.getAttributeValue(i));
+            content.addProperty("body." + tag.getAttributeName(i), tag.getAttributeValue(i));
         }
         context.pushBuffer();
         return null;
@@ -36,7 +37,7 @@ public class BodyTagRule extends BasicBlockRule {
 
     @Override
     protected void processEnd(Tag tag, Object data) throws IOException {
-        page.addProperty("body", context.currentBufferContents());
+        content.addProperty("body", context.currentBufferContents());
         context.popBuffer();
     }
 

@@ -22,9 +22,9 @@ public class DivExtractingRuleTest extends TestCase {
         super.setUp();
         contentProcessor = new HtmlContentProcessor() {
             @Override
-            protected void setupRules(State defaultState, PageBuilder builder, Context context) {
-                super.setupRules(defaultState, builder, context);
-                defaultState.addRule(new DivExtractingRule(builder));
+            protected void setupRules(State defaultState, Content content, Context context) {
+                super.setupRules(defaultState, content, context);
+                defaultState.addRule(new DivExtractingRule(content));
             }
         };
     }

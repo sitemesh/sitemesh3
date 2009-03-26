@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh.html.rules;
 
 import com.opensymphony.sitemesh.tagprocessor.BasicRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
+import com.opensymphony.sitemesh.Content;
 
 import java.io.IOException;
 
@@ -16,11 +17,11 @@ import java.io.IOException;
  */
 public class MsOfficeDocumentPropertiesRule extends BasicRule {
 
-    private final PageBuilder page;
+    private final Content content;
     private boolean inDocumentProperties;
 
-    public MsOfficeDocumentPropertiesRule(PageBuilder page) {
-        this.page = page;
+    public MsOfficeDocumentPropertiesRule(Content content) {
+        this.content = content;
     }
 
     @Override
@@ -39,7 +40,7 @@ public class MsOfficeDocumentPropertiesRule extends BasicRule {
                 context.pushBuffer();
             } else if (tag.getType() == Tag.Type.CLOSE) {
                 String name = tag.getName().substring(2);
-                page.addProperty("office.DocumentProperties." + name, context.currentBufferContents());
+                content.addProperty("office.DocumentProperties." + name, context.currentBufferContents());
                 CharSequence contents = context.currentBufferContents();
                 context.popBuffer();
                 context.currentBuffer().append(contents);
