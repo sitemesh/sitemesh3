@@ -57,4 +57,48 @@ public class WebAppContextTest extends TestCase {
 
         assertEquals(expected, web.getBody());
     }
+
+    public void testSupportsDecoratingInlineContentInDecorators() throws Exception {
+
+        ContentProcessor<WebAppContext> processor = new HtmlContentProcessor<WebAppContext>() {
+            @Override
+            protected void setupRules(State defaultState, PageBuilder builder, WebAppContext context) {
+                super.setupRules(defaultState, builder, context);
+                defaultState.addRule(new DecorateRule(context));
+            }
+        };
+
+        WebEnvironment web = new WebEnvironment.Builder()
+                .addFilter("/*", new BaseSiteMeshFilter(
+                        new BasicSelector("text/html"),
+                        processor,
+                        new PathBasedDecoratorSelector()
+                                .put("/*", "page"),
+                        new SimpleDecoratorApplier()
+                                .put("page", "PAGE\n<decorate decorator='inner'>{{body}}</decorate>\n/PAGE")
+                                .put("inline", "INLINE Title:{{title}} " +
+                                        "Body:<decorate decorator='inner'>{{body}}</decorate> /INLINE")
+                                .put("inner", "INNER{{body}}/INNER")
+                ))
+                .addStaticContent("/hello.html", "text/html", "" +
+                        "<body>\n" +
+                        "CONTENT\n" +
+                        "<decorate decorator='inline' title='block A'><b>A</b></decorate>\n" +
+                        "<decorate decorator='inline' title='block B'><i>B</i></decorate>\n" +
+                        "</body>\n")
+                .create();
+
+        web.doGet("/hello.html");
+
+        String expected = "" +
+                "PAGE\n" +
+                "INNER\n" +
+                "CONTENT\n" +
+                "INLINE Title:block A Body:INNER<b>A</b>/INNER /INLINE\n" +
+                "INLINE Title:block B Body:INNER<i>B</i>/INNER /INLINE\n" +
+                "/INNER\n" +
+                "/PAGE";
+
+        assertEquals(expected, web.getBody());
+    }
 }

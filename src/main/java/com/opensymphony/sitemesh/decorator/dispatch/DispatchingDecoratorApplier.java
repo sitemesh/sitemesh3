@@ -4,6 +4,8 @@ import com.opensymphony.sitemesh.DecoratorApplier;
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.webapp.WebAppContext;
+import com.opensymphony.sitemesh.webapp.contentfilter.HttpServletResponseBuffer;
+import com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.CharBuffer;
 
 /**
  * Dispatches to another path to render a decorator.
@@ -52,10 +55,14 @@ public class DispatchingDecoratorApplier implements DecoratorApplier<WebAppConte
         HttpServletRequest request = context.getRequest();
         HttpServletResponse response = context.getResponse();
 
-        if (response.getWriter() != out) {
-            // TODO: This needs to be supported.
-            throw new UnsupportedOperationException();
-        }
+        // Wrap response so output gets buffered.
+        HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, new BasicSelector() {
+            @Override
+            public boolean shouldBufferForContentType(String contentType, String mimeType, String encoding) {
+                return true; // We know we should buffer.
+            }
+        });
+        responseBuffer.setContentType(response.getContentType()); // Trigger buffering.
 
         // It's possible that this is reentrant, so we need to take a copy
         // of additional request attributes so we can restore them afterwards.
@@ -69,6 +76,11 @@ public class DispatchingDecoratorApplier implements DecoratorApplier<WebAppConte
             // Main dispatch.
             ServletContext destinationServletContext = getContextForWebApp(context);
             dispatch(request, response, destinationServletContext, decoratorPath);
+
+            // Write out the buffered output.
+            CharBuffer buffer = responseBuffer.getBuffer();
+            out.append(buffer);
+
         } catch (ServletException e) {
             throw new IOException("Could not dispatch to decorator: ", e);
         } finally {

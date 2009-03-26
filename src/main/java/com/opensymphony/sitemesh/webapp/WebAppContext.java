@@ -4,12 +4,14 @@ import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.DecoratorApplier;
 import com.opensymphony.sitemesh.DecoratorSelector;
+import com.opensymphony.sitemesh.ContentProcessor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletContext;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.CharArrayWriter;
+import java.nio.CharBuffer;
 
 /**
  * SiteMesh {@link Context} implementation specifically for webapps running in a Servlet
@@ -27,17 +29,20 @@ public class WebAppContext implements Context {
     private final ServletContext servletContext;
     private final DecoratorApplier<WebAppContext> decoratorApplier;
     private final DecoratorSelector<WebAppContext> decoratorSelector;
+    private final ContentProcessor<WebAppContext> contentProcessor;
 
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
                          DecoratorApplier<WebAppContext> decoratorApplier,
-                         DecoratorSelector<WebAppContext> decoratorSelector) {
+                         DecoratorSelector<WebAppContext> decoratorSelector,
+                         ContentProcessor<WebAppContext> contentProcessor) {
         this.contentType = contentType;
         this.request = request;
         this.response = response;
         this.servletContext = servletContext;
         this.decoratorApplier = decoratorApplier;
         this.decoratorSelector = decoratorSelector;
+        this.contentProcessor = contentProcessor;
     }
 
     public HttpServletRequest getRequest() {
@@ -77,14 +82,30 @@ public class WebAppContext implements Context {
     }
 
     @Override
-    public boolean applyDecorator(Content content, Writer out) throws IOException {
-        return content != null
-                && applyDecorator(decoratorSelector.selectDecoratorPath(content, this), content, out);
+    public Content decorate(Content content) throws IOException {
+        if (content == null) {
+            return null;
+        }
+        return decorate(decoratorSelector.selectDecoratorPath(content, this), content);
     }
 
     @Override
-    public boolean applyDecorator(String decoratorName, Content content, Writer out) throws IOException {
-        return decoratorName != null
-                && decoratorApplier.decorate(decoratorName, content, this, out);
+    public Content decorate(String decoratorName, Content content) throws IOException {
+        if (decoratorName == null) {
+            return null;
+        }
+
+        class CharBufferWriter extends CharArrayWriter {
+            public CharBuffer toCharBuffer() {
+                return CharBuffer.wrap(this.buf, 0, this.count);
+            }
+        }
+        CharBufferWriter out = new CharBufferWriter();
+        decoratorApplier.decorate(decoratorName, content, this, out);
+
+        CharBuffer decorated = out.toCharBuffer();
+
+        // TODO: Don't reprocess the content properties.
+        return contentProcessor.build(decorated, this);
     }
 }

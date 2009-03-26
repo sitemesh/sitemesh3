@@ -2,11 +2,11 @@ package com.opensymphony.sitemesh.html.rules;
 
 import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.InMemoryContent;
+import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.tagprocessor.BasicBlockRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 /**
  * Rule that applies decorators to inline blocks of content.
@@ -65,10 +65,10 @@ public class DecorateRule extends BasicBlockRule<InMemoryContent> {
         content.addProperty("body", body);
 
         String decoratorName = content.getProperty("decorator").value();
-        StringWriter writer = new StringWriter();
-        boolean applied = siteMeshContext.applyDecorator(decoratorName, content, writer);
-        if (applied) {
-            context.currentBuffer().append(writer.toString());
+        Content decorated = siteMeshContext.decorate(decoratorName, content);
+        if (decorated != null) {
+            // TODO: Use a 'default' property
+            decorated.getProperty("body").writeTo(context.currentBuffer());
         } else {
             context.currentBuffer().append(body);
         }

@@ -81,7 +81,9 @@ public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
         BasicSelector basicSelector = new BasicSelector(mimeTypes) {
             @Override
             public boolean shouldBufferForRequest(HttpServletRequest request) {
-                String requestPath = new WebAppContext(null, request, null, null, null, null).getRequestPath();
+                // TODO: No need to instantiate WebAppContext for this.
+                String requestPath = new WebAppContext(null, request, null, null, null, null, null)
+                        .getRequestPath();
                 return super.shouldBufferForRequest(request)
                         && excludesMapper.get(requestPath) == null;
             }

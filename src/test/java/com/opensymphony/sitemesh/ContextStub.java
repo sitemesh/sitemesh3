@@ -1,7 +1,6 @@
 package com.opensymphony.sitemesh;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * Stub {@link Context} implementation, for use in tests.
@@ -23,12 +22,12 @@ public class ContextStub implements Context {
     }
 
     @Override
-    public boolean applyDecorator(Content content, Writer out) throws IOException {
+    public Content decorate(Content content) throws IOException {
         throw new UnsupportedOperationException("Not supported by ContextStub");
     }
 
     @Override
-    public boolean applyDecorator(String decoratorName, Content content, Writer out) throws IOException {
+    public Content decorate(String decoratorName, Content content) throws IOException {
         throw new UnsupportedOperationException("Not supported by ContextStub");
     }
 }

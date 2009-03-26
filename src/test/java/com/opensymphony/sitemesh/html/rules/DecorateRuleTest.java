@@ -3,11 +3,11 @@ package com.opensymphony.sitemesh.html.rules;
 import junit.framework.TestCase;
 import com.opensymphony.sitemesh.ContextStub;
 import com.opensymphony.sitemesh.Content;
+import com.opensymphony.sitemesh.InMemoryContent;
 import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
 
 import java.nio.CharBuffer;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -26,9 +26,9 @@ public class DecorateRuleTest extends TestCase {
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
         tagProcessor.addRule(new DecorateRule(new ContextStub() {
             @Override
-            public boolean applyDecorator(String decoratorName, Content content, Writer out) throws IOException {
+            public Content decorate(String decoratorName, Content content) throws IOException {
                 capturedContentRef.set(content);
-                return true;
+                return new InMemoryContent();
             }
         }));
         tagProcessor.process();
@@ -49,9 +49,10 @@ public class DecorateRuleTest extends TestCase {
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
         tagProcessor.addRule(new DecorateRule(new ContextStub() {
             @Override
-            public boolean applyDecorator(String decoratorName, Content content, Writer out) throws IOException {
-                out.write("-DECORATED-");
-                return true;
+            public Content decorate(String decoratorName, Content content) throws IOException {
+                InMemoryContent result = new InMemoryContent();
+                result.addProperty("body", "-DECORATED-");
+                return result;
             }
         }));
         tagProcessor.process();
@@ -69,10 +70,9 @@ public class DecorateRuleTest extends TestCase {
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
         tagProcessor.addRule(new DecorateRule(new ContextStub() {
             @Override
-            public boolean applyDecorator(String decoratorName, Content content, Writer out) throws IOException {
+            public Content decorate(String decoratorName, Content content) throws IOException {
                 wasCalled.set(true);
-                out.write("-DECORATED-");
-                return false; // Decorator not successfully applied, therefore the above content should not be written.
+                return null;
             }
         }));
         tagProcessor.process();
@@ -91,9 +91,9 @@ public class DecorateRuleTest extends TestCase {
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
         tagProcessor.addRule(new DecorateRule(new ContextStub() {
             @Override
-            public boolean applyDecorator(String decoratorName, Content content, Writer out) throws IOException {
+            public Content decorate(String decoratorName, Content content) throws IOException {
                 wasCalled.set(true);
-                return false;
+                return null;
             }
         }));
         tagProcessor.process();
