@@ -75,7 +75,7 @@ public class DispatchingDecoratorApplier implements DecoratorApplier<WebAppConte
         try {
             // Main dispatch.
             ServletContext destinationServletContext = getContextForWebApp(context);
-            dispatch(request, response, destinationServletContext, decoratorPath);
+            dispatch(request, responseBuffer, destinationServletContext, decoratorPath);
 
             // Write out the buffered output.
             CharBuffer buffer = responseBuffer.getBuffer();

@@ -23,15 +23,15 @@ import java.io.IOException;
  */
 public class PathBasedDecoratorSelector implements DecoratorSelector {
 
-    private final PathMapper<String> pathMapper = new PathMapper<String>();
+    private final PathMapper<String[]> pathMapper = new PathMapper<String[]>();
 
-    public PathBasedDecoratorSelector put(String contentPath, String decoratorPath) {
-        pathMapper.put(contentPath, decoratorPath);
+    public PathBasedDecoratorSelector put(String contentPath, String... decoratorPaths) {
+        pathMapper.put(contentPath, decoratorPaths);
         return this;
     }
 
     @Override
-    public String selectDecoratorPath(Content content, Context context) throws IOException {
+    public String[] selectDecoratorPaths(Content content, Context context) throws IOException {
         return pathMapper.get(context.getRequestPath());
     }
 }

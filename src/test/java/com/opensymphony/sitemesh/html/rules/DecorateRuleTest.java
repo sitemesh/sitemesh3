@@ -98,7 +98,7 @@ public class DecorateRuleTest extends TestCase {
         }));
         tagProcessor.process();
 
-        assertTrue("applyDecorator() should have been called", wasCalled.get());
+        assertFalse("applyDecorator() should NOT have been called", wasCalled.get());
         assertEquals("BEFORE<b>Some content</b>AFTER", tagProcessor.getDefaultBufferContents().toString());
     }
 

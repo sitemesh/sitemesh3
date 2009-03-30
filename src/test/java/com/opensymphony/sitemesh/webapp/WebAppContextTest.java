@@ -101,4 +101,5 @@ public class WebAppContextTest extends TestCase {
 
         assertEquals(expected, web.getBody());
     }
+
 }

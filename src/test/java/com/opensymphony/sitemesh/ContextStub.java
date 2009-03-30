@@ -22,11 +22,6 @@ public class ContextStub implements Context {
     }
 
     @Override
-    public Content decorate(Content content) throws IOException {
-        throw new UnsupportedOperationException("Not supported by ContextStub");
-    }
-
-    @Override
     public Content decorate(String decoratorName, Content content) throws IOException {
         throw new UnsupportedOperationException("Not supported by ContextStub");
     }

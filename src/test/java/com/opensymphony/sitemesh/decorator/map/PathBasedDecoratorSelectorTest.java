@@ -18,14 +18,35 @@ public class PathBasedDecoratorSelectorTest extends TestCase {
         DecoratorSelector selector = new PathBasedDecoratorSelector()
                 .put("/*", "/decorators/default.jsp")
                 .put("/admin/*", "/decorators/admin.jsp")
-                .put("/thingy", "/decorators/thingy.jsp");
+                .put("/thingy", "/decorators/thingy.jsp")
+                .put("/multiple", "/1.jsp", "/2.jsp", "/3.jsp");
 
-        assertEquals("/decorators/admin.jsp", selector.selectDecoratorPath(content,
-                new ContextStub().withRequestPath("/admin/foo")));
-        assertEquals("/decorators/thingy.jsp", selector.selectDecoratorPath(content,
-                new ContextStub().withRequestPath("/thingy")));
-        assertEquals("/decorators/default.jsp", selector.selectDecoratorPath(content,
-                new ContextStub().withRequestPath("/thingy-not")));
+        assertEquals(
+                join("/decorators/admin.jsp"),
+                join(selector.selectDecoratorPaths(content,
+                        new ContextStub().withRequestPath("/admin/foo"))));
+        assertEquals(
+                join("/decorators/thingy.jsp"),
+                join(selector.selectDecoratorPaths(content,
+                        new ContextStub().withRequestPath("/thingy"))));
+        assertEquals(
+                join("/decorators/default.jsp"),
+                join(selector.selectDecoratorPaths(content,
+                        new ContextStub().withRequestPath("/thingy-not"))));
+        assertEquals(
+                join("/1.jsp", "/2.jsp", "/3.jsp"),
+                join(selector.selectDecoratorPaths(content,
+                        new ContextStub().withRequestPath("/multiple"))));
     }
 
+    private static String join(String... strings) {
+        StringBuilder result = new StringBuilder();
+        for (String string : strings) {
+            if (result.length() > 0) {
+                result.append('|');
+            }
+            result.append(string);
+        }
+        return result.toString();
+    }
 }

@@ -1,8 +1,7 @@
 package com.opensymphony.sitemesh.simple;
 
 import com.opensymphony.sitemesh.Content;
-import com.opensymphony.sitemesh.ContentProcessor;
-import com.opensymphony.sitemesh.InMemoryContent;
+import com.opensymphony.sitemesh.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh.webapp.WebAppContext;
 import com.opensymphony.sitemesh.webapp.WebEnvironment;
 import junit.framework.TestCase;
@@ -12,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.CharBuffer;
 import java.util.HashMap;
 
@@ -84,10 +84,10 @@ public class SimpleSiteMeshFilterTest extends TestCase {
                 "Decorated: Hello world", webEnvironment.getBody());
     }
 
-    public static class MyContentProcessor implements ContentProcessor<WebAppContext> {
+    public static class MyContentProcessor extends HtmlContentProcessor<WebAppContext> {
         @Override
         public Content build(CharBuffer data, WebAppContext context) throws IOException {
-            Content content = new InMemoryContent();
+            Content content = super.build(data, context);
             content.addProperty("title", "MyContentProcessedTitle");
             return content;
         }
@@ -188,6 +188,39 @@ public class SimpleSiteMeshFilterTest extends TestCase {
         assertEquals("Decorated: Hello world (by C)", webEnvironment.getBody());
         webEnvironment.doGet("/foo/x.bar");
         assertEquals("Decorated: Hello world (by B)", webEnvironment.getBody());
+    }
+
+    public void testSupportsChainingOfTopLevelDecorators() throws Exception {
+
+        class SimpleDecoratorServlet extends HttpServlet {
+            private final String name;
+
+            public SimpleDecoratorServlet(String name) {
+                this.name = name;
+            }
+
+            @Override
+            protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+                Content content = (Content) request.getAttribute(Content.class.getName());
+                PrintWriter out = response.getWriter();
+                out.append(name).append(' ');
+                content.getProperty("body").writeTo(out);
+                out.append(" /").append(name);
+            }
+        }
+
+        WebEnvironment web = new WebEnvironment.Builder()
+                .addFilter("/*",
+                        SimpleSiteMeshFilter.class,
+                        new InitParams()
+                                .with("defaultDecorator", "/decorator-inner,/decorator-inner,/decorator-outer"))
+                .addServlet("/decorator-outer", new SimpleDecoratorServlet("OUTER"))
+                .addServlet("/decorator-inner", new SimpleDecoratorServlet("INNER"))
+                .addStaticContent("/hello.html", "text/html", "<body>CONTENT</body>")
+                .create();
+
+        web.doGet("/hello.html");
+        assertEquals("OUTER INNER INNER CONTENT /INNER /INNER /OUTER", web.getBody());
     }
 
     /**

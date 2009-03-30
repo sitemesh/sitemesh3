@@ -9,6 +9,6 @@ import java.io.IOException;
  */
 public interface DecoratorSelector<C extends Context> {
 
-    String selectDecoratorPath(Content content, C context) throws IOException;
+    String[] selectDecoratorPaths(Content content, C context) throws IOException;
 
 }

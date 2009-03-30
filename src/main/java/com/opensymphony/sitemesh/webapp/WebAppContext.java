@@ -3,7 +3,6 @@ package com.opensymphony.sitemesh.webapp;
 import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.DecoratorApplier;
-import com.opensymphony.sitemesh.DecoratorSelector;
 import com.opensymphony.sitemesh.ContentProcessor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,20 +27,17 @@ public class WebAppContext implements Context {
     private final HttpServletResponse response;
     private final ServletContext servletContext;
     private final DecoratorApplier<WebAppContext> decoratorApplier;
-    private final DecoratorSelector<WebAppContext> decoratorSelector;
     private final ContentProcessor<WebAppContext> contentProcessor;
 
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
                          DecoratorApplier<WebAppContext> decoratorApplier,
-                         DecoratorSelector<WebAppContext> decoratorSelector,
                          ContentProcessor<WebAppContext> contentProcessor) {
         this.contentType = contentType;
         this.request = request;
         this.response = response;
         this.servletContext = servletContext;
         this.decoratorApplier = decoratorApplier;
-        this.decoratorSelector = decoratorSelector;
         this.contentProcessor = contentProcessor;
     }
 
@@ -63,6 +59,10 @@ public class WebAppContext implements Context {
 
     @Override
     public String getRequestPath() {
+        return getRequestPath(request);
+    }
+
+    public static String getRequestPath(HttpServletRequest request) {
         String result = request.getServletPath();
         // getServletPath() returns null unless the mapping corresponds to a servlet
         if (result == null) {
@@ -79,14 +79,6 @@ public class WebAppContext implements Context {
         } else {
             return result;
         }
-    }
-
-    @Override
-    public Content decorate(Content content) throws IOException {
-        if (content == null) {
-            return null;
-        }
-        return decorate(decoratorSelector.selectDecoratorPath(content, this), content);
     }
 
     @Override

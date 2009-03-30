@@ -65,6 +65,11 @@ public class DecorateRule extends BasicBlockRule<Content> {
         content.addProperty("body", body);
 
         String decoratorName = content.getProperty("decorator").value();
+        if (decoratorName == null) {
+            context.currentBuffer().append(body);
+            return;
+        }
+
         Content decorated = siteMeshContext.decorate(decoratorName, content);
         if (decorated != null) {
             // TODO: Use a 'default' property

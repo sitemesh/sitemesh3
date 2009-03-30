@@ -81,11 +81,8 @@ public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
         BasicSelector basicSelector = new BasicSelector(mimeTypes) {
             @Override
             public boolean shouldBufferForRequest(HttpServletRequest request) {
-                // TODO: No need to instantiate WebAppContext for this.
-                String requestPath = new WebAppContext(null, request, null, null, null, null, null)
-                        .getRequestPath();
                 return super.shouldBufferForRequest(request)
-                        && excludesMapper.get(requestPath) == null;
+                        && excludesMapper.get(WebAppContext.getRequestPath(request)) == null;
             }
         };
         setSelector(basicSelector);
@@ -101,7 +98,7 @@ public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
         PathBasedDecoratorSelector decoratorSelector = new PathBasedDecoratorSelector();
         String defaultDecorator = properties.getString(DEFAULT_DECORATOR_PARAM, DEFAULT_DECORATOR_DEFAULT);
         if (defaultDecorator != null) {
-            decoratorSelector.put("/*", defaultDecorator);
+            decoratorSelector.put("/*", defaultDecorator.split(","));
         }
         Map<String,String> decoratorsMappings = properties.getStringMap(
                 DECORATOR_MAPPINGS_PARAM, DECORATOR_MAPPINGS_DEFAULT);
