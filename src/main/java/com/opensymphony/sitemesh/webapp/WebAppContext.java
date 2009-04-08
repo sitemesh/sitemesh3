@@ -29,6 +29,8 @@ public class WebAppContext implements Context {
     private final DecoratorApplier<WebAppContext> decoratorApplier;
     private final ContentProcessor<WebAppContext> contentProcessor;
 
+    private Content currentContent;
+
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
                          DecoratorApplier<WebAppContext> decoratorApplier,
@@ -97,7 +99,20 @@ public class WebAppContext implements Context {
 
         CharBuffer decorated = out.toCharBuffer();
 
-        // TODO: Don't reprocess the content properties.
-        return contentProcessor.build(decorated, this);
+        Content lastContent = currentContent;
+        currentContent = content;
+        try {
+            // TODO: Don't reprocess the content properties.
+            return contentProcessor.build(decorated, this);
+        } finally {
+            currentContent = lastContent;
+        }
     }
+
+    @Override
+    public Content getContentToMerge() {
+        return currentContent;
+    }
+
+
 }

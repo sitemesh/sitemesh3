@@ -38,8 +38,8 @@ public class WebAppExample2 {
             // us some convenient methods.
             Content content = (Content) request.getAttribute(Content.class.getName());
 
-            response.getWriter().printf("Title: %s\nBody:\n%s",
-                    content.getProperty("head").value(),
+            response.getWriter().printf("<html><body>\nTitle: %s\nBody:\n%s\n</body></html>",
+                    content.getProperty("title").value(),
                     content.getProperty("body").value());
         }
     }
@@ -52,7 +52,7 @@ public class WebAppExample2 {
                 new BasicSelector("text/html"),
                 // Process the data as HTML, exposing relevant properties.
                 new HtmlContentProcessor<WebAppContext>(),
-                new PathBasedDecoratorSelector().put("/*", "/mydecorator"),
+                new PathBasedDecoratorSelector().put("/*", "/my-decorator"),
                 // Dispatch to another
                 new DispatchingDecoratorApplier());
 

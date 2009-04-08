@@ -106,6 +106,9 @@ public class DispatchingDecoratorApplier implements DecoratorApplier<WebAppConte
                             ServletContext destinationServletContext, String path)
             throws ServletException, IOException {
         RequestDispatcher dispatcher = destinationServletContext.getRequestDispatcher(path);
+        if (dispatcher == null) {
+            throw new ServletException("Not found: " + path);
+        }
         dispatcher.include(request, response);
     }
 

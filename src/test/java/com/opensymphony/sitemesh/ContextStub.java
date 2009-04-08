@@ -10,6 +10,7 @@ import java.io.IOException;
 public class ContextStub implements Context {
 
     private String requestPath;
+    private Content contentToMerge;
 
     @Override
     public String getRequestPath() {
@@ -24,5 +25,14 @@ public class ContextStub implements Context {
     @Override
     public Content decorate(String decoratorName, Content content) throws IOException {
         throw new UnsupportedOperationException("Not supported by ContextStub");
+    }
+
+    @Override
+    public Content getContentToMerge() {
+        return contentToMerge;
+    }
+
+    public void setContentToMerge(Content contentToMerge) {
+        this.contentToMerge = contentToMerge;
     }
 }

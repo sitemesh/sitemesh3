@@ -6,24 +6,22 @@ import com.opensymphony.sitemesh.webapp.WebAppContext;
 import com.opensymphony.sitemesh.webapp.WebEnvironment;
 import junit.framework.TestCase;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.CharBuffer;
 import java.util.HashMap;
 
+/**
+ * @author Joe Walnes
+ */
 public class SimpleSiteMeshFilterTest extends TestCase {
 
-    public void test() throws Exception {
+    public void testAppliesDefaultDecoratorToRequests() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*",
                         SimpleSiteMeshFilter.class,
                         new InitParams()
                             .with("defaultDecorator", "  /my-decorator \n  ")) // testing whitespace
-                .addServlet("/my-decorator", new MyDecoratorServlet())
+                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/content", "text/html", "<title>Hello world</title>")
                 .create();
 
@@ -37,7 +35,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
                         SimpleSiteMeshFilter.class,
                         new InitParams()
                             .with("defaultDecorator", "/my-decorator"))
-                .addServlet("/my-decorator", new MyDecoratorServlet())
+                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/html", "text/html", "<title>Hello world</title>")         // <-- text/html
                 .addStaticContent("/other", "other/type", "<title>Hello world</title>") // <-- NOT text/html
                 .create();
@@ -58,7 +56,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
                         new InitParams()
                             .with("mimeTypes", "  other/type foo/bar \n, x/y ") // <-- mime type
                             .with("defaultDecorator", "/my-decorator"))
-                .addServlet("/my-decorator", new MyDecoratorServlet())
+                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/html", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/other1", "other/type", "<title>Hello world</title>")
                 .addStaticContent("/other2", "foo/bar", "<title>Hello world</title>")
@@ -100,7 +98,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
                         new InitParams()
                             .with("defaultDecorator", "/my-decorator")
                             .with("contentProcessor", MyContentProcessor.class.getName())) // <-- ContentProcessor
-                .addServlet("/my-decorator", new MyDecoratorServlet())
+                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/content", "text/html", "<title>Hello world</title>")
                 .create();
 
@@ -115,7 +113,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
                         new InitParams()
                             .with("defaultDecorator", "/my-decorator")
                             .with("contentProcessor", "com.blah.MyProcessor")) // <-- ContentProcessor
-                .addServlet("/my-decorator", new MyDecoratorServlet())
+                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/content", "text/html", "<title>Hello world</title>")
                 .create();
 
@@ -130,7 +128,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
                         new InitParams()
                             .with("defaultDecorator", "/my-decorator")
                             .with("exclude", "/foo/*, *.x, /somefile")) // <-- ContentProcessor
-                .addServlet("/my-decorator", new MyDecoratorServlet())
+                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/foo/bar", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/foo/", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/a.x", "text/html", "<title>Hello world</title>")
@@ -171,9 +169,9 @@ public class SimpleSiteMeshFilterTest extends TestCase {
                         new InitParams()
                             .with("defaultDecorator", "/decorator-a")
                             .with("decoratorMappings", "/foo/*=/decorator-b, *.bar=/decorator-c")) // <--
-                .addServlet("/decorator-a", new MyDecoratorServlet("A"))
-                .addServlet("/decorator-b", new MyDecoratorServlet("B"))
-                .addServlet("/decorator-c", new MyDecoratorServlet("C"))
+                .addStaticContent("/decorator-a", "text/html", "Decorated: <sitemesh:write property='title'/> (by A)")
+                .addStaticContent("/decorator-b", "text/html", "Decorated: <sitemesh:write property='title'/> (by B)")
+                .addStaticContent("/decorator-c", "text/html", "Decorated: <sitemesh:write property='title'/> (by C)")
                 .addStaticContent("/html", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/foo/html", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/x.bar", "text/html", "<title>Hello world</title>")
@@ -191,60 +189,19 @@ public class SimpleSiteMeshFilterTest extends TestCase {
     }
 
     public void testSupportsChainingOfTopLevelDecorators() throws Exception {
-
-        class SimpleDecoratorServlet extends HttpServlet {
-            private final String name;
-
-            public SimpleDecoratorServlet(String name) {
-                this.name = name;
-            }
-
-            @Override
-            protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-                Content content = (Content) request.getAttribute(Content.class.getName());
-                PrintWriter out = response.getWriter();
-                out.append(name).append(' ');
-                content.getProperty("body").writeTo(out);
-                out.append(" /").append(name);
-            }
-        }
-
         WebEnvironment web = new WebEnvironment.Builder()
                 .addFilter("/*",
                         SimpleSiteMeshFilter.class,
                         new InitParams()
-                                .with("defaultDecorator", "/decorator-inner,/decorator-inner,/decorator-outer"))
-                .addServlet("/decorator-outer", new SimpleDecoratorServlet("OUTER"))
-                .addServlet("/decorator-inner", new SimpleDecoratorServlet("INNER"))
+                                .with("defaultDecorator", "/decorator-inner,/decorator-inner,/decorator-outer")
+                                .with("decoratorMappings", "/foo/*=/decorator-b, *.bar=/decorator-c"))
+                .addStaticContent("/decorator-outer", "text/html", "OUTER <sitemesh:write property='body'/> /OUTER")
+                .addStaticContent("/decorator-inner", "text/html", "INNER <sitemesh:write property='body'/> /INNER")
                 .addStaticContent("/hello.html", "text/html", "<body>CONTENT</body>")
                 .create();
 
         web.doGet("/hello.html");
         assertEquals("OUTER INNER INNER CONTENT /INNER /INNER /OUTER", web.getBody());
-    }
-
-    /**
-     * Simple decorator that echos the content title.
-     */
-    private static class MyDecoratorServlet extends HttpServlet {
-        private final String name;
-
-        public MyDecoratorServlet() {
-            name = null;
-        }
-
-        public MyDecoratorServlet(String name) {
-            this.name = name;
-        }
-
-        @Override
-        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            Content content = (Content) request.getAttribute(Content.class.getName());
-            response.getWriter().print("Decorated: " + content.getProperty("title"));
-            if (name != null) {
-                response.getWriter().print(" (by " + name + ")");
-            }
-        }
     }
 
     /**

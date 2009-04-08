@@ -10,6 +10,7 @@ import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.FilterHolder;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.log.Log;
+import org.mortbay.resource.FileResource;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletContextListener;
@@ -18,7 +19,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.File;
 import java.util.Map;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * Sets up a complete web-environment in-process. This includes a Servlet container, Filters, static
@@ -116,14 +120,14 @@ public class WebEnvironment {
         private final Context context;
         private LocalConnector connector;
 
-        public Builder() {
+        public Builder() throws IOException, URISyntaxException {
             Log.setLog(null);
             server = new Server();
             connector = new LocalConnector();
-            context = new Context(Context.SESSIONS);
+            context = new org.mortbay.jetty.webapp.WebAppContext();
+            context.setBaseResource(new FileResource(new URL("file://ignoreTHIS/")));
             server.setSendServerVersion(false);
             server.addConnector(connector);
-            server.addHandler(context);
         }
 
         public Builder addServlet(String path, HttpServlet servlet) {
@@ -172,7 +176,13 @@ public class WebEnvironment {
             return this;
         }
 
+        public Builder setRootDir(File dir) throws IOException, URISyntaxException {
+            context.setBaseResource(new FileResource(dir.toURI().toURL()));
+            return this;
+        }
+
         public WebEnvironment create() throws Exception {
+            server.addHandler(context);
             server.start();
             return new WebEnvironment(connector);
         }

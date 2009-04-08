@@ -1,5 +1,7 @@
 package com.opensymphony.sitemesh;
 
+import com.sun.xml.internal.ws.api.message.Header;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -19,6 +21,10 @@ public interface Content extends Iterable<Map.Entry<String,Content.Property>> {
     Property getOriginal();
     void setOriginal(CharSequence original);
     void setOriginal(Property original);
+
+    Property getProcessed();
+    void setProcessed(CharSequence original);
+    void setProcessed(Property original);
 
     Property getProperty(String name);
     void addProperty(String name, Property property);

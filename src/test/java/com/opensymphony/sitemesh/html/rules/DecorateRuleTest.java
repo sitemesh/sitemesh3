@@ -18,7 +18,7 @@ public class DecorateRuleTest extends TestCase {
 
     public void testPassesContentWithBodyAndPropertiesToContext() throws IOException {
         String in = "BEFORE" +
-                "<decorate decorator='/mydecorator' title='foo' cheese='bar'><b>Some content</b></decorate>" +
+                "<sitemesh:decorate decorator='/mydecorator' title='foo' cheese='bar'><b>Some content</b></sitemesh:decorate>" +
                 "AFTER";
 
         final AtomicReference<Content> capturedContentRef = new AtomicReference<Content>();
@@ -43,7 +43,7 @@ public class DecorateRuleTest extends TestCase {
 
     public void testAllowsContextToWriteToPage() throws IOException {
         String in = "BEFORE" +
-                "<decorate decorator='x'><b>Some content</b></decorate>" +
+                "<sitemesh:decorate decorator='x'><b>Some content</b></sitemesh:decorate>" +
                 "AFTER";
 
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
@@ -62,7 +62,7 @@ public class DecorateRuleTest extends TestCase {
 
     public void testWritesBodyIfDecoratorCannotBeApplied() throws IOException {
         String in = "BEFORE" +
-                "<decorate decorator=x><b>Some content</b></decorate>" +
+                "<sitemesh:decorate decorator=x><b>Some content</b></sitemesh:decorate>" +
                 "AFTER";
 
         final AtomicBoolean wasCalled = new AtomicBoolean(false);
@@ -83,7 +83,7 @@ public class DecorateRuleTest extends TestCase {
 
     public void testSkipsTagWithoutDecoratorAttribute() throws IOException {
         String in = "BEFORE" +
-                "<decorate><b>Some content</b></decorate>" +
+                "<sitemesh:decorate><b>Some content</b></sitemesh:decorate>" +
                 "AFTER";
 
         final AtomicBoolean wasCalled = new AtomicBoolean(false);

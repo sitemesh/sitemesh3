@@ -21,7 +21,9 @@ public abstract class TagBasedContentProcessor<C extends Context> implements Con
 
     @Override
     public Content build(CharBuffer data, C context) throws IOException {
-        Content content = new InMemoryContent(data);
+        Content content = new InMemoryContent();
+        content.setOriginal(data);
+
         TagProcessor processor = new TagProcessor(data);
 
         // Additional rules - designed to be tweaked.
@@ -30,6 +32,7 @@ public abstract class TagBasedContentProcessor<C extends Context> implements Con
         // Run the processor.
         processor.process();
 
+        content.setProcessed(processor.getDefaultBufferContents());
         postProcess(content, processor);
         return content;
     }

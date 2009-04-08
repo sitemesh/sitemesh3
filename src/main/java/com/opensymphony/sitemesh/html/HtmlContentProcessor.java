@@ -6,6 +6,8 @@ import com.opensymphony.sitemesh.html.rules.BodyTagRule;
 import com.opensymphony.sitemesh.html.rules.HeadExtractingRule;
 import com.opensymphony.sitemesh.html.rules.MetaTagRule;
 import com.opensymphony.sitemesh.html.rules.TitleExtractingRule;
+import com.opensymphony.sitemesh.html.rules.DecorateRule;
+import com.opensymphony.sitemesh.html.rules.decorator.SiteMeshWriteTagRule;
 import com.opensymphony.sitemesh.tagprocessor.State;
 import com.opensymphony.sitemesh.tagprocessor.StateTransitionRule;
 import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
@@ -53,6 +55,10 @@ public class HtmlContentProcessor<C extends Context> extends TagBasedContentProc
         // Ensure that while in <xml> tag, none of the other rules kick in.
         // For example <xml><book><title>hello</title></book></xml> should not affect the title of the page.
         defaultState.addRule(new StateTransitionRule("xml", new State()));
+
+        // SiteMesh decorator tags.
+        defaultState.addRule(new SiteMeshWriteTagRule(context));
+        defaultState.addRule(new DecorateRule(context));
     }
 
     @Override

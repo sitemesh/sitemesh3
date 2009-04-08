@@ -20,7 +20,7 @@ public class DivExtractingRuleTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        contentProcessor = new HtmlContentProcessor() {
+        contentProcessor = new HtmlContentProcessor<Context>() {
             @Override
             protected void setupRules(State defaultState, Content content, Context context) {
                 super.setupRules(defaultState, content, context);

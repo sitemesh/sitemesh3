@@ -111,8 +111,7 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
         if (content == null) {
             return false;
         }
-        // TODO: Use a 'default' property
-        content.getProperty("body").writeTo(response.getWriter());
+        content.getProcessed().writeTo(response.getWriter());
         return true;
     }
 

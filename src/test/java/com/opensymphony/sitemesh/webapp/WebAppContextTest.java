@@ -1,14 +1,14 @@
 package com.opensymphony.sitemesh.webapp;
 
-import junit.framework.TestCase;
-import com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector;
+import com.opensymphony.sitemesh.Content;
+import com.opensymphony.sitemesh.ContentProcessor;
+import com.opensymphony.sitemesh.decorator.dispatch.DispatchingDecoratorApplier;
+import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh.html.rules.DecorateRule;
-import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
-import com.opensymphony.sitemesh.decorator.simple.SimpleDecoratorApplier;
-import com.opensymphony.sitemesh.ContentProcessor;
-import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.tagprocessor.State;
+import com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector;
+import junit.framework.TestCase;
 
 /**
  * @author Joe Walnes
@@ -30,18 +30,20 @@ public class WebAppContextTest extends TestCase {
                         new BasicSelector("text/html"),
                         processor,
                         new PathBasedDecoratorSelector()
-                                .put("/*", "page"),
-                        new SimpleDecoratorApplier()
-                                .put("page", "PAGE\n{{body}}\n/PAGE")
-                                .put("inline", "INLINE Title:{{title}} " +
-                                        "Body:{{body}} /INLINE")
+                                .put("/*", "/decorators/page.html"),
+                        new DispatchingDecoratorApplier()
                 ))
                 .addStaticContent("/hello.html", "text/html", "" +
                         "<body>\n" +
                         "CONTENT\n" +
-                        "<decorate decorator='inline' title='block A'><b>A</b></decorate>\n" +
-                        "<decorate decorator='inline' title='block B'><i>B</i></decorate>\n" +
+                        "<sitemesh:decorate decorator='/decorators/inline.html' title='block A'><b>A</b></sitemesh:decorate>\n" +
+                        "<sitemesh:decorate decorator='/decorators/inline.html' title='block B'><i>B</i></sitemesh:decorate>\n" +
                         "</body>\n")
+                .addStaticContent("/decorators/page.html", "text/html",
+                        "PAGE\n<sitemesh:write property='body'/>\n/PAGE")
+                .addStaticContent("/decorators/inline.html", "text/html", "" +
+                        "INLINE Title:<sitemesh:write property='title'/> " +
+                        "Body:<sitemesh:write property='body'/> /INLINE")
                 .create();
 
         web.doGet("/hello.html");
@@ -73,19 +75,24 @@ public class WebAppContextTest extends TestCase {
                         new BasicSelector("text/html"),
                         processor,
                         new PathBasedDecoratorSelector()
-                                .put("/*", "page"),
-                        new SimpleDecoratorApplier()
-                                .put("page", "PAGE\n<decorate decorator='inner'>{{body}}</decorate>\n/PAGE")
-                                .put("inline", "INLINE Title:{{title}} " +
-                                        "Body:<decorate decorator='inner'>{{body}}</decorate> /INLINE")
-                                .put("inner", "INNER{{body}}/INNER")
+                                .put("/*", "/decorators/page.html"),
+                        new DispatchingDecoratorApplier()
                 ))
                 .addStaticContent("/hello.html", "text/html", "" +
                         "<body>\n" +
                         "CONTENT\n" +
-                        "<decorate decorator='inline' title='block A'><b>A</b></decorate>\n" +
-                        "<decorate decorator='inline' title='block B'><i>B</i></decorate>\n" +
+                        "<sitemesh:decorate decorator='/decorators/inline.html' title='block A'><b>A</b></sitemesh:decorate>\n" +
+                        "<sitemesh:decorate decorator='/decorators/inline.html' title='block B'><i>B</i></sitemesh:decorate>\n" +
                         "</body>\n")
+                .addStaticContent("/decorators/page.html", "text/html", "" +
+                        "PAGE\n<sitemesh:decorate decorator='/decorators/inner.html'>" +
+                        "<sitemesh:write property='body'/></sitemesh:decorate>\n/PAGE")
+                .addStaticContent("/decorators/inline.html", "text/html", "" +
+                        "INLINE Title:<sitemesh:write property='title'/> " +
+                        "Body:<sitemesh:decorate decorator='/decorators/inner.html'>" +
+                        "<sitemesh:write property='body'/></sitemesh:decorate> /INLINE")
+                .addStaticContent("/decorators/inner.html", "text/html", "" +
+                        "INNER<sitemesh:write property='body'/>/INNER")
                 .create();
 
         web.doGet("/hello.html");

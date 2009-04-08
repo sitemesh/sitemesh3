@@ -2,6 +2,8 @@ package com.opensymphony.sitemesh.html;
 
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.ContentProcessor;
+import com.opensymphony.sitemesh.ContextStub;
+import com.opensymphony.sitemesh.Context;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -30,7 +32,7 @@ public class DataDrivenSuiteBuilder {
      * Builds a TestSuite, containing a collection of smaller suites
      * (one for each file of testdata/text??.txt).
      */
-    public static void buildSuite(TestSuite suite, ContentProcessor<?> processor, String... inputFileNames)
+    public static void buildSuite(TestSuite suite, ContentProcessor<Context> processor, String... inputFileNames)
             throws IOException {
         File testDataDir = new File("src/test/java/com/opensymphony/sitemesh/html/testdata");
 
@@ -38,7 +40,7 @@ public class DataDrivenSuiteBuilder {
             File inputFile = new File(testDataDir, inputFileName);
 
             Map<String, String> expectedBlocks = readBlocks(new FileReader(inputFile));
-            Content content = processor.build(CharBuffer.wrap(expectedBlocks.get("INPUT")), null);
+            Content content = processor.build(CharBuffer.wrap(expectedBlocks.get("INPUT")), new ContextStub());
 
             TestSuite inputSuite = new TestSuite(inputFile.getName().replace('.', '_'));
             inputSuite.addTest(new AssertTrimmedTest(

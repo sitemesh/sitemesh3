@@ -28,6 +28,7 @@ public class BodyTagRule extends BasicBlockRule {
 
     @Override
     protected Object processStart(Tag tag) throws IOException {
+        tag.writeTo(context.currentBuffer());
         for (int i = 0; i < tag.getAttributeCount(); i++) {
             content.addProperty("body." + tag.getAttributeName(i), tag.getAttributeValue(i));
         }
@@ -37,8 +38,11 @@ public class BodyTagRule extends BasicBlockRule {
 
     @Override
     protected void processEnd(Tag tag, Object data) throws IOException {
-        content.addProperty("body", context.currentBufferContents());
+        CharSequence body = context.currentBufferContents();
+        content.addProperty("body", body);
         context.popBuffer();
+        context.currentBuffer().append(body);
+        tag.writeTo(context.currentBuffer());
     }
 
 }

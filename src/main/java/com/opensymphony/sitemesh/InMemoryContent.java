@@ -14,16 +14,9 @@ import java.util.Map;
  */
 public class InMemoryContent implements Content {
 
-    private Property original;
+    private Property original = EMPTY_PROPERTY;
+    private Property processed = EMPTY_PROPERTY;
     private final Map<String, Property> properties = new HashMap<String, Property>();
-
-    public InMemoryContent(Property original) throws IOException {
-        setOriginal(original);
-    }
-
-    public InMemoryContent(CharSequence original) throws IOException {
-        setOriginal(original);
-    }
 
     public InMemoryContent() throws IOException {
         setOriginal(EMPTY_PROPERTY);
@@ -51,6 +44,16 @@ public class InMemoryContent implements Content {
     }
 
     @Override
+    public void setProcessed(CharSequence processed) {
+        setProcessed(toProperty(processed));
+    }
+
+    @Override
+    public void setProcessed(Property processed) {
+        this.processed = processed;
+    }
+
+    @Override
     public void addProperty(String name, Property property) {
         properties.put(name, property);
     }
@@ -69,6 +72,11 @@ public class InMemoryContent implements Content {
     @Override
     public Property getOriginal() {
         return original;
+    }
+
+    @Override
+    public Property getProcessed() {
+        return processed;
     }
 
     @Override
