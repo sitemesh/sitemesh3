@@ -15,11 +15,11 @@ import java.io.IOException;
  * @author Joe Walnes
  * @see Context#getContentToMerge()
  */
-public class SiteMeshWriteTagRule extends BasicBlockRule {
+public class SiteMeshWriteRule extends BasicBlockRule {
 
     private final Context siteMeshContext;
 
-    public SiteMeshWriteTagRule(Context siteMeshContext) {
+    public SiteMeshWriteRule(Context siteMeshContext) {
         super("sitemesh:write"); // TODO: Support real namespaces.
         this.siteMeshContext = siteMeshContext;
     }

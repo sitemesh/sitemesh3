@@ -12,7 +12,7 @@ import java.nio.CharBuffer;
 /**
  * @author Joe Walnes
  */
-public class SiteMeshWriteTagRuleTest extends TestCase {
+public class SiteMeshWriteRuleTest extends TestCase {
 
     public void testWritesTheProperty() throws IOException {
         Content content = new InMemoryContent();
@@ -23,7 +23,7 @@ public class SiteMeshWriteTagRuleTest extends TestCase {
 
         String in = "Hello <sitemesh:write property='foo'/> <sitemesh:write property='bar.x'/>!";
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule(new SiteMeshWriteTagRule(context));
+        tagProcessor.addRule(new SiteMeshWriteRule(context));
         tagProcessor.process();
         CharSequence out = tagProcessor.getDefaultBufferContents();
 
@@ -37,7 +37,7 @@ public class SiteMeshWriteTagRuleTest extends TestCase {
 
         String in = "Hello <sitemesh:write property='notfound'/> <sitemesh:write property='found.not'/>!";
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule(new SiteMeshWriteTagRule(context));
+        tagProcessor.addRule(new SiteMeshWriteRule(context));
         tagProcessor.process();
         CharSequence out = tagProcessor.getDefaultBufferContents();
 
@@ -53,7 +53,7 @@ public class SiteMeshWriteTagRuleTest extends TestCase {
         String in = "Hello <sitemesh:write property='found'>BAD</sitemesh:write>" +
                 " <sitemesh:write property='notfound'>BAD</sitemesh:write>!";
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule(new SiteMeshWriteTagRule(context));
+        tagProcessor.addRule(new SiteMeshWriteRule(context));
         tagProcessor.process();
         CharSequence out = tagProcessor.getDefaultBufferContents();
 

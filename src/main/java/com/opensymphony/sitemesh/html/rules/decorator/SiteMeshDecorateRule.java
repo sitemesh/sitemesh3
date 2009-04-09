@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh.html.rules;
+package com.opensymphony.sitemesh.html.rules.decorator;
 
 import com.opensymphony.sitemesh.Context;
 import com.opensymphony.sitemesh.InMemoryContent;
@@ -12,7 +12,7 @@ import java.io.IOException;
  * Rule that applies decorators to inline blocks of content.
  *
  * <ul>
- * <li>A {@link com.opensymphony.sitemesh.Content} object will be created for the inline block.</li>
+ * <li>A {@link Content} object will be created for the inline block.</li>
  * <li>The contents of the tag body will be exposed as the <code>body</code> property.</li>
  * <li>All attributes of the tag will be copied as named properties (see example below).</li>
  * <li>The <code>decorator</code> attribute will specify which decorator is used.</li>
@@ -20,7 +20,7 @@ import java.io.IOException;
  *
  * <h3>Example</h3>
  *
- * <pre>Some content &lt;decorate decorator='/mydecorator' title='foo' cheese='bar'&gt;blah&lt;/decorate&gt;</pre>
+ * <pre>Some content {@code <sitemesh:decorate decorator='/mydecorator' title='foo' cheese='bar'>blah</sitemesh:decorate>}
  *
  * <p>This will apply the decorator named <code>/mydecorator</code>, passing in {@link com.opensymphony.sitemesh.Content}
  * with the following properties:</p>
@@ -32,11 +32,11 @@ import java.io.IOException;
  *
  * @author Joe Walnes
  */
-public class DecorateRule extends BasicBlockRule<Content> {
+public class SiteMeshDecorateRule extends BasicBlockRule<Content> {
 
     private final Context siteMeshContext;
 
-    public DecorateRule(Context siteMeshContext) {
+    public SiteMeshDecorateRule(Context siteMeshContext) {
         super("sitemesh:decorate");
         this.siteMeshContext = siteMeshContext;
     }

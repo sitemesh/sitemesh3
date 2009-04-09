@@ -6,8 +6,8 @@ import com.opensymphony.sitemesh.html.rules.BodyTagRule;
 import com.opensymphony.sitemesh.html.rules.HeadExtractingRule;
 import com.opensymphony.sitemesh.html.rules.MetaTagRule;
 import com.opensymphony.sitemesh.html.rules.TitleExtractingRule;
-import com.opensymphony.sitemesh.html.rules.DecorateRule;
-import com.opensymphony.sitemesh.html.rules.decorator.SiteMeshWriteTagRule;
+import com.opensymphony.sitemesh.html.rules.decorator.SiteMeshWriteRule;
+import com.opensymphony.sitemesh.html.rules.decorator.SiteMeshDecorateRule;
 import com.opensymphony.sitemesh.tagprocessor.State;
 import com.opensymphony.sitemesh.tagprocessor.StateTransitionRule;
 import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
@@ -57,8 +57,8 @@ public class HtmlContentProcessor<C extends Context> extends TagBasedContentProc
         defaultState.addRule(new StateTransitionRule("xml", new State()));
 
         // SiteMesh decorator tags.
-        defaultState.addRule(new SiteMeshWriteTagRule(context));
-        defaultState.addRule(new DecorateRule(context));
+        defaultState.addRule(new SiteMeshWriteRule(context));
+        defaultState.addRule(new SiteMeshDecorateRule(context));
     }
 
     @Override
