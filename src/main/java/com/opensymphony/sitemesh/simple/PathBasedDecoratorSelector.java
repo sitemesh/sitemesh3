@@ -1,8 +1,9 @@
-package com.opensymphony.sitemesh.decorator.map;
+package com.opensymphony.sitemesh.simple;
 
 import com.opensymphony.sitemesh.DecoratorSelector;
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.SiteMeshContext;
+import com.opensymphony.sitemesh.simple.PathMapper;
 
 import java.io.IOException;
 

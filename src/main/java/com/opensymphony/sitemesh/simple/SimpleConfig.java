@@ -4,8 +4,6 @@ import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.ContentProcessor;
 import com.opensymphony.sitemesh.DecoratorSelector;
 import com.opensymphony.sitemesh.SiteMeshContext;
-import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
-import com.opensymphony.sitemesh.decorator.map.PathMapper;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
 
 import java.io.IOException;

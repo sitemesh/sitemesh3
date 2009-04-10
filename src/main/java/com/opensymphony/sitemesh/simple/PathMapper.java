@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh.decorator.map;
+package com.opensymphony.sitemesh.simple;
 
 import java.util.HashMap;
 import java.util.Map;

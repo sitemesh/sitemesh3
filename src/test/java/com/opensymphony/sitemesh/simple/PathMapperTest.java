@@ -1,6 +1,7 @@
-package com.opensymphony.sitemesh.decorator.map;
+package com.opensymphony.sitemesh.simple;
 
 import junit.framework.TestCase;
+import com.opensymphony.sitemesh.simple.PathMapper;
 
 /**
  * @author Joe Walnes

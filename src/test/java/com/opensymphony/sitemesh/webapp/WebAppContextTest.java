@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh.webapp;
 
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.ContentProcessor;
-import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
+import com.opensymphony.sitemesh.simple.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh.html.rules.decorator.SiteMeshDecorateRule;
 import com.opensymphony.sitemesh.tagprocessor.State;
