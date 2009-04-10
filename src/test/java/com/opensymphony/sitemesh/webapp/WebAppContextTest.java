@@ -2,7 +2,6 @@ package com.opensymphony.sitemesh.webapp;
 
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.ContentProcessor;
-import com.opensymphony.sitemesh.decorator.dispatch.DispatchingDecoratorApplier;
 import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh.html.rules.decorator.SiteMeshDecorateRule;
@@ -10,10 +9,43 @@ import com.opensymphony.sitemesh.tagprocessor.State;
 import com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector;
 import junit.framework.TestCase;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 /**
  * @author Joe Walnes
  */
 public class WebAppContextTest extends TestCase {
+
+    public void testDispatchesToServletToApplyDecorator() throws Exception {
+
+        HttpServlet decoratorServlet = new HttpServlet() {
+            @Override
+            protected void doGet(HttpServletRequest request, HttpServletResponse response)
+                    throws ServletException, IOException {
+                Content content = (Content) request.getAttribute(WebAppContext.CONTENT_KEY);
+                PrintWriter out = response.getWriter();
+                out.println("Title = " + content.getProperty("title"));
+            }
+        };
+
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addFilter("/*", new BaseSiteMeshFilter(
+                        new BasicSelector("text/html"),
+                        new HtmlContentProcessor<WebAppContext>(),
+                        new PathBasedDecoratorSelector().put("/*", "/mydecorator")
+                ))
+                .addStaticContent("/mycontent", "text/html", "<title>Some title</title>")
+                .addServlet("/mydecorator", decoratorServlet)
+                .create();
+
+        webEnvironment.doGet("/mycontent");
+        assertEquals("Title = Some title", webEnvironment.getBody().trim());
+    }
 
     public void testSupportsDecoratingInlineContent() throws Exception {
 
@@ -30,8 +62,7 @@ public class WebAppContextTest extends TestCase {
                         new BasicSelector("text/html"),
                         processor,
                         new PathBasedDecoratorSelector()
-                                .put("/*", "/decorators/page.html"),
-                        new DispatchingDecoratorApplier()
+                                .put("/*", "/decorators/page.html")
                 ))
                 .addStaticContent("/hello.html", "text/html", "" +
                         "<body>\n" +
@@ -75,8 +106,7 @@ public class WebAppContextTest extends TestCase {
                         new BasicSelector("text/html"),
                         processor,
                         new PathBasedDecoratorSelector()
-                                .put("/*", "/decorators/page.html"),
-                        new DispatchingDecoratorApplier()
+                                .put("/*", "/decorators/page.html")
                 ))
                 .addStaticContent("/hello.html", "text/html", "" +
                         "<body>\n" +

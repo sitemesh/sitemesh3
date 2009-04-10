@@ -1,6 +1,5 @@
 package com.opensymphony.sitemesh.simple;
 
-import com.opensymphony.sitemesh.decorator.dispatch.DispatchingDecoratorApplier;
 import com.opensymphony.sitemesh.webapp.BaseSiteMeshFilter;
 import com.opensymphony.sitemesh.webapp.WebAppContext;
 import com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector;
@@ -99,7 +98,6 @@ public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
 
             setDecoratorSelector(config);
             setContentProcessor(config);
-            setDecoratorApplier(new DispatchingDecoratorApplier());
             // We don't want SimpleConfig to directly implement Selector as this is a web-app
             // specific thing. SimpleConfig should be also useable outside of web-apps.
             setSelector(new BasicSelector(config.getMimeTypes()) {

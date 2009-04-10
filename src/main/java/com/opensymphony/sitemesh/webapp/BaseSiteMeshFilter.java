@@ -2,7 +2,6 @@ package com.opensymphony.sitemesh.webapp;
 
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.ContentProcessor;
-import com.opensymphony.sitemesh.DecoratorApplier;
 import com.opensymphony.sitemesh.DecoratorSelector;
 import com.opensymphony.sitemesh.webapp.contentfilter.ContentBufferingFilter;
 import com.opensymphony.sitemesh.webapp.contentfilter.Selector;
@@ -16,9 +15,8 @@ import java.nio.CharBuffer;
 /**
  * Core Filter for integrating SiteMesh into a Java web application.
  *
- * <p>For this to be functional it requires a {@link Selector}, {@link ContentProcessor},
- * and {@link DecoratorApplier}. These must be passed in through the constructor
- * or setter methods.</p>
+ * <p>For this to be functional it requires a {@link Selector}, and {@link ContentProcessor}.
+ * These must be passed in through the constructor or setter methods.</p>
  *
  * <p>This filter will not work on its own in a typical Servlet container as the container
  * will not know how to pass in the dependencies. It is designed for programmatic use, or
@@ -33,14 +31,12 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
     private Selector selector;
     private ContentProcessor<WebAppContext> contentProcessor;
     private DecoratorSelector<WebAppContext> decoratorSelector;
-    private DecoratorApplier<WebAppContext> decoratorApplier;
 
     /**
      * Default constructor. If this is used, it is the caller's
      * responsibility to call {@link #setSelector(Selector)},
      * {@link #setContentProcessor(ContentProcessor)},
-     * {@link #setContentProcessor(ContentProcessor)},
-     * and {@link #setDecoratorApplier(DecoratorApplier)}.
+     * and {@link #setDecoratorSelector(DecoratorSelector)}.
      */
     public BaseSiteMeshFilter() {
     }
@@ -48,18 +44,14 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
     /**
      * Will call {@link #setSelector(Selector)},
      * {@link #setContentProcessor(ContentProcessor)},
-     * {@link #setDecoratorSelector(DecoratorSelector)}.
-     * and {@link #setDecoratorApplier(DecoratorApplier)}.
-     * @param decoratorApplier
+     * and {@link #setDecoratorSelector(DecoratorSelector)}.
      */
     public BaseSiteMeshFilter(Selector selector,
                               ContentProcessor<WebAppContext> contentProcessor,
-                              DecoratorSelector<WebAppContext> decoratorSelector,
-                              DecoratorApplier<WebAppContext> decoratorApplier) {
+                              DecoratorSelector<WebAppContext> decoratorSelector) {
         setSelector(selector);
         setContentProcessor(contentProcessor);
         setDecoratorSelector(decoratorSelector);
-        setDecoratorApplier(decoratorApplier);
     }
 
     /**
@@ -77,10 +69,6 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
 
     public void setDecoratorSelector(DecoratorSelector<WebAppContext> decoratorSelector) {
         this.decoratorSelector = decoratorSelector;
-    }
-
-    public void setDecoratorApplier(DecoratorApplier<WebAppContext> decoratorApplier) {
-        this.decoratorApplier = decoratorApplier;
     }
 
     @Override
@@ -131,10 +119,6 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
             throw new ServletException(getClass().getName()
                     + " not initialized correctly. setDecoratorSelector() not called");
         }
-        if (decoratorApplier == null) {
-            throw new ServletException(getClass().getName()
-                    + " not initialized correctly. setDecoratorApplier() not called");
-        }
     }
 
     /**
@@ -144,6 +128,6 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
     protected WebAppContext createContext(String contentType, HttpServletRequest request,
                                           HttpServletResponse response) {
         return new WebAppContext(contentType, request, response,
-                getFilterConfig().getServletContext(), decoratorApplier, contentProcessor);
+                getFilterConfig().getServletContext(), contentProcessor);
     }
 }
