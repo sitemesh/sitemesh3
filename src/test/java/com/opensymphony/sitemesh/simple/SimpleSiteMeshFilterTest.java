@@ -17,10 +17,8 @@ public class SimpleSiteMeshFilterTest extends TestCase {
 
     public void testAppliesDefaultDecoratorToRequests() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*",
-                        SimpleSiteMeshFilter.class,
-                        new InitParams()
-                            .with("defaultDecorator", "  /my-decorator \n  ")) // testing whitespace
+                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                        .addDecoratorPath("/*", "/my-decorator")))
                 .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/content", "text/html", "<title>Hello world</title>")
                 .create();
@@ -31,10 +29,8 @@ public class SimpleSiteMeshFilterTest extends TestCase {
 
     public void testDefaultsToOnlyDecoratingTextHtml() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*",
-                        SimpleSiteMeshFilter.class,
-                        new InitParams()
-                            .with("defaultDecorator", "/my-decorator"))
+                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                        .addDecoratorPath("/*", "/my-decorator")))
                 .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/html", "text/html", "<title>Hello world</title>")         // <-- text/html
                 .addStaticContent("/other", "other/type", "<title>Hello world</title>") // <-- NOT text/html
@@ -51,11 +47,9 @@ public class SimpleSiteMeshFilterTest extends TestCase {
 
     public void testDecoratesOtherMimeTypesIfSpecifiedWithInitParam() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*",
-                        SimpleSiteMeshFilter.class,
-                        new InitParams()
-                            .with("mimeTypes", "  other/type foo/bar \n, x/y ") // <-- mime type
-                            .with("defaultDecorator", "/my-decorator"))
+                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                        .addDecoratorPath("/*", "/my-decorator")
+                        .setMimeTypes("other/type", "foo/bar", "x/y")))
                 .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/html", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/other1", "other/type", "<title>Hello world</title>")
@@ -93,11 +87,9 @@ public class SimpleSiteMeshFilterTest extends TestCase {
 
     public void testAllowsContentProcessorToBeSwitched() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*",
-                        SimpleSiteMeshFilter.class,
-                        new InitParams()
-                            .with("defaultDecorator", "/my-decorator")
-                            .with("contentProcessor", MyContentProcessor.class.getName())) // <-- ContentProcessor
+                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                        .addDecoratorPath("/*", "/my-decorator")
+                        .setContentProcessor(MyContentProcessor.class.getName())))
                 .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/content", "text/html", "<title>Hello world</title>")
                 .create();
@@ -107,27 +99,28 @@ public class SimpleSiteMeshFilterTest extends TestCase {
     }
 
     public void testFailsToInitIfContentProcessorNotFound() throws Exception {
-        WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*",
-                        SimpleSiteMeshFilter.class,
-                        new InitParams()
-                            .with("defaultDecorator", "/my-decorator")
-                            .with("contentProcessor", "com.blah.MyProcessor")) // <-- ContentProcessor
-                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
-                .addStaticContent("/content", "text/html", "<title>Hello world</title>")
-                .create();
-
-        webEnvironment.doGet("/content");
-        assertEquals(404, webEnvironment.getStatus()); // Web-app could not be initialized - therefore 404 (on Jetty).
+        WebEnvironment webEnvironment = null;
+        try {
+            webEnvironment = new WebEnvironment.Builder()
+                    .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                            .addDecoratorPath("/*", "/my-decorator")
+                            .setContentProcessor("com.blah.MyProcessor")))
+                    .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                    .addStaticContent("/content", "text/html", "<title>Hello world</title>")
+                    .create();
+            fail("Expected exception");
+        } catch (SiteMeshConfigException expected) {
+            // Expected
+        }
     }
 
     public void testDoesNotDecorateExcludedPaths() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*",
-                        SimpleSiteMeshFilter.class,
-                        new InitParams()
-                            .with("defaultDecorator", "/my-decorator")
-                            .with("exclude", "/foo/*, *.x, /somefile")) // <-- ContentProcessor
+                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                        .addDecoratorPath("/*", "/my-decorator")
+                        .addExcludedPath("/foo/*")
+                        .addExcludedPath("*.x")
+                        .addExcludedPath("/somefile")))
                 .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/foo/bar", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/foo/", "text/html", "<title>Hello world</title>")
@@ -161,14 +154,13 @@ public class SimpleSiteMeshFilterTest extends TestCase {
         assertEquals("/foo ANOTHER have been decorated",
                 "Decorated: Hello world", webEnvironment.getBody());
     }
-    
+
     public void testAllowsPathBasedDecoratorMappings() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*",
-                        SimpleSiteMeshFilter.class,
-                        new InitParams()
-                            .with("defaultDecorator", "/decorator-a")
-                            .with("decoratorMappings", "/foo/*=/decorator-b, *.bar=/decorator-c")) // <--
+                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                        .addDecoratorPath("/*", "/decorator-a")
+                        .addDecoratorPath("/foo/*", "/decorator-b")
+                        .addDecoratorPath("*.bar", "/decorator-c")))
                 .addStaticContent("/decorator-a", "text/html", "Decorated: <sitemesh:write property='title'/> (by A)")
                 .addStaticContent("/decorator-b", "text/html", "Decorated: <sitemesh:write property='title'/> (by B)")
                 .addStaticContent("/decorator-c", "text/html", "Decorated: <sitemesh:write property='title'/> (by C)")
@@ -190,11 +182,10 @@ public class SimpleSiteMeshFilterTest extends TestCase {
 
     public void testSupportsChainingOfTopLevelDecorators() throws Exception {
         WebEnvironment web = new WebEnvironment.Builder()
-                .addFilter("/*",
-                        SimpleSiteMeshFilter.class,
-                        new InitParams()
-                                .with("defaultDecorator", "/decorator-inner,/decorator-inner,/decorator-outer")
-                                .with("decoratorMappings", "/foo/*=/decorator-b, *.bar=/decorator-c"))
+                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                        .addDecoratorPaths("/*", "/decorator-inner", "/decorator-inner", "/decorator-outer")
+                        .addDecoratorPath("/foo/*", "/decorator-b")
+                        .addDecoratorPath("*.bar", "/decorator-c")))
                 .addStaticContent("/decorator-outer", "text/html", "OUTER <sitemesh:write property='body'/> /OUTER")
                 .addStaticContent("/decorator-inner", "text/html", "INNER <sitemesh:write property='body'/> /INNER")
                 .addStaticContent("/hello.html", "text/html", "<body>CONTENT</body>")
@@ -204,13 +195,4 @@ public class SimpleSiteMeshFilterTest extends TestCase {
         assertEquals("OUTER INNER INNER CONTENT /INNER /INNER /OUTER", web.getBody());
     }
 
-    /**
-     * Convenience class for creating the init-params HashMap.
-     */
-    private static class InitParams extends HashMap<String, String> {
-        public InitParams with(String key, String value) {
-            put(key, value);
-            return this;
-        }
-    }
 }

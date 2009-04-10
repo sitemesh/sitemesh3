@@ -23,6 +23,8 @@ import java.io.IOException;
  */
 public class PathBasedDecoratorSelector implements DecoratorSelector {
 
+    private static final String[] EMPTY = {};
+
     private final PathMapper<String[]> pathMapper = new PathMapper<String[]>();
 
     public PathBasedDecoratorSelector put(String contentPath, String... decoratorPaths) {
@@ -32,6 +34,7 @@ public class PathBasedDecoratorSelector implements DecoratorSelector {
 
     @Override
     public String[] selectDecoratorPaths(Content content, SiteMeshContext siteMeshContext) throws IOException {
-        return pathMapper.get(siteMeshContext.getRequestPath());
+        String[] result = pathMapper.get(siteMeshContext.getRequestPath());
+        return result == null ? EMPTY : result;
     }
 }

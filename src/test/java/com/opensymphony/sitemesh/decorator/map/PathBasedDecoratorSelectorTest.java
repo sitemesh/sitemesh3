@@ -39,6 +39,19 @@ public class PathBasedDecoratorSelectorTest extends TestCase {
                         new SiteMeshContextStub().withRequestPath("/multiple"))));
     }
 
+    public void testReturnsEmptyArrayForUnMappedPaths() throws IOException {
+        Content content = new InMemoryContent();
+        DecoratorSelector selector = new PathBasedDecoratorSelector()
+                .put("/a/*", "A", "B");
+
+        assertEquals(
+                join("A", "B"),
+                join(selector.selectDecoratorPaths(content,
+                        new SiteMeshContextStub().withRequestPath("/a/foo"))));
+        assertEquals(0, selector.selectDecoratorPaths(content,
+                        new SiteMeshContextStub().withRequestPath("/b/foo")).length);
+    }
+
     private static String join(String... strings) {
         StringBuilder result = new StringBuilder();
         for (String string : strings) {

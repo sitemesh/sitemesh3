@@ -18,44 +18,34 @@ public class PropertiesParserTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         properties = new HashMap<String, String>();
-        propertiesParser = new PropertiesParser() {
-            @Override
-            protected String getProperty(String key) {
-                return properties.get(key);
-            }
-        };
+        propertiesParser = new PropertiesParser(properties);
     }
 
-    public void testRetrievesStringOrDefaultValueIfNotFound() {
+    public void testRetrievesStringOrNullIfNotFound() {
         properties.put("foo", "bar");
-        assertEquals("bar", propertiesParser.getString("foo", "fooDefault"));
-        assertEquals("otherDefault", propertiesParser.getString("other", "otherDefault"));
-        assertNull(propertiesParser.getString("other", null));
+        assertEquals("bar", propertiesParser.getString("foo"));
+        assertNull(propertiesParser.getString("other"));
     }
 
     public void testDiscardsLeadingAndTrailingWhitespace() {
         properties.put("foo", "  \n ba r ");
         properties.put("other", "   \n  ");
-        assertEquals("ba r", propertiesParser.getString("foo", "fooDefault"));
-        assertEquals("otherDefault", propertiesParser.getString("other", "otherDefault"));
+        assertEquals("ba r", propertiesParser.getString("foo"));
+        assertNull(propertiesParser.getString("other"));
     }
 
     public void testSplitsStringArrayOnCommasOrWhitespace() {
         properties.put("foo", "   aaaa   bbbb,cccc\ndddd \n ");
         assertEquals("aaaa|bbbb|cccc|dddd",
-                joinSequence(propertiesParser.getStringArray("foo", "foo Default")));
-        assertEquals("other|Default",
-                joinSequence(propertiesParser.getStringArray("other", "other Default")));
-        assertEquals(0, propertiesParser.getStringArray("other", null).length);
+                joinSequence(propertiesParser.getStringArray("foo")));
+        assertNull(propertiesParser.getStringArray("other"));
     }
 
     public void testSplitsKeyValuesIntoMap() {
         properties.put("foo", "   aa=Apples,zz=Ziggy\n   bb=Bananas ");
         assertEquals("(aa:Apples)|(zz:Ziggy)|(bb:Bananas)",
-                joinDict(propertiesParser.getStringMap("foo", "a=Default")));
-        assertEquals("(other:Default)|(foo:bar)",
-                joinDict(propertiesParser.getStringMap("other", "other=Default,foo=bar")));
-        assertEquals(0, propertiesParser.getStringMap("other", null).size());
+                joinDict(propertiesParser.getStringMap("foo")));
+        assertNull(propertiesParser.getStringMap("other"));
     }
 
     private String joinSequence(String... sequence) {
