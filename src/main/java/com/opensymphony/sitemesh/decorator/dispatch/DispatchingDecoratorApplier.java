@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh.decorator.dispatch;
 
 import com.opensymphony.sitemesh.DecoratorApplier;
 import com.opensymphony.sitemesh.Content;
-import com.opensymphony.sitemesh.Context;
+import com.opensymphony.sitemesh.SiteMeshContext;
 import com.opensymphony.sitemesh.webapp.WebAppContext;
 import com.opensymphony.sitemesh.webapp.contentfilter.HttpServletResponseBuffer;
 import com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector;
@@ -22,7 +22,7 @@ import java.nio.CharBuffer;
  * <p>This path may anything that handles a standard request (e.g. Servlet,
  * JSP, MVC framework, etc).</p>
  *
- * <p>The end point can access the {@link Content} and {@link Context} by using
+ * <p>The end point can access the {@link Content} and {@link SiteMeshContext} by using
  * looking them up as {@link HttpServletRequest} attributes under the keys
  * {@link DispatchingDecoratorApplier#CONTENT_KEY} and
  * {@link DispatchingDecoratorApplier#CONTEXT_KEY} respectively.</p>
@@ -41,10 +41,10 @@ public class DispatchingDecoratorApplier implements DecoratorApplier<WebAppConte
     public static final String CONTENT_KEY = Content.class.getName();
 
     /**
-     * Key that the {@link Context} is stored under in the {@link HttpServletRequest}
+     * Key that the {@link SiteMeshContext} is stored under in the {@link HttpServletRequest}
      * attribute. It is "com.opensymphony.sitemesh.Context".
      */
-    public static final String CONTEXT_KEY = Context.class.getName();
+    public static final String CONTEXT_KEY = SiteMeshContext.class.getName();
 
     /**
      * See class JavaDoc.

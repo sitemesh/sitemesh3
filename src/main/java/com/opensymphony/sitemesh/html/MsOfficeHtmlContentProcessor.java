@@ -1,6 +1,6 @@
 package com.opensymphony.sitemesh.html;
 
-import com.opensymphony.sitemesh.Context;
+import com.opensymphony.sitemesh.SiteMeshContext;
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.html.rules.MsOfficeDocumentPropertiesRule;
 import com.opensymphony.sitemesh.tagprocessor.State;
@@ -21,7 +21,7 @@ import com.opensymphony.sitemesh.tagprocessor.TagRule;
  * @see MsOfficeDocumentPropertiesRule
  * @author Joe Walnes
  */
-public class MsOfficeHtmlContentProcessor<C extends Context> extends HtmlContentProcessor<C> {
+public class MsOfficeHtmlContentProcessor<C extends SiteMeshContext> extends HtmlContentProcessor<C> {
 
     @Override
     protected void setupRules(State htmlState, Content content, C context) {

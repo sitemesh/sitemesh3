@@ -22,18 +22,18 @@ public class HeadExtractingRule extends BasicBlockRule {
 
     @Override
     protected Object processStart(Tag tag) throws IOException {
-        tag.writeTo(context.currentBuffer());
-        context.pushBuffer();
+        tag.writeTo(tagProcessorContext.currentBuffer());
+        tagProcessorContext.pushBuffer();
         return null;
     }
 
     @Override
     protected void processEnd(Tag tag, Object data) throws IOException {
-        CharSequence head = context.currentBufferContents();
+        CharSequence head = tagProcessorContext.currentBufferContents();
         content.addProperty("head", head);
-        context.popBuffer();
-        context.currentBuffer().append(head);
-        tag.writeTo(context.currentBuffer());
+        tagProcessorContext.popBuffer();
+        tagProcessorContext.currentBuffer().append(head);
+        tag.writeTo(tagProcessorContext.currentBuffer());
     }
 
 }

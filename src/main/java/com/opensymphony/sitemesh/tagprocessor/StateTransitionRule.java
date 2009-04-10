@@ -21,15 +21,15 @@ public class StateTransitionRule extends BasicRule {
     @Override
     public void process(Tag tag) throws IOException {
         if (tag.getType() == Tag.Type.OPEN) {
-            lastState = context.currentState();
-            context.changeState(newState);
+            lastState = tagProcessorContext.currentState();
+            tagProcessorContext.changeState(newState);
             newState.addRule(tag.getName().toLowerCase(), this);
         } else if (tag.getType() == Tag.Type.CLOSE && lastState != null) {
-            context.changeState(lastState);
+            tagProcessorContext.changeState(lastState);
             lastState = null;
         }
         if (writeEnclosingTag) {
-            tag.writeTo(context.currentBuffer());
+            tag.writeTo(tagProcessorContext.currentBuffer());
         }
     }
 }

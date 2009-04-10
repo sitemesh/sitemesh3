@@ -21,7 +21,7 @@ public class TagProcessorTest extends TestCase {
                     href = href.toUpperCase();
                     customTag.setAttributeValue("href", true, href);
                 }
-                customTag.writeTo(context.currentBuffer());
+                customTag.writeTo(tagProcessorContext.currentBuffer());
             }
         });
 
@@ -41,7 +41,7 @@ public class TagProcessorTest extends TestCase {
                     assertEquals(1, ctag.getAttributeCount());
                     tag = ctag;
                 }
-                tag.writeTo(context.currentBuffer());
+                tag.writeTo(tagProcessorContext.currentBuffer());
             }
         });
         processor.process();

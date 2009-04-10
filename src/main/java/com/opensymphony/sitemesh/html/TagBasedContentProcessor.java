@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh.html;
 
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.ContentProcessor;
-import com.opensymphony.sitemesh.Context;
+import com.opensymphony.sitemesh.SiteMeshContext;
 import com.opensymphony.sitemesh.InMemoryContent;
 import com.opensymphony.sitemesh.tagprocessor.State;
 import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
@@ -17,7 +17,7 @@ import java.nio.CharBuffer;
  *
  * @author Joe Walnes
  */
-public abstract class TagBasedContentProcessor<C extends Context> implements ContentProcessor<C> {
+public abstract class TagBasedContentProcessor<C extends SiteMeshContext> implements ContentProcessor<C> {
 
     @Override
     public Content build(CharBuffer data, C context) throws IOException {

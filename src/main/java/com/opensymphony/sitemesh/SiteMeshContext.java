@@ -2,8 +2,7 @@ package com.opensymphony.sitemesh;
 
 import java.io.IOException;
 
-// TODO: Rename to SiteMeshContext to avoid abiguity.
-public interface Context {
+public interface SiteMeshContext {
 
     String getRequestPath();
 

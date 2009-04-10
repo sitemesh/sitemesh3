@@ -1,7 +1,7 @@
 package com.opensymphony.sitemesh.decorator.map;
 
 import com.opensymphony.sitemesh.Content;
-import com.opensymphony.sitemesh.ContextStub;
+import com.opensymphony.sitemesh.SiteMeshContextStub;
 import com.opensymphony.sitemesh.DecoratorSelector;
 import com.opensymphony.sitemesh.InMemoryContent;
 import junit.framework.TestCase;
@@ -24,19 +24,19 @@ public class PathBasedDecoratorSelectorTest extends TestCase {
         assertEquals(
                 join("/decorators/admin.jsp"),
                 join(selector.selectDecoratorPaths(content,
-                        new ContextStub().withRequestPath("/admin/foo"))));
+                        new SiteMeshContextStub().withRequestPath("/admin/foo"))));
         assertEquals(
                 join("/decorators/thingy.jsp"),
                 join(selector.selectDecoratorPaths(content,
-                        new ContextStub().withRequestPath("/thingy"))));
+                        new SiteMeshContextStub().withRequestPath("/thingy"))));
         assertEquals(
                 join("/decorators/default.jsp"),
                 join(selector.selectDecoratorPaths(content,
-                        new ContextStub().withRequestPath("/thingy-not"))));
+                        new SiteMeshContextStub().withRequestPath("/thingy-not"))));
         assertEquals(
                 join("/1.jsp", "/2.jsp", "/3.jsp"),
                 join(selector.selectDecoratorPaths(content,
-                        new ContextStub().withRequestPath("/multiple"))));
+                        new SiteMeshContextStub().withRequestPath("/multiple"))));
     }
 
     private static String join(String... strings) {

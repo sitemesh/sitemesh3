@@ -1,7 +1,7 @@
 package com.opensymphony.sitemesh.html;
 
 import com.opensymphony.sitemesh.Content;
-import com.opensymphony.sitemesh.Context;
+import com.opensymphony.sitemesh.SiteMeshContext;
 import com.opensymphony.sitemesh.html.rules.BodyTagRule;
 import com.opensymphony.sitemesh.html.rules.HeadExtractingRule;
 import com.opensymphony.sitemesh.html.rules.MetaTagRule;
@@ -32,14 +32,14 @@ import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
  * attribute will instead be everything in the document that is not matched by any other rule. This is useful
  * for documents that are not wrapped in a <code>&lt;body&gt;</code> tag.</p>
  *
- * <p>To add custom rules, override {@link TagBasedContentProcessor#setupRules(State, Content, Context)} },
+ * <p>To add custom rules, override {@link TagBasedContentProcessor#setupRules(State, Content, com.opensymphony.sitemesh.SiteMeshContext)} },
  * ensuring that super.setupRules() is called.</p>
  *
  * @author Joe Walnes
  * @see Sm2HtmlContentProcessor
  * @see TagBasedContentProcessor
  */
-public class HtmlContentProcessor<C extends Context> extends TagBasedContentProcessor<C> {
+public class HtmlContentProcessor<C extends SiteMeshContext> extends TagBasedContentProcessor<C> {
 
     @Override
     protected void setupRules(State defaultState, Content content, C context) {

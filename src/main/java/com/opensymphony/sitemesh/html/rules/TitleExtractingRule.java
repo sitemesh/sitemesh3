@@ -24,18 +24,18 @@ public class TitleExtractingRule extends BasicBlockRule {
 
     @Override
     protected Object processStart(Tag tag) throws IOException {
-        context.pushBuffer();
+        tagProcessorContext.pushBuffer();
         return null;
     }
 
     @Override
     protected void processEnd(Tag tag, Object data) throws IOException {
-        CharSequence title = context.currentBufferContents();
+        CharSequence title = tagProcessorContext.currentBufferContents();
         if (!seenAtLeastOneTitle) {
             content.addProperty("title", title);
             seenAtLeastOneTitle = true;
         }
-        context.popBuffer();
+        tagProcessorContext.popBuffer();
     }
 
 }

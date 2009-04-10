@@ -1,6 +1,6 @@
 package com.opensymphony.sitemesh.html.rules.decorator;
 
-import com.opensymphony.sitemesh.Context;
+import com.opensymphony.sitemesh.SiteMeshContext;
 import com.opensymphony.sitemesh.InMemoryContent;
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.tagprocessor.BasicBlockRule;
@@ -34,15 +34,15 @@ import java.io.IOException;
  */
 public class SiteMeshDecorateRule extends BasicBlockRule<Content> {
 
-    private final Context siteMeshContext;
+    private final SiteMeshContext siteMeshContext;
 
-    public SiteMeshDecorateRule(Context siteMeshContext) {
+    public SiteMeshDecorateRule(SiteMeshContext siteMeshContext) {
         this.siteMeshContext = siteMeshContext;
     }
 
     @Override
     protected Content processStart(Tag tag) throws IOException {
-        context.pushBuffer();
+        tagProcessorContext.pushBuffer();
 
         Content content = new InMemoryContent();
 
@@ -57,24 +57,24 @@ public class SiteMeshDecorateRule extends BasicBlockRule<Content> {
 
     @Override
     protected void processEnd(Tag tag, Content content) throws IOException {
-        CharSequence body = context.currentBufferContents();
-        context.popBuffer();
+        CharSequence body = tagProcessorContext.currentBufferContents();
+        tagProcessorContext.popBuffer();
 
         content.setOriginal(body);
         content.addProperty("body", body);
 
         String decoratorName = content.getProperty("decorator").value();
         if (decoratorName == null) {
-            context.currentBuffer().append(body);
+            tagProcessorContext.currentBuffer().append(body);
             return;
         }
 
         Content decorated = siteMeshContext.decorate(decoratorName, content);
         if (decorated != null) {
             // TODO: Use a 'default' property
-            decorated.getProperty("body").writeTo(context.currentBuffer());
+            decorated.getProperty("body").writeTo(tagProcessorContext.currentBuffer());
         } else {
-            context.currentBuffer().append(body);
+            tagProcessorContext.currentBuffer().append(body);
         }
     }
 

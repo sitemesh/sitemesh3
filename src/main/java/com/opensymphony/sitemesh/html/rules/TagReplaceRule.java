@@ -26,6 +26,6 @@ public class TagReplaceRule extends BasicRule {
     public void process(Tag tag) throws IOException {
         CustomTag customTag = new CustomTag(tag);
         customTag.setName(newTagName);
-        customTag.writeTo(context.currentBuffer());
+        customTag.writeTo(tagProcessorContext.currentBuffer());
     }
 }

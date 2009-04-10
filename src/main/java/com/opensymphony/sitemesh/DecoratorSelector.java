@@ -7,7 +7,7 @@ import java.io.IOException;
  *
  * @author Joe Walnes
  */
-public interface DecoratorSelector<C extends Context> {
+public interface DecoratorSelector<C extends SiteMeshContext> {
 
     String[] selectDecoratorPaths(Content content, C context) throws IOException;
 

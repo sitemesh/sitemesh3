@@ -26,15 +26,15 @@ public class MsOfficeDocumentPropertiesRule extends BasicRule {
     @Override
     public void process(Tag tag) throws IOException {
         if (tag.getType() == Tag.Type.OPEN) {
-            tag.writeTo(context.currentBuffer());
-            context.pushBuffer();
+            tag.writeTo(tagProcessorContext.currentBuffer());
+            tagProcessorContext.pushBuffer();
         } else if (tag.getType() == Tag.Type.CLOSE) {
             String name = tag.getName().substring(2);
-            content.addProperty("office.DocumentProperties." + name, context.currentBufferContents());
-            CharSequence contents = context.currentBufferContents();
-            context.popBuffer();
-            context.currentBuffer().append(contents);
-            tag.writeTo(context.currentBuffer());
+            content.addProperty("office.DocumentProperties." + name, tagProcessorContext.currentBufferContents());
+            CharSequence contents = tagProcessorContext.currentBufferContents();
+            tagProcessorContext.popBuffer();
+            tagProcessorContext.currentBuffer().append(contents);
+            tag.writeTo(tagProcessorContext.currentBuffer());
         }
     }
 

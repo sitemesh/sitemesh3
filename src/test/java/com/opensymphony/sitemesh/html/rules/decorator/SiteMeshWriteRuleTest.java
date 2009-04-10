@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh.html.rules.decorator;
 
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.InMemoryContent;
-import com.opensymphony.sitemesh.ContextStub;
+import com.opensymphony.sitemesh.SiteMeshContextStub;
 import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
 import junit.framework.TestCase;
 
@@ -18,7 +18,7 @@ public class SiteMeshWriteRuleTest extends TestCase {
         Content content = new InMemoryContent();
         content.addProperty("foo", "This is the <foo> property.");
         content.addProperty("bar.x", "BAR");
-        ContextStub context = new ContextStub();
+        SiteMeshContextStub context = new SiteMeshContextStub();
         context.setContentToMerge(content);
 
         String in = "Hello <sitemesh:write property='foo'/> <sitemesh:write property='bar.x'/>!";
@@ -32,7 +32,7 @@ public class SiteMeshWriteRuleTest extends TestCase {
 
     public void testRemovesTagContents() throws IOException {
         Content content = new InMemoryContent();
-        ContextStub context = new ContextStub();
+        SiteMeshContextStub context = new SiteMeshContextStub();
         context.setContentToMerge(content);
 
         String in = "Hello <sitemesh:write property='notfound'/> <sitemesh:write property='found.not'/>!";
@@ -46,7 +46,7 @@ public class SiteMeshWriteRuleTest extends TestCase {
 
     public void testSkipsMissingProperties() throws IOException {
         Content content = new InMemoryContent();
-        ContextStub context = new ContextStub();
+        SiteMeshContextStub context = new SiteMeshContextStub();
         content.addProperty("found", "FOUND");
         context.setContentToMerge(content);
 

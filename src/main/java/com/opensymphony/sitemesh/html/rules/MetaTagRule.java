@@ -31,6 +31,6 @@ public class MetaTagRule extends BasicRule {
             content.addProperty("meta.http-equiv." + tag.getAttributeValue("http-equiv", false),
                     tag.getAttributeValue("content", false));
         }
-        tag.writeTo(context.currentBuffer());
+        tag.writeTo(tagProcessorContext.currentBuffer());
     }
 }

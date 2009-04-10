@@ -2,13 +2,13 @@ package com.opensymphony.sitemesh.decorator.map;
 
 import com.opensymphony.sitemesh.DecoratorSelector;
 import com.opensymphony.sitemesh.Content;
-import com.opensymphony.sitemesh.Context;
+import com.opensymphony.sitemesh.SiteMeshContext;
 
 import java.io.IOException;
 
 /**
  * {@link DecoratorSelector} implementation that selects a decorator based on the
- * incoming {@link Context#getRequestPath()} and the mappings setup.
+ * incoming {@link SiteMeshContext#getRequestPath()} and the mappings setup.
  *
  * <h3>Example</h3>
  * <pre>
@@ -31,7 +31,7 @@ public class PathBasedDecoratorSelector implements DecoratorSelector {
     }
 
     @Override
-    public String[] selectDecoratorPaths(Content content, Context context) throws IOException {
-        return pathMapper.get(context.getRequestPath());
+    public String[] selectDecoratorPaths(Content content, SiteMeshContext siteMeshContext) throws IOException {
+        return pathMapper.get(siteMeshContext.getRequestPath());
     }
 }

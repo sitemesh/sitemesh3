@@ -21,14 +21,14 @@ public class BasicBlockRuleTest extends TestCase {
         tagProcessor.addRule("tag", new BasicBlockRule<String>() {
             @Override
             protected String processStart(Tag tag) throws IOException {
-                context.pushBuffer();
+                tagProcessorContext.pushBuffer();
                 return tag.getAttributeValue("type", false);
             }
 
             @Override
             protected void processEnd(Tag tag, String data) throws IOException {
-                out.put(data, context.currentBufferContents().toString());
-                context.popBuffer();
+                out.put(data, tagProcessorContext.currentBufferContents().toString());
+                tagProcessorContext.popBuffer();
             }
         });
         tagProcessor.process();

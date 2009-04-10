@@ -37,12 +37,12 @@ public class DivExtractingRule extends BasicBlockRule<String> {
     }
 
     private void ensureContentIsNotConsumed(CharSequence content) throws IOException {
-        context.currentBuffer().append(content);
+        tagProcessorContext.currentBuffer().append(content);
     }
 
     private CharSequence popContent() {
-        CharSequence content = context.currentBufferContents();
-        context.popBuffer();
+        CharSequence content = tagProcessorContext.currentBufferContents();
+        tagProcessorContext.popBuffer();
         return content;
     }
 
@@ -51,7 +51,7 @@ public class DivExtractingRule extends BasicBlockRule<String> {
     }
 
     private void pushContent() {
-        context.pushBuffer();
+        tagProcessorContext.pushBuffer();
     }
 
     private String getId(Tag tag) {
@@ -63,6 +63,6 @@ public class DivExtractingRule extends BasicBlockRule<String> {
     }
 
     private void ensureTagIsNotConsumed(Tag tag) throws IOException {
-        tag.writeTo(context.currentBuffer());
+        tag.writeTo(tagProcessorContext.currentBuffer());
     }
 }

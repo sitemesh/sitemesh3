@@ -3,7 +3,7 @@ package com.opensymphony.sitemesh.html.rules.decorator;
 import com.opensymphony.sitemesh.tagprocessor.BasicBlockRule;
 import com.opensymphony.sitemesh.tagprocessor.Tag;
 import com.opensymphony.sitemesh.Content;
-import com.opensymphony.sitemesh.Context;
+import com.opensymphony.sitemesh.SiteMeshContext;
 
 import java.io.IOException;
 
@@ -13,13 +13,13 @@ import java.io.IOException;
  * discarded.
  *
  * @author Joe Walnes
- * @see Context#getContentToMerge()
+ * @see SiteMeshContext#getContentToMerge()
  */
 public class SiteMeshWriteRule extends BasicBlockRule {
 
-    private final Context siteMeshContext;
+    private final SiteMeshContext siteMeshContext;
 
-    public SiteMeshWriteRule(Context siteMeshContext) {
+    public SiteMeshWriteRule(SiteMeshContext siteMeshContext) {
         this.siteMeshContext = siteMeshContext;
     }
 
@@ -30,15 +30,15 @@ public class SiteMeshWriteRule extends BasicBlockRule {
         if (contentToMerge != null) {
             Content.Property property = contentToMerge.getProperty(propertyName);
             if (property.exists()) {
-                property.writeTo(context.currentBuffer());
+                property.writeTo(tagProcessorContext.currentBuffer());
             }
         }
-        context.pushBuffer();
+        tagProcessorContext.pushBuffer();
         return null;
     }
 
     @Override
     protected void processEnd(Tag tag, Object data) throws IOException {
-        context.popBuffer();
+        tagProcessorContext.popBuffer();
     }
 }

@@ -9,7 +9,7 @@ import java.io.Writer;
  * @author Joe Walnes
  * @since SiteMesh 3
  */
-public interface DecoratorApplier<C extends Context> {
+public interface DecoratorApplier<C extends SiteMeshContext> {
 
     /**
      * @return Whether decorator was applied.

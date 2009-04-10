@@ -26,14 +26,14 @@ public class ContentBlockExtractingRule extends BasicBlockRule<String> {
 
     @Override
     protected String processStart(Tag tag) throws IOException {
-        context.pushBuffer();
+        tagProcessorContext.pushBuffer();
         return tag.getAttributeValue("tag", false);
     }
 
     @Override
     protected void processEnd(Tag tag, String tagId) throws IOException {
-        content.addProperty("page." + tagId, context.currentBufferContents());
-        context.popBuffer();
+        content.addProperty("page." + tagId, tagProcessorContext.currentBufferContents());
+        tagProcessorContext.popBuffer();
     }
 
 }

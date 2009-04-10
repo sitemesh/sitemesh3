@@ -68,7 +68,7 @@ public class TagProcessor {
             @Override
             public void tag(Tag tag) throws IOException {
                 TagRule tagRule = currentState.getRule(tag.getName().toLowerCase());
-                tagRule.setContext(context);
+                tagRule.setTagProcessorContext(context);
                 tagRule.process(tag);
             }
 

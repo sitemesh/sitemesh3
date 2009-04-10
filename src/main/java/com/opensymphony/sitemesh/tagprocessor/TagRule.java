@@ -15,7 +15,7 @@ public interface TagRule {
     /**
      * Injected by the {@link TagProcessor} before any of the other TagRule methods.
      */
-    void setContext(TagProcessorContext context);
+    void setTagProcessorContext(TagProcessorContext context);
 
     /**
      * Implementations can use this to do any necessary work on the {@link Tag} such as extracting

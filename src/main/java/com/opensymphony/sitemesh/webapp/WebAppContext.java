@@ -1,6 +1,6 @@
 package com.opensymphony.sitemesh.webapp;
 
-import com.opensymphony.sitemesh.Context;
+import com.opensymphony.sitemesh.SiteMeshContext;
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.DecoratorApplier;
 import com.opensymphony.sitemesh.ContentProcessor;
@@ -13,14 +13,14 @@ import java.io.CharArrayWriter;
 import java.nio.CharBuffer;
 
 /**
- * SiteMesh {@link Context} implementation specifically for webapps running in a Servlet
+ * SiteMesh {@link SiteMeshContext} implementation specifically for webapps running in a Servlet
  * container. Makes {@link HttpServletRequest}, {@link HttpServletResponse} and
  * {@link ServletContext} available to web-app specific SiteMesh components.
  *
  * @author Joe Walnes
  * @author Mike Cannon-Brookes
  */
-public class WebAppContext implements Context {
+public class WebAppContext implements SiteMeshContext {
 
     private final String contentType;
     private final HttpServletRequest request;

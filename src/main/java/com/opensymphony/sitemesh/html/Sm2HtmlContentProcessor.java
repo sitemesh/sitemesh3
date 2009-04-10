@@ -1,6 +1,6 @@
 package com.opensymphony.sitemesh.html;
 
-import com.opensymphony.sitemesh.Context;
+import com.opensymphony.sitemesh.SiteMeshContext;
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.html.rules.ContentBlockExtractingRule;
 import com.opensymphony.sitemesh.html.rules.FramesetRule;
@@ -25,7 +25,7 @@ import com.opensymphony.sitemesh.tagprocessor.State;
  * @see HtmlContentProcessor
  * @author Joe Walnes
  */
-public class Sm2HtmlContentProcessor<C extends Context> extends HtmlContentProcessor<C> {
+public class Sm2HtmlContentProcessor<C extends SiteMeshContext> extends HtmlContentProcessor<C> {
 
     @Override
     protected void setupRules(State htmlState, Content content, C context) {

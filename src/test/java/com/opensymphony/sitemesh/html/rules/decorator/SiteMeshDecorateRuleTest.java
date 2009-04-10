@@ -1,7 +1,7 @@
 package com.opensymphony.sitemesh.html.rules.decorator;
 
 import junit.framework.TestCase;
-import com.opensymphony.sitemesh.ContextStub;
+import com.opensymphony.sitemesh.SiteMeshContextStub;
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.InMemoryContent;
 import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
@@ -24,7 +24,7 @@ public class SiteMeshDecorateRuleTest extends TestCase {
         final AtomicReference<Content> capturedContentRef = new AtomicReference<Content>();
 
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new ContextStub() {
+        tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new SiteMeshContextStub() {
             @Override
             public Content decorate(String decoratorName, Content content) throws IOException {
                 capturedContentRef.set(content);
@@ -47,7 +47,7 @@ public class SiteMeshDecorateRuleTest extends TestCase {
                 "AFTER";
 
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new ContextStub() {
+        tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new SiteMeshContextStub() {
             @Override
             public Content decorate(String decoratorName, Content content) throws IOException {
                 Content result = new InMemoryContent();
@@ -68,7 +68,7 @@ public class SiteMeshDecorateRuleTest extends TestCase {
         final AtomicBoolean wasCalled = new AtomicBoolean(false);
 
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new ContextStub() {
+        tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new SiteMeshContextStub() {
             @Override
             public Content decorate(String decoratorName, Content content) throws IOException {
                 wasCalled.set(true);
@@ -89,7 +89,7 @@ public class SiteMeshDecorateRuleTest extends TestCase {
         final AtomicBoolean wasCalled = new AtomicBoolean(false);
 
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new ContextStub() {
+        tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new SiteMeshContextStub() {
             @Override
             public Content decorate(String decoratorName, Content content) throws IOException {
                 wasCalled.set(true);
