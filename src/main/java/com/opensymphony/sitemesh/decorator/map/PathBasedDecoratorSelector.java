@@ -13,9 +13,9 @@ import java.io.IOException;
  * <h3>Example</h3>
  * <pre>
  * DecoratorSelector selector = new PathBasedDecoratorSelector()
- * &nbsp;    .put("/*", "/decorators/default.jsp")
- * &nbsp;    .put("/admin/*", "/decorators/admin.jsp")
- * &nbsp;    .put("/thingy", "/decorators/thingy.jsp")
+ * &nbsp;    .put("/*", "/decorators/default.html")
+ * &nbsp;    .put("/admin/*", "/decorators/admin.html")
+ * &nbsp;    .put("/thingy", "/decorators/thingy.html")
  * </pre>
  * @see PathMapper
  *

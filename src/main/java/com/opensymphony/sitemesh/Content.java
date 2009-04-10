@@ -1,7 +1,5 @@
 package com.opensymphony.sitemesh;
 
-import com.sun.xml.internal.ws.api.message.Header;
-
 import java.io.IOException;
 import java.util.Map;
 

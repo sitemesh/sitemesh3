@@ -21,7 +21,7 @@ import java.util.Map;
  * <p>It is configured throught filter init-params in web.xml. These are:</p>
  *
  * <p><b><code>defaultDecorator</code> (optional)</b>: The path to the default
- * decorator to apply to request. e.g. <code>/my-decorator.jsp</code>. This uses the
+ * decorator to apply to request. e.g. <code>/my-decorator.html</code>. This uses the
  * {@link DispatchingDecoratorApplier}.</p>
  *
  * <p><b><code>mimeTypes</code></b> (optional): A list of mime-types, separated by whitespace
@@ -35,7 +35,7 @@ import java.util.Map;
  *
  * <p><b><code>decoratorMappings</code></b> (optional): A list of mappings of path patterns to decorators.
  * Each entry should consist of pattern=decorator, separated by whitespace or commas.
- * e.g. <code>/admin/*=/decorators/admin.jsp, *.secret=/decorators/secret.jsp</code></p>
+ * e.g. <code>/admin/*=/decorators/admin.html, *.secret=/decorators/secret.html</code></p>
  *
  * <p>If this filter does not do what you want, consider creating a subclass of
  * {@link BaseSiteMeshFilter}.

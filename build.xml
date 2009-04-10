@@ -18,7 +18,6 @@
         <ivy:retrieve pattern="lib/[conf]/[artifact]-[revision].[ext]" log="quiet"/>
         <ivy:cachepath pathid="buildtools.classpath" conf="buildtools"/>
         <ivy:cachepath pathid="main.classpath" conf="main"/>
-        <ivy:cachepath pathid="extras.classpath" conf="extras"/>
         <ivy:cachepath pathid="test.classpath" conf="test"/>
         <ivy:cachepath pathid="benchmark.classpath" conf="benchmark"/>
     </target>
@@ -36,27 +35,14 @@
                classpathref="main.classpath"
                debug="on" source="${jdk}" target="${jdk}"/>
         <mkdir dir="dist"/>
-        <jar destfile="dist/sitemesh-${version}.jar" basedir="build/main/classes">
-            <zipfileset dir="src/main/taglib" prefix="META-INF"/>
-        </jar>
+        <jar destfile="dist/sitemesh-${version}.jar" basedir="build/main/classes"/>
     </target>
 
-    <target name="extras" depends="main" description="Build optional extras">
-        <mkdir dir="build/extras/classes"/>
-        <javac srcdir="src/extras/java"
-               destdir="build/extras/classes"
-               classpath="build/main/classes"
-               classpathref="extras.classpath"
-               debug="on" source="${jdk}" target="${jdk}"/>
-        <mkdir dir="dist"/>
-        <jar destfile="dist/sitemesh-extras-${version}.jar" basedir="build/extras/classes"/>
-    </target>
-
-    <target name="test" depends="main,extras" description="Run unit tests">
+    <target name="test" depends="main" description="Run unit tests">
         <mkdir dir="build/test/classes"/>
         <javac srcdir="src/test/java"
                destdir="build/test/classes"
-               classpath="build/main/classes;build/extras/classes"
+               classpath="build/main/classes"
                classpathref="test.classpath"
                debug="on" source="${jdk}" target="${jdk}"/>
         <mkdir dir="build/test-results"/>
@@ -69,7 +55,6 @@
             <classpath refid="test.classpath"/>
             <classpath>
                 <pathelement location="build/main/classes"/>
-                <pathelement location="build/extras/classes"/>
                 <pathelement location="build/test/classes"/>
             </classpath>
             <formatter type="brief" usefile="no"/>
