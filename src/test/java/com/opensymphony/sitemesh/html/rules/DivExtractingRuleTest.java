@@ -24,7 +24,7 @@ public class DivExtractingRuleTest extends TestCase {
             @Override
             protected void setupRules(State defaultState, Content content, Context context) {
                 super.setupRules(defaultState, content, context);
-                defaultState.addRule(new DivExtractingRule(content));
+                defaultState.addRule("div", new DivExtractingRule(content));
             }
         };
     }

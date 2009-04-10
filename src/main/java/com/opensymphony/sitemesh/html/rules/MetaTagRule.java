@@ -19,7 +19,6 @@ public class MetaTagRule extends BasicRule {
     private final Content content;
 
     public MetaTagRule(Content content) {
-        super("meta");
         this.content = content;
     }
 

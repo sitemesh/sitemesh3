@@ -30,10 +30,10 @@ public class Sm2HtmlContentProcessor<C extends Context> extends HtmlContentProce
     @Override
     protected void setupRules(State htmlState, Content content, C context) {
         super.setupRules(htmlState, content, context);
-        htmlState.addRule(new FramesetRule(content));               // Detect framesets.
-        htmlState.addRule(new HtmlAttributesRule(content));         // attributes in <html> element
-        htmlState.addRule(new ParameterExtractingRule(content));    // <parameter> blocks
-        htmlState.addRule(new ContentBlockExtractingRule(content)); // <content> blocks
+        htmlState.addRule("frameset", new FramesetRule(content));              // Detect framesets.
+        htmlState.addRule("html", new HtmlAttributesRule(content));            // attributes in <html> element
+        htmlState.addRule("parameter", new ParameterExtractingRule(content));  // <parameter> blocks
+        htmlState.addRule("content", new ContentBlockExtractingRule(content)); // <content> blocks
     }
 
 }

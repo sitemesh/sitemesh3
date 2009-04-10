@@ -8,9 +8,6 @@ import junit.framework.TestCase;
 public class StateTest extends TestCase {
 
     private static class DummyRule extends BasicRule {
-        public DummyRule(String acceptableTagName) {
-            super(acceptableTagName);
-        }
         @Override
         public void process(Tag tag) {
             throw new UnsupportedOperationException();
@@ -18,14 +15,14 @@ public class StateTest extends TestCase {
     }
 
     public void testMapsTagNameToRule() {
-        TagRule mouseRule = new DummyRule("mouse");
-        TagRule donkeyRule = new DummyRule("donkey");
-        TagRule lemonRule = new DummyRule("lemon");
+        TagRule mouseRule = new DummyRule();
+        TagRule donkeyRule = new DummyRule();
+        TagRule lemonRule = new DummyRule();
 
         State state = new State();
-        state.addRule(mouseRule);
-        state.addRule(donkeyRule);
-        state.addRule(lemonRule);
+        state.addRule("mouse", mouseRule);
+        state.addRule("donkey", donkeyRule);
+        state.addRule("lemon", lemonRule);
 
         assertSame(donkeyRule, state.getRule("donkey"));
         assertSame(lemonRule, state.getRule("lemon"));
@@ -33,14 +30,14 @@ public class StateTest extends TestCase {
     }
 
     public void testExposesWhetherItShouldProcessATagBasedOnAvailableRules() {
-        TagRule mouseRule = new DummyRule("mouse");
-        TagRule donkeyRule = new DummyRule("donkey");
-        TagRule lemonRule = new DummyRule("lemon");
+        TagRule mouseRule = new DummyRule();
+        TagRule donkeyRule = new DummyRule();
+        TagRule lemonRule = new DummyRule();
 
         State state = new State();
-        state.addRule(mouseRule);
-        state.addRule(donkeyRule);
-        state.addRule(lemonRule);
+        state.addRule("mouse", mouseRule);
+        state.addRule("donkey", donkeyRule);
+        state.addRule("lemon", lemonRule);
 
         assertTrue(state.shouldProcessTag("donkey"));
         assertTrue(state.shouldProcessTag("lemon"));
@@ -48,12 +45,12 @@ public class StateTest extends TestCase {
     }
 
     public void testReturnsMostRecentlyAddedRuleIfMultipleMatchesFound() {
-        TagRule oldRule = new DummyRule("something");
-        TagRule newRule = new DummyRule("something");
+        TagRule oldRule = new DummyRule();
+        TagRule newRule = new DummyRule();
 
         State state = new State();
-        state.addRule(oldRule);
-        state.addRule(newRule);
+        state.addRule("something", oldRule);
+        state.addRule("something", newRule);
 
         assertSame(newRule, state.getRule("something"));
     }

@@ -9,12 +9,11 @@ public class StateTransitionRule extends BasicRule {
 
     private State lastState;
 
-    public StateTransitionRule(String tagName, State newState) {
-        this(tagName, newState, true);
+    public StateTransitionRule(State newState) {
+        this(newState, true);
     }
 
-    public StateTransitionRule(String tagName, State newState, boolean writeEnclosingTag) {
-        super(tagName);
+    public StateTransitionRule(State newState, boolean writeEnclosingTag) {
         this.newState = newState;
         this.writeEnclosingTag = writeEnclosingTag;
     }
@@ -24,7 +23,7 @@ public class StateTransitionRule extends BasicRule {
         if (tag.getType() == Tag.Type.OPEN) {
             lastState = context.currentState();
             context.changeState(newState);
-            newState.addRule(this);
+            newState.addRule(tag.getName().toLowerCase(), this);
         } else if (tag.getType() == Tag.Type.CLOSE && lastState != null) {
             context.changeState(lastState);
             lastState = null;

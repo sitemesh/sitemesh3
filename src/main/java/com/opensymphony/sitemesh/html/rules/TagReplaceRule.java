@@ -18,8 +18,7 @@ public class TagReplaceRule extends BasicRule {
 
     private final String newTagName;
 
-    public TagReplaceRule(String originalTagName, String newTagName) {
-        super(originalTagName);
+    public TagReplaceRule(String newTagName) {
         this.newTagName = newTagName;
     }
 

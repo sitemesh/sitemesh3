@@ -20,7 +20,6 @@ public class SiteMeshWriteRule extends BasicBlockRule {
     private final Context siteMeshContext;
 
     public SiteMeshWriteRule(Context siteMeshContext) {
-        super("sitemesh:write"); // TODO: Support real namespaces.
         this.siteMeshContext = siteMeshContext;
     }
 

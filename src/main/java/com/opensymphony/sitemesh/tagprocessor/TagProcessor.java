@@ -47,10 +47,10 @@ public class TagProcessor {
     /**
      * Equivalent of TagProcessor.defaultState().addRule()
      *
-     * @see State#addRule(TagRule)
+     * @see State#addRule(String,TagRule)
      */
-    public void addRule(TagRule rule) {
-        defaultState.addRule(rule);
+    public void addRule(String name, TagRule rule) {
+        defaultState.addRule(name, rule);
     }
 
     /**

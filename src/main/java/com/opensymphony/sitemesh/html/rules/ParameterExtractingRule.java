@@ -18,7 +18,6 @@ public class ParameterExtractingRule extends BasicRule{
     private final Content content;
 
     public ParameterExtractingRule(Content content) {
-        super("parameter");
         this.content = content;
     }
 

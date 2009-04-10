@@ -22,7 +22,6 @@ public class BodyTagRule extends BasicBlockRule {
     private final Content content;
 
     public BodyTagRule(Content content) {
-        super("body");
         this.content = content;
     }
 

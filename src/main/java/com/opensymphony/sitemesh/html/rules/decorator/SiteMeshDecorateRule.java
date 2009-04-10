@@ -37,7 +37,6 @@ public class SiteMeshDecorateRule extends BasicBlockRule<Content> {
     private final Context siteMeshContext;
 
     public SiteMeshDecorateRule(Context siteMeshContext) {
-        super("sitemesh:decorate");
         this.siteMeshContext = siteMeshContext;
     }
 

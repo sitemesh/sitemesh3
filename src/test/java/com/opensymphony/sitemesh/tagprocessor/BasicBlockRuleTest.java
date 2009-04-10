@@ -18,7 +18,7 @@ public class BasicBlockRuleTest extends TestCase {
         final Map<String, String> out = new HashMap<String, String>();
 
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule(new BasicBlockRule<String>("tag") {
+        tagProcessor.addRule("tag", new BasicBlockRule<String>() {
             @Override
             protected String processStart(Tag tag) throws IOException {
                 context.pushBuffer();
@@ -43,7 +43,7 @@ public class BasicBlockRuleTest extends TestCase {
         final AtomicInteger endCount = new AtomicInteger();
 
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule(new BasicBlockRule("x") {
+        tagProcessor.addRule("x", new BasicBlockRule() {
             @Override
             protected String processStart(Tag tag) throws IOException {
                 startCount.incrementAndGet();

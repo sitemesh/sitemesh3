@@ -23,7 +23,7 @@ public class SiteMeshWriteRuleTest extends TestCase {
 
         String in = "Hello <sitemesh:write property='foo'/> <sitemesh:write property='bar.x'/>!";
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule(new SiteMeshWriteRule(context));
+        tagProcessor.addRule("sitemesh:write", new SiteMeshWriteRule(context));
         tagProcessor.process();
         CharSequence out = tagProcessor.getDefaultBufferContents();
 
@@ -37,7 +37,7 @@ public class SiteMeshWriteRuleTest extends TestCase {
 
         String in = "Hello <sitemesh:write property='notfound'/> <sitemesh:write property='found.not'/>!";
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule(new SiteMeshWriteRule(context));
+        tagProcessor.addRule("sitemesh:write", new SiteMeshWriteRule(context));
         tagProcessor.process();
         CharSequence out = tagProcessor.getDefaultBufferContents();
 
@@ -53,7 +53,7 @@ public class SiteMeshWriteRuleTest extends TestCase {
         String in = "Hello <sitemesh:write property='found'>BAD</sitemesh:write>" +
                 " <sitemesh:write property='notfound'>BAD</sitemesh:write>!";
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule(new SiteMeshWriteRule(context));
+        tagProcessor.addRule("sitemesh:write", new SiteMeshWriteRule(context));
         tagProcessor.process();
         CharSequence out = tagProcessor.getDefaultBufferContents();
 

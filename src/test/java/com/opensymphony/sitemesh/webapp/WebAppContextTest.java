@@ -5,7 +5,7 @@ import com.opensymphony.sitemesh.ContentProcessor;
 import com.opensymphony.sitemesh.decorator.dispatch.DispatchingDecoratorApplier;
 import com.opensymphony.sitemesh.decorator.map.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh.html.HtmlContentProcessor;
-import com.opensymphony.sitemesh.html.rules.SiteMeshDecorateRule;
+import com.opensymphony.sitemesh.html.rules.decorator.SiteMeshDecorateRule;
 import com.opensymphony.sitemesh.tagprocessor.State;
 import com.opensymphony.sitemesh.webapp.contentfilter.BasicSelector;
 import junit.framework.TestCase;
@@ -21,7 +21,7 @@ public class WebAppContextTest extends TestCase {
             @Override
             protected void setupRules(State defaultState, Content content, WebAppContext context) {
                 super.setupRules(defaultState, content, context);
-                defaultState.addRule(new SiteMeshDecorateRule(context));
+                defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(context));
             }
         };
 
@@ -66,7 +66,7 @@ public class WebAppContextTest extends TestCase {
             @Override
             protected void setupRules(State defaultState, Content content, WebAppContext context) {
                 super.setupRules(defaultState, content, context);
-                defaultState.addRule(new SiteMeshDecorateRule(context));
+                defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(context));
             }
         };
 

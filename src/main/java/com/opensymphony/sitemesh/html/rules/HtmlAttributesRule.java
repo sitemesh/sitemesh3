@@ -15,7 +15,6 @@ public class HtmlAttributesRule extends BasicRule {
     private final Content content;
 
     public HtmlAttributesRule(Content content) {
-        super("html");
         this.content = content;
     }
 

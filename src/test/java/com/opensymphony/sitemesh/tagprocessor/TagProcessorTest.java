@@ -1,6 +1,5 @@
 package com.opensymphony.sitemesh.tagprocessor;
 
-import com.opensymphony.sitemesh.html.rules.TagReplaceRule;
 import junit.framework.TestCase;
 
 import java.io.IOException;
@@ -11,18 +10,9 @@ import java.nio.CharBuffer;
  */
 public class TagProcessorTest extends TestCase {
 
-    public void testSupportsConventionalReaderAndWriter() throws IOException {
-        TagProcessor processor = new TagProcessor(CharBuffer.wrap("<hello><b id=\"something\">world</b></hello>"));
-        processor.addRule(new TagReplaceRule("b", "strong"));
-
-        processor.process();
-        assertEquals("<hello><strong id=\"something\">world</strong></hello>",
-                processor.getDefaultBufferContents().toString());
-    }
-
     public void testAllowsRulesToModifyAttributes() throws IOException {
         TagProcessor processor = new TagProcessor(CharBuffer.wrap("<hello><a href=\"modify-me\">world</a></hello>"));
-        processor.addRule(new BasicRule("a") {
+        processor.addRule("a", new BasicRule() {
             @Override
             public void process(Tag tag) throws IOException {
                 CustomTag customTag = new CustomTag(tag);
@@ -42,12 +32,7 @@ public class TagProcessorTest extends TestCase {
 
     public void testCanAddAttributesToCustomTag() throws IOException {
         TagProcessor processor = new TagProcessor(CharBuffer.wrap("<h1>Headline</h1>"));
-        processor.addRule(new BasicRule() {
-            @Override
-            public boolean shouldProcess(String tag) {
-                return tag.equalsIgnoreCase("h1");
-            }
-
+        processor.addRule("h1", new BasicRule() {
             @Override
             public void process(Tag tag) throws IOException {
                 if (tag.getType() == Tag.Type.OPEN) {

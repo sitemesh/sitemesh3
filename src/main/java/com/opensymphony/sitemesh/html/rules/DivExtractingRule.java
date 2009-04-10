@@ -14,7 +14,6 @@ public class DivExtractingRule extends BasicBlockRule<String> {
     private final Content content;
 
     public DivExtractingRule(Content content) {
-        super("div");
         this.content = content;
     }
 

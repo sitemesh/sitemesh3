@@ -16,7 +16,6 @@ public class FramesetRule extends BasicRule {
     private final Content content;
 
     public FramesetRule(Content content) {
-        super("frame", "frameset");
         this.content = content;
     }
 

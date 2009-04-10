@@ -19,7 +19,6 @@ public class TitleExtractingRule extends BasicBlockRule {
     private boolean seenAtLeastOneTitle;
 
     public TitleExtractingRule(Content content) {
-        super("title");
         this.content = content;
     }
 

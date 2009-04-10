@@ -18,13 +18,6 @@ public abstract class BasicBlockRule<T> extends BasicRule {
 
     private DataHolder<T> current;
 
-    public BasicBlockRule(String... acceptableTagNames) {
-        super(acceptableTagNames);
-    }
-
-    public BasicBlockRule() {
-    }
-
     /**
      * Called when a block is started (i.e. <code>&lt;opening&gt;</code> tag is encountered).
      *

@@ -35,10 +35,9 @@ import com.opensymphony.sitemesh.tagprocessor.TagProcessor;
  * <p>To add custom rules, override {@link TagBasedContentProcessor#setupRules(State, Content, Context)} },
  * ensuring that super.setupRules() is called.</p>
  *
- * @see Sm2HtmlContentProcessor
- * @see MsOfficeHtmlContentProcessor
- * @see TagBasedContentProcessor
  * @author Joe Walnes
+ * @see Sm2HtmlContentProcessor
+ * @see TagBasedContentProcessor
  */
 public class HtmlContentProcessor<C extends Context> extends TagBasedContentProcessor<C> {
 
@@ -47,18 +46,19 @@ public class HtmlContentProcessor<C extends Context> extends TagBasedContentProc
         super.setupRules(defaultState, content, context);
 
         // Core rules for SiteMesh to be functional.
-        defaultState.addRule(new HeadExtractingRule(content)); // contents of <head>
-        defaultState.addRule(new TitleExtractingRule(content)); // the <title>
-        defaultState.addRule(new BodyTagRule(content)); // contents of <body>
-        defaultState.addRule(new MetaTagRule(content)); // <meta> tags.
+        defaultState.addRule("head", new HeadExtractingRule(content));
+        defaultState.addRule("title", new TitleExtractingRule(content));
+        defaultState.addRule("body", new BodyTagRule(content));
+        defaultState.addRule("meta", new MetaTagRule(content));
 
         // Ensure that while in <xml> tag, none of the other rules kick in.
         // For example <xml><book><title>hello</title></book></xml> should not affect the title of the page.
-        defaultState.addRule(new StateTransitionRule("xml", new State()));
+        defaultState.addRule("xml", new StateTransitionRule(new State()));
 
         // SiteMesh decorator tags.
-        defaultState.addRule(new SiteMeshWriteRule(context));
-        defaultState.addRule(new SiteMeshDecorateRule(context));
+        // TODO: Support real XML namespaces.
+        defaultState.addRule("sitemesh:write", new SiteMeshWriteRule(context));
+        defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(context));
     }
 
     @Override

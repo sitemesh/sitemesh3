@@ -21,7 +21,6 @@ public class ContentBlockExtractingRule extends BasicBlockRule<String> {
     private final Content content;
 
     public ContentBlockExtractingRule(Content content) {
-        super("content");
         this.content = content;
     }
 

@@ -24,7 +24,7 @@ public class SiteMeshDecorateRuleTest extends TestCase {
         final AtomicReference<Content> capturedContentRef = new AtomicReference<Content>();
 
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule(new SiteMeshDecorateRule(new ContextStub() {
+        tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new ContextStub() {
             @Override
             public Content decorate(String decoratorName, Content content) throws IOException {
                 capturedContentRef.set(content);
@@ -47,7 +47,7 @@ public class SiteMeshDecorateRuleTest extends TestCase {
                 "AFTER";
 
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule(new SiteMeshDecorateRule(new ContextStub() {
+        tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new ContextStub() {
             @Override
             public Content decorate(String decoratorName, Content content) throws IOException {
                 Content result = new InMemoryContent();
@@ -68,7 +68,7 @@ public class SiteMeshDecorateRuleTest extends TestCase {
         final AtomicBoolean wasCalled = new AtomicBoolean(false);
 
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule(new SiteMeshDecorateRule(new ContextStub() {
+        tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new ContextStub() {
             @Override
             public Content decorate(String decoratorName, Content content) throws IOException {
                 wasCalled.set(true);
@@ -89,7 +89,7 @@ public class SiteMeshDecorateRuleTest extends TestCase {
         final AtomicBoolean wasCalled = new AtomicBoolean(false);
 
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
-        tagProcessor.addRule(new SiteMeshDecorateRule(new ContextStub() {
+        tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new ContextStub() {
             @Override
             public Content decorate(String decoratorName, Content content) throws IOException {
                 wasCalled.set(true);

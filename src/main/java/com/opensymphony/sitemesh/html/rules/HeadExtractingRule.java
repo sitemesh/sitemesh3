@@ -17,7 +17,6 @@ public class HeadExtractingRule extends BasicBlockRule {
     private final Content content;
 
     public HeadExtractingRule(Content content) {
-        super("head");
         this.content = content;
     }
 
