@@ -18,34 +18,23 @@ import java.io.IOException;
 public class MsOfficeDocumentPropertiesRule extends BasicRule {
 
     private final Content content;
-    private boolean inDocumentProperties;
 
     public MsOfficeDocumentPropertiesRule(Content content) {
         this.content = content;
     }
 
     @Override
-    public boolean shouldProcess(String name) {
-        return (inDocumentProperties && name.startsWith("o:")) || name.equals("o:documentproperties");
-    }
-
-    @Override
     public void process(Tag tag) throws IOException {
-        if (tag.getName().equals("o:DocumentProperties")) {
-            inDocumentProperties = (tag.getType() == Tag.Type.OPEN);
+        if (tag.getType() == Tag.Type.OPEN) {
             tag.writeTo(context.currentBuffer());
-        } else {
-            if (tag.getType() == Tag.Type.OPEN) {
-                tag.writeTo(context.currentBuffer());
-                context.pushBuffer();
-            } else if (tag.getType() == Tag.Type.CLOSE) {
-                String name = tag.getName().substring(2);
-                content.addProperty("office.DocumentProperties." + name, context.currentBufferContents());
-                CharSequence contents = context.currentBufferContents();
-                context.popBuffer();
-                context.currentBuffer().append(contents);
-                tag.writeTo(context.currentBuffer());
-            }
+            context.pushBuffer();
+        } else if (tag.getType() == Tag.Type.CLOSE) {
+            String name = tag.getName().substring(2);
+            content.addProperty("office.DocumentProperties." + name, context.currentBufferContents());
+            CharSequence contents = context.currentBufferContents();
+            context.popBuffer();
+            context.currentBuffer().append(contents);
+            tag.writeTo(context.currentBuffer());
         }
     }
 
