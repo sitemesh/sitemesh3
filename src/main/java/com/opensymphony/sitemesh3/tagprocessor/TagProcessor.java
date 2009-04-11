@@ -79,8 +79,7 @@ public class TagProcessor {
 
             @Override
             public void warning(String message, int line, int column) {
-                // TODO
-                // System.out.println(line + "," + column + ": " + message);
+                // Warnings are ignored. Keep on processing.
             }
         });
         tokenizer.start();
