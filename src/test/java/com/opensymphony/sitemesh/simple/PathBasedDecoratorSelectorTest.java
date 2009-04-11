@@ -4,7 +4,6 @@ import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.SiteMeshContextStub;
 import com.opensymphony.sitemesh.DecoratorSelector;
 import com.opensymphony.sitemesh.InMemoryContent;
-import com.opensymphony.sitemesh.simple.PathBasedDecoratorSelector;
 import junit.framework.TestCase;
 
 import java.io.IOException;

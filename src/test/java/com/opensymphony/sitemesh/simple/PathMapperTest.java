@@ -1,7 +1,6 @@
 package com.opensymphony.sitemesh.simple;
 
 import junit.framework.TestCase;
-import com.opensymphony.sitemesh.simple.PathMapper;
 
 /**
  * @author Joe Walnes
@@ -10,13 +9,13 @@ import com.opensymphony.sitemesh.simple.PathMapper;
  */
 public class PathMapperTest extends TestCase {
 
-    private PathMapper pathMapper;
+    private PathMapper<String> pathMapper;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-        pathMapper = new PathMapper();
+        pathMapper = new PathMapper<String>();
 
         // exact matches come first
         pathMapper.put("/myexactfile.html", "exact1");
@@ -37,11 +36,11 @@ public class PathMapperTest extends TestCase {
     }
 
     public void testHardening() throws Exception {
-        PathMapper bad = new PathMapper();
-        bad.put(null, null);
-        assertNull(bad.get(null));
-        assertNull(bad.get(""));
-        assertNull(bad.get("/somenonexistingpath"));
+        pathMapper = new PathMapper<String>();
+        pathMapper.put(null, null);
+        assertNull(pathMapper.get(null));
+        assertNull(pathMapper.get(""));
+        assertNull(pathMapper.get("/somenonexistingpath"));
     }
 
     public void testFindExactKey() throws Exception {
