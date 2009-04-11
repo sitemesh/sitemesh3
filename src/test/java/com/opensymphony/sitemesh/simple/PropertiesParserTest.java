@@ -38,14 +38,14 @@ public class PropertiesParserTest extends TestCase {
         properties.put("foo", "   aaaa   bbbb,cccc\ndddd \n ");
         assertEquals("aaaa|bbbb|cccc|dddd",
                 joinSequence(propertiesParser.getStringArray("foo")));
-        assertNull(propertiesParser.getStringArray("other"));
+        assertEquals(0, propertiesParser.getStringArray("other").length);
     }
 
     public void testSplitsKeyValuesIntoMap() {
         properties.put("foo", "   aa=Apples,zz=Ziggy\n   bb=Bananas ");
         assertEquals("(aa:Apples)|(zz:Ziggy)|(bb:Bananas)",
                 joinDict(propertiesParser.getStringMap("foo")));
-        assertNull(propertiesParser.getStringMap("other"));
+        assertTrue(propertiesParser.getStringMap("other").isEmpty());
     }
 
     private String joinSequence(String... sequence) {
