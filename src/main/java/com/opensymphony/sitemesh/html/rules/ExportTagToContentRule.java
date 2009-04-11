@@ -7,13 +7,24 @@ import com.opensymphony.sitemesh.Content;
 import java.io.IOException;
 
 /**
- * Extracts the contents of the &lt;body&gt; tag, writing into the passed in buffer.
+ * Exports the contents of a match tag to property of the passed in {@link Content}.
  *
- * <p>Additionally, any attributes on the &lt;body&gt; tag (e.g. onclick) will be exported
- * to the page as properties under the 'body.' prefix (e.g. body.onclick).</p>
+ * Additionally, if this tag has attributes, they will be written as child properties.
  *
- * <p>This rule also deals with documents that do not contain any &lt;body&gt; tags,
- * treating the entire document as the body instead.</p>
+ * <h3>Example</h3>
+ *
+ * <pre>
+ * // Java
+ * myState.addRule("foo", new ExportTagToContentRule(content, "bar");
+ *
+ * // Input
+ * &lt;foo x=1 b=2&gt;hello&lt/foo&gt;
+ *
+ * // Exported properties of Content
+ * bar=hello
+ * bar.x=1
+ * bar.b=2
+ * </pre>
  *
  * @author Joe Walnes
  */
