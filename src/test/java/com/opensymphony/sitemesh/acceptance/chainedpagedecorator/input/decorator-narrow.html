@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title><sitemesh:write property='title'/></title>
+    <sitemesh:write property='head'/>
+    <style type="text/css">
+      .sidebar { float: left; width: 200px; }
+      .narrow { width: 800px; }
+    </style>
+  </head>
+  <body>
+
+    <div class="sidebar">
+      <ul>
+        <li>Some</li>
+        <li>Additional</li>
+        <li>Stuff</li>
+      </ul>
+    </div>
+
+    <div class="narrow">
+      <sitemesh:write property='body'/>
+    </div>
+
+  </body>
+</html>

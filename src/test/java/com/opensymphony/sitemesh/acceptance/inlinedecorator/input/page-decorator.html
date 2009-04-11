@@ -1,0 +1,24 @@
+<!-- Common header -->
+<html>
+  <head>
+    <title><sitemesh:write property='title'/></title>
+    <style type="text/css">
+      /* common css */
+      body { padding: 20px; }
+      .title { color: #00c; }
+    </style>
+    <sitemesh:write property='head'/>
+  </head>
+  <body>
+
+    <sitemesh:decorate decorator="/header-decorator.html">
+      Page: <sitemesh:write property="title"/>
+    </sitemesh:decorate>
+
+    <!-- body -->
+    <sitemesh:write property='body'/>
+    <!-- end of body -->
+
+  </body>
+</html>
+<!-- Common footer -->

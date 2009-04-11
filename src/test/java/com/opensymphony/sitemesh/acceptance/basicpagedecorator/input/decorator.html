@@ -1,0 +1,21 @@
+<!-- Common header -->
+<html>
+  <head>
+    <title><sitemesh:write property='title'/></title>
+    <style type="text/css">
+      /* common css */
+      body { padding: 20px; }
+    </style>
+    <sitemesh:write property='head'/>
+  </head>
+  <body>
+
+    <h1 style="text-align:center"><sitemesh:write property='title'/></h1>
+
+    <!-- body -->
+    <sitemesh:write property='body'/>
+    <!-- end of body -->
+
+  </body>
+</html>
+<!-- Common footer -->

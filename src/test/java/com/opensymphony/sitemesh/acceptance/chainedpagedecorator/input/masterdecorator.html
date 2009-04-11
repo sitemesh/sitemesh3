@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title><sitemesh:write property='title'/></title>
+    <sitemesh:write property='head'/>
+    <style type="text/css">
+      .main { background-color: #eee; }
+      body { font-family: arial,serif; }
+    </style>
+  </head>
+  <body>
+
+    <h1><sitemesh:write property='title'/></h1>
+
+    <div class="main">
+      <sitemesh:write property='body'/>
+    </div>
+
+  </body>
+</html>
