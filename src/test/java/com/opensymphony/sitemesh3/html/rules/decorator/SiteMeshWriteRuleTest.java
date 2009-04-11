@@ -16,8 +16,8 @@ public class SiteMeshWriteRuleTest extends TestCase {
 
     public void testWritesTheProperty() throws IOException {
         Content content = new InMemoryContent();
-        content.addProperty("foo", "This is the <foo> property.");
-        content.addProperty("bar.x", "BAR");
+        content.getProperty("foo").update("This is the <foo> property.");
+        content.getProperty("bar.x").update("BAR");
         SiteMeshContextStub context = new SiteMeshContextStub();
         context.setContentToMerge(content);
 
@@ -47,7 +47,7 @@ public class SiteMeshWriteRuleTest extends TestCase {
     public void testSkipsMissingProperties() throws IOException {
         Content content = new InMemoryContent();
         SiteMeshContextStub context = new SiteMeshContextStub();
-        content.addProperty("found", "FOUND");
+        content.getProperty("found").update("FOUND");
         context.setContentToMerge(content);
 
         String in = "Hello <sitemesh:write property='found'>BAD</sitemesh:write>" +

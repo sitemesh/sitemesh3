@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * {@link Content} implementation that stores properties in memory in a hashtable.
@@ -14,59 +17,18 @@ import java.util.Map;
  */
 public class InMemoryContent implements Content {
 
-    private Property original = EMPTY_PROPERTY;
-    private Property processed = EMPTY_PROPERTY;
+    private Property original = new CharSequenceProperty();
+    private Property processed = new CharSequenceProperty();
     private final Map<String, Property> properties = new HashMap<String, Property>();
-
-    public InMemoryContent() throws IOException {
-        setOriginal(EMPTY_PROPERTY);
-    }
-
-    protected Property toProperty(CharSequence charSequence) {
-        if (charSequence == null) {
-            return EMPTY_PROPERTY;
-        } else if (charSequence instanceof CharSequenceList) {
-            // Optimization.
-            return new CharSequenceListProperty((CharSequenceList) charSequence);
-        } else {
-            return new CharSequenceProperty(charSequence);
-        }
-    }
-
-    @Override
-    public void setOriginal(CharSequence original) {
-        setOriginal(toProperty(original));
-    }
-
-    @Override
-    public void setOriginal(Property original) {
-        this.original = original;
-    }
-
-    @Override
-    public void setProcessed(CharSequence processed) {
-        setProcessed(toProperty(processed));
-    }
-
-    @Override
-    public void setProcessed(Property processed) {
-        this.processed = processed;
-    }
-
-    @Override
-    public void addProperty(String name, Property property) {
-        properties.put(name, property);
-    }
-
-    @Override
-    public void addProperty(String name, CharSequence value) {
-        addProperty(name, toProperty(value));
-    }
 
     @Override
     public Property getProperty(String name) {
-        Property result = properties.get(name);
-        return result == null ? EMPTY_PROPERTY : result;
+        Property property = properties.get(name);
+        if (property == null) {
+            property = new CharSequenceProperty();
+            properties.put(name, property);
+        }
+        return property;
     }
 
     @Override
@@ -81,103 +43,57 @@ public class InMemoryContent implements Content {
 
     @Override
     public Iterator<Map.Entry<String, Property>> iterator() {
-        return properties.entrySet().iterator();
+        List<Map.Entry<String, Property>> list = new ArrayList<Map.Entry<String, Property>>(properties.size());
+        for (Map.Entry<String, Property> next : properties.entrySet()) {
+            if (next.getValue().exists()) {
+                list.add(next);
+            }
+        }
+        return list.iterator();
     }
 
     private static class CharSequenceProperty implements Content.Property {
 
-        private final CharSequence value;
-
-        public CharSequenceProperty(CharSequence value) {
-            this.value = value;
-        }
+        private CharSequence value;
 
         @Override
         public boolean exists() {
-            return true;
+            return value != null;
         }
 
         @Override
         public String value() {
-            return value.toString();
+            return value != null ? value.toString() : null;
         }
 
         @Override
         public String valueNeverNull() {
-            return value.toString();
+            return value != null ? value.toString() : "";
         }
 
         @Override
         public void writeTo(Appendable out) throws IOException {
-            out.append(value);
+            if (value == null) {
+                return;
+            }
+            if (value instanceof CharSequenceList) {
+                // Optimization.
+                CharSequenceList charSequenceList = (CharSequenceList) value;
+                charSequenceList.writeTo(out);
+            } else {
+                out.append(value);
+            }
+        }
+
+        @Override
+        public void update(CharSequence data) {
+            value = data;
         }
 
         @Override
         public String toString() {
-            return value.toString();
+            return valueNeverNull();
         }
     }
 
-    /**
-     * Implementation of {@link Content.Property} that is optimized for
-     * {@link com.opensymphony.sitemesh3.tagprocessor.util.CharSequenceList}.
-     */
-    private static class CharSequenceListProperty implements Content.Property {
-        private final CharSequenceList value;
-
-        public CharSequenceListProperty(CharSequenceList value) {
-            this.value = value;
-        }
-
-        @Override
-        public boolean exists() {
-            return true;
-        }
-
-        @Override
-        public String value() {
-            return value.toString();
-        }
-
-        @Override
-        public String valueNeverNull() {
-            return value.toString();
-        }
-
-        @Override
-        public void writeTo(Appendable out) throws IOException {
-            value.writeTo(out);
-        }
-
-        @Override
-        public String toString() {
-            return value.toString();
-        }
-    }
-
-    public static final Property EMPTY_PROPERTY = new Property() {
-        @Override
-        public boolean exists() {
-            return false;
-        }
-
-        @Override
-        public String value() {
-            return null;
-        }
-
-        @Override
-        public String valueNeverNull() {
-            return "";
-        }
-
-        @Override
-        public void writeTo(Appendable out) throws IOException {
-        }
-
-        @Override
-        public String toString() {
-            return "";
-        }
-    };
 }

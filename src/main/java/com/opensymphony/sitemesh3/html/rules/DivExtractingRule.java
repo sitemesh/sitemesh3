@@ -29,9 +29,9 @@ public class DivExtractingRule extends BasicBlockRule<String> {
     @Override
     protected void processEnd(Tag tag, String id) throws IOException {
         if (capturing(id)) {
-            CharSequence content = popContent();
-            this.content.addProperty("div." + id, content);
-            ensureContentIsNotConsumed(content);
+            CharSequence tagContent = popContent();
+            content.getProperty("div." + id).update(tagContent);
+            ensureContentIsNotConsumed(tagContent);
         }
         ensureTagIsNotConsumed(tag);
     }

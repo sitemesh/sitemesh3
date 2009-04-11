@@ -21,7 +21,7 @@ public class FramesetRule extends BasicRule {
 
     @Override
     public void process(Tag tag) {
-        content.addProperty("frameset", "true");
+        content.getProperty("frameset").update("true");
     }
 
 }

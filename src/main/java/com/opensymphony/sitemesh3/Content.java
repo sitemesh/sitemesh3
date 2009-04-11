@@ -13,18 +13,13 @@ public interface Content extends Iterable<Map.Entry<String,Content.Property>> {
         String value();
         String valueNeverNull();
         void writeTo(Appendable out) throws IOException;
+        void update(CharSequence data);
     }
 
     Property getOriginal();
-    void setOriginal(CharSequence original);
-    void setOriginal(Property original);
 
     Property getProcessed();
-    void setProcessed(CharSequence original);
-    void setProcessed(Property original);
 
     Property getProperty(String name);
-    void addProperty(String name, Property property);
-    void addProperty(String name, CharSequence value);
 
 }

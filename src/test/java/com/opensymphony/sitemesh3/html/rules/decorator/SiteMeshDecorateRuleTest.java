@@ -51,7 +51,7 @@ public class SiteMeshDecorateRuleTest extends TestCase {
             @Override
             public Content decorate(String decoratorName, Content content) throws IOException {
                 Content result = new InMemoryContent();
-                result.addProperty("body", "-DECORATED-");
+                result.getProperty("body").update("-DECORATED-");
                 return result;
             }
         }));

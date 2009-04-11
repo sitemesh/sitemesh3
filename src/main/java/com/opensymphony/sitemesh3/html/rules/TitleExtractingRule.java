@@ -34,7 +34,7 @@ public class TitleExtractingRule extends BasicBlockRule {
     protected void processEnd(Tag tag, Object data) throws IOException {
         CharSequence title = tagProcessorContext.currentBufferContents();
         if (!seenAtLeastOneTitle) {
-            content.addProperty(propertyName, title);
+            content.getProperty(propertyName).update(title);
             seenAtLeastOneTitle = true;
         }
         tagProcessorContext.popBuffer();

@@ -65,7 +65,7 @@ public class HtmlContentProcessor<C extends SiteMeshContext> extends TagBasedCon
         // In the event that no <body> tag was captured, use the default buffer contents instead
         // (i.e. the whole document, except anything that was written to other buffers).
         if (!content.getProperty("body").exists()) {
-            content.addProperty("body", processor.getDefaultBufferContents());
+            content.getProperty("body").update(processor.getDefaultBufferContents());
         }
     }
 

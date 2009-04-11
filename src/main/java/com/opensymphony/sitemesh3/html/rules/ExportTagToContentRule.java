@@ -42,7 +42,7 @@ public class ExportTagToContentRule extends BasicBlockRule {
     protected Object processStart(Tag tag) throws IOException {
         tag.writeTo(tagProcessorContext.currentBuffer());
         for (int i = 0; i < tag.getAttributeCount(); i++) {
-            content.addProperty(propertyName + '.' + tag.getAttributeName(i), tag.getAttributeValue(i));
+            content.getProperty(propertyName + '.' + tag.getAttributeName(i)).update(tag.getAttributeValue(i));
         }
         tagProcessorContext.pushBuffer();
         return null;
@@ -50,10 +50,10 @@ public class ExportTagToContentRule extends BasicBlockRule {
 
     @Override
     protected void processEnd(Tag tag, Object data) throws IOException {
-        CharSequence head = tagProcessorContext.currentBufferContents();
-        content.addProperty(propertyName, head);
+        CharSequence tagContent = tagProcessorContext.currentBufferContents();
+        content.getProperty(propertyName).update(tagContent);
         tagProcessorContext.popBuffer();
-        tagProcessorContext.currentBuffer().append(head);
+        tagProcessorContext.currentBuffer().append(tagContent);
         tag.writeTo(tagProcessorContext.currentBuffer());
     }
 }

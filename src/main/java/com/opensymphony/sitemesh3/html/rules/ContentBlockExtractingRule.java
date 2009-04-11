@@ -32,7 +32,7 @@ public class ContentBlockExtractingRule extends BasicBlockRule<String> {
 
     @Override
     protected void processEnd(Tag tag, String tagId) throws IOException {
-        content.addProperty("page." + tagId, tagProcessorContext.currentBufferContents());
+        content.getProperty("page." + tagId).update(tagProcessorContext.currentBufferContents());
         tagProcessorContext.popBuffer();
     }
 

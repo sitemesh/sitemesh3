@@ -80,7 +80,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
         @Override
         public Content build(CharBuffer data, WebAppContext context) throws IOException {
             Content content = super.build(data, context);
-            content.addProperty("title", "MyContentProcessedTitle");
+            content.getProperty("title").update("MyContentProcessedTitle");
             return content;
         }
     }
