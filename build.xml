@@ -25,7 +25,7 @@
     <target name="codegen" depends="dependencies" description="Generate code">
         <mkdir dir="build/main/java"/>
         <taskdef name="jflex" classname="JFlex.anttask.JFlexTask" classpathref="buildtools.classpath"/>
-        <jflex file="src/main/java/com/opensymphony/sitemesh/tagprocessor/lexer.flex" destdir="build/main/java"/>
+        <jflex file="src/main/java/com/opensymphony/sitemesh3/tagprocessor/lexer.flex" destdir="build/main/java"/>
     </target>
 
     <target name="main" depends="codegen" description="Build main library">

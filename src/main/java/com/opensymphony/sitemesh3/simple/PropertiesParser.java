@@ -1,0 +1,75 @@
+package com.opensymphony.sitemesh3.simple;
+
+import java.util.Map;
+import java.util.LinkedHashMap;
+
+/**
+ * Parses and cleans up string based properties.
+ *
+ * @author Joe Walnes
+ */
+class PropertiesParser {
+
+    private final Map<String, String> properties;
+
+    PropertiesParser(Map<String, String> properties) {
+        this.properties = properties;
+    }
+
+    /**
+     * Return string value, trimming whitespace.
+     *
+     * Will return null if property is not found, empty or whitespace only.
+     */
+    String getString(String key) {
+        String string = properties.get(key);
+        if (string == null) {
+            return null;
+        }
+        string = string.trim();
+        if (string.isEmpty()) {
+            return null;
+        }
+        return string;
+    }
+
+    /**
+     * Return string array, splitting on whitespace or commas, and trimming whitespace.
+     * e.g. "a,b,c" equivalent to "a b c" or "a\nb\nc" or "a    b,\nc  "
+     *
+     * Will return empty array if property is not found or empty.
+     */
+    String[] getStringArray(String key) {
+        String string = getString(key);
+        if (string == null) {
+            return new String[0];
+        }
+        String[] result = string.split("[,\\s]+");
+        for (int i = 0; i < result.length; i++) {
+            result[i] = result[i].trim();
+        }
+        return result;
+    }
+
+    /**
+     * Return Map, splitting entries on whitespace or commas, and trimming whitespace.
+     * Entries must consist of key=value (with no whitespace around the = char).
+     * e.g. "a=Apples, b=Bananas, c=Cherries" or "a=Apples\nb=Bananas\nc=Cherries".
+     * The map will retain the order that the entries were defined in.
+     *
+     * Will return empty map if property is not found or empty.
+     */
+    Map<String, String> getStringMap(String key) {
+        Map<String, String> result = new LinkedHashMap<String, String>();
+        String[] entries = getStringArray(key);
+        if (entries != null) {
+            for (String entry : entries) {
+                String[] split = entry.split("=", 2);
+                if (split.length == 2) {
+                    result.put(split[0], split[1]);
+                }
+            }
+        }
+        return result;
+    }
+}
