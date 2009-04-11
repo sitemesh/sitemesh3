@@ -2,10 +2,9 @@ package com.opensymphony.sitemesh.html;
 
 import com.opensymphony.sitemesh.Content;
 import com.opensymphony.sitemesh.SiteMeshContext;
-import com.opensymphony.sitemesh.html.rules.BodyTagRule;
-import com.opensymphony.sitemesh.html.rules.HeadExtractingRule;
 import com.opensymphony.sitemesh.html.rules.MetaTagRule;
 import com.opensymphony.sitemesh.html.rules.TitleExtractingRule;
+import com.opensymphony.sitemesh.html.rules.ExportTagToContentRule;
 import com.opensymphony.sitemesh.html.rules.decorator.SiteMeshWriteRule;
 import com.opensymphony.sitemesh.html.rules.decorator.SiteMeshDecorateRule;
 import com.opensymphony.sitemesh.tagprocessor.State;
@@ -46,10 +45,10 @@ public class HtmlContentProcessor<C extends SiteMeshContext> extends TagBasedCon
         super.setupRules(defaultState, content, context);
 
         // Core rules for SiteMesh to be functional.
-        defaultState.addRule("head", new HeadExtractingRule(content));
-        defaultState.addRule("title", new TitleExtractingRule(content));
-        defaultState.addRule("body", new BodyTagRule(content));
-        defaultState.addRule("meta", new MetaTagRule(content));
+        defaultState.addRule("head", new ExportTagToContentRule(content, "head"));
+        defaultState.addRule("title", new TitleExtractingRule(content, "title"));
+        defaultState.addRule("body", new ExportTagToContentRule(content, "body"));
+        defaultState.addRule("meta", new MetaTagRule(content, "meta"));
 
         // Ensure that while in <xml> tag, none of the other rules kick in.
         // For example <xml><book><title>hello</title></book></xml> should not affect the title of the page.

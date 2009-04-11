@@ -2,10 +2,9 @@ package com.opensymphony.sitemesh.html;
 
 import com.opensymphony.sitemesh.SiteMeshContext;
 import com.opensymphony.sitemesh.Content;
-import com.opensymphony.sitemesh.html.rules.MsOfficeDocumentPropertiesRule;
+import com.opensymphony.sitemesh.html.rules.ExportTagToContentRule;
 import com.opensymphony.sitemesh.tagprocessor.State;
 import com.opensymphony.sitemesh.tagprocessor.StateTransitionRule;
-import com.opensymphony.sitemesh.tagprocessor.TagRule;
 
 /**
  * Extension to {@link HtmlContentProcessor} that adds additional properties from MS Office Word and Excel
@@ -17,9 +16,8 @@ import com.opensymphony.sitemesh.tagprocessor.TagRule;
  * <code>Author</code>, <code>Company</code>, <code>Version</code>, etc.</li>
  * </ul>
  *
- * @see HtmlContentProcessor
- * @see MsOfficeDocumentPropertiesRule
  * @author Joe Walnes
+ * @see HtmlContentProcessor
  */
 public class MsOfficeHtmlContentProcessor<C extends SiteMeshContext> extends HtmlContentProcessor<C> {
 
@@ -32,19 +30,19 @@ public class MsOfficeHtmlContentProcessor<C extends SiteMeshContext> extends Htm
         State xmlState = new State();
         htmlState.addRule("xml", new StateTransitionRule(xmlState));
 
-        final TagRule msOfficeDocumentPropertiesRule = new MsOfficeDocumentPropertiesRule(content);
-        State documentPropertiesState = new State() {
-            @Override
-            public boolean shouldProcessTag(String tagName) {
-                return super.shouldProcessTag(tagName) || tagName.startsWith("o:");
-            }
-            @Override
-            public TagRule getRule(String tagName) {
-                TagRule result = super.getRule(tagName);
-                return result != null ? result : msOfficeDocumentPropertiesRule;
-            }
-        };
+        State documentPropertiesState = new State();
+        for (String documentPropertyName : getOfficePropertyNames()) {
+            documentPropertiesState.addRule("o:" + documentPropertyName,
+                    new ExportTagToContentRule(content, "office.DocumentProperties." + documentPropertyName));
+        }
         xmlState.addRule("o:documentproperties", new StateTransitionRule(documentPropertiesState));
+    }
+
+    protected String[] getOfficePropertyNames() {
+        return new String[]{
+            "Author", "Characters", "CharactersWithSpaces", "Company", "Created", "LastAuthor", "LastSaved",
+                "Lines", "Pages", "Paragraphs", "Revision", "TotalTime", "Version", "Words"
+        };
     }
 
 }

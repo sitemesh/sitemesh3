@@ -17,18 +17,20 @@ import java.io.IOException;
 public class MetaTagRule extends BasicRule {
 
     private final Content content;
+    private final String propertyPrefix;
 
-    public MetaTagRule(Content content) {
+    public MetaTagRule(Content content, String propertyPrefix) {
         this.content = content;
+        this.propertyPrefix = propertyPrefix;
     }
 
     @Override
     public void process(Tag tag) throws IOException {
         if (tag.hasAttribute("name", false)) {
-            content.addProperty("meta." + tag.getAttributeValue("name", false),
+            content.addProperty(propertyPrefix + '.' + tag.getAttributeValue("name", false),
                     tag.getAttributeValue("content", false));
         } else if (tag.hasAttribute("http-equiv", false)) {
-            content.addProperty("meta.http-equiv." + tag.getAttributeValue("http-equiv", false),
+            content.addProperty(propertyPrefix + ".http-equiv." + tag.getAttributeValue("http-equiv", false),
                     tag.getAttributeValue("content", false));
         }
         tag.writeTo(tagProcessorContext.currentBuffer());

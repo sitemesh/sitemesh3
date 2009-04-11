@@ -20,7 +20,7 @@ public class State {
      * @param rule
      */
     public void addRule(String tagName, TagRule rule) {
-        tagRules.put(tagName, rule);
+        tagRules.put(tagName.toLowerCase(), rule);
     }
 
     public boolean shouldProcessTag(String tagName) {

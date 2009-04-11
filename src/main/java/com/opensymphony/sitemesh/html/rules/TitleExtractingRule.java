@@ -15,11 +15,13 @@ import java.io.IOException;
 public class TitleExtractingRule extends BasicBlockRule {
 
     private final Content content;
+    private final String propertyName;
 
     private boolean seenAtLeastOneTitle;
 
-    public TitleExtractingRule(Content content) {
+    public TitleExtractingRule(Content content, String propertyName) {
         this.content = content;
+        this.propertyName = propertyName;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class TitleExtractingRule extends BasicBlockRule {
     protected void processEnd(Tag tag, Object data) throws IOException {
         CharSequence title = tagProcessorContext.currentBufferContents();
         if (!seenAtLeastOneTitle) {
-            content.addProperty("title", title);
+            content.addProperty(propertyName, title);
             seenAtLeastOneTitle = true;
         }
         tagProcessorContext.popBuffer();

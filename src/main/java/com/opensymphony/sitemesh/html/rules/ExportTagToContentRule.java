@@ -17,19 +17,21 @@ import java.io.IOException;
  *
  * @author Joe Walnes
  */
-public class BodyTagRule extends BasicBlockRule {
+public class ExportTagToContentRule extends BasicBlockRule {
 
     private final Content content;
+    private final String propertyName;
 
-    public BodyTagRule(Content content) {
+    public ExportTagToContentRule(Content content, String propertyName) {
         this.content = content;
+        this.propertyName = propertyName;
     }
 
     @Override
     protected Object processStart(Tag tag) throws IOException {
         tag.writeTo(tagProcessorContext.currentBuffer());
         for (int i = 0; i < tag.getAttributeCount(); i++) {
-            content.addProperty("body." + tag.getAttributeName(i), tag.getAttributeValue(i));
+            content.addProperty(propertyName + '.' + tag.getAttributeName(i), tag.getAttributeValue(i));
         }
         tagProcessorContext.pushBuffer();
         return null;
@@ -37,11 +39,10 @@ public class BodyTagRule extends BasicBlockRule {
 
     @Override
     protected void processEnd(Tag tag, Object data) throws IOException {
-        CharSequence body = tagProcessorContext.currentBufferContents();
-        content.addProperty("body", body);
+        CharSequence head = tagProcessorContext.currentBufferContents();
+        content.addProperty(propertyName, head);
         tagProcessorContext.popBuffer();
-        tagProcessorContext.currentBuffer().append(body);
+        tagProcessorContext.currentBuffer().append(head);
         tag.writeTo(tagProcessorContext.currentBuffer());
     }
-
 }
