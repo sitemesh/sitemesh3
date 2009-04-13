@@ -46,19 +46,19 @@ public class DataDrivenSuiteBuilder {
             inputSuite.addTest(new AssertTrimmedTest(
                     "testTitle",
                     expectedBlocks.get("TITLE"),
-                    content.getProperty("title").value()));
+                    content.getProperty("title").getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
                     "testBody",
                     expectedBlocks.get("BODY"),
-                    content.getProperty("body").value()));
+                    content.getProperty("body").getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
                     "testHead",
                     expectedBlocks.get("HEAD"),
-                    content.getProperty("head").value()));
+                    content.getProperty("head").getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
                     "testOriginal",
                     expectedBlocks.get("INPUT"),
-                    content.getOriginal().value()));
+                    content.getOriginal().getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
                     "testProperties",
                     cleanExpectedProperties(expectedBlocks.get("PROPERTIES")),
@@ -70,16 +70,27 @@ public class DataDrivenSuiteBuilder {
 
     private static String cleanActualProperties(Content content) {
         Map<String, String> actualProperties = new HashMap<String, String>();
-        for (Map.Entry<String, Content.Property> propertyEntry : content) {
-            String name = propertyEntry.getKey();
-            if (name.equals("body") || name.equals("head")) {
+        for (Content.Property property : content.getRoot().getDescendants()) {
+            String fullName = getFullName(property);
+            if (!property.hasValue() || fullName.equals("body") || fullName.equals("head")) {
                 continue;
             }
-            String actualValue = trimSafely(propertyEntry.getValue().value());
-            actualProperties.put(name, actualValue);
+            String actualValue = trimSafely(property.getValue());
+            actualProperties.put(fullName, actualValue);
         }
 
         return sortMapAndDumpAsString(actualProperties);
+    }
+
+    private static String getFullName(Content.Property property) {
+        StringBuilder result = new StringBuilder();
+        for (Content.Property item : property.getFullPath()) {
+            if (result.length() > 0) {
+                result.append('.');
+            }
+            result.append(item.getName());
+        }
+        return result.toString();
     }
 
     private static String cleanExpectedProperties(String string) throws IOException {

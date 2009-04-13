@@ -30,19 +30,17 @@ import java.io.IOException;
  */
 public class ExportTagToContentRule extends BasicBlockRule {
 
-    private final Content content;
-    private final String propertyName;
+    private final Content.Property targetProperty;
 
-    public ExportTagToContentRule(Content content, String propertyName) {
-        this.content = content;
-        this.propertyName = propertyName;
+    public ExportTagToContentRule(Content.Property targetProperty) {
+        this.targetProperty = targetProperty;
     }
 
     @Override
     protected Object processStart(Tag tag) throws IOException {
         tag.writeTo(tagProcessorContext.currentBuffer());
         for (int i = 0; i < tag.getAttributeCount(); i++) {
-            content.getProperty(propertyName + '.' + tag.getAttributeName(i)).update(tag.getAttributeValue(i));
+            targetProperty.getChild(tag.getAttributeName(i)).setValue(tag.getAttributeValue(i));
         }
         tagProcessorContext.pushBuffer();
         return null;
@@ -51,7 +49,7 @@ public class ExportTagToContentRule extends BasicBlockRule {
     @Override
     protected void processEnd(Tag tag, Object data) throws IOException {
         CharSequence tagContent = tagProcessorContext.currentBufferContents();
-        content.getProperty(propertyName).update(tagContent);
+        targetProperty.setValue(tagContent);
         tagProcessorContext.popBuffer();
         tagProcessorContext.currentBuffer().append(tagContent);
         tag.writeTo(tagProcessorContext.currentBuffer());

@@ -8,7 +8,6 @@ import junit.framework.TestCase;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
-import java.util.HashMap;
 
 /**
  * @author Joe Walnes
@@ -80,7 +79,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
         @Override
         public Content build(CharBuffer data, WebAppContext context) throws IOException {
             Content content = super.build(data, context);
-            content.getProperty("title").update("MyContentProcessedTitle");
+            content.getProperty("title").setValue("MyContentProcessedTitle");
             return content;
         }
     }

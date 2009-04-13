@@ -40,9 +40,9 @@ public class DivExtractingRuleTest extends TestCase {
         Content out = contentProcessor.build(CharBuffer.wrap(html), null);
 
         // verify
-        assertEquals(body, out.getProperty("body").value());
-        assertEquals(outer, out.getProperty("div.outer").value());
-        assertEquals(inner, out.getProperty("div.inner").value());
+        assertEquals(body, out.getProperty("body").getValue());
+        assertEquals(outer, out.getProperty("div.outer").getValue());
+        assertEquals(inner, out.getProperty("div.inner").getValue());
     }
 
     public void testDoesNotConsumeDivWhenExtracting() throws IOException {
@@ -53,7 +53,7 @@ public class DivExtractingRuleTest extends TestCase {
         Content out = contentProcessor.build(CharBuffer.wrap(html), null);
 
         // verify
-        assertEquals("<div id='target'>content</div>", out.getProperty("body").value());
+        assertEquals("<div id='target'>content</div>", out.getProperty("body").getValue());
     }
 
     public void testExtractsDivsWithIds() throws IOException {
@@ -64,7 +64,7 @@ public class DivExtractingRuleTest extends TestCase {
         Content out = contentProcessor.build(CharBuffer.wrap(html), null);
 
         // verify
-        assertEquals("content", out.getProperty("div.target").value());
+        assertEquals("content", out.getProperty("div.target").getValue());
     }
 
 }

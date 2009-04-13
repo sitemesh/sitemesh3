@@ -47,7 +47,7 @@ public class SiteMeshDecorateRule extends BasicBlockRule<Content> {
         Content content = new InMemoryContent();
 
         for (int i = 0, count = tag.getAttributeCount(); i < count; i++) {
-            content.getProperty(tag.getAttributeName(i)).update(tag.getAttributeValue(i));
+            content.getProperty(tag.getAttributeName(i)).setValue(tag.getAttributeValue(i));
         }
 
         return content;
@@ -58,11 +58,11 @@ public class SiteMeshDecorateRule extends BasicBlockRule<Content> {
         CharSequence body = tagProcessorContext.currentBufferContents();
         tagProcessorContext.popBuffer();
 
-        content.getOriginal().update(body);
+        content.getOriginal().setValue(body);
         // TODO: Use a 'default' property
-        content.getProperty("body").update(body);
+        content.getProperty("body").setValue(body);
 
-        String decoratorName = content.getProperty("decorator").value();
+        String decoratorName = content.getProperty("decorator").getValue();
         if (decoratorName == null) {
             tagProcessorContext.currentBuffer().append(body);
             return;
@@ -71,7 +71,7 @@ public class SiteMeshDecorateRule extends BasicBlockRule<Content> {
         Content decorated = siteMeshContext.decorate(decoratorName, content);
         if (decorated != null) {
             // TODO: Use a 'default' property
-            decorated.getProperty("body").writeTo(tagProcessorContext.currentBuffer());
+            decorated.getProperty("body").writeValueTo(tagProcessorContext.currentBuffer());
         } else {
             tagProcessorContext.currentBuffer().append(body);
         }

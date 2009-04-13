@@ -31,9 +31,10 @@ public class MsOfficeHtmlContentProcessor<C extends SiteMeshContext> extends Htm
         htmlState.addRule("xml", new StateTransitionRule(xmlState));
 
         State documentPropertiesState = new State();
+        Content.Property docProperties = content.getProperty("office").getChild("DocumentProperties");
         for (String documentPropertyName : getOfficePropertyNames()) {
             documentPropertiesState.addRule("o:" + documentPropertyName,
-                    new ExportTagToContentRule(content, "office.DocumentProperties." + documentPropertyName));
+                    new ExportTagToContentRule(docProperties.getChild(documentPropertyName)));
         }
         xmlState.addRule("o:documentproperties", new StateTransitionRule(documentPropertiesState));
     }

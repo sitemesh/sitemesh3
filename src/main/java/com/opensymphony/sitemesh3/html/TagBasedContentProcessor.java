@@ -22,7 +22,7 @@ public abstract class TagBasedContentProcessor<C extends SiteMeshContext> implem
     @Override
     public Content build(CharBuffer data, C context) throws IOException {
         Content content = new InMemoryContent();
-        content.getOriginal().update(data);
+        content.getOriginal().setValue(data);
 
         TagProcessor processor = new TagProcessor(data);
 
@@ -32,7 +32,7 @@ public abstract class TagBasedContentProcessor<C extends SiteMeshContext> implem
         // Run the processor.
         processor.process();
 
-        content.getProcessed().update(processor.getDefaultBufferContents());
+        content.getProcessed().setValue(processor.getDefaultBufferContents());
         postProcess(content, processor);
         return content;
     }

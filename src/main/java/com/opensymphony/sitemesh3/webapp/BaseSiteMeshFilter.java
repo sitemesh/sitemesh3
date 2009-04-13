@@ -99,7 +99,7 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
         if (content == null) {
             return false;
         }
-        content.getProcessed().writeTo(response.getWriter());
+        content.getProcessed().writeValueTo(response.getWriter());
         return true;
     }
 

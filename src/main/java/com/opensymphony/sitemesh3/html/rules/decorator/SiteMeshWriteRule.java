@@ -29,8 +29,8 @@ public class SiteMeshWriteRule extends BasicBlockRule {
         Content contentToMerge = siteMeshContext.getContentToMerge();
         if (contentToMerge != null) {
             Content.Property property = contentToMerge.getProperty(propertyName);
-            if (property.exists()) {
-                property.writeTo(tagProcessorContext.currentBuffer());
+            if (property.hasValue()) {
+                property.writeValueTo(tagProcessorContext.currentBuffer());
             }
         }
         tagProcessorContext.pushBuffer();

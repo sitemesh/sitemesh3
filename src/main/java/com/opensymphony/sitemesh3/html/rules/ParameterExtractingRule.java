@@ -24,6 +24,6 @@ public class ParameterExtractingRule extends BasicRule{
     @Override
     public void process(Tag tag) {
         content.getProperty("page." + tag.getAttributeValue("name", false))
-                .update(tag.getAttributeValue("value", false));
+                .setValue(tag.getAttributeValue("value", false));
     }
 }

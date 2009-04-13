@@ -35,10 +35,10 @@ public class SiteMeshDecorateRuleTest extends TestCase {
 
         Content content = capturedContentRef.get();
         assertNotNull(content);
-        assertEquals("<b>Some content</b>", content.getProperty("body").value());
-        assertEquals("<b>Some content</b>", content.getOriginal().value());
-        assertEquals("foo", content.getProperty("title").value());
-        assertEquals("bar", content.getProperty("cheese").value());
+        assertEquals("<b>Some content</b>", content.getProperty("body").getValue());
+        assertEquals("<b>Some content</b>", content.getOriginal().getValue());
+        assertEquals("foo", content.getProperty("title").getValue());
+        assertEquals("bar", content.getProperty("cheese").getValue());
     }
 
     public void testAllowsContextToWriteToPage() throws IOException {
@@ -51,7 +51,7 @@ public class SiteMeshDecorateRuleTest extends TestCase {
             @Override
             public Content decorate(String decoratorName, Content content) throws IOException {
                 Content result = new InMemoryContent();
-                result.getProperty("body").update("-DECORATED-");
+                result.getProperty("body").setValue("-DECORATED-");
                 return result;
             }
         }));

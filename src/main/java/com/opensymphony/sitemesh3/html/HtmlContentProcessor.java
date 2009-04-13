@@ -45,10 +45,10 @@ public class HtmlContentProcessor<C extends SiteMeshContext> extends TagBasedCon
         super.setupRules(defaultState, content, context);
 
         // Core rules for SiteMesh to be functional.
-        defaultState.addRule("head", new ExportTagToContentRule(content, "head"));
+        defaultState.addRule("head", new ExportTagToContentRule(content.getProperty("head")));
         defaultState.addRule("title", new TitleExtractingRule(content, "title"));
-        defaultState.addRule("body", new ExportTagToContentRule(content, "body"));
-        defaultState.addRule("meta", new MetaTagRule(content, "meta"));
+        defaultState.addRule("body", new ExportTagToContentRule(content.getProperty("body")));
+        defaultState.addRule("meta", new MetaTagRule(content.getProperty("meta")));
 
         // Ensure that while in <xml> tag, none of the other rules kick in.
         // For example <xml><book><title>hello</title></book></xml> should not affect the title of the page.
@@ -64,8 +64,8 @@ public class HtmlContentProcessor<C extends SiteMeshContext> extends TagBasedCon
     protected void postProcess(Content content, TagProcessor processor) {
         // In the event that no <body> tag was captured, use the default buffer contents instead
         // (i.e. the whole document, except anything that was written to other buffers).
-        if (!content.getProperty("body").exists()) {
-            content.getProperty("body").update(processor.getDefaultBufferContents());
+        if (!content.getProperty("body").hasValue()) {
+            content.getProperty("body").setValue(processor.getDefaultBufferContents());
         }
     }
 

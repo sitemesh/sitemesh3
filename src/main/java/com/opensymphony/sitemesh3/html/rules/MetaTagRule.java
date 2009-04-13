@@ -16,22 +16,20 @@ import java.io.IOException;
  */
 public class MetaTagRule extends BasicRule {
 
-    private final Content content;
-    private final String propertyPrefix;
+    private final Content.Property propertyToUpdate;
 
-    public MetaTagRule(Content content, String propertyPrefix) {
-        this.content = content;
-        this.propertyPrefix = propertyPrefix;
+    public MetaTagRule(Content.Property propertyToUpdate) {
+        this.propertyToUpdate = propertyToUpdate;
     }
 
     @Override
     public void process(Tag tag) throws IOException {
         if (tag.hasAttribute("name", false)) {
-            content.getProperty(propertyPrefix + '.' + tag.getAttributeValue("name", false))
-                    .update(tag.getAttributeValue("content", false));
+            propertyToUpdate.getChild(tag.getAttributeValue("name", false))
+                    .setValue(tag.getAttributeValue("content", false));
         } else if (tag.hasAttribute("http-equiv", false)) {
-            content.getProperty(propertyPrefix + ".http-equiv." + tag.getAttributeValue("http-equiv", false))
-                    .update(tag.getAttributeValue("content", false));
+            propertyToUpdate.getChild("http-equiv").getChild(tag.getAttributeValue("http-equiv", false))
+                    .setValue(tag.getAttributeValue("content", false));
         }
         tag.writeTo(tagProcessorContext.currentBuffer());
     }
