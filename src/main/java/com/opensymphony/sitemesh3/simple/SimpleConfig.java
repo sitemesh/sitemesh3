@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @author Joe Walnes
  */
-public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelector<C>, ContentProcessor<C> {
+public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelector<C>, ContentProcessor {
 
     // Init param names.
     public static final String CONTENT_PROCESSOR_PARAM = "contentProcessor";
@@ -39,7 +39,7 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
     private final PathBasedDecoratorSelector decoratorSelector = new PathBasedDecoratorSelector();
     private final PathMapper<Boolean> excludesMapper = new PathMapper<Boolean>();
 
-    private ContentProcessor<C> contentProcessor;
+    private ContentProcessor contentProcessor;
     private String[] mimeTypes;
 
     public SimpleConfig() throws SiteMeshConfigException {
@@ -100,14 +100,14 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
      */
     @SuppressWarnings("unchecked")
     public SimpleConfig<C> setContentProcessor(String className) throws SiteMeshConfigException {
-        setContentProcessor((ContentProcessor<C>) instantiate(className));
+        setContentProcessor((ContentProcessor) instantiate(className));
         return this;
     }
 
     /**
      * Set the {@link ContentProcessor} implementation.
      */
-    public SimpleConfig<C> setContentProcessor(ContentProcessor<C> processor) {
+    public SimpleConfig<C> setContentProcessor(ContentProcessor processor) {
         contentProcessor = processor;
         return this;
     }
@@ -151,8 +151,8 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
     }
 
     @Override
-    public Content build(CharBuffer data, C context) throws IOException {
-        return contentProcessor.build(data, context);
+    public Content build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
+        return contentProcessor.build(data, siteMeshContext);
     }
 
     public boolean shouldExclude(String requestPath) {

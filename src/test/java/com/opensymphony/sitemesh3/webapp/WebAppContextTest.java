@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh3.webapp;
 
 import com.opensymphony.sitemesh3.Content;
 import com.opensymphony.sitemesh3.ContentProcessor;
+import com.opensymphony.sitemesh3.SiteMeshContext;
 import com.opensymphony.sitemesh3.simple.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh3.html.rules.decorator.SiteMeshDecorateRule;
@@ -36,7 +37,7 @@ public class WebAppContextTest extends TestCase {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new BaseSiteMeshFilter(
                         new BasicSelector("text/html"),
-                        new HtmlContentProcessor<WebAppContext>(),
+                        new HtmlContentProcessor(),
                         new PathBasedDecoratorSelector().put("/*", "/mydecorator")
                 ))
                 .addStaticContent("/mycontent", "text/html", "<title>Some title</title>")
@@ -49,11 +50,11 @@ public class WebAppContextTest extends TestCase {
 
     public void testSupportsDecoratingInlineContent() throws Exception {
 
-        ContentProcessor<WebAppContext> processor = new HtmlContentProcessor<WebAppContext>() {
+        ContentProcessor processor = new HtmlContentProcessor() {
             @Override
-            protected void setupRules(State defaultState, Content content, WebAppContext context) {
-                super.setupRules(defaultState, content, context);
-                defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(context));
+            protected void setupRules(State defaultState, Content content, SiteMeshContext siteMeshContext) {
+                super.setupRules(defaultState, content, siteMeshContext);
+                defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(siteMeshContext));
             }
         };
 
@@ -93,11 +94,11 @@ public class WebAppContextTest extends TestCase {
 
     public void testSupportsDecoratingInlineContentInDecorators() throws Exception {
 
-        ContentProcessor<WebAppContext> processor = new HtmlContentProcessor<WebAppContext>() {
+        ContentProcessor processor = new HtmlContentProcessor() {
             @Override
-            protected void setupRules(State defaultState, Content content, WebAppContext context) {
-                super.setupRules(defaultState, content, context);
-                defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(context));
+            protected void setupRules(State defaultState, Content content, SiteMeshContext siteMeshContext) {
+                super.setupRules(defaultState, content, siteMeshContext);
+                defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(siteMeshContext));
             }
         };
 

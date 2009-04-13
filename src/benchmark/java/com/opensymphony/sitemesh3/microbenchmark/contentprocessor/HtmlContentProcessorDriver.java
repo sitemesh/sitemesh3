@@ -10,7 +10,7 @@ import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
  */
 public class HtmlContentProcessorDriver extends BaseContentProcessorDriver {
     @Override
-    protected ContentProcessor<?> createProcessor() {
+    protected ContentProcessor createProcessor() {
         return new HtmlContentProcessor();
     }
 }

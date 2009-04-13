@@ -38,11 +38,11 @@ import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
  * @see Sm2HtmlContentProcessor
  * @see TagBasedContentProcessor
  */
-public class HtmlContentProcessor<C extends SiteMeshContext> extends TagBasedContentProcessor<C> {
+public class HtmlContentProcessor extends TagBasedContentProcessor {
 
     @Override
-    protected void setupRules(State defaultState, Content content, C context) {
-        super.setupRules(defaultState, content, context);
+    protected void setupRules(State defaultState, Content content, SiteMeshContext siteMeshContext) {
+        super.setupRules(defaultState, content, siteMeshContext);
 
         // Core rules for SiteMesh to be functional.
         defaultState.addRule("head", new ExportTagToContentRule(content.getProperty("head")));
@@ -56,8 +56,8 @@ public class HtmlContentProcessor<C extends SiteMeshContext> extends TagBasedCon
 
         // SiteMesh decorator tags.
         // TODO: Support real XML namespaces.
-        defaultState.addRule("sitemesh:write", new SiteMeshWriteRule(context));
-        defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(context));
+        defaultState.addRule("sitemesh:write", new SiteMeshWriteRule(siteMeshContext));
+        defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(siteMeshContext));
     }
 
     @Override

@@ -29,7 +29,7 @@ import java.nio.CharBuffer;
 public class BaseSiteMeshFilter extends ContentBufferingFilter {
 
     private Selector selector;
-    private ContentProcessor<WebAppContext> contentProcessor;
+    private ContentProcessor contentProcessor;
     private DecoratorSelector<WebAppContext> decoratorSelector;
 
     /**
@@ -47,7 +47,7 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
      * and {@link #setDecoratorSelector(DecoratorSelector)}.
      */
     public BaseSiteMeshFilter(Selector selector,
-                              ContentProcessor<WebAppContext> contentProcessor,
+                              ContentProcessor contentProcessor,
                               DecoratorSelector<WebAppContext> decoratorSelector) {
         setSelector(selector);
         setContentProcessor(contentProcessor);
@@ -63,7 +63,7 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
         this.selector = selector;
     }
 
-    public void setContentProcessor(ContentProcessor<WebAppContext> contentProcessor) {
+    public void setContentProcessor(ContentProcessor contentProcessor) {
         this.contentProcessor = contentProcessor;
     }
 

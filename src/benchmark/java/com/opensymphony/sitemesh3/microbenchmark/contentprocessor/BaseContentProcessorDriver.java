@@ -24,7 +24,7 @@ public abstract class BaseContentProcessorDriver extends JapexDriverBase {
     /**
      * ContentProcessor implementation to be benchmarked.
      */
-    private ContentProcessor<?> contentProcessor;
+    private ContentProcessor contentProcessor;
 
     /**
      * Data used for benchmarking.
@@ -35,7 +35,7 @@ public abstract class BaseContentProcessorDriver extends JapexDriverBase {
      * Factory method - subclasses should implement this to return a suitable
      * implementation.
      */
-    protected abstract ContentProcessor<?> createProcessor();
+    protected abstract ContentProcessor createProcessor();
 
     /**
      * Preparation phase: Load input data into CharBuffer.

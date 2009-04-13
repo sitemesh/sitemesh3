@@ -15,12 +15,12 @@ import java.nio.CharBuffer;
  */
 public class DivExtractingRuleTest extends TestCase {
 
-    private ContentProcessor<?> contentProcessor;
+    private ContentProcessor contentProcessor;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        contentProcessor = new HtmlContentProcessor<SiteMeshContext>() {
+        contentProcessor = new HtmlContentProcessor() {
             @Override
             protected void setupRules(State defaultState, Content content, SiteMeshContext siteMeshContext) {
                 super.setupRules(defaultState, content, siteMeshContext);

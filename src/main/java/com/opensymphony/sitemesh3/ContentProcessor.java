@@ -6,8 +6,8 @@ import java.nio.CharBuffer;
 /**
  * @author Joe Walnes
  */
-public interface ContentProcessor<C extends SiteMeshContext> {
+public interface ContentProcessor {
 
-    Content build(CharBuffer data, C context) throws IOException;
+    Content build(CharBuffer data, SiteMeshContext context) throws IOException;
 
 }

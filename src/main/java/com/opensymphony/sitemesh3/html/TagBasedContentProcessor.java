@@ -17,17 +17,17 @@ import java.nio.CharBuffer;
  *
  * @author Joe Walnes
  */
-public abstract class TagBasedContentProcessor<C extends SiteMeshContext> implements ContentProcessor<C> {
+public abstract class TagBasedContentProcessor implements ContentProcessor {
 
     @Override
-    public Content build(CharBuffer data, C context) throws IOException {
+    public Content build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
         Content content = new InMemoryContent();
         content.getOriginal().setValue(data);
 
         TagProcessor processor = new TagProcessor(data);
 
         // Additional rules - designed to be tweaked.
-        setupRules(processor.defaultState(), content, context);
+        setupRules(processor.defaultState(), content, siteMeshContext);
 
         // Run the processor.
         processor.process();
@@ -41,7 +41,7 @@ public abstract class TagBasedContentProcessor<C extends SiteMeshContext> implem
      * Override this to add custom rules.
      */
     @SuppressWarnings("UnusedDeclaration")
-    protected void setupRules(State defaultState, Content content, C context) {
+    protected void setupRules(State defaultState, Content content, SiteMeshContext siteMeshContext) {
         // No op.
     }
 

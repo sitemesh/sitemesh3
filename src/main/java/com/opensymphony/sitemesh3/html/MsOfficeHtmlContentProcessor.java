@@ -19,11 +19,11 @@ import com.opensymphony.sitemesh3.tagprocessor.StateTransitionRule;
  * @author Joe Walnes
  * @see HtmlContentProcessor
  */
-public class MsOfficeHtmlContentProcessor<C extends SiteMeshContext> extends HtmlContentProcessor<C> {
+public class MsOfficeHtmlContentProcessor extends HtmlContentProcessor {
 
     @Override
-    protected void setupRules(State htmlState, Content content, C context) {
-        super.setupRules(htmlState, content, context);
+    protected void setupRules(State htmlState, Content content, SiteMeshContext siteMeshContext) {
+        super.setupRules(htmlState, content, siteMeshContext);
 
         // When inside <xml><o:documentproperties>...</o:documentproperties></xml>,
         // capture every tag that has an o: prefix.

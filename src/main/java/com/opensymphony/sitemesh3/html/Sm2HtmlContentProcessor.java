@@ -25,11 +25,11 @@ import com.opensymphony.sitemesh3.tagprocessor.State;
  * @see HtmlContentProcessor
  * @author Joe Walnes
  */
-public class Sm2HtmlContentProcessor<C extends SiteMeshContext> extends HtmlContentProcessor<C> {
+public class Sm2HtmlContentProcessor extends HtmlContentProcessor {
 
     @Override
-    protected void setupRules(State htmlState, Content content, C context) {
-        super.setupRules(htmlState, content, context);
+    protected void setupRules(State htmlState, Content content, SiteMeshContext siteMeshContext) {
+        super.setupRules(htmlState, content, siteMeshContext);
         htmlState.addRule("frameset", new FramesetRule(content));              // Detect framesets.
         htmlState.addRule("html", new HtmlAttributesRule(content));            // attributes in <html> element
         htmlState.addRule("parameter", new ParameterExtractingRule(content));  // <parameter> blocks

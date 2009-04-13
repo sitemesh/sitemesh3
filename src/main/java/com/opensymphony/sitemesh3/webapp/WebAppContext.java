@@ -42,13 +42,13 @@ public class WebAppContext implements SiteMeshContext {
     private final HttpServletRequest request;
     private final HttpServletResponse response;
     private final ServletContext servletContext;
-    private final ContentProcessor<WebAppContext> contentProcessor;
+    private final ContentProcessor contentProcessor;
 
     private Content currentContent;
 
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
-                         ContentProcessor<WebAppContext> contentProcessor) {
+                         ContentProcessor contentProcessor) {
         this.contentType = contentType;
         this.request = request;
         this.response = response;

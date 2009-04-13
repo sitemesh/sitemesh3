@@ -1,6 +1,7 @@
 package com.opensymphony.sitemesh3.simple;
 
 import com.opensymphony.sitemesh3.Content;
+import com.opensymphony.sitemesh3.SiteMeshContext;
 import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh3.webapp.WebAppContext;
 import com.opensymphony.sitemesh3.webapp.WebEnvironment;
@@ -75,10 +76,10 @@ public class SimpleSiteMeshFilterTest extends TestCase {
                 "Decorated: Hello world", webEnvironment.getBody());
     }
 
-    public static class MyContentProcessor extends HtmlContentProcessor<WebAppContext> {
+    public static class MyContentProcessor extends HtmlContentProcessor {
         @Override
-        public Content build(CharBuffer data, WebAppContext context) throws IOException {
-            Content content = super.build(data, context);
+        public Content build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
+            Content content = super.build(data, siteMeshContext);
             content.getProperty("title").setValue("MyContentProcessedTitle");
             return content;
         }
