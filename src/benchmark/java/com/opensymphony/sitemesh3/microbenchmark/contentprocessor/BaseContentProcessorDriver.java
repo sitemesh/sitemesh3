@@ -1,6 +1,6 @@
 package com.opensymphony.sitemesh3.microbenchmark.contentprocessor;
 
-import com.opensymphony.sitemesh3.ContentProcessor;
+import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.webapp.contentfilter.io.TextEncoder;
 import com.sun.japex.JapexDriverBase;
 import com.sun.japex.TestCase;

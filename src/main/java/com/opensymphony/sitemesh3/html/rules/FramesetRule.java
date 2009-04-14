@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh3.html.rules;
 
 import com.opensymphony.sitemesh3.tagprocessor.BasicRule;
 import com.opensymphony.sitemesh3.tagprocessor.Tag;
-import com.opensymphony.sitemesh3.ContentProperty;
+import com.opensymphony.sitemesh3.content.ContentProperty;
 
 /**
  * Identifies whether a page contains frames (as these would typically

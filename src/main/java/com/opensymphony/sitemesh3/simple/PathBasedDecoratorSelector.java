@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh3.simple;
 
 import com.opensymphony.sitemesh3.DecoratorSelector;
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.ContentProperty;
+import com.opensymphony.sitemesh3.content.ContentProperty;
 
 import java.io.IOException;
 

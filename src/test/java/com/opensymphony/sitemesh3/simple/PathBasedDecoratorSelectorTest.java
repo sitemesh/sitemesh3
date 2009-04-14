@@ -2,8 +2,8 @@ package com.opensymphony.sitemesh3.simple;
 
 import com.opensymphony.sitemesh3.SiteMeshContextStub;
 import com.opensymphony.sitemesh3.DecoratorSelector;
-import com.opensymphony.sitemesh3.InMemoryContentProperty;
-import com.opensymphony.sitemesh3.ContentProperty;
+import com.opensymphony.sitemesh3.content.memory.InMemoryContentProperty;
+import com.opensymphony.sitemesh3.content.ContentProperty;
 import junit.framework.TestCase;
 
 import java.io.IOException;

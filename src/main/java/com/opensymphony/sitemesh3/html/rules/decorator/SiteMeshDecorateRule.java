@@ -1,8 +1,8 @@
 package com.opensymphony.sitemesh3.html.rules.decorator;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.InMemoryContentProperty;
-import com.opensymphony.sitemesh3.ContentProperty;
+import com.opensymphony.sitemesh3.content.memory.InMemoryContentProperty;
+import com.opensymphony.sitemesh3.content.ContentProperty;
 import com.opensymphony.sitemesh3.tagprocessor.Tag;
 import com.opensymphony.sitemesh3.tagprocessor.BasicBlockRule;
 

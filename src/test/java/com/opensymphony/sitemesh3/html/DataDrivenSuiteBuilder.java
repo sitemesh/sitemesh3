@@ -1,8 +1,8 @@
 package com.opensymphony.sitemesh3.html;
 
-import com.opensymphony.sitemesh3.ContentProcessor;
+import com.opensymphony.sitemesh3.content.ContentProcessor;
+import com.opensymphony.sitemesh3.content.ContentProperty;
 import com.opensymphony.sitemesh3.SiteMeshContextStub;
-import com.opensymphony.sitemesh3.ContentProperty;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 

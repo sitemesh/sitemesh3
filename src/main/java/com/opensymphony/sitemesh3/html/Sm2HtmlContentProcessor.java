@@ -1,7 +1,7 @@
 package com.opensymphony.sitemesh3.html;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.ContentProperty;
+import com.opensymphony.sitemesh3.content.ContentProperty;
 import com.opensymphony.sitemesh3.html.rules.ContentBlockExtractingRule;
 import com.opensymphony.sitemesh3.html.rules.FramesetRule;
 import com.opensymphony.sitemesh3.html.rules.HtmlAttributesRule;

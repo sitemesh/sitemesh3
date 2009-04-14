@@ -1,7 +1,7 @@
 package com.opensymphony.sitemesh3.html;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.ContentProperty;
+import com.opensymphony.sitemesh3.content.ContentProperty;
 import com.opensymphony.sitemesh3.html.rules.MetaTagRule;
 import com.opensymphony.sitemesh3.html.rules.TitleExtractingRule;
 import com.opensymphony.sitemesh3.html.rules.ExportTagToContentRule;
@@ -12,7 +12,7 @@ import com.opensymphony.sitemesh3.tagprocessor.StateTransitionRule;
 import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
 
 /**
- * {@link com.opensymphony.sitemesh3.ContentProcessor} implementation that processes HTML documents.
+ * {@link com.opensymphony.sitemesh3.content.ContentProcessor} implementation that processes HTML documents.
  *
  * <p>The following properties will be extracted from the document:</p>
  * <ul>

@@ -1,4 +1,6 @@
-package com.opensymphony.sitemesh3;
+package com.opensymphony.sitemesh3.content;
+
+import com.opensymphony.sitemesh3.SiteMeshContext;
 
 import java.io.IOException;
 import java.nio.CharBuffer;

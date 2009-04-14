@@ -1,9 +1,9 @@
 package com.opensymphony.sitemesh3.simple;
 
-import com.opensymphony.sitemesh3.ContentProcessor;
+import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.DecoratorSelector;
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.ContentProperty;
+import com.opensymphony.sitemesh3.content.ContentProperty;
 import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
 
 import java.io.IOException;
@@ -105,7 +105,7 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
     }
 
     /**
-     * Set the {@link ContentProcessor} implementation.
+     * Set the {@link com.opensymphony.sitemesh3.content.ContentProcessor} implementation.
      */
     public SimpleConfig<C> setContentProcessor(ContentProcessor processor) {
         contentProcessor = processor;

@@ -1,9 +1,9 @@
 package com.opensymphony.sitemesh3.html;
 
-import com.opensymphony.sitemesh3.ContentProcessor;
+import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.InMemoryContentProperty;
-import com.opensymphony.sitemesh3.ContentProperty;
+import com.opensymphony.sitemesh3.content.memory.InMemoryContentProperty;
+import com.opensymphony.sitemesh3.content.ContentProperty;
 import com.opensymphony.sitemesh3.tagprocessor.State;
 import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
 

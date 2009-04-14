@@ -1,5 +1,7 @@
 package com.opensymphony.sitemesh3;
 
+import com.opensymphony.sitemesh3.content.ContentProperty;
+
 import java.io.IOException;
 
 /**

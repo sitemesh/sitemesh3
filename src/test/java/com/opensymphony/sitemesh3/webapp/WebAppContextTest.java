@@ -1,8 +1,8 @@
 package com.opensymphony.sitemesh3.webapp;
 
-import com.opensymphony.sitemesh3.ContentProcessor;
+import com.opensymphony.sitemesh3.content.ContentProcessor;
+import com.opensymphony.sitemesh3.content.ContentProperty;
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.ContentProperty;
 import com.opensymphony.sitemesh3.simple.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh3.html.rules.decorator.SiteMeshDecorateRule;
