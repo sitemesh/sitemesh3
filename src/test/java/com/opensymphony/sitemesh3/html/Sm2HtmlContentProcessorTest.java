@@ -5,6 +5,10 @@ import junit.framework.TestSuite;
 
 import java.io.IOException;
 
+import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
+import com.opensymphony.sitemesh3.content.tagrules.html.Sm2TagRuleBundle;
+import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
+
 /**
  * This is a data driven test suite. See testdata/readme.txt.
  *
@@ -16,7 +20,7 @@ public class Sm2HtmlContentProcessorTest {
         TestSuite suite = new TestSuite(Sm2HtmlContentProcessorTest.class.getName());
         DataDrivenSuiteBuilder.buildSuite(
                 suite,
-                new Sm2HtmlContentProcessor(),
+                new TagBasedContentProcessor(new CoreHtmlTagRuleBundle(), new Sm2TagRuleBundle()),
                 "test01.txt",
                 "test02.txt",
                 "test03.txt",
@@ -54,7 +58,7 @@ public class Sm2HtmlContentProcessorTest {
                 "test35.txt",
                 "test36.txt",
                 "test37.txt",
-                // "test38.txt", This uses MSOffice properties, which has been moved to MsOfficeHtmlContentProcessor.
+                // "test38.txt", This uses MSOffice properties, which has been moved to MsOfficeTagRuleBundle.
                 "test39.txt",
                 "test40.txt",
                 "test41.txt",

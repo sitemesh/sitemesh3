@@ -5,6 +5,10 @@ import junit.framework.TestSuite;
 
 import java.io.IOException;
 
+import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
+import com.opensymphony.sitemesh3.content.tagrules.msoffice.MsOfficeTagRuleBundle;
+import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
+
 public class MsOfficeHtmlContentProcessorTest {
 
     /**
@@ -15,7 +19,7 @@ public class MsOfficeHtmlContentProcessorTest {
         TestSuite suite = new TestSuite(MsOfficeHtmlContentProcessorTest.class.getName());
         DataDrivenSuiteBuilder.buildSuite(
                 suite,
-                new MsOfficeHtmlContentProcessor(),
+                new TagBasedContentProcessor(new CoreHtmlTagRuleBundle(), new MsOfficeTagRuleBundle()),
                 "test01.txt",
                 "test02.txt",
                 "test03.txt",

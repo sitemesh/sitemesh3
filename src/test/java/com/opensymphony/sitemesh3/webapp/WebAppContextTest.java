@@ -2,11 +2,10 @@ package com.opensymphony.sitemesh3.webapp;
 
 import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.SiteMeshContext;
 import com.opensymphony.sitemesh3.simple.PathBasedDecoratorSelector;
-import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
-import com.opensymphony.sitemesh3.content.tagrules.decorate.SiteMeshDecorateRule;
-import com.opensymphony.sitemesh3.tagprocessor.State;
+import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
+import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
+import com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle;
 import com.opensymphony.sitemesh3.webapp.contentfilter.BasicSelector;
 import junit.framework.TestCase;
 
@@ -37,7 +36,7 @@ public class WebAppContextTest extends TestCase {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new BaseSiteMeshFilter(
                         new BasicSelector("text/html"),
-                        new HtmlContentProcessor(),
+                        new TagBasedContentProcessor(new CoreHtmlTagRuleBundle()),
                         new PathBasedDecoratorSelector().put("/*", "/mydecorator")
                 ))
                 .addStaticContent("/mycontent", "text/html", "<title>Some title</title>")
@@ -50,13 +49,8 @@ public class WebAppContextTest extends TestCase {
 
     public void testSupportsDecoratingInlineContent() throws Exception {
 
-        ContentProcessor processor = new HtmlContentProcessor() {
-            @Override
-            protected void setupRules(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
-                super.setupRules(defaultState, contentProperty, siteMeshContext);
-                defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(siteMeshContext));
-            }
-        };
+        ContentProcessor processor = new TagBasedContentProcessor(
+                new CoreHtmlTagRuleBundle(), new DecoratorTagRuleBundle());
 
         WebEnvironment web = new WebEnvironment.Builder()
                 .addFilter("/*", new BaseSiteMeshFilter(
@@ -94,13 +88,8 @@ public class WebAppContextTest extends TestCase {
 
     public void testSupportsDecoratingInlineContentInDecorators() throws Exception {
 
-        ContentProcessor processor = new HtmlContentProcessor() {
-            @Override
-            protected void setupRules(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
-                super.setupRules(defaultState, contentProperty, siteMeshContext);
-                defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(siteMeshContext));
-            }
-        };
+        ContentProcessor processor = new TagBasedContentProcessor(
+                new CoreHtmlTagRuleBundle(), new DecoratorTagRuleBundle());
 
         WebEnvironment web = new WebEnvironment.Builder()
                 .addFilter("/*", new BaseSiteMeshFilter(

@@ -2,13 +2,12 @@ package com.opensymphony.sitemesh3.simple;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
 import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
+import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
+import com.opensymphony.sitemesh3.content.tagrules.html.ExportTagToContentRule;
+import com.opensymphony.sitemesh3.tagprocessor.State;
 import com.opensymphony.sitemesh3.webapp.WebAppContext;
 import com.opensymphony.sitemesh3.webapp.WebEnvironment;
 import junit.framework.TestCase;
-
-import java.io.IOException;
-import java.nio.CharBuffer;
 
 /**
  * @author Joe Walnes
@@ -76,41 +75,24 @@ public class SimpleSiteMeshFilterTest extends TestCase {
                 "Decorated: Hello world", webEnvironment.getBody());
     }
 
-    public static class MyContentProcessor extends HtmlContentProcessor {
+    class MyTagRuleBundle implements TagRuleBundle {
         @Override
-        public ContentProperty build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
-            ContentProperty result = super.build(data, siteMeshContext);
-            result.getChild("title").setValue("MyContentProcessedTitle");
-            return result;
+        public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+            defaultState.addRule("foo", new ExportTagToContentRule(contentProperty.getChild("foo")));
         }
     }
 
-    public void testAllowsContentProcessorToBeSwitched() throws Exception {
+    public void testAllowsCustomTagRuleBundlesToBeAdded() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
                         .addDecoratorPath("/*", "/my-decorator")
-                        .setContentProcessor(MyContentProcessor.class.getName())))
-                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
-                .addStaticContent("/content", "text/html", "<title>Hello world</title>")
+                        .addTagRuleBundle(new MyTagRuleBundle())))
+                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='foo'/>")
+                .addStaticContent("/content", "text/html", "<foo>Hello world</foo>")
                 .create();
 
         webEnvironment.doGet("/content");
-        assertEquals("Decorated: MyContentProcessedTitle", webEnvironment.getBody());
-    }
-
-    public void testFailsToInitIfContentProcessorNotFound() throws Exception {
-        try {
-            new WebEnvironment.Builder()
-                    .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
-                            .addDecoratorPath("/*", "/my-decorator")
-                            .setContentProcessor("com.blah.MyProcessor")))
-                    .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
-                    .addStaticContent("/content", "text/html", "<title>Hello world</title>")
-                    .create();
-            fail("Expected exception");
-        } catch (SiteMeshConfigException expected) {
-            // Expected
-        }
+        assertEquals("Decorated: Hello world", webEnvironment.getBody());
     }
 
     public void testDoesNotDecorateExcludedPaths() throws Exception {

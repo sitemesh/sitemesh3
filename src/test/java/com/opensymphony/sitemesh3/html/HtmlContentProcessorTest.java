@@ -5,6 +5,10 @@ import junit.framework.TestSuite;
 
 import java.io.IOException;
 
+import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
+import com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle;
+import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
+
 /**
  * This is a data driven test suite. See testdata/readme.txt.
  *
@@ -16,7 +20,7 @@ public class HtmlContentProcessorTest {
         TestSuite suite = new TestSuite(HtmlContentProcessorTest.class.getName());
         DataDrivenSuiteBuilder.buildSuite(
                 suite,
-                new HtmlContentProcessor(),
+                new TagBasedContentProcessor(new CoreHtmlTagRuleBundle(), new DecoratorTagRuleBundle()),
                 "test01.txt",
                 "test02.txt",
                 "test03.txt",

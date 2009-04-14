@@ -17,8 +17,10 @@ import java.util.Map;
  * <p>It is configured through filter init-params in web.xml. See {@link SimpleConfig#configureFromProperties(Map)}
  * for the definition of these.
  *
- * <p>Defaults to intercepting content of type {@code text/html}, with
- * {@link com.opensymphony.sitemesh3.html.HtmlContentProcessor}.</p>
+ * <p>Defaults to intercepting content of type {@code text/html}, using a
+ * {@link com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor} with the rules from
+ * {@link com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle} and
+ * {@link com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle}.
  *
  * <p>The minimum required to make this useful is to add a {@code decoratorMappings} init parameter.</p>
  *

@@ -1,10 +1,8 @@
 package com.opensymphony.sitemesh3.content.tagrules.html;
 
 import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.SiteMeshContext;
 import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
-import com.opensymphony.sitemesh3.tagprocessor.State;
+import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
 import junit.framework.TestCase;
 
 import java.io.IOException;
@@ -20,13 +18,7 @@ public class DivExtractingRuleTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        contentProcessor = new HtmlContentProcessor() {
-            @Override
-            protected void setupRules(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
-                super.setupRules(defaultState, contentProperty, siteMeshContext);
-                defaultState.addRule("div", new DivExtractingRule(contentProperty.getChild("div")));
-            }
-        };
+        contentProcessor = new TagBasedContentProcessor(new CoreHtmlTagRuleBundle(), new DivExtractingTagRuleBundle());
     }
 
     public void testHandlesNestedDivs() throws IOException {

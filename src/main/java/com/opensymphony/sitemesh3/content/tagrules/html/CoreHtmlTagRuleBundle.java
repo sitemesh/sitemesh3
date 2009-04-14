@@ -1,15 +1,10 @@
-package com.opensymphony.sitemesh3.html;
+package com.opensymphony.sitemesh3.content.tagrules.html;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
 import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.tagrules.html.MetaTagRule;
-import com.opensymphony.sitemesh3.content.tagrules.html.TitleExtractingRule;
-import com.opensymphony.sitemesh3.content.tagrules.html.ExportTagToContentRule;
-import com.opensymphony.sitemesh3.content.tagrules.decorate.SiteMeshWriteRule;
-import com.opensymphony.sitemesh3.content.tagrules.decorate.SiteMeshDecorateRule;
+import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
 import com.opensymphony.sitemesh3.tagprocessor.State;
 import com.opensymphony.sitemesh3.tagprocessor.StateTransitionRule;
-import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
 
 /**
  * {@link com.opensymphony.sitemesh3.content.ContentProcessor} implementation that processes HTML documents.
@@ -31,19 +26,13 @@ import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
  * attribute will instead be everything in the document that is not matched by any other rule. This is useful
  * for documents that are not wrapped in a <code>&lt;body&gt;</code> tag.</p>
  *
- * <p>To add custom rules, override {@link TagBasedContentProcessor#setupRules(State, ContentProperty, SiteMeshContext)} },
- * ensuring that super.setupRules() is called.</p>
- *
  * @author Joe Walnes
- * @see Sm2HtmlContentProcessor
- * @see TagBasedContentProcessor
+ * @see com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor
  */
-public class HtmlContentProcessor extends TagBasedContentProcessor {
+public class CoreHtmlTagRuleBundle implements TagRuleBundle {
 
     @Override
-    protected void setupRules(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
-        super.setupRules(defaultState, contentProperty, siteMeshContext);
-
+    public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         // Core rules for SiteMesh to be functional.
         defaultState.addRule("head", new ExportTagToContentRule(contentProperty.getChild("head")));
         defaultState.addRule("title", new TitleExtractingRule(contentProperty.getChild("title")));
@@ -53,20 +42,6 @@ public class HtmlContentProcessor extends TagBasedContentProcessor {
         // Ensure that while in <xml> tag, none of the other rules kick in.
         // For example <xml><book><title>hello</title></book></xml> should not affect the title of the page.
         defaultState.addRule("xml", new StateTransitionRule(new State()));
-
-        // SiteMesh decorator tags.
-        // TODO: Support real XML namespaces.
-        defaultState.addRule("sitemesh:write", new SiteMeshWriteRule(siteMeshContext));
-        defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(siteMeshContext));
-    }
-
-    @Override
-    protected void postProcess(ContentProperty content, TagProcessor processor) {
-        // In the event that no <body> tag was captured, use the default buffer contents instead
-        // (i.e. the whole document, except anything that was written to other buffers).
-        if (!content.getChild("body").hasValue()) {
-            content.getChild("body").setValue(processor.getDefaultBufferContents());
-        }
     }
 
 }

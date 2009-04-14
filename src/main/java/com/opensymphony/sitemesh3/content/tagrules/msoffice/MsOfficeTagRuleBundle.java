@@ -1,42 +1,41 @@
-package com.opensymphony.sitemesh3.html;
+package com.opensymphony.sitemesh3.content.tagrules.msoffice;
 
-import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.tagrules.html.ExportTagToContentRule;
 import com.opensymphony.sitemesh3.tagprocessor.State;
 import com.opensymphony.sitemesh3.tagprocessor.StateTransitionRule;
+import com.opensymphony.sitemesh3.content.ContentProperty;
+import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
+import com.opensymphony.sitemesh3.content.tagrules.html.ExportTagToContentRule;
+import com.opensymphony.sitemesh3.SiteMeshContext;
 
 /**
- * Extension to {@link HtmlContentProcessor} that adds additional properties from MS Office Word and Excel
+ * {@link com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle} that adds document properties from MS Office Word and Excel
  * documents that have been saved as HTML.
  *
- * <p>In addition to the properties extracted by {@link HtmlContentProcessor}, this adds:</p>
+ * <p>These are:</p>
  * <ul>
  * <li><b><code>office.DocumentProperties.XXX</code></b>: The document properties, where <code>XXX</code> is
  * <code>Author</code>, <code>Company</code>, <code>Version</code>, etc.</li>
  * </ul>
  *
  * @author Joe Walnes
- * @see HtmlContentProcessor
  */
-public class MsOfficeHtmlContentProcessor extends HtmlContentProcessor {
+public class MsOfficeTagRuleBundle implements TagRuleBundle {
 
     @Override
-    protected void setupRules(State htmlState, ContentProperty content, SiteMeshContext siteMeshContext) {
-        super.setupRules(htmlState, content, siteMeshContext);
-
+    public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         // When inside <xml><o:documentproperties>...</o:documentproperties></xml>,
         // capture every tag that has an o: prefix.
         State xmlState = new State();
-        htmlState.addRule("xml", new StateTransitionRule(xmlState));
+        defaultState.addRule("xml", new StateTransitionRule(xmlState));
 
         State documentPropertiesState = new State();
-        ContentProperty docProperties = content.getChild("office").getChild("DocumentProperties");
+        ContentProperty docProperties = contentProperty.getChild("office").getChild("DocumentProperties");
         for (String documentPropertyName : getOfficePropertyNames()) {
             documentPropertiesState.addRule("o:" + documentPropertyName,
                     new ExportTagToContentRule(docProperties.getChild(documentPropertyName)));
         }
         xmlState.addRule("o:documentproperties", new StateTransitionRule(documentPropertiesState));
+
     }
 
     protected String[] getOfficePropertyNames() {

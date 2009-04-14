@@ -16,8 +16,8 @@
     <!-- possible values: tps, mps, mbps -->
     <param name="japex.resultUnit" value="ms"/>
 
-    <driver name="com.opensymphony.sitemesh3.microbenchmark.contentprocessor.HtmlContentProcessorDriver">
-        <param name="Description" value="HtmlContentProcessor"/>
+    <driver name="com.opensymphony.sitemesh3.microbenchmark.contentprocessor.TagBasedContentProcessorDriver">
+        <param name="Description" value="TagBasedContentProcessor"/>
     </driver>
 
     <testCase name="tiny">
