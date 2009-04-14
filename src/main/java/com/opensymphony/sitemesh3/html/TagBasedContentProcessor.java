@@ -1,9 +1,9 @@
 package com.opensymphony.sitemesh3.html;
 
-import com.opensymphony.sitemesh3.Content;
 import com.opensymphony.sitemesh3.ContentProcessor;
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.InMemoryContent;
+import com.opensymphony.sitemesh3.InMemoryContentProperty;
+import com.opensymphony.sitemesh3.ContentProperty;
 import com.opensymphony.sitemesh3.tagprocessor.State;
 import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
 
@@ -20,28 +20,28 @@ import java.nio.CharBuffer;
 public abstract class TagBasedContentProcessor implements ContentProcessor {
 
     @Override
-    public Content build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
-        Content content = new InMemoryContent();
-        content.getOriginal().setValue(data);
+    public ContentProperty build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
+        ContentProperty contentProperty = new InMemoryContentProperty();
+        contentProperty.getOriginal().setValue(data);
 
         TagProcessor processor = new TagProcessor(data);
 
         // Additional rules - designed to be tweaked.
-        setupRules(processor.defaultState(), content, siteMeshContext);
+        setupRules(processor.defaultState(), contentProperty, siteMeshContext);
 
         // Run the processor.
         processor.process();
 
-        content.getProcessed().setValue(processor.getDefaultBufferContents());
-        postProcess(content, processor);
-        return content;
+        contentProperty.setValue(processor.getDefaultBufferContents());
+        postProcess(contentProperty, processor);
+        return contentProperty;
     }
 
     /**
      * Override this to add custom rules.
      */
     @SuppressWarnings("UnusedDeclaration")
-    protected void setupRules(State defaultState, Content content, SiteMeshContext siteMeshContext) {
+    protected void setupRules(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         // No op.
     }
 
@@ -49,7 +49,7 @@ public abstract class TagBasedContentProcessor implements ContentProcessor {
      * Override this to perform any additional processing after the tag processor has completed.
      */
     @SuppressWarnings("UnusedDeclaration")
-    protected void postProcess(Content content, TagProcessor processor) {
+    protected void postProcess(ContentProperty contentProperty, TagProcessor processor) {
         // No op.
     }
 

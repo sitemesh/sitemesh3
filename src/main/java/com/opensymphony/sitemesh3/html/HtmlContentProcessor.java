@@ -1,7 +1,7 @@
 package com.opensymphony.sitemesh3.html;
 
-import com.opensymphony.sitemesh3.Content;
 import com.opensymphony.sitemesh3.SiteMeshContext;
+import com.opensymphony.sitemesh3.ContentProperty;
 import com.opensymphony.sitemesh3.html.rules.MetaTagRule;
 import com.opensymphony.sitemesh3.html.rules.TitleExtractingRule;
 import com.opensymphony.sitemesh3.html.rules.ExportTagToContentRule;
@@ -12,7 +12,7 @@ import com.opensymphony.sitemesh3.tagprocessor.StateTransitionRule;
 import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
 
 /**
- * {@link Content} implementation that will build itself from an HTML document.
+ * {@link com.opensymphony.sitemesh3.ContentProcessor} implementation that processes HTML documents.
  *
  * <p>The following properties will be extracted from the document:</p>
  * <ul>
@@ -31,7 +31,7 @@ import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
  * attribute will instead be everything in the document that is not matched by any other rule. This is useful
  * for documents that are not wrapped in a <code>&lt;body&gt;</code> tag.</p>
  *
- * <p>To add custom rules, override {@link TagBasedContentProcessor#setupRules(State, Content, com.opensymphony.sitemesh3.SiteMeshContext)} },
+ * <p>To add custom rules, override {@link TagBasedContentProcessor#setupRules(State, ContentProperty, SiteMeshContext)} },
  * ensuring that super.setupRules() is called.</p>
  *
  * @author Joe Walnes
@@ -41,14 +41,14 @@ import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
 public class HtmlContentProcessor extends TagBasedContentProcessor {
 
     @Override
-    protected void setupRules(State defaultState, Content content, SiteMeshContext siteMeshContext) {
-        super.setupRules(defaultState, content, siteMeshContext);
+    protected void setupRules(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+        super.setupRules(defaultState, contentProperty, siteMeshContext);
 
         // Core rules for SiteMesh to be functional.
-        defaultState.addRule("head", new ExportTagToContentRule(content.getProperty("head")));
-        defaultState.addRule("title", new TitleExtractingRule(content, "title"));
-        defaultState.addRule("body", new ExportTagToContentRule(content.getProperty("body")));
-        defaultState.addRule("meta", new MetaTagRule(content.getProperty("meta")));
+        defaultState.addRule("head", new ExportTagToContentRule(contentProperty.getChild("head")));
+        defaultState.addRule("title", new TitleExtractingRule(contentProperty.getChild("title")));
+        defaultState.addRule("body", new ExportTagToContentRule(contentProperty.getChild("body")));
+        defaultState.addRule("meta", new MetaTagRule(contentProperty.getChild("meta")));
 
         // Ensure that while in <xml> tag, none of the other rules kick in.
         // For example <xml><book><title>hello</title></book></xml> should not affect the title of the page.
@@ -61,11 +61,11 @@ public class HtmlContentProcessor extends TagBasedContentProcessor {
     }
 
     @Override
-    protected void postProcess(Content content, TagProcessor processor) {
+    protected void postProcess(ContentProperty content, TagProcessor processor) {
         // In the event that no <body> tag was captured, use the default buffer contents instead
         // (i.e. the whole document, except anything that was written to other buffers).
-        if (!content.getProperty("body").hasValue()) {
-            content.getProperty("body").setValue(processor.getDefaultBufferContents());
+        if (!content.getChild("body").hasValue()) {
+            content.getChild("body").setValue(processor.getDefaultBufferContents());
         }
     }
 

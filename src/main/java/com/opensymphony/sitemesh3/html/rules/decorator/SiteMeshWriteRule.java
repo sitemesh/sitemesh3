@@ -2,14 +2,14 @@ package com.opensymphony.sitemesh3.html.rules.decorator;
 
 import com.opensymphony.sitemesh3.tagprocessor.BasicBlockRule;
 import com.opensymphony.sitemesh3.tagprocessor.Tag;
-import com.opensymphony.sitemesh3.Content;
 import com.opensymphony.sitemesh3.SiteMeshContext;
+import com.opensymphony.sitemesh3.ContentProperty;
 
 import java.io.IOException;
 
 /**
- * Replaces tags that look like {@code <sitemesh:write property='foo'/>} with the property of the
- * {@link Content} being merged into the current document. The body contents of the tag will be
+ * Replaces tags that look like {@code <sitemesh:write property='foo'/>} with the
+ * {@link ContentProperty} being merged into the current document. The body contents of the tag will be
  * discarded.
  *
  * @author Joe Walnes
@@ -26,9 +26,9 @@ public class SiteMeshWriteRule extends BasicBlockRule {
     @Override
     protected Object processStart(Tag tag) throws IOException {
         String propertyName = tag.getAttributeValue("property", true);
-        Content contentToMerge = siteMeshContext.getContentToMerge();
+        ContentProperty contentToMerge = siteMeshContext.getContentToMerge();
         if (contentToMerge != null) {
-            Content.Property property = contentToMerge.getProperty(propertyName);
+            ContentProperty property = contentToMerge.getChild(propertyName);
             if (property.hasValue()) {
                 property.writeValueTo(tagProcessorContext.currentBuffer());
             }

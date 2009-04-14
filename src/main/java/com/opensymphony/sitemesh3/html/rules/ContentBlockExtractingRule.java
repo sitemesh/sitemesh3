@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh3.html.rules;
 
 import com.opensymphony.sitemesh3.tagprocessor.Tag;
 import com.opensymphony.sitemesh3.tagprocessor.BasicBlockRule;
-import com.opensymphony.sitemesh3.Content;
+import com.opensymphony.sitemesh3.ContentProperty;
 
 import java.io.IOException;
 
@@ -18,10 +18,10 @@ import java.io.IOException;
  */
 public class ContentBlockExtractingRule extends BasicBlockRule<String> {
 
-    private final Content content;
+    private final ContentProperty propertyToExport;
 
-    public ContentBlockExtractingRule(Content content) {
-        this.content = content;
+    public ContentBlockExtractingRule(ContentProperty propertyToExport) {
+        this.propertyToExport = propertyToExport;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class ContentBlockExtractingRule extends BasicBlockRule<String> {
 
     @Override
     protected void processEnd(Tag tag, String tagId) throws IOException {
-        content.getProperty("page." + tagId).setValue(tagProcessorContext.currentBufferContents());
+        propertyToExport.getChild(tagId).setValue(tagProcessorContext.currentBufferContents());
         tagProcessorContext.popBuffer();
     }
 

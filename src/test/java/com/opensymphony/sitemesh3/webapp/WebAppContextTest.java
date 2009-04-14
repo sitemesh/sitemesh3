@@ -1,8 +1,8 @@
 package com.opensymphony.sitemesh3.webapp;
 
-import com.opensymphony.sitemesh3.Content;
 import com.opensymphony.sitemesh3.ContentProcessor;
 import com.opensymphony.sitemesh3.SiteMeshContext;
+import com.opensymphony.sitemesh3.ContentProperty;
 import com.opensymphony.sitemesh3.simple.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh3.html.rules.decorator.SiteMeshDecorateRule;
@@ -28,9 +28,9 @@ public class WebAppContextTest extends TestCase {
             @Override
             protected void doGet(HttpServletRequest request, HttpServletResponse response)
                     throws ServletException, IOException {
-                Content content = (Content) request.getAttribute(WebAppContext.CONTENT_KEY);
+                ContentProperty contentProperty = (ContentProperty) request.getAttribute(WebAppContext.CONTENT_KEY);
                 PrintWriter out = response.getWriter();
-                out.println("Title = " + content.getProperty("title"));
+                out.println("Title = " + contentProperty.getChild("title").getValue());
             }
         };
 
@@ -52,8 +52,8 @@ public class WebAppContextTest extends TestCase {
 
         ContentProcessor processor = new HtmlContentProcessor() {
             @Override
-            protected void setupRules(State defaultState, Content content, SiteMeshContext siteMeshContext) {
-                super.setupRules(defaultState, content, siteMeshContext);
+            protected void setupRules(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+                super.setupRules(defaultState, contentProperty, siteMeshContext);
                 defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(siteMeshContext));
             }
         };
@@ -96,8 +96,8 @@ public class WebAppContextTest extends TestCase {
 
         ContentProcessor processor = new HtmlContentProcessor() {
             @Override
-            protected void setupRules(State defaultState, Content content, SiteMeshContext siteMeshContext) {
-                super.setupRules(defaultState, content, siteMeshContext);
+            protected void setupRules(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+                super.setupRules(defaultState, contentProperty, siteMeshContext);
                 defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(siteMeshContext));
             }
         };

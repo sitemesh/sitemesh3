@@ -8,6 +8,6 @@ import java.nio.CharBuffer;
  */
 public interface ContentProcessor {
 
-    Content build(CharBuffer data, SiteMeshContext context) throws IOException;
+    ContentProperty build(CharBuffer data, SiteMeshContext context) throws IOException;
 
 }

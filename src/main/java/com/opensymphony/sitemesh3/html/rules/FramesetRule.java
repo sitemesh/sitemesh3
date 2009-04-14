@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh3.html.rules;
 
 import com.opensymphony.sitemesh3.tagprocessor.BasicRule;
 import com.opensymphony.sitemesh3.tagprocessor.Tag;
-import com.opensymphony.sitemesh3.Content;
+import com.opensymphony.sitemesh3.ContentProperty;
 
 /**
  * Identifies whether a page contains frames (as these would typically
@@ -13,15 +13,15 @@ import com.opensymphony.sitemesh3.Content;
  */
 public class FramesetRule extends BasicRule {
 
-    private final Content content;
+    private final ContentProperty propertyToExport;
 
-    public FramesetRule(Content content) {
-        this.content = content;
+    public FramesetRule(ContentProperty propertyToExport) {
+        this.propertyToExport = propertyToExport;
     }
 
     @Override
     public void process(Tag tag) {
-        content.getProperty("frameset").setValue("true");
+        propertyToExport.setValue("true");
     }
 
 }

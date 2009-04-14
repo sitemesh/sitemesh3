@@ -2,12 +2,12 @@ package com.opensymphony.sitemesh3.html.rules;
 
 import com.opensymphony.sitemesh3.tagprocessor.BasicBlockRule;
 import com.opensymphony.sitemesh3.tagprocessor.Tag;
-import com.opensymphony.sitemesh3.Content;
+import com.opensymphony.sitemesh3.ContentProperty;
 
 import java.io.IOException;
 
 /**
- * Exports the contents of a match tag to property of the passed in {@link Content}.
+ * Exports the contents of a match tag to property of the passed in {@link ContentProperty}.
  *
  * Additionally, if this tag has attributes, they will be written as child properties.
  *
@@ -30,9 +30,9 @@ import java.io.IOException;
  */
 public class ExportTagToContentRule extends BasicBlockRule {
 
-    private final Content.Property targetProperty;
+    private final ContentProperty targetProperty;
 
-    public ExportTagToContentRule(Content.Property targetProperty) {
+    public ExportTagToContentRule(ContentProperty targetProperty) {
         this.targetProperty = targetProperty;
     }
 

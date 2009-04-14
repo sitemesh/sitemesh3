@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh3.html.rules;
 
 import com.opensymphony.sitemesh3.tagprocessor.BasicRule;
 import com.opensymphony.sitemesh3.tagprocessor.Tag;
-import com.opensymphony.sitemesh3.Content;
+import com.opensymphony.sitemesh3.ContentProperty;
 
 /**
  * Extracts the contents of any elements that look like
@@ -15,15 +15,15 @@ import com.opensymphony.sitemesh3.Content;
  */
 public class ParameterExtractingRule extends BasicRule{
 
-    private final Content content;
+    private final ContentProperty propertyToExport;
 
-    public ParameterExtractingRule(Content content) {
-        this.content = content;
+    public ParameterExtractingRule(ContentProperty propertyToExport) {
+        this.propertyToExport = propertyToExport;
     }
 
     @Override
     public void process(Tag tag) {
-        content.getProperty("page." + tag.getAttributeValue("name", false))
+        propertyToExport.getChild(tag.getAttributeValue("name", false))
                 .setValue(tag.getAttributeValue("value", false));
     }
 }

@@ -1,8 +1,8 @@
 package com.opensymphony.sitemesh3.html;
 
-import com.opensymphony.sitemesh3.Content;
 import com.opensymphony.sitemesh3.ContentProcessor;
 import com.opensymphony.sitemesh3.SiteMeshContextStub;
+import com.opensymphony.sitemesh3.ContentProperty;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -39,39 +39,39 @@ public class DataDrivenSuiteBuilder {
             File inputFile = new File(testDataDir, inputFileName);
 
             Map<String, String> expectedBlocks = readBlocks(new FileReader(inputFile));
-            Content content = processor.build(CharBuffer.wrap(expectedBlocks.get("INPUT")), new SiteMeshContextStub());
+            ContentProperty contentProperty = processor.build(CharBuffer.wrap(expectedBlocks.get("INPUT")), new SiteMeshContextStub());
 
             TestSuite inputSuite = new TestSuite(inputFile.getName().replace('.', '_'));
             inputSuite.addTest(new AssertTrimmedTest(
                     "testTitle",
                     expectedBlocks.get("TITLE"),
-                    content.getProperty("title").getValue()));
+                    contentProperty.getChild("title").getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
                     "testBody",
                     expectedBlocks.get("BODY"),
-                    content.getProperty("body").getValue()));
+                    contentProperty.getChild("body").getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
                     "testHead",
                     expectedBlocks.get("HEAD"),
-                    content.getProperty("head").getValue()));
+                    contentProperty.getChild("head").getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
                     "testOriginal",
                     expectedBlocks.get("INPUT"),
-                    content.getOriginal().getValue()));
+                    contentProperty.getOriginal().getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
                     "testProperties",
                     cleanExpectedProperties(expectedBlocks.get("PROPERTIES")),
-                    cleanActualProperties(content)));
+                    cleanActualProperties(contentProperty)));
 
             suite.addTest(inputSuite);
         }
     }
 
-    private static String cleanActualProperties(Content content) {
+    private static String cleanActualProperties(ContentProperty content) {
         Map<String, String> actualProperties = new HashMap<String, String>();
-        for (Content.Property property : content.getRoot().getDescendants()) {
+        for (ContentProperty property : content.getDescendants()) {
             String fullName = getFullName(property);
-            if (!property.hasValue() || fullName.equals("body") || fullName.equals("head")) {
+            if (!property.hasValue() || fullName.equals("body") || fullName.equals("head") || fullName.equals("")) {
                 continue;
             }
             String actualValue = trimSafely(property.getValue());
@@ -81,9 +81,9 @@ public class DataDrivenSuiteBuilder {
         return sortMapAndDumpAsString(actualProperties);
     }
 
-    private static String getFullName(Content.Property property) {
+    private static String getFullName(ContentProperty property) {
         StringBuilder result = new StringBuilder();
-        for (Content.Property item : property.getFullPath()) {
+        for (ContentProperty item : property.getFullPath()) {
             if (result.length() > 0) {
                 result.append('.');
             }

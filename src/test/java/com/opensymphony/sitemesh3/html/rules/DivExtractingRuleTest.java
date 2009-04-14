@@ -1,8 +1,8 @@
 package com.opensymphony.sitemesh3.html.rules;
 
-import com.opensymphony.sitemesh3.Content;
 import com.opensymphony.sitemesh3.ContentProcessor;
 import com.opensymphony.sitemesh3.SiteMeshContext;
+import com.opensymphony.sitemesh3.ContentProperty;
 import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh3.tagprocessor.State;
 import junit.framework.TestCase;
@@ -22,9 +22,9 @@ public class DivExtractingRuleTest extends TestCase {
         super.setUp();
         contentProcessor = new HtmlContentProcessor() {
             @Override
-            protected void setupRules(State defaultState, Content content, SiteMeshContext siteMeshContext) {
-                super.setupRules(defaultState, content, siteMeshContext);
-                defaultState.addRule("div", new DivExtractingRule(content));
+            protected void setupRules(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+                super.setupRules(defaultState, contentProperty, siteMeshContext);
+                defaultState.addRule("div", new DivExtractingRule(contentProperty.getChild("div")));
             }
         };
     }
@@ -37,12 +37,12 @@ public class DivExtractingRuleTest extends TestCase {
         String html = "<html><body>" + body + "</body></html>";
 
         // execute
-        Content out = contentProcessor.build(CharBuffer.wrap(html), null);
+        ContentProperty out = contentProcessor.build(CharBuffer.wrap(html), null);
 
         // verify
-        assertEquals(body, out.getProperty("body").getValue());
-        assertEquals(outer, out.getProperty("div.outer").getValue());
-        assertEquals(inner, out.getProperty("div.inner").getValue());
+        assertEquals(body, out.getChild("body").getValue());
+        assertEquals(outer, out.getChild("div").getChild("outer").getValue());
+        assertEquals(inner, out.getChild("div").getChild("inner").getValue());
     }
 
     public void testDoesNotConsumeDivWhenExtracting() throws IOException {
@@ -50,10 +50,10 @@ public class DivExtractingRuleTest extends TestCase {
         String html = "<html><body><div id='target'>content</div></body></html>";
 
         // execute
-        Content out = contentProcessor.build(CharBuffer.wrap(html), null);
+        ContentProperty out = contentProcessor.build(CharBuffer.wrap(html), null);
 
         // verify
-        assertEquals("<div id='target'>content</div>", out.getProperty("body").getValue());
+        assertEquals("<div id='target'>content</div>", out.getChild("body").getValue());
     }
 
     public void testExtractsDivsWithIds() throws IOException {
@@ -61,10 +61,10 @@ public class DivExtractingRuleTest extends TestCase {
         String html = "<html><body><div id='target'>content</div></body></html>";
 
         // execute
-        Content out = contentProcessor.build(CharBuffer.wrap(html), null);
+        ContentProperty out = contentProcessor.build(CharBuffer.wrap(html), null);
 
         // verify
-        assertEquals("content", out.getProperty("div.target").getValue());
+        assertEquals("content", out.getChild("div").getChild("target").getValue());
     }
 
 }

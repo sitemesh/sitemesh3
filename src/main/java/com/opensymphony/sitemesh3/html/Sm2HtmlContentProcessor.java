@@ -1,7 +1,7 @@
 package com.opensymphony.sitemesh3.html;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.Content;
+import com.opensymphony.sitemesh3.ContentProperty;
 import com.opensymphony.sitemesh3.html.rules.ContentBlockExtractingRule;
 import com.opensymphony.sitemesh3.html.rules.FramesetRule;
 import com.opensymphony.sitemesh3.html.rules.HtmlAttributesRule;
@@ -28,12 +28,12 @@ import com.opensymphony.sitemesh3.tagprocessor.State;
 public class Sm2HtmlContentProcessor extends HtmlContentProcessor {
 
     @Override
-    protected void setupRules(State htmlState, Content content, SiteMeshContext siteMeshContext) {
-        super.setupRules(htmlState, content, siteMeshContext);
-        htmlState.addRule("frameset", new FramesetRule(content));              // Detect framesets.
-        htmlState.addRule("html", new HtmlAttributesRule(content));            // attributes in <html> element
-        htmlState.addRule("parameter", new ParameterExtractingRule(content));  // <parameter> blocks
-        htmlState.addRule("content", new ContentBlockExtractingRule(content)); // <content> blocks
+    protected void setupRules(State htmlState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+        super.setupRules(htmlState, contentProperty, siteMeshContext);
+        htmlState.addRule("frameset", new FramesetRule(contentProperty.getChild("frameset")));          // Detect framesets.
+        htmlState.addRule("html", new HtmlAttributesRule(contentProperty));                             // attributes in <html> element
+        htmlState.addRule("parameter", new ParameterExtractingRule(contentProperty.getChild("page")));  // <parameter> blocks
+        htmlState.addRule("content", new ContentBlockExtractingRule(contentProperty.getChild("page"))); // <content> blocks
     }
 
 }

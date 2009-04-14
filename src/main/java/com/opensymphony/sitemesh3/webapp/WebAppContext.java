@@ -1,8 +1,8 @@
 package com.opensymphony.sitemesh3.webapp;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.Content;
 import com.opensymphony.sitemesh3.ContentProcessor;
+import com.opensymphony.sitemesh3.ContentProperty;
 import com.opensymphony.sitemesh3.webapp.contentfilter.HttpServletResponseBuffer;
 import com.opensymphony.sitemesh3.webapp.contentfilter.BasicSelector;
 
@@ -27,10 +27,10 @@ import java.nio.CharBuffer;
 public class WebAppContext implements SiteMeshContext {
 
     /**
-     * Key that the {@link Content} is stored under in the {@link HttpServletRequest}
-     * attribute. It is "com.opensymphony.sitemesh3.Content".
+     * Key that the {@link ContentProperty} is stored under in the {@link HttpServletRequest}
+     * attribute. It is "com.opensymphony.sitemesh3.ContentProperty".
      */
-    public static final String CONTENT_KEY = Content.class.getName();
+    public static final String CONTENT_KEY = ContentProperty.class.getName();
 
     /**
      * Key that the {@link WebAppContext} is stored under in the {@link HttpServletRequest}
@@ -44,7 +44,7 @@ public class WebAppContext implements SiteMeshContext {
     private final ServletContext servletContext;
     private final ContentProcessor contentProcessor;
 
-    private Content currentContent;
+    private ContentProperty currentContentProperty;
 
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
@@ -97,7 +97,7 @@ public class WebAppContext implements SiteMeshContext {
     }
 
     @Override
-    public Content decorate(String decoratorName, Content content) throws IOException {
+    public ContentProperty decorate(String decoratorName, ContentProperty contentProperty) throws IOException {
         if (decoratorName == null) {
             return null;
         }
@@ -108,23 +108,23 @@ public class WebAppContext implements SiteMeshContext {
             }
         }
         CharBufferWriter out = new CharBufferWriter();
-        decorate(decoratorName, content, out);
+        decorate(decoratorName, contentProperty, out);
 
         CharBuffer decorated = out.toCharBuffer();
 
-        Content lastContent = currentContent;
-        currentContent = content;
+        ContentProperty lastContent = currentContentProperty;
+        currentContentProperty = contentProperty;
         try {
             // TODO: Don't reprocess the content properties.
             return contentProcessor.build(decorated, this);
         } finally {
-            currentContent = lastContent;
+            currentContentProperty = lastContent;
         }
     }
 
     @Override
-    public Content getContentToMerge() {
-        return currentContent;
+    public ContentProperty getContentToMerge() {
+        return currentContentProperty;
     }
 
     /**
@@ -133,12 +133,12 @@ public class WebAppContext implements SiteMeshContext {
      * <p>This path may anything that handles a standard request (e.g. Servlet,
      * JSP, MVC framework, etc).</p>
      *
-     * <p>The end point can access the {@link Content} and {@link SiteMeshContext} by using
+     * <p>The end point can access the {@link ContentProperty} and {@link SiteMeshContext} by using
      * looking them up as {@link HttpServletRequest} attributes under the keys
      * {@link #CONTENT_KEY} and
      * {@link #CONTEXT_KEY} respectively.</p>
      */
-    protected void decorate(String decoratorPath, Content content, Writer out) throws IOException {
+    protected void decorate(String decoratorPath, ContentProperty contentProperty, Writer out) throws IOException {
         // Wrap response so output gets buffered.
         HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, new BasicSelector() {
             @Override
@@ -153,7 +153,7 @@ public class WebAppContext implements SiteMeshContext {
         Object oldContent = request.getAttribute(CONTENT_KEY);
         Object oldContext = request.getAttribute(CONTEXT_KEY);
 
-        request.setAttribute(CONTENT_KEY, content);
+        request.setAttribute(CONTENT_KEY, contentProperty);
         request.setAttribute(CONTEXT_KEY, this);
 
         try {

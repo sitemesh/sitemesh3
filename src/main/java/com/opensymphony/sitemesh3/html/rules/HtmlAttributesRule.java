@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh3.html.rules;
 
 import com.opensymphony.sitemesh3.tagprocessor.BasicRule;
 import com.opensymphony.sitemesh3.tagprocessor.Tag;
-import com.opensymphony.sitemesh3.Content;
+import com.opensymphony.sitemesh3.ContentProperty;
 
 /**
  * Exports any attributes on the <code>&lt;html&gt;</code> tag
@@ -12,17 +12,17 @@ import com.opensymphony.sitemesh3.Content;
  */
 public class HtmlAttributesRule extends BasicRule {
 
-    private final Content content;
+    private final ContentProperty propertyToExport;
 
-    public HtmlAttributesRule(Content content) {
-        this.content = content;
+    public HtmlAttributesRule(ContentProperty propertyToExport) {
+        this.propertyToExport = propertyToExport;
     }
 
     @Override
     public void process(Tag tag) {
         if (tag.getType() == Tag.Type.OPEN) {
             for (int i = 0; i < tag.getAttributeCount(); i++) {
-                content.getProperty(tag.getAttributeName(i)).setValue(tag.getAttributeValue(i));
+                propertyToExport.getChild(tag.getAttributeName(i)).setValue(tag.getAttributeValue(i));
             }
         }
     }

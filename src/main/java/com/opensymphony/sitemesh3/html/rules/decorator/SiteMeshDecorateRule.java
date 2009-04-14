@@ -1,10 +1,10 @@
 package com.opensymphony.sitemesh3.html.rules.decorator;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.InMemoryContent;
-import com.opensymphony.sitemesh3.Content;
-import com.opensymphony.sitemesh3.tagprocessor.BasicBlockRule;
+import com.opensymphony.sitemesh3.InMemoryContentProperty;
+import com.opensymphony.sitemesh3.ContentProperty;
 import com.opensymphony.sitemesh3.tagprocessor.Tag;
+import com.opensymphony.sitemesh3.tagprocessor.BasicBlockRule;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import java.io.IOException;
  * Rule that applies decorators to inline blocks of content.
  *
  * <ul>
- * <li>A {@link Content} object will be created for the inline block.</li>
+ * <li>A {@link ContentProperty} object will be created for the inline block.</li>
  * <li>The contents of the tag body will be exposed as the <code>body</code> property.</li>
  * <li>All attributes of the tag will be copied as named properties (see example below).</li>
  * <li>The <code>decorator</code> attribute will specify which decorator is used.</li>
@@ -22,7 +22,7 @@ import java.io.IOException;
  *
  * <pre>Some content {@code <sitemesh:decorate decorator='/mydecorator' title='foo' cheese='bar'>blah</sitemesh:decorate>}
  *
- * <p>This will apply the decorator named <code>/mydecorator</code>, passing in {@link com.opensymphony.sitemesh3.Content}
+ * <p>This will apply the decorator named <code>/mydecorator</code>, passing in {@link ContentProperty}
  * with the following properties:</p>
  * <pre>
  * body=blah
@@ -32,7 +32,12 @@ import java.io.IOException;
  *
  * @author Joe Walnes
  */
-public class SiteMeshDecorateRule extends BasicBlockRule<Content> {
+public class SiteMeshDecorateRule extends BasicBlockRule<SiteMeshDecorateRule.Holder> {
+
+    static class Holder {
+        public final ContentProperty contentProperty = new InMemoryContentProperty();
+        public String decoratorName;
+    }
 
     private final SiteMeshContext siteMeshContext;
 
@@ -41,37 +46,41 @@ public class SiteMeshDecorateRule extends BasicBlockRule<Content> {
     }
 
     @Override
-    protected Content processStart(Tag tag) throws IOException {
+    protected Holder processStart(Tag tag) throws IOException {
         tagProcessorContext.pushBuffer();
 
-        Content content = new InMemoryContent();
-
+        Holder holder = new Holder();
         for (int i = 0, count = tag.getAttributeCount(); i < count; i++) {
-            content.getProperty(tag.getAttributeName(i)).setValue(tag.getAttributeValue(i));
+            String name = tag.getAttributeName(i);
+            String value = tag.getAttributeValue(i);
+            if (name.equals("decorator")) {
+                holder.decoratorName = value;
+            } else {
+                holder.contentProperty.getChild(name).setValue(value);
+            }
         }
 
-        return content;
+        return holder;
     }
 
     @Override
-    protected void processEnd(Tag tag, Content content) throws IOException {
+    protected void processEnd(Tag tag, Holder holder) throws IOException {
         CharSequence body = tagProcessorContext.currentBufferContents();
         tagProcessorContext.popBuffer();
 
-        content.getOriginal().setValue(body);
+        holder.contentProperty.getOriginal().setValue(body);
         // TODO: Use a 'default' property
-        content.getProperty("body").setValue(body);
+        holder.contentProperty.getChild("body").setValue(body);
 
-        String decoratorName = content.getProperty("decorator").getValue();
-        if (decoratorName == null) {
+        if (holder.decoratorName == null) {
             tagProcessorContext.currentBuffer().append(body);
             return;
         }
 
-        Content decorated = siteMeshContext.decorate(decoratorName, content);
+        ContentProperty decorated = siteMeshContext.decorate(holder.decoratorName, holder.contentProperty);
         if (decorated != null) {
             // TODO: Use a 'default' property
-            decorated.getProperty("body").writeValueTo(tagProcessorContext.currentBuffer());
+            decorated.getChild("body").writeValueTo(tagProcessorContext.currentBuffer());
         } else {
             tagProcessorContext.currentBuffer().append(body);
         }

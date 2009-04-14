@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh3.html.rules;
 
 import com.opensymphony.sitemesh3.tagprocessor.BasicRule;
 import com.opensymphony.sitemesh3.tagprocessor.Tag;
-import com.opensymphony.sitemesh3.Content;
+import com.opensymphony.sitemesh3.ContentProperty;
 
 import java.io.IOException;
 
@@ -16,9 +16,9 @@ import java.io.IOException;
  */
 public class MetaTagRule extends BasicRule {
 
-    private final Content.Property propertyToUpdate;
+    private final ContentProperty propertyToUpdate;
 
-    public MetaTagRule(Content.Property propertyToUpdate) {
+    public MetaTagRule(ContentProperty propertyToUpdate) {
         this.propertyToUpdate = propertyToUpdate;
     }
 

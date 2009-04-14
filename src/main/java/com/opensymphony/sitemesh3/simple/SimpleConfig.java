@@ -1,9 +1,9 @@
 package com.opensymphony.sitemesh3.simple;
 
-import com.opensymphony.sitemesh3.Content;
 import com.opensymphony.sitemesh3.ContentProcessor;
 import com.opensymphony.sitemesh3.DecoratorSelector;
 import com.opensymphony.sitemesh3.SiteMeshContext;
+import com.opensymphony.sitemesh3.ContentProperty;
 import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
 
 import java.io.IOException;
@@ -146,12 +146,12 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
     }
 
     @Override
-    public String[] selectDecoratorPaths(Content content, C context) throws IOException {
-        return decoratorSelector.selectDecoratorPaths(content, context);
+    public String[] selectDecoratorPaths(ContentProperty contentProperty, C context) throws IOException {
+        return decoratorSelector.selectDecoratorPaths(contentProperty, context);
     }
 
     @Override
-    public Content build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
+    public ContentProperty build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
         return contentProcessor.build(data, siteMeshContext);
     }
 

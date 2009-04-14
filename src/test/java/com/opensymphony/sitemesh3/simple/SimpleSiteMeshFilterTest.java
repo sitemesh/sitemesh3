@@ -1,7 +1,7 @@
 package com.opensymphony.sitemesh3.simple;
 
-import com.opensymphony.sitemesh3.Content;
 import com.opensymphony.sitemesh3.SiteMeshContext;
+import com.opensymphony.sitemesh3.ContentProperty;
 import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
 import com.opensymphony.sitemesh3.webapp.WebAppContext;
 import com.opensymphony.sitemesh3.webapp.WebEnvironment;
@@ -78,10 +78,10 @@ public class SimpleSiteMeshFilterTest extends TestCase {
 
     public static class MyContentProcessor extends HtmlContentProcessor {
         @Override
-        public Content build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
-            Content content = super.build(data, siteMeshContext);
-            content.getProperty("title").setValue("MyContentProcessedTitle");
-            return content;
+        public ContentProperty build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
+            ContentProperty result = super.build(data, siteMeshContext);
+            result.getChild("title").setValue("MyContentProcessedTitle");
+            return result;
         }
     }
 
@@ -99,9 +99,8 @@ public class SimpleSiteMeshFilterTest extends TestCase {
     }
 
     public void testFailsToInitIfContentProcessorNotFound() throws Exception {
-        WebEnvironment webEnvironment = null;
         try {
-            webEnvironment = new WebEnvironment.Builder()
+            new WebEnvironment.Builder()
                     .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
                             .addDecoratorPath("/*", "/my-decorator")
                             .setContentProcessor("com.blah.MyProcessor")))
