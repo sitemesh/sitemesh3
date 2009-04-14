@@ -2,10 +2,10 @@ package com.opensymphony.sitemesh3.html;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
 import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.html.rules.ContentBlockExtractingRule;
-import com.opensymphony.sitemesh3.html.rules.FramesetRule;
-import com.opensymphony.sitemesh3.html.rules.HtmlAttributesRule;
-import com.opensymphony.sitemesh3.html.rules.ParameterExtractingRule;
+import com.opensymphony.sitemesh3.content.tagrules.html.ContentBlockExtractingRule;
+import com.opensymphony.sitemesh3.content.tagrules.html.FramesetRule;
+import com.opensymphony.sitemesh3.content.tagrules.html.HtmlAttributesRule;
+import com.opensymphony.sitemesh3.content.tagrules.html.ParameterExtractingRule;
 import com.opensymphony.sitemesh3.tagprocessor.State;
 
 /**

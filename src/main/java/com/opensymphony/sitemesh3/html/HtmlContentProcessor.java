@@ -2,11 +2,11 @@ package com.opensymphony.sitemesh3.html;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
 import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.html.rules.MetaTagRule;
-import com.opensymphony.sitemesh3.html.rules.TitleExtractingRule;
-import com.opensymphony.sitemesh3.html.rules.ExportTagToContentRule;
-import com.opensymphony.sitemesh3.html.rules.decorator.SiteMeshWriteRule;
-import com.opensymphony.sitemesh3.html.rules.decorator.SiteMeshDecorateRule;
+import com.opensymphony.sitemesh3.content.tagrules.html.MetaTagRule;
+import com.opensymphony.sitemesh3.content.tagrules.html.TitleExtractingRule;
+import com.opensymphony.sitemesh3.content.tagrules.html.ExportTagToContentRule;
+import com.opensymphony.sitemesh3.content.tagrules.decorate.SiteMeshWriteRule;
+import com.opensymphony.sitemesh3.content.tagrules.decorate.SiteMeshDecorateRule;
 import com.opensymphony.sitemesh3.tagprocessor.State;
 import com.opensymphony.sitemesh3.tagprocessor.StateTransitionRule;
 import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;

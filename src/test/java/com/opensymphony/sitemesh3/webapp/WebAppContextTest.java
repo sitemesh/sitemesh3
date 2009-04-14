@@ -5,7 +5,7 @@ import com.opensymphony.sitemesh3.content.ContentProperty;
 import com.opensymphony.sitemesh3.SiteMeshContext;
 import com.opensymphony.sitemesh3.simple.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh3.html.HtmlContentProcessor;
-import com.opensymphony.sitemesh3.html.rules.decorator.SiteMeshDecorateRule;
+import com.opensymphony.sitemesh3.content.tagrules.decorate.SiteMeshDecorateRule;
 import com.opensymphony.sitemesh3.tagprocessor.State;
 import com.opensymphony.sitemesh3.webapp.contentfilter.BasicSelector;
 import junit.framework.TestCase;

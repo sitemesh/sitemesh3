@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.html.rules;
+package com.opensymphony.sitemesh3.content.tagrules.html;
 
 import com.opensymphony.sitemesh3.tagprocessor.BasicBlockRule;
 import com.opensymphony.sitemesh3.tagprocessor.Tag;

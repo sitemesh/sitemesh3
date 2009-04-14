@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.html.rules.decorator;
+package com.opensymphony.sitemesh3.content.tagrules.decorate;
 
 import com.opensymphony.sitemesh3.content.memory.InMemoryContentProperty;
 import com.opensymphony.sitemesh3.SiteMeshContextStub;
