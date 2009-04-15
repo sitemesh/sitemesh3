@@ -52,6 +52,8 @@ public class ExportTagToContentRule extends BasicBlockRule {
         targetProperty.setValue(tagContent);
         tagProcessorContext.popBuffer();
         tagProcessorContext.currentBuffer().append(tagContent);
-        tag.writeTo(tagProcessorContext.currentBuffer());
+        if (tag.getType() == Tag.Type.CLOSE) {
+            tag.writeTo(tagProcessorContext.currentBuffer());
+        }
     }
 }
