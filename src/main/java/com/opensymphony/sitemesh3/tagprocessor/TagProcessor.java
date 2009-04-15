@@ -87,10 +87,10 @@ public class TagProcessor {
 
     private class Context implements TagProcessorContext {
 
-        private CharSequenceList[] buffers = new CharSequenceList[10];
+        private CharSequenceBuffer[] buffers = new CharSequenceBuffer[10];
         private int size;
 
-        public Context(CharSequenceList defaultBuffer) {
+        public Context(CharSequenceBuffer defaultBuffer) {
             buffers[0] = defaultBuffer;
             size = 1;
         }
@@ -106,13 +106,18 @@ public class TagProcessor {
         }
 
         @Override
-        public void pushBuffer() {
+        public void pushBuffer(CharSequenceBuffer customBuffer) {
             if(size == buffers.length) {
-              CharSequenceList[] newBuffers = new CharSequenceList[buffers.length * 2];
+              CharSequenceBuffer[] newBuffers = new CharSequenceBuffer[buffers.length * 2];
               System.arraycopy(buffers, 0, newBuffers, 0, buffers.length);
               buffers = newBuffers;
             }
-            buffers[size++] = new CharSequenceList();
+            buffers[size++] = customBuffer;
+        }
+
+        @Override
+        public void pushBuffer() {
+            pushBuffer(new CharSequenceList());
         }
 
         @Override

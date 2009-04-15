@@ -33,8 +33,16 @@ public interface TagProcessorContext {
      * Push a new destination output buffer onto the stack. All content in the
      * document from this point forwards will be written to this buffer instead
      * of the default destination, until {@link #popBuffer()} is called.
+     * Will use a default implementation of {@link CharSequenceBuffer}.
      */
     void pushBuffer();
+
+    /**
+     * Push a new destination output buffer onto the stack. All content in the
+     * document from this point forwards will be written to this buffer instead
+     * of the default destination, until {@link #popBuffer()} is called.
+     */
+    void pushBuffer(CharSequenceBuffer customBuffer);
 
     /**
      * @see #pushBuffer()

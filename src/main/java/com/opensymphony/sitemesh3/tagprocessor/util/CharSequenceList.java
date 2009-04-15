@@ -1,5 +1,7 @@
 package com.opensymphony.sitemesh3.tagprocessor.util;
 
+import com.opensymphony.sitemesh3.tagprocessor.CharSequenceBuffer;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
@@ -30,7 +32,7 @@ import java.util.LinkedList;
  *
  * @author Joe Walnes
  */
-public class CharSequenceList implements Appendable, CharSequence, Iterable<CharSequence> {
+public class CharSequenceList implements CharSequenceBuffer {
 
     private final LinkedList<CharSequence> list = new LinkedList<CharSequence>();
 
@@ -90,11 +92,12 @@ public class CharSequenceList implements Appendable, CharSequence, Iterable<Char
         }
     }
 
+    @Override
     public void writeTo(Appendable out) throws IOException {
         for (CharSequence charSequence : list) {
-            if (charSequence instanceof CharSequenceList) {
+            if (charSequence instanceof CharSequenceBuffer) {
                 // Optimization.
-                ((CharSequenceList) charSequence).writeTo(out);
+                ((CharSequenceBuffer) charSequence).writeTo(out);
             } else {
                 out.append(charSequence);
             }

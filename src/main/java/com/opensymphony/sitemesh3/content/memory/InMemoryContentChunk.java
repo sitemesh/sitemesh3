@@ -1,8 +1,8 @@
 package com.opensymphony.sitemesh3.content.memory;
 
-import com.opensymphony.sitemesh3.tagprocessor.util.CharSequenceList;
-import com.opensymphony.sitemesh3.content.ContentChunk;
 import com.opensymphony.sitemesh3.content.Content;
+import com.opensymphony.sitemesh3.content.ContentChunk;
+import com.opensymphony.sitemesh3.tagprocessor.CharSequenceBuffer;
 
 import java.io.IOException;
 
@@ -40,10 +40,9 @@ class InMemoryContentChunk implements ContentChunk {
         if (value == null) {
             return;
         }
-        if (value instanceof CharSequenceList) {
+        if (value instanceof CharSequenceBuffer) {
             // Optimization.
-            CharSequenceList charSequenceList = (CharSequenceList) value;
-            charSequenceList.writeTo(out);
+            ((CharSequenceBuffer) value).writeTo(out);
         } else {
             out.append(value);
         }
