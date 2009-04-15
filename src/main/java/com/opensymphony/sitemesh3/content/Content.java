@@ -1,5 +1,7 @@
 package com.opensymphony.sitemesh3.content;
 
+import com.opensymphony.sitemesh3.tagprocessor.CharSequenceBuffer;
+
 /**
  * @author Joe Walnes
  */
@@ -15,5 +17,11 @@ public interface Content {
      * Get a tree of extracted properties, that were captured by the {@link ContentProcessor}.
      */
     ContentProperty getExtractedProperties();
+
+    /**
+     * Creates a buffer that will output it contents in {@link #getData()}, but NOT in the
+     * extracted properties from {@link #getExtractedProperties()}.
+     */
+    CharSequenceBuffer createDataOnlyBuffer();
 
 }
