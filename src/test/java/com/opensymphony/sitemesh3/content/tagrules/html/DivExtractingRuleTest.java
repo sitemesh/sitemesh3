@@ -1,7 +1,7 @@
 package com.opensymphony.sitemesh3.content.tagrules.html;
 
+import com.opensymphony.sitemesh3.content.Content;
 import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.content.ContentProperty;
 import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
 import junit.framework.TestCase;
 
@@ -29,12 +29,12 @@ public class DivExtractingRuleTest extends TestCase {
         String html = "<html><body>" + body + "</body></html>";
 
         // execute
-        ContentProperty out = contentProcessor.build(CharBuffer.wrap(html), null);
+        Content out = contentProcessor.build(CharBuffer.wrap(html), null);
 
         // verify
-        assertEquals(body, out.getChild("body").getValue());
-        assertEquals(outer, out.getChild("div").getChild("outer").getValue());
-        assertEquals(inner, out.getChild("div").getChild("inner").getValue());
+        assertEquals(body, out.getExtractedProperties().getChild("body").getValue());
+        assertEquals(outer, out.getExtractedProperties().getChild("div").getChild("outer").getValue());
+        assertEquals(inner, out.getExtractedProperties().getChild("div").getChild("inner").getValue());
     }
 
     public void testDoesNotConsumeDivWhenExtracting() throws IOException {
@@ -42,10 +42,10 @@ public class DivExtractingRuleTest extends TestCase {
         String html = "<html><body><div id='target'>content</div></body></html>";
 
         // execute
-        ContentProperty out = contentProcessor.build(CharBuffer.wrap(html), null);
+        Content out = contentProcessor.build(CharBuffer.wrap(html), null);
 
         // verify
-        assertEquals("<div id='target'>content</div>", out.getChild("body").getValue());
+        assertEquals("<div id='target'>content</div>", out.getExtractedProperties().getChild("body").getValue());
     }
 
     public void testExtractsDivsWithIds() throws IOException {
@@ -53,10 +53,10 @@ public class DivExtractingRuleTest extends TestCase {
         String html = "<html><body><div id='target'>content</div></body></html>";
 
         // execute
-        ContentProperty out = contentProcessor.build(CharBuffer.wrap(html), null);
+        Content out = contentProcessor.build(CharBuffer.wrap(html), null);
 
         // verify
-        assertEquals("content", out.getChild("div").getChild("target").getValue());
+        assertEquals("content", out.getExtractedProperties().getChild("div").getChild("target").getValue());
     }
 
 }

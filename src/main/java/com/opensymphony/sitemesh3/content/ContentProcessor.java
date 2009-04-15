@@ -10,6 +10,6 @@ import java.nio.CharBuffer;
  */
 public interface ContentProcessor {
 
-    ContentProperty build(CharBuffer data, SiteMeshContext context) throws IOException;
+    Content build(CharBuffer data, SiteMeshContext context) throws IOException;
 
 }

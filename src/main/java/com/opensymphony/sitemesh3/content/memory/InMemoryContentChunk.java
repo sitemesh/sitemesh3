@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh3.content.memory;
 
 import com.opensymphony.sitemesh3.tagprocessor.util.CharSequenceList;
 import com.opensymphony.sitemesh3.content.ContentChunk;
+import com.opensymphony.sitemesh3.content.Content;
 
 import java.io.IOException;
 
@@ -10,9 +11,14 @@ import java.io.IOException;
  *
  * @author Joe Walnes
  */
-public class InMemoryContentChunk implements ContentChunk {
+class InMemoryContentChunk implements ContentChunk {
 
     private CharSequence value;
+    private final Content owner;
+
+    public InMemoryContentChunk(Content owner) {
+        this.owner = owner;
+    }
 
     @Override
     public boolean hasValue() {
@@ -53,4 +59,8 @@ public class InMemoryContentChunk implements ContentChunk {
         return getNonNullValue();
     }
 
+    @Override
+    public Content getOwningContent() {
+        return owner;
+    }
 }

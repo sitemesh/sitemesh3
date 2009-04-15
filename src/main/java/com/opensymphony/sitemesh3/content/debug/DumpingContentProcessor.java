@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh3.content.debug;
 
 import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.content.ContentProperty;
+import com.opensymphony.sitemesh3.content.Content;
 import com.opensymphony.sitemesh3.SiteMeshContext;
 
 import java.nio.CharBuffer;
@@ -24,27 +25,26 @@ public class DumpingContentProcessor implements ContentProcessor {
     }
 
     @Override
-    public ContentProperty build(CharBuffer data, SiteMeshContext context) throws IOException {
-        ContentProperty result = contentProcessor.build(data, context);
+    public Content build(CharBuffer data, SiteMeshContext context) throws IOException {
+        Content result = contentProcessor.build(data, context);
         dump(result, debugOut);
         return result;
     }
 
-    public static void dump(ContentProperty contentProperty, Appendable out) throws IOException {
-        for (ContentProperty descendant : contentProperty.getDescendants()) {
+    public static void dump(Content content, Appendable out) throws IOException {
+        out.append("~~~~~~ MAIN ~~~~~~");
+        content.getData().writeValueTo(out);
+        for (ContentProperty descendant : content.getExtractedProperties().getDescendants()) {
             out.append("~~~~~~ " + getFullPath(descendant) + " ~~~~~~");
-            out.append("\n[[ORIGINAL]]\n");
-            descendant.getOriginal().writeValueTo(out);
-            out.append("\n[[PROCESSED]]\n");
             descendant.writeValueTo(out);
             out.append("\n\n");
         }
     }
 
-    public static String dump(ContentProperty contentProperty) {
+    public static String dump(Content content) {
         StringBuilder result = new StringBuilder();
         try {
-            dump(contentProperty, result);
+            dump(content, result);
         } catch (IOException e) {
             return "Exception: " + e.toString();
         }

@@ -1,18 +1,18 @@
 package com.opensymphony.sitemesh3.simple;
 
-import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.DecoratorSelector;
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
-import com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle;
-import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
+import com.opensymphony.sitemesh3.content.Content;
+import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
+import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
+import com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle;
+import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
-import java.util.Map;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * A simple SiteMesh configuration that is easy to use and should suit the needs of <i>most</i> users.
@@ -201,12 +201,12 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
     }
 
     @Override
-    public String[] selectDecoratorPaths(ContentProperty contentProperty, C context) throws IOException {
-        return decoratorSelector.selectDecoratorPaths(contentProperty, context);
+    public String[] selectDecoratorPaths(Content content, C context) throws IOException {
+        return decoratorSelector.selectDecoratorPaths(content, context);
     }
 
     @Override
-    public ContentProperty build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
+    public Content build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
         return contentProcessor.build(data, siteMeshContext);
     }
 

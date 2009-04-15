@@ -1,11 +1,11 @@
 package com.opensymphony.sitemesh3.webapp;
 
+import com.opensymphony.sitemesh3.content.Content;
 import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.simple.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
-import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
 import com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle;
+import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
+import com.opensymphony.sitemesh3.simple.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh3.webapp.contentfilter.BasicSelector;
 import junit.framework.TestCase;
 
@@ -27,9 +27,9 @@ public class WebAppContextTest extends TestCase {
             @Override
             protected void doGet(HttpServletRequest request, HttpServletResponse response)
                     throws ServletException, IOException {
-                ContentProperty contentProperty = (ContentProperty) request.getAttribute(WebAppContext.CONTENT_KEY);
+                Content content = (Content) request.getAttribute(WebAppContext.CONTENT_KEY);
                 PrintWriter out = response.getWriter();
-                out.println("Title = " + contentProperty.getChild("title").getValue());
+                out.println("Title = " + content.getExtractedProperties().getChild("title").getValue());
             }
         };
 

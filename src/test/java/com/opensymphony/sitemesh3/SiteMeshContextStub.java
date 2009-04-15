@@ -1,6 +1,6 @@
 package com.opensymphony.sitemesh3;
 
-import com.opensymphony.sitemesh3.content.ContentProperty;
+import com.opensymphony.sitemesh3.content.Content;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import java.io.IOException;
 public class SiteMeshContextStub implements SiteMeshContext {
 
     private String requestPath;
-    private ContentProperty contentToMerge;
+    private Content contentToMerge;
 
     @Override
     public String getRequestPath() {
@@ -25,16 +25,16 @@ public class SiteMeshContextStub implements SiteMeshContext {
     }
 
     @Override
-    public ContentProperty decorate(String decoratorName, ContentProperty content) throws IOException {
+    public Content decorate(String decoratorName, Content content) throws IOException {
         throw new UnsupportedOperationException("Not supported by SiteMeshContextStub");
     }
 
     @Override
-    public ContentProperty getContentToMerge() {
+    public Content getContentToMerge() {
         return contentToMerge;
     }
 
-    public void setContentToMerge(ContentProperty contentToMerge) {
+    public void setContentToMerge(Content contentToMerge) {
         this.contentToMerge = contentToMerge;
     }
 }

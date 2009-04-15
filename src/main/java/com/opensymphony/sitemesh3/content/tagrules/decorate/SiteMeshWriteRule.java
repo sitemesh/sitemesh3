@@ -4,6 +4,7 @@ import com.opensymphony.sitemesh3.tagprocessor.BasicBlockRule;
 import com.opensymphony.sitemesh3.tagprocessor.Tag;
 import com.opensymphony.sitemesh3.SiteMeshContext;
 import com.opensymphony.sitemesh3.content.ContentProperty;
+import com.opensymphony.sitemesh3.content.Content;
 
 import java.io.IOException;
 
@@ -26,9 +27,9 @@ public class SiteMeshWriteRule extends BasicBlockRule {
     @Override
     protected Object processStart(Tag tag) throws IOException {
         String propertyName = tag.getAttributeValue("property", true);
-        ContentProperty contentToMerge = siteMeshContext.getContentToMerge();
+        Content contentToMerge = siteMeshContext.getContentToMerge();
         if (contentToMerge != null) {
-            ContentProperty property = contentToMerge.getChild(propertyName);
+            ContentProperty property = contentToMerge.getExtractedProperties().getChild(propertyName);
             if (property.hasValue()) {
                 property.writeValueTo(tagProcessorContext.currentBuffer());
             }

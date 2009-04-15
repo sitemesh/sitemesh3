@@ -1,9 +1,9 @@
 package com.opensymphony.sitemesh3.simple;
 
-import com.opensymphony.sitemesh3.SiteMeshContextStub;
 import com.opensymphony.sitemesh3.DecoratorSelector;
-import com.opensymphony.sitemesh3.content.memory.InMemoryContentProperty;
-import com.opensymphony.sitemesh3.content.ContentProperty;
+import com.opensymphony.sitemesh3.SiteMeshContextStub;
+import com.opensymphony.sitemesh3.content.Content;
+import com.opensymphony.sitemesh3.content.memory.InMemoryContent;
 import junit.framework.TestCase;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.io.IOException;
 public class PathBasedDecoratorSelectorTest extends TestCase {
 
     public void testSelectsDecoratorBasedOnContentRequestPath() throws IOException {
-        ContentProperty contentProperty = new InMemoryContentProperty();
+        Content content = new InMemoryContent();
         DecoratorSelector selector = new PathBasedDecoratorSelector()
                 .put("/*", "/decorators/default.jsp")
                 .put("/admin/*", "/decorators/admin.jsp")
@@ -23,32 +23,32 @@ public class PathBasedDecoratorSelectorTest extends TestCase {
 
         assertEquals(
                 join("/decorators/admin.jsp"),
-                join(selector.selectDecoratorPaths(contentProperty,
+                join(selector.selectDecoratorPaths(content,
                         new SiteMeshContextStub().withRequestPath("/admin/foo"))));
         assertEquals(
                 join("/decorators/thingy.jsp"),
-                join(selector.selectDecoratorPaths(contentProperty,
+                join(selector.selectDecoratorPaths(content,
                         new SiteMeshContextStub().withRequestPath("/thingy"))));
         assertEquals(
                 join("/decorators/default.jsp"),
-                join(selector.selectDecoratorPaths(contentProperty,
+                join(selector.selectDecoratorPaths(content,
                         new SiteMeshContextStub().withRequestPath("/thingy-not"))));
         assertEquals(
                 join("/1.jsp", "/2.jsp", "/3.jsp"),
-                join(selector.selectDecoratorPaths(contentProperty,
+                join(selector.selectDecoratorPaths(content,
                         new SiteMeshContextStub().withRequestPath("/multiple"))));
     }
 
     public void testReturnsEmptyArrayForUnMappedPaths() throws IOException {
-        ContentProperty contentProperty = new InMemoryContentProperty();
+        Content content = new InMemoryContent();
         DecoratorSelector selector = new PathBasedDecoratorSelector()
                 .put("/a/*", "A", "B");
 
         assertEquals(
                 join("A", "B"),
-                join(selector.selectDecoratorPaths(contentProperty,
+                join(selector.selectDecoratorPaths(content,
                         new SiteMeshContextStub().withRequestPath("/a/foo"))));
-        assertEquals(0, selector.selectDecoratorPaths(contentProperty,
+        assertEquals(0, selector.selectDecoratorPaths(content,
                         new SiteMeshContextStub().withRequestPath("/b/foo")).length);
     }
 

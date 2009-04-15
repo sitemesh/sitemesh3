@@ -1,6 +1,5 @@
 package com.opensymphony.sitemesh3.content.memory;
 
-import com.opensymphony.sitemesh3.content.ContentChunk;
 import com.opensymphony.sitemesh3.content.ContentProperty;
 
 import java.util.Collections;
@@ -16,32 +15,27 @@ import java.util.Map;
  *
  * @author Joe Walnes
  */
-public class InMemoryContentProperty extends InMemoryContentChunk implements ContentProperty, Iterable<ContentProperty> {
+class InMemoryContentProperty extends InMemoryContentChunk implements ContentProperty, Iterable<ContentProperty> {
 
     private static final Iterator<ContentProperty> EMPTY_ITERATOR = Collections.<ContentProperty>emptySet().iterator();
-
-    private final ContentChunk original = new InMemoryContentChunk();
 
     private final boolean isRoot;
     private final String name;
     private final InMemoryContentProperty parent;
     private Map<String, ContentProperty> children; // Lazily instantiated.
 
-    public InMemoryContentProperty() {
+    public InMemoryContentProperty(InMemoryContent owner) {
+        super(owner);
         name = null;
         parent = null;
         isRoot = true;
     }
 
     protected InMemoryContentProperty(String name, InMemoryContentProperty parent) {
+        super(parent.getOwningContent());
         this.name = name;
         this.parent = parent;
-        isRoot = false;
-    }
-
-    @Override
-    public ContentChunk getOriginal() {
-        return original;
+        this.isRoot = false;
     }
 
     @Override

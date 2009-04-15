@@ -1,15 +1,15 @@
 package com.opensymphony.sitemesh3.content.tagrules.decorate;
 
-import junit.framework.TestCase;
 import com.opensymphony.sitemesh3.SiteMeshContextStub;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.memory.InMemoryContentProperty;
+import com.opensymphony.sitemesh3.content.Content;
+import com.opensymphony.sitemesh3.content.memory.InMemoryContent;
 import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
+import junit.framework.TestCase;
 
-import java.nio.CharBuffer;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicReference;
+import java.nio.CharBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Joe Walnes
@@ -21,24 +21,24 @@ public class SiteMeshDecorateRuleTest extends TestCase {
                 "<sitemesh:decorate decorator='/mydecorator' title='foo' cheese='bar'><b>Some content</b></sitemesh:decorate>" +
                 "AFTER";
 
-        final AtomicReference<ContentProperty> capturedContentPropertyRef = new AtomicReference<ContentProperty>();
+        final AtomicReference<Content> capturedContentRef = new AtomicReference<Content>();
 
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
         tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new SiteMeshContextStub() {
             @Override
-            public ContentProperty decorate(String decoratorName, ContentProperty contentProperty) throws IOException {
-                capturedContentPropertyRef.set(contentProperty);
-                return new InMemoryContentProperty();
+            public Content decorate(String decoratorName, Content content) throws IOException {
+                capturedContentRef.set(content);
+                return new InMemoryContent();
             }
         }));
         tagProcessor.process();
 
-        ContentProperty contentProperty = capturedContentPropertyRef.get();
-        assertNotNull(contentProperty);
-        assertEquals("<b>Some content</b>", contentProperty.getChild("body").getValue());
-        assertEquals("<b>Some content</b>", contentProperty.getOriginal().getValue());
-        assertEquals("foo", contentProperty.getChild("title").getValue());
-        assertEquals("bar", contentProperty.getChild("cheese").getValue());
+        Content content = capturedContentRef.get();
+        assertNotNull(content);
+        assertEquals("<b>Some content</b>", content.getExtractedProperties().getChild("body").getValue());
+        assertEquals("<b>Some content</b>", content.getData().getValue());
+        assertEquals("foo", content.getExtractedProperties().getChild("title").getValue());
+        assertEquals("bar", content.getExtractedProperties().getChild("cheese").getValue());
     }
 
     public void testAllowsContextToWriteToPage() throws IOException {
@@ -49,9 +49,9 @@ public class SiteMeshDecorateRuleTest extends TestCase {
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
         tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new SiteMeshContextStub() {
             @Override
-            public ContentProperty decorate(String decoratorName, ContentProperty contentProperty) throws IOException {
-                ContentProperty result = new InMemoryContentProperty();
-                result.getChild("body").setValue("-DECORATED-");
+            public Content decorate(String decoratorName, Content content) throws IOException {
+                Content result = new InMemoryContent();
+                result.getExtractedProperties().getChild("body").setValue("-DECORATED-");
                 return result;
             }
         }));
@@ -70,7 +70,7 @@ public class SiteMeshDecorateRuleTest extends TestCase {
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
         tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new SiteMeshContextStub() {
             @Override
-            public ContentProperty decorate(String decoratorName, ContentProperty contentProperty) throws IOException {
+            public Content decorate(String decoratorName, Content content) throws IOException {
                 wasCalled.set(true);
                 return null;
             }
@@ -91,7 +91,7 @@ public class SiteMeshDecorateRuleTest extends TestCase {
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
         tagProcessor.addRule("sitemesh:decorate", new SiteMeshDecorateRule(new SiteMeshContextStub() {
             @Override
-            public ContentProperty decorate(String decoratorName, ContentProperty contentProperty) throws IOException {
+            public Content decorate(String decoratorName, Content content) throws IOException {
                 wasCalled.set(true);
                 return null;
             }

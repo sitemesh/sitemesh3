@@ -2,6 +2,7 @@ package com.opensymphony.sitemesh3.html;
 
 import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.content.ContentProperty;
+import com.opensymphony.sitemesh3.content.Content;
 import com.opensymphony.sitemesh3.SiteMeshContextStub;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -39,7 +40,8 @@ public class DataDrivenSuiteBuilder {
             File inputFile = new File(testDataDir, inputFileName);
 
             Map<String, String> expectedBlocks = readBlocks(new FileReader(inputFile));
-            ContentProperty contentProperty = processor.build(CharBuffer.wrap(expectedBlocks.get("INPUT")), new SiteMeshContextStub());
+            Content content = processor.build(CharBuffer.wrap(expectedBlocks.get("INPUT")), new SiteMeshContextStub());
+            ContentProperty contentProperty = content.getExtractedProperties();
 
             TestSuite inputSuite = new TestSuite(inputFile.getName().replace('.', '_'));
             inputSuite.addTest(new AssertTrimmedTest(
@@ -57,7 +59,7 @@ public class DataDrivenSuiteBuilder {
             inputSuite.addTest(new AssertTrimmedTest(
                     "testOriginal",
                     expectedBlocks.get("INPUT"),
-                    contentProperty.getOriginal().getValue()));
+                    content.getData().getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
                     "testProperties",
                     cleanExpectedProperties(expectedBlocks.get("PROPERTIES")),

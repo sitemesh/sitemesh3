@@ -1,18 +1,19 @@
 package com.opensymphony.sitemesh3.webapp;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
+import com.opensymphony.sitemesh3.content.Content;
 import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.webapp.contentfilter.HttpServletResponseBuffer;
 import com.opensymphony.sitemesh3.webapp.contentfilter.BasicSelector;
+import com.opensymphony.sitemesh3.webapp.contentfilter.HttpServletResponseBuffer;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.RequestDispatcher;
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.CharArrayWriter;
+import java.io.IOException;
 import java.io.Writer;
 import java.nio.CharBuffer;
 
@@ -28,13 +29,13 @@ public class WebAppContext implements SiteMeshContext {
 
     /**
      * Key that the {@link ContentProperty} is stored under in the {@link HttpServletRequest}
-     * attribute. It is "com.opensymphony.sitemesh3.ContentProperty".
+     * attribute. It is "com.opensymphony.sitemesh3.content.Content".
      */
-    public static final String CONTENT_KEY = ContentProperty.class.getName();
+    public static final String CONTENT_KEY = Content.class.getName();
 
     /**
      * Key that the {@link WebAppContext} is stored under in the {@link HttpServletRequest}
-     * attribute. It is "com.opensymphony.sitemesh3.Context".
+     * attribute. It is "com.opensymphony.sitemesh3.SiteMeshContext".
      */
     public static final String CONTEXT_KEY = SiteMeshContext.class.getName();
 
@@ -44,7 +45,7 @@ public class WebAppContext implements SiteMeshContext {
     private final ServletContext servletContext;
     private final ContentProcessor contentProcessor;
 
-    private ContentProperty currentContentProperty;
+    private Content currentContent;
 
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
@@ -97,7 +98,7 @@ public class WebAppContext implements SiteMeshContext {
     }
 
     @Override
-    public ContentProperty decorate(String decoratorName, ContentProperty contentProperty) throws IOException {
+    public Content decorate(String decoratorName, Content content) throws IOException {
         if (decoratorName == null) {
             return null;
         }
@@ -108,23 +109,23 @@ public class WebAppContext implements SiteMeshContext {
             }
         }
         CharBufferWriter out = new CharBufferWriter();
-        decorate(decoratorName, contentProperty, out);
+        decorate(decoratorName, content, out);
 
         CharBuffer decorated = out.toCharBuffer();
 
-        ContentProperty lastContent = currentContentProperty;
-        currentContentProperty = contentProperty;
+        Content lastContent = currentContent;
+        currentContent = content;
         try {
             // TODO: Don't reprocess the content properties.
             return contentProcessor.build(decorated, this);
         } finally {
-            currentContentProperty = lastContent;
+            currentContent = lastContent;
         }
     }
 
     @Override
-    public ContentProperty getContentToMerge() {
-        return currentContentProperty;
+    public Content getContentToMerge() {
+        return currentContent;
     }
 
     /**
@@ -138,7 +139,7 @@ public class WebAppContext implements SiteMeshContext {
      * {@link #CONTENT_KEY} and
      * {@link #CONTEXT_KEY} respectively.</p>
      */
-    protected void decorate(String decoratorPath, ContentProperty contentProperty, Writer out) throws IOException {
+    protected void decorate(String decoratorPath, Content content, Writer out) throws IOException {
         // Wrap response so output gets buffered.
         HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, new BasicSelector() {
             @Override
@@ -153,7 +154,7 @@ public class WebAppContext implements SiteMeshContext {
         Object oldContent = request.getAttribute(CONTENT_KEY);
         Object oldContext = request.getAttribute(CONTEXT_KEY);
 
-        request.setAttribute(CONTENT_KEY, contentProperty);
+        request.setAttribute(CONTENT_KEY, content);
         request.setAttribute(CONTEXT_KEY, this);
 
         try {

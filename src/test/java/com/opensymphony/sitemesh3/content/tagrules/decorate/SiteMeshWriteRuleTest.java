@@ -1,8 +1,8 @@
 package com.opensymphony.sitemesh3.content.tagrules.decorate;
 
-import com.opensymphony.sitemesh3.content.memory.InMemoryContentProperty;
 import com.opensymphony.sitemesh3.SiteMeshContextStub;
-import com.opensymphony.sitemesh3.content.ContentProperty;
+import com.opensymphony.sitemesh3.content.Content;
+import com.opensymphony.sitemesh3.content.memory.InMemoryContent;
 import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
 import junit.framework.TestCase;
 
@@ -15,11 +15,11 @@ import java.nio.CharBuffer;
 public class SiteMeshWriteRuleTest extends TestCase {
 
     public void testWritesTheProperty() throws IOException {
-        ContentProperty contentProperty = new InMemoryContentProperty();
-        contentProperty.getChild("foo").setValue("This is the <foo> property.");
-        contentProperty.getChild("bar.x").setValue("BAR");
+        Content content = new InMemoryContent();
+        content.getExtractedProperties().getChild("foo").setValue("This is the <foo> property.");
+        content.getExtractedProperties().getChild("bar.x").setValue("BAR");
         SiteMeshContextStub context = new SiteMeshContextStub();
-        context.setContentToMerge(contentProperty);
+        context.setContentToMerge(content);
 
         String in = "Hello <sitemesh:write property='foo'/> <sitemesh:write property='bar.x'/>!";
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
@@ -31,9 +31,9 @@ public class SiteMeshWriteRuleTest extends TestCase {
     }
 
     public void testRemovesTagContents() throws IOException {
-        ContentProperty contentProperty = new InMemoryContentProperty();
+        Content content = new InMemoryContent();
         SiteMeshContextStub context = new SiteMeshContextStub();
-        context.setContentToMerge(contentProperty);
+        context.setContentToMerge(content);
 
         String in = "Hello <sitemesh:write property='notfound'/> <sitemesh:write property='found.not'/>!";
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
@@ -45,10 +45,10 @@ public class SiteMeshWriteRuleTest extends TestCase {
     }
 
     public void testSkipsMissingProperties() throws IOException {
-        ContentProperty contentProperty = new InMemoryContentProperty();
+        Content content = new InMemoryContent();
         SiteMeshContextStub context = new SiteMeshContextStub();
-        contentProperty.getChild("found").setValue("FOUND");
-        context.setContentToMerge(contentProperty);
+        content.getExtractedProperties().getChild("found").setValue("FOUND");
+        context.setContentToMerge(content);
 
         String in = "Hello <sitemesh:write property='found'>BAD</sitemesh:write>" +
                 " <sitemesh:write property='notfound'>BAD</sitemesh:write>!";

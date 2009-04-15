@@ -1,8 +1,8 @@
 package com.opensymphony.sitemesh3.webapp;
 
-import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.DecoratorSelector;
-import com.opensymphony.sitemesh3.content.ContentProperty;
+import com.opensymphony.sitemesh3.content.Content;
+import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.webapp.contentfilter.ContentBufferingFilter;
 import com.opensymphony.sitemesh3.webapp.contentfilter.Selector;
 
@@ -86,20 +86,20 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
             throws IOException, ServletException {
         verify();
         WebAppContext context = createContext(contentType, request, response);
-        ContentProperty contentProperty = contentProcessor.build(buffer, context);
-        if (contentProperty == null) {
+        Content content = contentProcessor.build(buffer, context);
+        if (content == null) {
             return false;
         }
 
-        String[] decoratorPaths = decoratorSelector.selectDecoratorPaths(contentProperty, context);
+        String[] decoratorPaths = decoratorSelector.selectDecoratorPaths(content, context);
         for (String decoratorPath : decoratorPaths) {
-            contentProperty = context.decorate(decoratorPath, contentProperty);
+            content = context.decorate(decoratorPath, content);
         }
 
-        if (contentProperty == null) {
+        if (content == null) {
             return false;
         }
-        contentProperty.writeValueTo(response.getWriter());
+        content.getData().writeValueTo(response.getWriter());
         return true;
     }
 

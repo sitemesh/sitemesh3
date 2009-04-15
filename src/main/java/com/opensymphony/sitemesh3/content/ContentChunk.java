@@ -36,4 +36,9 @@ public interface ContentChunk {
      */
     void setValue(CharSequence value);
 
+    /**
+     * Returns the Content that this chunk belongs to.
+     */
+    Content getOwningContent();
+
 }

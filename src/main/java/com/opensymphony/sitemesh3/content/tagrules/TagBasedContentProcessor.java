@@ -1,9 +1,10 @@
 package com.opensymphony.sitemesh3.content.tagrules;
 
-import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.memory.InMemoryContentProperty;
+import com.opensymphony.sitemesh3.content.Content;
+import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.content.ContentProperty;
+import com.opensymphony.sitemesh3.content.memory.InMemoryContent;
 import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
 
 import java.io.IOException;
@@ -24,23 +25,23 @@ public class TagBasedContentProcessor implements ContentProcessor {
     }
 
     @Override
-    public ContentProperty build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
-        ContentProperty contentProperty = new InMemoryContentProperty();
-        contentProperty.getOriginal().setValue(data);
+    public Content build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
+        Content content = new InMemoryContent();
+        content.getData().setValue(data);
 
         TagProcessor processor = new TagProcessor(data);
 
         // Additional rules - designed to be tweaked.
         for (TagRuleBundle tagRuleBundle : tagRuleBundles) {
-            tagRuleBundle.install(processor.defaultState(), contentProperty, siteMeshContext);
+            tagRuleBundle.install(processor.defaultState(), content.getExtractedProperties(), siteMeshContext);
         }
 
         // Run the processor.
         processor.process();
 
-        contentProperty.setValue(processor.getDefaultBufferContents());
-        postProcess(contentProperty, processor);
-        return contentProperty;
+        content.getExtractedProperties().setValue(processor.getDefaultBufferContents());
+        postProcess(content.getExtractedProperties(), processor);
+        return content;
     }
 
     // TODO: Replace this hack with a TagRule.

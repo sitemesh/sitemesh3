@@ -1,8 +1,9 @@
 package com.opensymphony.sitemesh3.content.tagrules.decorate;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.memory.InMemoryContentProperty;
+import com.opensymphony.sitemesh3.content.memory.InMemoryContent;
 import com.opensymphony.sitemesh3.content.ContentProperty;
+import com.opensymphony.sitemesh3.content.Content;
 import com.opensymphony.sitemesh3.tagprocessor.Tag;
 import com.opensymphony.sitemesh3.tagprocessor.BasicBlockRule;
 
@@ -35,7 +36,7 @@ import java.io.IOException;
 public class SiteMeshDecorateRule extends BasicBlockRule<SiteMeshDecorateRule.Holder> {
 
     static class Holder {
-        public final ContentProperty contentProperty = new InMemoryContentProperty();
+        public final Content content = new InMemoryContent();
         public String decoratorName;
     }
 
@@ -56,7 +57,7 @@ public class SiteMeshDecorateRule extends BasicBlockRule<SiteMeshDecorateRule.Ho
             if (name.equals("decorator")) {
                 holder.decoratorName = value;
             } else {
-                holder.contentProperty.getChild(name).setValue(value);
+                holder.content.getExtractedProperties().getChild(name).setValue(value);
             }
         }
 
@@ -68,19 +69,19 @@ public class SiteMeshDecorateRule extends BasicBlockRule<SiteMeshDecorateRule.Ho
         CharSequence body = tagProcessorContext.currentBufferContents();
         tagProcessorContext.popBuffer();
 
-        holder.contentProperty.getOriginal().setValue(body);
+        holder.content.getData().setValue(body);
         // TODO: Use a 'default' property
-        holder.contentProperty.getChild("body").setValue(body);
+        holder.content.getExtractedProperties().getChild("body").setValue(body);
 
         if (holder.decoratorName == null) {
             tagProcessorContext.currentBuffer().append(body);
             return;
         }
 
-        ContentProperty decorated = siteMeshContext.decorate(holder.decoratorName, holder.contentProperty);
+        Content decorated = siteMeshContext.decorate(holder.decoratorName, holder.content);
         if (decorated != null) {
             // TODO: Use a 'default' property
-            decorated.getChild("body").writeValueTo(tagProcessorContext.currentBuffer());
+            decorated.getExtractedProperties().getChild("body").writeValueTo(tagProcessorContext.currentBuffer());
         } else {
             tagProcessorContext.currentBuffer().append(body);
         }

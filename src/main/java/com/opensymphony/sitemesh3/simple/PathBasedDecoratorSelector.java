@@ -2,7 +2,7 @@ package com.opensymphony.sitemesh3.simple;
 
 import com.opensymphony.sitemesh3.DecoratorSelector;
 import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.ContentProperty;
+import com.opensymphony.sitemesh3.content.Content;
 
 import java.io.IOException;
 
@@ -33,7 +33,7 @@ public class PathBasedDecoratorSelector implements DecoratorSelector {
     }
 
     @Override
-    public String[] selectDecoratorPaths(ContentProperty content, SiteMeshContext siteMeshContext) throws IOException {
+    public String[] selectDecoratorPaths(Content content, SiteMeshContext siteMeshContext) throws IOException {
         String[] result = pathMapper.get(siteMeshContext.getRequestPath());
         return result == null ? EMPTY : result;
     }

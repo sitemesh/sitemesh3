@@ -1,6 +1,6 @@
 package com.opensymphony.sitemesh3;
 
-import com.opensymphony.sitemesh3.content.ContentProperty;
+import com.opensymphony.sitemesh3.content.Content;
 
 import java.io.IOException;
 
@@ -14,6 +14,6 @@ public interface DecoratorSelector<C extends SiteMeshContext> {
     /**
      * Implementations should never return null.
      */
-    String[] selectDecoratorPaths(ContentProperty contentProperty, C context) throws IOException;
+    String[] selectDecoratorPaths(Content content, C context) throws IOException;
 
 }
