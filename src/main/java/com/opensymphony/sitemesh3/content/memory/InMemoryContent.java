@@ -21,6 +21,31 @@ public class InMemoryContent implements Content {
     public InMemoryContent() {
         data = new InMemoryContentChunk(this) {
             @Override
+            public boolean hasValue() {
+                return inMain && super.hasValue();
+            }
+
+            @Override
+            public String getValue() {
+                inMain = true;
+                try {
+                    return super.getValue();
+                } finally {
+                    inMain = false;
+                }
+            }
+
+            @Override
+            public String getNonNullValue() {
+                inMain = true;
+                try {
+                    return super.getNonNullValue();
+                } finally {
+                    inMain = false;
+                }
+            }
+
+            @Override
             public void writeValueTo(Appendable out) throws IOException {
                 inMain = true;
                 try {

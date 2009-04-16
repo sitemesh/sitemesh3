@@ -32,7 +32,7 @@ public class MsOfficeTagRuleBundle implements TagRuleBundle {
         ContentProperty docProperties = contentProperty.getChild("office").getChild("DocumentProperties");
         for (String documentPropertyName : getOfficePropertyNames()) {
             documentPropertiesState.addRule("o:" + documentPropertyName,
-                    new ExportTagToContentRule(docProperties.getChild(documentPropertyName)));
+                    new ExportTagToContentRule(docProperties.getChild(documentPropertyName), true));
         }
         xmlState.addRule("o:documentproperties", new StateTransitionRule(documentPropertiesState));
 

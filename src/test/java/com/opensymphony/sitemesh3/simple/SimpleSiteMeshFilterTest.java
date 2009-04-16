@@ -78,7 +78,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
     class MyTagRuleBundle implements TagRuleBundle {
         @Override
         public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
-            defaultState.addRule("foo", new ExportTagToContentRule(contentProperty.getChild("foo")));
+            defaultState.addRule("foo", new ExportTagToContentRule(contentProperty.getChild("foo"), true));
         }
     }
 
