@@ -17,7 +17,7 @@ public class SiteMeshWriteRuleTest extends TestCase {
     public void testWritesTheProperty() throws IOException {
         Content content = new InMemoryContent();
         content.getExtractedProperties().getChild("foo").setValue("This is the <foo> property.");
-        content.getExtractedProperties().getChild("bar.x").setValue("BAR");
+        content.getExtractedProperties().getChild("bar").getChild("x").setValue("BAR");
         SiteMeshContextStub context = new SiteMeshContextStub();
         context.setContentToMerge(content);
 
