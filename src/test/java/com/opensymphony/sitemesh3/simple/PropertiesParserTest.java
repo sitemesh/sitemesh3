@@ -44,8 +44,15 @@ public class PropertiesParserTest extends TestCase {
     public void testSplitsKeyValuesIntoMap() {
         properties.put("foo", "   aa=Apples,zz=Ziggy\n   bb=Bananas ");
         assertEquals("(aa:Apples)|(zz:Ziggy)|(bb:Bananas)",
-                joinDict(propertiesParser.getStringMap("foo")));
-        assertTrue(propertiesParser.getStringMap("other").isEmpty());
+                joinMultiMap(propertiesParser.getStringMultiMap("foo")));
+        assertTrue(propertiesParser.getStringMultiMap("other").isEmpty());
+    }
+
+    public void testSplitsKeyValuesIntoMultiMap() {
+        properties.put("foo", "   aa=Apples|Aardvark,zz=Ziggy|Zoo\n   bb=Bananas ");
+        assertEquals("(aa:Apples|Aardvark)|(zz:Ziggy|Zoo)|(bb:Bananas)",
+                joinMultiMap(propertiesParser.getStringMultiMap("foo")));
+        assertTrue(propertiesParser.getStringMultiMap("other").isEmpty());
     }
 
     private String joinSequence(String... sequence) {
@@ -59,13 +66,13 @@ public class PropertiesParserTest extends TestCase {
         return result.toString();
     }
 
-    private String joinDict(Map<String, String> map) {
+    private String joinMultiMap(Map<String, String[]> map) {
         StringBuilder result = new StringBuilder();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
+        for (Map.Entry<String, String[]> entry : map.entrySet()) {
             if (result.length() > 0) {
                 result.append('|');
             }
-            result.append('(').append(entry.getKey()).append(":").append(entry.getValue()).append(')');
+            result.append('(').append(entry.getKey()).append(":").append(joinSequence(entry.getValue())).append(')');
         }
         return result.toString();
     }

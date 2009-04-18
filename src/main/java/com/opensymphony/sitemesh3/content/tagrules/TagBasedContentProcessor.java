@@ -53,4 +53,7 @@ public class TagBasedContentProcessor implements ContentProcessor {
         }
     }
 
+    public TagRuleBundle[] getTagRuleBundles() {
+        return Arrays.copyOf(tagRuleBundles, tagRuleBundles.length);
+    }
 }

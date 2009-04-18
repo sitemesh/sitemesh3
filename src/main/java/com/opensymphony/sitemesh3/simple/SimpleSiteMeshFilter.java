@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * A simple SiteMesh filter that can be dropped in to web.xml and used without the user having to write any Java code.
  *
- * <p>It is configured through filter init-params in web.xml. See {@link SimpleConfig#configureFromProperties(Map)}
+ * <p>It is configured through filter init-params in web.xml. See {@link SimpleConfigPropertiesBuilder}
  * for the definition of these.
  *
  * <p>Defaults to intercepting content of type {@code text/html}, using a
@@ -50,15 +50,16 @@ import java.util.Map;
  * <p>If this filter is not flexible enough for your needs, consider creating a subclass of {@link BaseSiteMeshFilter}.</p>
  *
  * @author Joe Walnes
- * @see SimpleConfig#configureFromProperties(Map)
+ * @see SimpleConfigPropertiesBuilder
  */
 public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
 
     private SimpleConfig<WebAppContext> config;
+    private ObjectFactory objectFactory = new ObjectFactory.Default();
 
     /**
      * Default behavior - configuration is read entirely through Filter's {@code <init-param>}s.
-     * See {@link SimpleConfig#configureFromProperties(Map)}.
+     * See {@link SimpleConfigPropertiesBuilder}.
      *
      * <p>Alternatively (or as well as), to configure SiteMesh through Java, call
      * {@link #setConfig(SimpleConfig)}, before the Filter {@link #init(FilterConfig)} is called.</p>
@@ -78,7 +79,7 @@ public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
      * Allow configuration to be passed in programmatically.
      *
      * <p>Note that, whatever you pass in will have
-     * {@link SimpleConfig#configureFromProperties(Map)} called on it later, which will override any
+     * {@link SimpleConfigPropertiesBuilder} applied on it later, which will override any
      * configuration settings that are also specified in the properties.</p>
      *
      * <p>Should be called before {@link #init(FilterConfig)} is called.</p>
@@ -95,8 +96,8 @@ public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
             if (config == null) {
                 config = new SimpleConfig<WebAppContext>();
             }
-
-            config.configureFromProperties(getConfigProperties(filterConfig));
+            // Additional configuration.
+            configure(config, filterConfig);
 
             setDecoratorSelector(config);
             setContentProcessor(config);
@@ -114,8 +115,22 @@ public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
         }
     }
 
+    protected void configure(SimpleConfig<WebAppContext> config, FilterConfig filterConfig) throws SiteMeshConfigException {
+        // Perform additional configuration through Filter init-params.
+        new SimpleConfigPropertiesBuilder(getObjectFactory())
+                .configure(config, getConfigProperties(filterConfig));
+    }
+
+    public ObjectFactory getObjectFactory() {
+        return objectFactory;
+    }
+
+    public void setObjectFactory(ObjectFactory objectFactory) {
+        this.objectFactory = objectFactory;
+    }
+
     /**
-     * Return the configuration properties that are passed to {@link SimpleConfig#configureFromProperties(Map)}.
+     * Return the configuration properties that are passed to {@link SimpleConfigPropertiesBuilder}.
      *
      * <p>This implementation simply reads them from the Filter's {@code <init-param>}s in {@code web.xml}.
      * To read from another place, override this.</p>

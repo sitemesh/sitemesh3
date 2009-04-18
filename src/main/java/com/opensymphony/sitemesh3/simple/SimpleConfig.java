@@ -12,14 +12,10 @@ import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
 import java.io.IOException;
 import java.nio.CharBuffer;
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * A simple SiteMesh configuration that is easy to use and should suit the needs of <i>most</i> users.
  * Use in conjunction with {@link SimpleSiteMeshFilter}.
- *
- * <p>Can be configured programatically via methods or from a list of key/value string properties using
- * {@link #configureFromProperties(Map)}.</p>
  *
  * <p>Defaults to intercepting content of type {@code text/html}, using a
  * {@link com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor} with the rules from
@@ -27,23 +23,11 @@ import java.util.Map;
  * {@link com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle}.
  *
  * <p>The minimum required to make this useful is to add a decorator path by calling
- * {@link #addDecoratorPath(String, String)} or specifying the {@code decoratorMappings} property when
- * calling {@link #configureFromProperties(Map)}.
+ * {@link #addDecoratorPath(String, String)}.
  *
  * @author Joe Walnes
  */
 public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelector<C>, ContentProcessor {
-
-    // Init param names.
-    public static final String TAG_RULE_BUNDLES_PARAM = "tagRuleBundles";
-    public static final String CONTENT_PROCESSOR_PARAM = "contentProcessor";
-    public static final String DECORATOR_MAPPINGS_PARAM = "decoratorMappings";
-    public static final String EXCLUDE_PARAM = "exclude";
-    public static final String MIME_TYPES_PARAM = "mimeTypes";
-
-    // Default values.
-    public static final TagRuleBundle[] RULE_SETS_DEFAULT = {new CoreHtmlTagRuleBundle(), new DecoratorTagRuleBundle()};
-    public static final String[] MIME_TYPES_DEFAULT = {"text/html"};
 
     private final PathBasedDecoratorSelector decoratorSelector = new PathBasedDecoratorSelector();
     private final PathMapper<Boolean> excludesMapper = new PathMapper<Boolean>();
@@ -53,63 +37,12 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
     private TagRuleBundle[] tagRuleBundles;
 
     public SimpleConfig() throws SiteMeshConfigException {
-        setTagRuleBundles(RULE_SETS_DEFAULT);
-        setMimeTypes(MIME_TYPES_DEFAULT);
+        configureDefaults();
     }
 
-    /**
-     * Configuration driven from string key/value pairs. The keys are:
-     *
-     * <p><b><code>decoratorMappings</code></b> (optional): A list of mappings of path patterns to decorators.
-     * Each entry should consist of pattern=decorator, separated by whitespace or commas.
-     * e.g. <code>/admin/*=/decorators/admin.html, *.secret=/decorators/secret.html</code></p>
-     *
-     * <p><b><code>mimeTypes</code></b> (optional): A list of mime-types, separated by whitespace
-     * or commas, that should attempt to be decorated. Defaults to <code>text/html</code>.</p>
-     *
-     * <p><b><code>tagRuleBundles</code></b> (optional): The fully qualified class names of any
-     * additional {@link TagRuleBundle}s to install, separated by whitespace or commas.
-     * Thiese will be added to the default bundles:
-     * {@link com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle} and
-     * {@link com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle}.</p>
-     *
-     * <p><b><code>exclude</code></b> (optional): A list of path patterns to exclude from
-     * decoration, separated by whitespace or commas. e.g. <code>/javadoc/*, somepage.html, *.jsp</code></p>
-     */
-    public void configureFromProperties(Map<String, String> properties) throws SiteMeshConfigException {
-        PropertiesParser propParser = new PropertiesParser(properties);
-
-        // Setup TagRuleBundles.
-        String[] ruleSetClassNames = propParser.getStringArray(TAG_RULE_BUNDLES_PARAM);
-        if (ruleSetClassNames.length != 0) {
-            TagRuleBundle[] tagRuleBundles = new TagRuleBundle[ruleSetClassNames.length];
-            for (int i = 0; i < ruleSetClassNames.length; i++) {
-                tagRuleBundles[i] = (TagRuleBundle) instantiate(ruleSetClassNames[i]);
-            }
-            setTagRuleBundles(tagRuleBundles);
-        }
-
-        // Setup decorator mappings.
-        Map<String, String> decoratorsMappings = propParser.getStringMap(DECORATOR_MAPPINGS_PARAM);
-        if (decoratorsMappings != null) {
-            for (Map.Entry<String, String> entry : decoratorsMappings.entrySet()) {
-                addDecoratorPaths(entry.getKey(), entry.getValue() /* TODO: Multiple values. */);
-            }
-        }
-
-        // Setup excludes.
-        String[] excludes = propParser.getStringArray(EXCLUDE_PARAM);
-        if (excludes != null) {
-            for (String exclude : excludes) {
-                addExcludedPath(exclude);
-            }
-        }
-
-        // Setup mime-types.
-        String[] mimeTypes = propParser.getStringArray(MIME_TYPES_PARAM);
-        if (mimeTypes != null && mimeTypes.length > 0) {
-            setMimeTypes(mimeTypes);
-        }
+    protected void configureDefaults() {
+        setTagRuleBundles(new CoreHtmlTagRuleBundle(), new DecoratorTagRuleBundle());
+        setMimeTypes("text/html");
     }
 
     /**
@@ -218,22 +151,7 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
         return mimeTypes;
     }
 
-    /**
-     * Instantiate a object from a given className. This method is protected to
-     * allow it to be overridden for cases such as plugging in an object instantiation
-     * container, or alternate classloader.
-     */
-    protected Object instantiate(String className) throws SiteMeshConfigException {
-        try {
-            Class cls = Class.forName(className);
-            return cls.newInstance();
-        } catch (ClassNotFoundException e) {
-            throw new SiteMeshConfigException("Could not instantiate " + className, e);
-        } catch (InstantiationException e) {
-            throw new SiteMeshConfigException("Could not instantiate " + className, e);
-        } catch (IllegalAccessException e) {
-            throw new SiteMeshConfigException("Could not instantiate " + className, e);
-        }
+    public ContentProcessor getContentProcessor() {
+        return contentProcessor;
     }
-
 }
