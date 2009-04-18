@@ -23,44 +23,44 @@
     </target>
 
     <target name="codegen" depends="dependencies" description="Generate code">
-        <mkdir dir="build/main/java"/>
+        <mkdir dir="sitemesh3-core/build/main/java"/>
         <taskdef name="jflex" classname="JFlex.anttask.JFlexTask" classpathref="buildtools.classpath"/>
-        <jflex file="src/main/java/com/opensymphony/sitemesh3/tagprocessor/lexer.flex" destdir="build/main/java"/>
+        <jflex file="sitemesh3-core/src/main/java/com/opensymphony/sitemesh3/tagprocessor/lexer.flex" destdir="sitemesh3-core/build/main/java"/>
     </target>
 
     <target name="main" depends="codegen" description="Build main library">
-        <mkdir dir="build/main/classes"/>
-        <javac srcdir="src/main/java;build/main/java"
-               destdir="build/main/classes"
+        <mkdir dir="sitemesh3-core/build/main/classes"/>
+        <javac srcdir="sitemesh3-core/src/main/java;sitemesh3-core/build/main/java"
+               destdir="sitemesh3-core/build/main/classes"
                classpathref="main.classpath"
                debug="on" source="${jdk}" target="${jdk}"/>
         <mkdir dir="dist"/>
-        <jar destfile="dist/sitemesh-${version}.jar" basedir="build/main/classes"/>
+        <jar destfile="dist/sitemesh-${version}.jar" basedir="sitemesh3-core/build/main/classes"/>
     </target>
 
     <target name="test" depends="main" description="Run unit tests">
-        <mkdir dir="build/test/classes"/>
-        <javac srcdir="src/test/java"
-               destdir="build/test/classes"
-               classpath="build/main/classes"
+        <mkdir dir="sitemesh3-core/build/test/classes"/>
+        <javac srcdir="sitemesh3-core/src/test/java"
+               destdir="sitemesh3-core/build/test/classes"
+               classpath="sitemesh3-core/build/main/classes"
                classpathref="test.classpath"
                debug="on" source="${jdk}" target="${jdk}"/>
-        <mkdir dir="build/test-results"/>
+        <mkdir dir="sitemesh3-core/build/test-results"/>
         <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"
                  classpathref="buildtools.classpath"/>
-        <junit printsummary="no" haltonfailure="yes" fork="yes" forkmode="once" dir=".">
+        <junit printsummary="no" haltonfailure="yes" fork="yes" forkmode="once" dir="sitemesh3-core">
             <assertions>
                 <enable/>
             </assertions>
             <classpath refid="test.classpath"/>
             <classpath>
-                <pathelement location="build/main/classes"/>
-                <pathelement location="build/test/classes"/>
+                <pathelement location="sitemesh3-core/build/main/classes"/>
+                <pathelement location="sitemesh3-core/build/test/classes"/>
             </classpath>
             <formatter type="brief" usefile="no"/>
             <formatter type="xml"/>
-            <batchtest todir="build/test-results">
-                <fileset dir="src/test/java">
+            <batchtest todir="sitemesh3-core/build/test-results">
+                <fileset dir="sitemesh3-core/src/test/java">
                     <include name="**/*Test.java"/>
                 </fileset>
             </batchtest>
@@ -68,21 +68,22 @@
     </target>
 
     <target name="benchmark" depends="main" description="Run benchmarks">
-        <mkdir dir="build/benchmark/classes"/>
-        <javac srcdir="src/benchmark/java"
-               destdir="build/benchmark/classes"
-               classpath="build/main/classes"
+        <mkdir dir="sitemesh3-tools-benchmark/build/main/classes"/>
+        <javac srcdir="sitemesh3-tools-benchmark/src/main/java"
+               destdir="sitemesh3-tools-benchmark/build/main/classes"
+               classpath="sitemesh3-core/build/main/classes"
                classpathref="benchmark.classpath"
                debug="on" source="${jdk}" target="${jdk}"/>
         <java classname="com.sun.japex.Japex"
               classpathref="benchmark.classpath"
               fork="true">
-            <arg value="src/benchmark/config/contentprocessor.xml"/>
+            <arg value="sitemesh3-tools-benchmark/src/main/config/contentprocessor.xml"/>
         </java>
     </target>
 
     <target name="clean" description="Clean up">
-        <delete dir="build"/>
+        <delete dir="sitemesh3-core/build"/>
+        <delete dir="sitemesh3-tools-benchmark/build"/>
         <delete dir="dist"/>
     </target>
 
