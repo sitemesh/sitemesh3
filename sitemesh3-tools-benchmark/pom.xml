@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+    
     <parent>
         <groupId>opensymphony</groupId>
         <artifactId>sitemesh-parent</artifactId>
@@ -9,14 +9,11 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>sitemesh3-core</artifactId>
-
-    <name>The Sitemesh Core Project</name>
+    <artifactId>sitemesh-tools-benchmark</artifactId>
+    <name>The Sitemesh Benchmark Tools</name>
 
     <description>
-        SiteMesh is a web-page layout and decoration framework and web- application integration framework to aid in
-        creating large sites consisting of many pages for which a consistent look/feel, navigation and layout scheme is
-        required.
+        This project is used for performance benchmark testing.
     </description>
 
     <url>http://www.opensymphony.com/sitemesh</url>
@@ -35,15 +32,7 @@
                 <role>Owner</role>
                 <role>Committer</role>
             </roles>
-        </developer>
-        <developer>
-            <id>rburton</id>
-            <name>Richard L. Burton III</name>
-            <email>rburton@codehaus.org</email>
-            <roles>
-                <role>Committer</role>
-            </roles>
-        </developer>
+        </developer>  
     </developers>
 
     <ciManagement/>
@@ -54,11 +43,11 @@
     </issueManagement>
 
     <scm>
-        <connection>scm:hg:http://bitbucket.org/joewalnes/sitemesh-3-java/sitemesh3-core</connection>
+        <connection>scm:hg:http://bitbucket.org/joewalnes/sitemesh-3-java/sitemesh3-tools-benchmark</connection>
         <developerConnection>
-            scm:hg:http://bitbucket.org/joewalnes/sitemesh-3-java/sitemesh3-core
+            scm:hg:http://bitbucket.org/joewalnes/sitemesh-3-java/sitemesh3-tools-benchmark
         </developerConnection>
-        <url>http://bitbucket.org/joewalnes/sitemesh-3-java/sitemesh3-core</url>
+        <url>http://bitbucket.org/joewalnes/sitemesh-3-java/sitemesh3-tools-benchmark</url>
     </scm>
 
     <licenses>
@@ -97,6 +86,7 @@
                     </includes>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-clover2-plugin</artifactId>
@@ -131,24 +121,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>de.jflex</groupId>
-                <artifactId>maven-jflex-plugin</artifactId>
-                <version>1.4.3</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>src/main/java</outputDirectory>
-                            <lexDefinitions>
-                                <lexFile>src/main/java/com/opensymphony/sitemesh3/tagprocessor/lexer.flex</lexFile>
-                            </lexDefinitions>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <defaultGoal>install</defaultGoal>
@@ -188,6 +160,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>${pom.groupId}</groupId>
+            <artifactId>sitemesh3-core</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
@@ -197,13 +174,37 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.5</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.japex</groupId>
+            <artifactId>japex</artifactId>
+            <version>1.0.25</version>
+        </dependency>
+        <dependency>
+            <groupId>jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.8a</version>
         </dependency>
         <dependency>
             <groupId>org.mortbay.jetty</groupId>
             <artifactId>jetty</artifactId>
             <version>6.1.14</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jfree</groupId>
+            <artifactId>jcommon</artifactId>
+            <version>1.0.14</version>
+            <!--
+                The following artifact is not found in the central repository.
+                Excluding this artifact for now until I know for certain it's
+                required.
+            -->
+            <exclusions>
+                <exclusion>
+                    <groupId>gnujaxp</groupId>
+                    <artifactId>gnujaxp</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

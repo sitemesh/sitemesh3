@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>opensymphony</groupId>
+    <artifactId>sitemesh-parent</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>The Sitemesh parent POM</name>
+
+    <description>
+        The Sitemesh parent POM.
+    </description>
+
+    <url>http://www.opensymphony.com/sitemesh</url>
+
+    <organization>
+        <name>OpenSymphony</name>
+        <url>http://www.opensymphony.com/</url>
+    </organization>
+
+    <modules>
+        <module>sitemesh3-core</module>
+        <module>sitemesh3-tools-benchmark</module>
+    </modules>
+    
+    <developers>
+        <developer>
+            <id>joewalnes</id>
+            <name>Joe Walnes</name>
+            <email>joe.walnes at gmail.com</email>
+            <roles>
+                <role>Owner</role>
+                <role>Committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>rburton</id>
+            <name>Richard L. Burton III</name>
+            <email>rburton@codehaus.org</email>
+            <roles>
+                <role>Committer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <ciManagement/>
+
+    <issueManagement>
+        <system>JIRA</system>
+        <url>http://jira.opensymphony.com/browse/SIM</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:hg:http://bitbucket.org/joewalnes/sitemesh-3-java/</connection>
+        <developerConnection>
+            scm:hg:http://bitbucket.org/joewalnes/sitemesh-3-java/
+        </developerConnection>
+        <url>http://bitbucket.org/joewalnes/sitemesh-3-java/</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>The OpenSymphony Software License 1.1</name>
+            <url>http://www.opensymphony.com/sitemesh/license.action</url>
+        </license>
+    </licenses>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-idea-plugin</artifactId>
+                <configuration>
+                    <jdkName>1.6</jdkName>
+                    <exclude>target,test-output,.clover,build</exclude>
+                    <useShortDependencyNames>true</useShortDependencyNames>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
