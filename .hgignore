@@ -1,9 +1,14 @@
 syntax: regexp
 
 # Build output.
+/lib/
 ^lib/
+/build/
 ^build/
+/dist/
 ^dist/
+/target/
+^target/
 
 # IDE project files.
 \.eml
