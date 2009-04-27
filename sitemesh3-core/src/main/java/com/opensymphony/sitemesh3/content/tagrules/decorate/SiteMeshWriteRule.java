@@ -46,6 +46,10 @@ public class SiteMeshWriteRule extends BasicBlockRule {
 
     @Override
     protected void processEnd(Tag tag, Object data) throws IOException {
+        CharSequence defaultContents = tagProcessorContext.currentBufferContents();
         tagProcessorContext.popBuffer();
+        if (siteMeshContext.getContentToMerge() == null) {
+            tagProcessorContext.currentBuffer().append(defaultContents);
+        }
     }
 }
