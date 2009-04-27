@@ -8,3 +8,9 @@ To view:
   mvn package 
   mvn -Djetty.port=1234 jetty:run 
   Goto http://localhost:1234/sitemesh3-docs/
+
+To publish the public site, you need Google AppEngine Java SDK installed and
+a Google Account that is marked as a developer for the 'sitemesh-docs' AppEngine
+project. 
+  mvn package
+  [app-engine-dir]/bin/appcfg.sh update target/sitemesh3-docs
