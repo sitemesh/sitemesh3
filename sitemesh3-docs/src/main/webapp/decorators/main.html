@@ -1,25 +1,61 @@
 <html>
   <head>
-    <title>SiteMesh example: <sitemesh:write property='title'>Title goes here</sitemesh:write></title>
+    <title><sitemesh:write property='title'>SiteMesh3 documentation</sitemesh:write></title>
     <style type='text/css'>
-      body { font-family: arial, sans-serif; background-color: #ffffcc; }
-      h1, h2, h3, h4 { text-align: center; background-color: #ccffcc; border-top: 1px solid #66ff66; }
-      .disclaimer { text-align: center; border-top: 1px solid #cccccc; margin-top: 40px; color: #666666; font-size: smaller; }
+    
+      /* Shared style */
+      body {
+        font-family: "Trebuchet MS", verdana, arial, sans-serif;
+	font-size: 12px;
+	background: #cacaca url('decorators/background.png') repeat-x scroll 0 0;
+	padding: 0;
+      }
+      pre {
+        background-color: #eeeeee;
+	border: 1px solid #aaaaaa;
+	padding: 4px;
+	margin: 20px;
+	overflow: auto;
+      }
+
+      /* Decorator layout */
+      #layoutContainer {
+        width: 800px;
+	border: 1px solid #aaaaaa;
+	margin: 0 auto;
+	padding: 4px 0 0 4px;
+	background-color: #cccccc;
+      }
+      .layoutSection {
+	border: 1px solid #aaaaaa;
+	background-color: #eeeeee;
+	margin: 0 4px 4px 0;
+	padding: 10px;
+      }
     </style>
     <sitemesh:write property='head'/>
   </head>
   <body>
+    <div id='layoutContainer'>
+      <div class='layoutSection'>
+        <a href="./index.html"><img src='decorators/sitemesh-logo.png' width='317' height='122' alt='SiteMesh 3' border='0'/></a>
+      </div>
+      <div class='layoutSection' style='background-color: white; text-align: justify;'>
+        <h1 style='margin: 0;'><sitemesh:write property='title'/></h1>
 
-    <h1 class='title'>SiteMesh example site: <sitemesh:write property='title'>Title goes here</sitemesh:write></h1>
+        <sitemesh:write property='body'>
+	  <h1>Here is a title</h1>
+	  <p>Main body goes here.<p>
+	  <p>Blah de blah blah blah blah blah blah de blah blah blah blah blah blah de blah blah blah blah blah blah.
+	  Blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah. 
+	  Blah de blah blah blah blah blah blah de blah blah blah blah blah blah de blah blah blah blah blah blah.
+	  Blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah. </p>	  
+	</sitemesh:write>
 
-    <sitemesh:write property='body'>Body goes here. Blah blah blah.</sitemesh:write>
-
-    <div class='disclaimer'>Site disclaimer. This is an example.</div>
-    <div class='navigation'>
-      <b>Examples:</b>
-      [<a href="./">Static example</a>]
-      [<a href="demo.jsp">Dynamic example</a>]
+      </div>
+      <div class='layoutSection' style='text-align: center'>
+        &copy; 1999-2009 - This site built with SiteMesh (of course)
+      </div>
     </div>
-
   </body>
 </html>
