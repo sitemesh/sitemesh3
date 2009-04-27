@@ -3,7 +3,6 @@ package com.opensymphony.sitemesh3.content.tagrules;
 import com.opensymphony.sitemesh3.SiteMeshContext;
 import com.opensymphony.sitemesh3.content.Content;
 import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.content.ContentProperty;
 import com.opensymphony.sitemesh3.content.memory.InMemoryContent;
 import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
 
@@ -40,17 +39,11 @@ public class TagBasedContentProcessor implements ContentProcessor {
         processor.process();
 
         content.getExtractedProperties().setValue(processor.getDefaultBufferContents());
-        postProcess(content.getExtractedProperties(), processor);
-        return content;
-    }
 
-    // TODO: Replace this hack with a TagRule.
-    protected void postProcess(ContentProperty content, TagProcessor processor) {
-        // In the event that no <body> tag was captured, use the default buffer contents instead
-        // (i.e. the whole document, except anything that was written to other buffers).
-        if (!content.getChild("body").hasValue()) {
-            content.getChild("body").setValue(processor.getDefaultBufferContents());
+        for (TagRuleBundle tagRuleBundle : tagRuleBundles) {
+            tagRuleBundle.cleanUp(processor.defaultState(), content.getExtractedProperties(), siteMeshContext);
         }
+        return content;
     }
 
     public TagRuleBundle[] getTagRuleBundles() {

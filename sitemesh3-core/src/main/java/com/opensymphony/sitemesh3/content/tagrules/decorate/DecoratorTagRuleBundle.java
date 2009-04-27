@@ -19,4 +19,8 @@ public class DecoratorTagRuleBundle implements TagRuleBundle {
         defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(siteMeshContext));
     }
 
+    @Override
+    public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+        // No op.
+    }
 }

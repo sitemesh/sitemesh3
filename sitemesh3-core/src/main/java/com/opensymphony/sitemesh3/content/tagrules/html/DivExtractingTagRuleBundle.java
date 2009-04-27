@@ -17,4 +17,9 @@ public class DivExtractingTagRuleBundle implements TagRuleBundle {
         defaultState.addRule("div", new DivExtractingRule(contentProperty.getChild("div")));
     }
 
+    @Override
+    public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+        // No op.
+    }
+
 }

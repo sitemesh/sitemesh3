@@ -13,4 +13,6 @@ public interface TagRuleBundle {
 
     void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext);
 
+    void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext);
+
 }

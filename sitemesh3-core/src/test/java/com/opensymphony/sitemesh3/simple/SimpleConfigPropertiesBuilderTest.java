@@ -72,6 +72,10 @@ public class SimpleConfigPropertiesBuilderTest extends TestCase {
         public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
             // no-op.
         }
+        @Override
+        public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+            // No op.
+        }
     }
 
     // Supports previous test.
@@ -79,6 +83,10 @@ public class SimpleConfigPropertiesBuilderTest extends TestCase {
         @Override
         public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
             // no-op.
+        }
+        @Override
+        public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+            // No op.
         }
     }
 

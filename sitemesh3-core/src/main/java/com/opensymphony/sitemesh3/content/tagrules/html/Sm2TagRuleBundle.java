@@ -36,4 +36,9 @@ public class Sm2TagRuleBundle implements TagRuleBundle {
         // <content> blocks
         defaultState.addRule("content", new ContentBlockExtractingRule(contentProperty.getChild("page")));
     }
+
+    @Override
+    public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+        // No op.
+    }
 }

@@ -44,4 +44,12 @@ public class CoreHtmlTagRuleBundle implements TagRuleBundle {
         defaultState.addRule("xml", new StateTransitionRule(new State()));
     }
 
+    @Override
+    public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+        // In the event that no <body> tag was captured, use the default buffer contents instead
+        // (i.e. the whole document, except anything that was written to other buffers).
+        if (!contentProperty.getChild("body").hasValue()) {
+            contentProperty.getChild("body").setValue(contentProperty.getValue());
+        }
+    }
 }

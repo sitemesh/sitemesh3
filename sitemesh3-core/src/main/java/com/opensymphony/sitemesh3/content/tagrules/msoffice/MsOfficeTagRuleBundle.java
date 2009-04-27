@@ -38,6 +38,11 @@ public class MsOfficeTagRuleBundle implements TagRuleBundle {
 
     }
 
+    @Override
+    public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
+        // No op.
+    }
+    
     protected String[] getOfficePropertyNames() {
         return new String[]{
             "Author", "Characters", "CharactersWithSpaces", "Company", "Created", "LastAuthor", "LastSaved",
