@@ -22,7 +22,9 @@
 
     <modules>
         <module>sitemesh3-core</module>
+        <module>sitemesh3-docs</module>
         <module>sitemesh3-tools-benchmark</module>
+        <module>sitemesh3-examples-hellowebapp</module>
     </modules>
     
     <developers>
