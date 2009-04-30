@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.File;
 import java.util.Map;
+import java.util.HashMap;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -53,6 +54,7 @@ public class WebEnvironment {
     private String rawResponse;
     private int status;
     private String body;
+    private Map<String,String> headers;
 
     /**
      * Use {@link WebEnvironment.Builder} to create a WebEnvironment.
@@ -67,11 +69,26 @@ public class WebEnvironment {
      *
      * @param path e.g. "/some/servlet?foo=x"
      */
-    public void doGet(String path) throws Exception {
+    public void doGet(String path, String... headerPairs) throws Exception {
         connector.reopen();
-        String request = "GET " + path + " HTTP/1.1\r\nHost: localhost\r\n\r\n";
-        String response = connector.getResponses(request);
+        StringBuilder request = new StringBuilder("GET ")
+                .append(path)
+                .append(" HTTP/1.1\r\n");
+
+        addHeader(request, "Host", "localhost");
+        if (headerPairs.length % 2 != 0) {
+            throw new IllegalArgumentException("headerPairs should be an even number of values");
+        }
+        for (int i = 0; i < headerPairs.length; i += 2) {
+            addHeader(request, headerPairs[i], headerPairs[i + 1]);
+        }
+
+        request.append("\r\n");
+        String response = connector.getResponses(request.toString());
         rawResponse = unixLineEndings(response);
+
+        body = null;
+        headers = new HashMap<String, String>();
 
         new HttpParser(new ByteArrayBuffer(response), new HttpParser.EventHandler() {
             @Override
@@ -85,10 +102,19 @@ public class WebEnvironment {
             }
 
             @Override
+            public void parsedHeader(Buffer name, Buffer value) throws IOException {
+                headers.put(name.toString(), value.toString());
+            }
+
+            @Override
             public void startResponse(Buffer version, int status, Buffer reason) throws IOException {
                 WebEnvironment.this.status = status;
             }
         }).parse();
+    }
+
+    private void addHeader(StringBuilder out, String name, String value) {
+        out.append(name).append(": ").append(value).append("\r\n"); // TODO: escape values.
     }
 
     /**
@@ -113,6 +139,10 @@ public class WebEnvironment {
 
     public int getStatus() {
         return status;
+    }
+
+    public String getHeader(String name) {
+        return headers.get(name);
     }
 
     public static class Builder {
