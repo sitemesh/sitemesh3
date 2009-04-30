@@ -19,3 +19,7 @@ syntax: regexp
 \.classpath
 \.project
 ^out/
+
+# The code-generated file.
+# TODO: Should update Maven project to output Lexer.java in output dir.
+^sitemesh3-core/src/main/java/com/opensymphony/sitemesh3/tagprocessor/Lexer.java$
