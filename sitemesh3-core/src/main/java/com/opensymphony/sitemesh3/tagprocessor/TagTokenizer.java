@@ -1,8 +1,8 @@
 /*
  * IF YOU ARE HAVING TROUBLE COMPILING THIS CLASS, IT IS PROBABLY BECAUSE Lexer.java IS MISSING.
  *
- * Use 'ant codegen' to generate the file, which will reside in build/main/java
- * (ensure this is in your source path).
+ * To regenerate Lexer.java, run 'mvn jflex:generate' from the sitemesh3-core directory
+ * (this will be run automatically on other mvn goals such as 'compile', 'package', etc).
  */
 
 package com.opensymphony.sitemesh3.tagprocessor;
@@ -64,7 +64,7 @@ public class TagTokenizer {
 
     }
 
-    private final Lexer lexer; // If you are getting a compilation error on this line, see note above.
+    private final Lexer lexer; // If you are getting a compilation error on this line, see comment at top of this file.
     private final ReusableToken reusableToken = new ReusableToken();
 
     private Token pushbackToken = Token.UNKNOWN;

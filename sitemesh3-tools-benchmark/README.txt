@@ -8,7 +8,4 @@ In a nutshell:
   the input data.
 - The Japex tool runs the benchmarks and outputs the results.
 
-To use (from the main SiteMesh directory):
-  ant benchmark
-
-The HTML report will be generated in build/benchmark-reports
+TODO: How to run this from Maven?
