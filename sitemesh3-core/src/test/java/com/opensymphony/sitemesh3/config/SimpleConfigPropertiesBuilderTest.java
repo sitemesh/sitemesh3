@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.simple;
+package com.opensymphony.sitemesh3.config;
 
 import com.opensymphony.sitemesh3.SiteMeshContext;
 import com.opensymphony.sitemesh3.SiteMeshContextStub;

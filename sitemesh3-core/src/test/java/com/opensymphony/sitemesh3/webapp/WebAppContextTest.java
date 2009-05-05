@@ -5,7 +5,7 @@ import com.opensymphony.sitemesh3.content.ContentProcessor;
 import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
 import com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle;
 import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
-import com.opensymphony.sitemesh3.simple.PathBasedDecoratorSelector;
+import com.opensymphony.sitemesh3.config.PathBasedDecoratorSelector;
 import com.opensymphony.sitemesh3.webapp.contentfilter.BasicSelector;
 import junit.framework.TestCase;
 

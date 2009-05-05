@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.simple;
+package com.opensymphony.sitemesh3.config;
 
 import com.opensymphony.sitemesh3.webapp.BaseSiteMeshFilter;
 import com.opensymphony.sitemesh3.webapp.WebAppContext;
@@ -28,7 +28,7 @@ import java.util.Map;
  * <pre>
  *  &lt;filter&gt;
  *    &lt;filter-name&gt;sitemesh&lt;/filter-name&gt;
- *    &lt;filter-class&gt;com.opensymphony.sitemesh3.simple.SimpleSiteMeshFilter&lt;/filter-class&gt;
+ *    &lt;filter-class&gt;com.opensymphony.sitemesh3.config.SimpleSiteMeshFilter&lt;/filter-class&gt;
  *    &lt;init-param&gt;
  *      &lt;param-name&gt;decoratorMappings&lt;/param-name&gt;
  *      &lt;param-value&gt;

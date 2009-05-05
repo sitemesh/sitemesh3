@@ -3,8 +3,8 @@ package com.opensymphony.sitemesh3.acceptance.nopagedecorator;
 import junit.framework.Test;
 import com.opensymphony.sitemesh3.webapp.WebEnvironment;
 import com.opensymphony.sitemesh3.webapp.WebAppContext;
-import com.opensymphony.sitemesh3.simple.SimpleSiteMeshFilter;
-import com.opensymphony.sitemesh3.simple.SimpleConfig;
+import com.opensymphony.sitemesh3.config.SimpleSiteMeshFilter;
+import com.opensymphony.sitemesh3.config.SimpleConfig;
 import com.opensymphony.sitemesh3.acceptance.AcceptanceTestSuiteBuilder;
 
 /**
