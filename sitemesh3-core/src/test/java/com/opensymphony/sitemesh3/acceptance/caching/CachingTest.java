@@ -2,8 +2,8 @@ package com.opensymphony.sitemesh3.acceptance.caching;
 
 import com.opensymphony.sitemesh3.webapp.WebEnvironment;
 import com.opensymphony.sitemesh3.webapp.WebAppContext;
-import com.opensymphony.sitemesh3.simple.SimpleConfig;
-import com.opensymphony.sitemesh3.simple.SimpleSiteMeshFilter;
+import com.opensymphony.sitemesh3.config.SiteMeshConfig;
+import com.opensymphony.sitemesh3.config.SiteMeshFilter;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +51,7 @@ public class CachingTest extends TestCase {
         web = new WebEnvironment.Builder()
                 .addServlet("/content", contentServlet)
                 .addServlet("/decorator", decoratorServlet)
-                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                .addFilter("/*", new SiteMeshFilter(new SiteMeshConfig<WebAppContext>()
                         .addDecoratorPath("/content", "/decorator")))
                 .create();
     }

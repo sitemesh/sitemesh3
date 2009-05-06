@@ -23,6 +23,9 @@ import java.nio.CharBuffer;
  * to work with frameworks that can inject dependencies. Alternatively, it can be
  * subclassed.</p>
  *
+ * <p>For an easy to configure implementation, use
+ * {@link com.opensymphony.sitemesh3.config.SiteMeshFilter}.</p>
+ *
  * @author Joe Walnes
  * @author Scott Farquhar
  */
