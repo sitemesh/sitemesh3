@@ -12,11 +12,11 @@ import junit.framework.TestCase;
 /**
  * @author Joe Walnes
  */
-public class SimpleSiteMeshFilterTest extends TestCase {
+public class SiteMeshFilterTest extends TestCase {
 
     public void testAppliesDefaultDecoratorToRequests() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                .addFilter("/*", new SiteMeshFilter(new SiteMeshConfig<WebAppContext>()
                         .addDecoratorPath("/*", "/my-decorator")))
                 .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/content", "text/html", "<title>Hello world</title>")
@@ -28,7 +28,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
 
     public void testDefaultsToOnlyDecoratingTextHtml() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                .addFilter("/*", new SiteMeshFilter(new SiteMeshConfig<WebAppContext>()
                         .addDecoratorPath("/*", "/my-decorator")))
                 .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/html", "text/html", "<title>Hello world</title>")         // <-- text/html
@@ -46,7 +46,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
 
     public void testDecoratesOtherMimeTypesIfSpecifiedWithInitParam() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                .addFilter("/*", new SiteMeshFilter(new SiteMeshConfig<WebAppContext>()
                         .addDecoratorPath("/*", "/my-decorator")
                         .setMimeTypes("other/type", "foo/bar", "x/y")))
                 .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
@@ -88,7 +88,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
 
     public void testAllowsCustomTagRuleBundlesToBeAdded() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                .addFilter("/*", new SiteMeshFilter(new SiteMeshConfig<WebAppContext>()
                         .addDecoratorPath("/*", "/my-decorator")
                         .addTagRuleBundle(new MyTagRuleBundle())))
                 .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='foo'/>")
@@ -101,7 +101,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
 
     public void testDoesNotDecorateExcludedPaths() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                .addFilter("/*", new SiteMeshFilter(new SiteMeshConfig<WebAppContext>()
                         .addDecoratorPath("/*", "/my-decorator")
                         .addExcludedPath("/foo/*")
                         .addExcludedPath("*.x")
@@ -142,7 +142,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
 
     public void testAllowsPathBasedDecoratorMappings() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                .addFilter("/*", new SiteMeshFilter(new SiteMeshConfig<WebAppContext>()
                         .addDecoratorPath("/*", "/decorator-a")
                         .addDecoratorPath("/foo/*", "/decorator-b")
                         .addDecoratorPath("*.bar", "/decorator-c")))
@@ -167,7 +167,7 @@ public class SimpleSiteMeshFilterTest extends TestCase {
 
     public void testSupportsChainingOfTopLevelDecorators() throws Exception {
         WebEnvironment web = new WebEnvironment.Builder()
-                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>()
+                .addFilter("/*", new SiteMeshFilter(new SiteMeshConfig<WebAppContext>()
                         .addDecoratorPaths("/*", "/decorator-inner", "/decorator-inner", "/decorator-outer")
                         .addDecoratorPath("/foo/*", "/decorator-b")
                         .addDecoratorPath("*.bar", "/decorator-c")))

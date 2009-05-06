@@ -3,8 +3,8 @@ package com.opensymphony.sitemesh3.acceptance.nopagedecorator;
 import junit.framework.Test;
 import com.opensymphony.sitemesh3.webapp.WebEnvironment;
 import com.opensymphony.sitemesh3.webapp.WebAppContext;
-import com.opensymphony.sitemesh3.config.SimpleSiteMeshFilter;
-import com.opensymphony.sitemesh3.config.SimpleConfig;
+import com.opensymphony.sitemesh3.config.SiteMeshFilter;
+import com.opensymphony.sitemesh3.config.SiteMeshConfig;
 import com.opensymphony.sitemesh3.acceptance.AcceptanceTestSuiteBuilder;
 
 /**
@@ -19,7 +19,7 @@ public class NoPageDecoratorTest {
         String suiteName = "nopagedecorator";
 
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*", new SimpleSiteMeshFilter(new SimpleConfig<WebAppContext>())) // no decorators!
+                .addFilter("/*", new SiteMeshFilter(new SiteMeshConfig<WebAppContext>())) // no decorators!
                 .setRootDir(AcceptanceTestSuiteBuilder.getInputDir(suiteName))
                 .create();
 

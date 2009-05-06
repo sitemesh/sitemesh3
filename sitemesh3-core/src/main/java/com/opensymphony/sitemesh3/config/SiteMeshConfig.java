@@ -14,8 +14,8 @@ import java.nio.CharBuffer;
 import java.util.Arrays;
 
 /**
- * A simple SiteMesh configuration that is easy to use and should suit the needs of <i>most</i> users.
- * Use in conjunction with {@link SimpleSiteMeshFilter}.
+ * Holds a configuration for SiteMesh that is easy to change and should suit the needs of <i>most</i> users.
+ * Use in conjunction with {@link SiteMeshFilter}.
  *
  * <p>Defaults to intercepting content of type {@code text/html}, using a
  * {@link com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor} with the rules from
@@ -27,7 +27,7 @@ import java.util.Arrays;
  *
  * @author Joe Walnes
  */
-public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelector<C>, ContentProcessor {
+public class SiteMeshConfig<C extends SiteMeshContext> implements DecoratorSelector<C>, ContentProcessor {
 
     private final PathBasedDecoratorSelector decoratorSelector = new PathBasedDecoratorSelector();
     private final PathMapper<Boolean> excludesMapper = new PathMapper<Boolean>();
@@ -36,7 +36,7 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
     private String[] mimeTypes;
     private TagRuleBundle[] tagRuleBundles;
 
-    public SimpleConfig() throws SiteMeshConfigException {
+    public SiteMeshConfig() throws SiteMeshConfigException {
         configureDefaults();
     }
 
@@ -55,7 +55,7 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
      * <p>Note: Setting TagRuleBundles will override any custom ContentProcessor set with
      * {@link #setContentProcessor(ContentProcessor)}.</p>
      */
-    public SimpleConfig<C> setTagRuleBundles(TagRuleBundle... tagRuleBundles) {
+    public SiteMeshConfig<C> setTagRuleBundles(TagRuleBundle... tagRuleBundles) {
         this.tagRuleBundles = tagRuleBundles;
         return setContentProcessor(new TagBasedContentProcessor(this.tagRuleBundles));
     }
@@ -73,7 +73,7 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
      * <p>Note: Setting TagRuleBundles will override any custom ContentProcessor set with
      * {@link #setContentProcessor(ContentProcessor)}.</p>
      */
-    public SimpleConfig<C> addTagRuleBundles(TagRuleBundle... additionalTagRuleBundles) {
+    public SiteMeshConfig<C> addTagRuleBundles(TagRuleBundle... additionalTagRuleBundles) {
         // Not the most efficient way of doing this, but convenient and this typically
         // only ever happens at application initialization.
         TagRuleBundle[] oldTagRuleBundles = getTagRuleBundles();
@@ -85,7 +85,7 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
     /**
      * @see #addTagRuleBundles(TagRuleBundle[])
      */
-    public SimpleConfig<C> addTagRuleBundle(TagRuleBundle additionalTagRuleBundle) {
+    public SiteMeshConfig<C> addTagRuleBundle(TagRuleBundle additionalTagRuleBundle) {
         return addTagRuleBundles(additionalTagRuleBundle);
     }
 
@@ -95,7 +95,7 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
      * <p>Note: this will override any {@link com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle}s that have been configured
      * using {@link #setTagRuleBundles(com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle[])}.</p>
      */
-    public SimpleConfig<C> setContentProcessor(ContentProcessor contentProcessor) {
+    public SiteMeshConfig<C> setContentProcessor(ContentProcessor contentProcessor) {
         this.contentProcessor = contentProcessor;
         return this;
     }
@@ -103,7 +103,7 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
     /**
      * Set the mime types that should be intercepted by SiteMesh.
      */
-    public SimpleConfig<C> setMimeTypes(String... mimeTypes) {
+    public SiteMeshConfig<C> setMimeTypes(String... mimeTypes) {
         this.mimeTypes = mimeTypes;
         return this;
     }
@@ -111,7 +111,7 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
     /**
      * Add a decorator path to be used for a specific content path.
      */
-    public SimpleConfig<C> addDecoratorPath(String contentPath, String decoratorPath) {
+    public SiteMeshConfig<C> addDecoratorPath(String contentPath, String decoratorPath) {
         addDecoratorPaths(contentPath, decoratorPath);
         return this;
     }
@@ -120,7 +120,7 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
      * Add multiple decorator paths to be used for a specific content path. Use this to apply multiple
      * decorators to a single page.
      */
-    public SimpleConfig<C> addDecoratorPaths(String contentPath, String... decoratorPaths) {
+    public SiteMeshConfig<C> addDecoratorPaths(String contentPath, String... decoratorPaths) {
         decoratorSelector.put(contentPath, decoratorPaths);
         return this;
     }
@@ -128,7 +128,7 @@ public class SimpleConfig<C extends SiteMeshContext> implements DecoratorSelecto
     /**
      * Add a path to be excluded by SiteMesh.
      */
-    public SimpleConfig<C> addExcludedPath(String exclude) {
+    public SiteMeshConfig<C> addExcludedPath(String exclude) {
         excludesMapper.put(exclude, true);
         return this;
     }

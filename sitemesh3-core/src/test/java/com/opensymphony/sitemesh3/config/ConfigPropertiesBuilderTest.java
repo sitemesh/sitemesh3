@@ -21,17 +21,17 @@ import java.util.Map;
 /**
  * @author Joe Walnes
  */
-public class SimpleConfigPropertiesBuilderTest extends TestCase {
+public class ConfigPropertiesBuilderTest extends TestCase {
 
-    private SimpleConfig<SiteMeshContext> config;
-    private SimpleConfigPropertiesBuilder propertiesBuilder;
+    private SiteMeshConfig<SiteMeshContext> config;
+    private ConfigPropertiesBuilder propertiesBuilder;
     private Map<String, String> properties;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        config = new SimpleConfig<SiteMeshContext>();
-        propertiesBuilder = new SimpleConfigPropertiesBuilder(new ObjectFactory.Default());
+        config = new SiteMeshConfig<SiteMeshContext>();
+        propertiesBuilder = new ConfigPropertiesBuilder(new ObjectFactory.Default());
         properties = new HashMap<String, String>();
     }
 
@@ -44,7 +44,7 @@ public class SimpleConfigPropertiesBuilderTest extends TestCase {
 
         // Configure with param.
         String tagRulesValue = MyTagRuleBundle.class.getName() + ", " + AnotherTagRuleBundle.class.getName();
-        properties.put(SimpleConfigPropertiesBuilder.TAG_RULE_BUNDLES_PARAM, tagRulesValue);
+        properties.put(ConfigPropertiesBuilder.TAG_RULE_BUNDLES_PARAM, tagRulesValue);
         propertiesBuilder.configure(config, properties);
 
         // There should now be the original 2, plus the 2 new ones.
@@ -91,7 +91,7 @@ public class SimpleConfigPropertiesBuilderTest extends TestCase {
     }
 
     public void testSetsContentProcessor() throws SiteMeshConfigException, IOException {
-        properties.put(SimpleConfigPropertiesBuilder.CONTENT_PROCESSOR_PARAM, MyContentProcessor.class.getName());
+        properties.put(ConfigPropertiesBuilder.CONTENT_PROCESSOR_PARAM, MyContentProcessor.class.getName());
         propertiesBuilder.configure(config, properties);
 
         assertEquals(MyContentProcessor.class, config.getContentProcessor().getClass());
@@ -110,8 +110,8 @@ public class SimpleConfigPropertiesBuilderTest extends TestCase {
 
     public void testDoesNotAllowBothContentProcessorAndTagRuleBundlesToBeSet() {
         String tagRulesValue = MyTagRuleBundle.class.getName() + ", " + AnotherTagRuleBundle.class.getName();
-        properties.put(SimpleConfigPropertiesBuilder.TAG_RULE_BUNDLES_PARAM, tagRulesValue);
-        properties.put(SimpleConfigPropertiesBuilder.CONTENT_PROCESSOR_PARAM, MyContentProcessor.class.getName());
+        properties.put(ConfigPropertiesBuilder.TAG_RULE_BUNDLES_PARAM, tagRulesValue);
+        properties.put(ConfigPropertiesBuilder.CONTENT_PROCESSOR_PARAM, MyContentProcessor.class.getName());
         try {
             propertiesBuilder.configure(config, properties);
             fail("Expected exception");
@@ -121,14 +121,14 @@ public class SimpleConfigPropertiesBuilderTest extends TestCase {
     }
 
     public void testSetsMimeTypes() throws SiteMeshConfigException {
-        properties.put(SimpleConfigPropertiesBuilder.MIME_TYPES_PARAM, "text/foo, application/x-stuff  \n foo/bar");
+        properties.put(ConfigPropertiesBuilder.MIME_TYPES_PARAM, "text/foo, application/x-stuff  \n foo/bar");
         propertiesBuilder.configure(config, properties);
 
         assertArrayEquals(config.getMimeTypes(), "text/foo", "application/x-stuff", "foo/bar");
     }
 
     public void testSetsExcludePaths() throws SiteMeshConfigException {
-        properties.put(SimpleConfigPropertiesBuilder.EXCLUDE_PARAM, "/bad/*, *.BAD");
+        properties.put(ConfigPropertiesBuilder.EXCLUDE_PARAM, "/bad/*, *.BAD");
         propertiesBuilder.configure(config, properties);
 
         assertTrue(config.shouldExclude("/bad/foo"));
@@ -138,7 +138,7 @@ public class SimpleConfigPropertiesBuilderTest extends TestCase {
     }
 
     public void testAddsDecoratorMappings() throws SiteMeshConfigException, IOException {
-        properties.put(SimpleConfigPropertiesBuilder.DECORATOR_MAPPINGS_PARAM, "" +
+        properties.put(ConfigPropertiesBuilder.DECORATOR_MAPPINGS_PARAM, "" +
                 "/a/*=/decorator/a," +
                 "/b/*=/decorator/b,");
         propertiesBuilder.configure(config, properties);
@@ -156,7 +156,7 @@ public class SimpleConfigPropertiesBuilderTest extends TestCase {
     }
 
     public void testSupportsMultipleDecoratorMappingsForASinglePath() throws SiteMeshConfigException, IOException {
-        properties.put(SimpleConfigPropertiesBuilder.DECORATOR_MAPPINGS_PARAM, "" +
+        properties.put(ConfigPropertiesBuilder.DECORATOR_MAPPINGS_PARAM, "" +
                 "/a/*=/decorator/a1|/decorator/a2," +
                 "/b/*=/decorator/b1|/decorator/b2," +
                 "/c/*=/decorator/c,");
@@ -190,8 +190,8 @@ public class SimpleConfigPropertiesBuilderTest extends TestCase {
             }
         };
 
-        properties.put(SimpleConfigPropertiesBuilder.CONTENT_PROCESSOR_PARAM, "foo");
-        propertiesBuilder = new SimpleConfigPropertiesBuilder(someDependencyInjectionFramework);
+        properties.put(ConfigPropertiesBuilder.CONTENT_PROCESSOR_PARAM, "foo");
+        propertiesBuilder = new ConfigPropertiesBuilder(someDependencyInjectionFramework);
         propertiesBuilder.configure(config, properties);
 
         assertSame(aContentProcessor, config.getContentProcessor());

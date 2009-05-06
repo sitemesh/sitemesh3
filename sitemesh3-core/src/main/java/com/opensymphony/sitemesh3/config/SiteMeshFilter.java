@@ -12,9 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A simple SiteMesh filter that can be dropped in to web.xml and used without the user having to write any Java code.
+ * A configurable SiteMesh filter that can be dropped in to web.xml and used without the user having to write any
+ * Java code.
  *
- * <p>It is configured through filter init-params in web.xml. See {@link SimpleConfigPropertiesBuilder}
+ * <p>It is configured through filter init-params in web.xml. See {@link ConfigPropertiesBuilder}
  * for the definition of these.
  *
  * <p>Defaults to intercepting content of type {@code text/html}, using a
@@ -28,7 +29,7 @@ import java.util.Map;
  * <pre>
  *  &lt;filter&gt;
  *    &lt;filter-name&gt;sitemesh&lt;/filter-name&gt;
- *    &lt;filter-class&gt;com.opensymphony.sitemesh3.config.SimpleSiteMeshFilter&lt;/filter-class&gt;
+ *    &lt;filter-class&gt;com.opensymphony.sitemesh3.config.SiteMeshFilter&lt;/filter-class&gt;
  *    &lt;init-param&gt;
  *      &lt;param-name&gt;decoratorMappings&lt;/param-name&gt;
  *      &lt;param-value&gt;
@@ -44,34 +45,46 @@ import java.util.Map;
  *  &lt;/filter-mapping&gt;
  * </pre>
  *
- * <p>Can also be configured programmatically by passing in a {@link SimpleConfig} to the constructor or
- * {@link #setConfig(SimpleConfig)}.</p>
+ * <p>Can also be configured programmatically by passing in a {@link SiteMeshConfig} to the constructor or
+ * {@link #setConfig(SiteMeshConfig)}.</p>
+ *
+ * <h3>Example (Java)</h3>
+ * <pre>
+ * public class MySiteMeshFilter extends SiteMeshFilter {
+ *   public MySiteMeshFilter() {
+ *     super(
+ *       new SiteMeshConfig<WebAppContext>()
+ *         .addDecoratorPath("/*", "/decorators/mydecorator.html")
+ *         .addDecoratorPath("/admin/*", "/decorators/admindecorator.html"));
+ *   }
+ * }
+ * </pre>
  *
  * <p>If this filter is not flexible enough for your needs, consider creating a subclass of {@link BaseSiteMeshFilter}.</p>
  *
  * @author Joe Walnes
- * @see SimpleConfigPropertiesBuilder
+ * @see ConfigPropertiesBuilder
  */
-public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
+public class SiteMeshFilter extends BaseSiteMeshFilter {
 
-    private SimpleConfig<WebAppContext> config;
+    private SiteMeshConfig<WebAppContext> config;
     private ObjectFactory objectFactory = new ObjectFactory.Default();
 
     /**
      * Default behavior - configuration is read entirely through Filter's {@code <init-param>}s.
-     * See {@link SimpleConfigPropertiesBuilder}.
+     * See {@link ConfigPropertiesBuilder}.
      *
      * <p>Alternatively (or as well as), to configure SiteMesh through Java, call
-     * {@link #setConfig(SimpleConfig)}, before the Filter {@link #init(FilterConfig)} is called.</p>
+     * {@link #setConfig(SiteMeshConfig)}, before the Filter {@link #init(FilterConfig)} is called.</p>
      */
-    public SimpleSiteMeshFilter() {
+    public SiteMeshFilter() {
         setConfig(null);
     }
 
     /**
-     * Convenience constructor that also calls {@link #setConfig(SimpleConfig)}.
+     * Convenience constructor that also calls {@link #setConfig(SiteMeshConfig)}.
      */
-    public SimpleSiteMeshFilter(SimpleConfig<WebAppContext> config) {
+    public SiteMeshFilter(SiteMeshConfig<WebAppContext> config) {
         setConfig(config);
     }
 
@@ -79,12 +92,12 @@ public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
      * Allow configuration to be passed in programmatically.
      *
      * <p>Note that, whatever you pass in will have
-     * {@link SimpleConfigPropertiesBuilder} applied on it later, which will override any
+     * {@link ConfigPropertiesBuilder} applied on it later, which will override any
      * configuration settings that are also specified in the properties.</p>
      *
      * <p>Should be called before {@link #init(FilterConfig)} is called.</p>
      */
-    public synchronized void setConfig(SimpleConfig<WebAppContext> config) {
+    public synchronized void setConfig(SiteMeshConfig<WebAppContext> config) {
         this.config = config;
     }
 
@@ -94,15 +107,15 @@ public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
         try {
             // Lazily instantiated so we don't throw a SiteMeshConfigException too early.
             if (config == null) {
-                config = new SimpleConfig<WebAppContext>();
+                config = new SiteMeshConfig<WebAppContext>();
             }
             // Additional configuration.
             configure(config, filterConfig);
 
             setDecoratorSelector(config);
             setContentProcessor(config);
-            // We don't want SimpleConfig to directly implement Selector as this is a web-app
-            // specific thing. SimpleConfig should be also useable outside of web-apps.
+            // We don't want SiteMeshConfig to directly implement Selector as this is a web-app
+            // specific thing. SiteMeshConfig should be also useable outside of web-apps.
             setSelector(new BasicSelector(config.getMimeTypes()) {
                 @Override
                 public boolean shouldBufferForRequest(HttpServletRequest request) {
@@ -115,9 +128,9 @@ public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
         }
     }
 
-    protected void configure(SimpleConfig<WebAppContext> config, FilterConfig filterConfig) throws SiteMeshConfigException {
+    protected void configure(SiteMeshConfig<WebAppContext> config, FilterConfig filterConfig) throws SiteMeshConfigException {
         // Perform additional configuration through Filter init-params.
-        new SimpleConfigPropertiesBuilder(getObjectFactory())
+        new ConfigPropertiesBuilder(getObjectFactory())
                 .configure(config, getConfigProperties(filterConfig));
     }
 
@@ -130,7 +143,7 @@ public class SimpleSiteMeshFilter extends BaseSiteMeshFilter {
     }
 
     /**
-     * Return the configuration properties that are passed to {@link SimpleConfigPropertiesBuilder}.
+     * Return the configuration properties that are passed to {@link ConfigPropertiesBuilder}.
      *
      * <p>This implementation simply reads them from the Filter's {@code <init-param>}s in {@code web.xml}.
      * To read from another place, override this.</p>
