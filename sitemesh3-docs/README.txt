@@ -18,3 +18,7 @@ a Google Account that is marked as a developer for the 'sitemesh-docs' AppEngine
 project. 
   mvn package
   [app-engine-dir]/bin/appcfg.sh update target/sitemesh3-docs
+This will deploy the site to:
+  http://sitemesh-docs.appspot.com/ (awaiting sitemesh.org transfer)
+You can see the dashboard for the site at:
+  http://appengine.google.com/dashboard?&app_id=sitemesh-docs
