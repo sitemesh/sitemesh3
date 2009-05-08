@@ -1,9 +1,9 @@
-package com.opensymphony.sitemesh3.html;
+package org.sitemesh.html;
 
-import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.Content;
-import com.opensymphony.sitemesh3.SiteMeshContextStub;
+import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.content.Content;
+import org.sitemesh.SiteMeshContextStub;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -34,7 +34,7 @@ public class DataDrivenSuiteBuilder {
      */
     public static void buildSuite(TestSuite suite, ContentProcessor processor, String... inputFileNames)
             throws IOException {
-        File testDataDir = new File("src/test/java/com/opensymphony/sitemesh3/html/testdata");
+        File testDataDir = new File("src/test/java/org/sitemesh/html/testdata");
 
         for (String inputFileName : inputFileNames) {
             File inputFile = new File(testDataDir, inputFileName);

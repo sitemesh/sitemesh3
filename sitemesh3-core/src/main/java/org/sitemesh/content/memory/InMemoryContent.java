@@ -1,10 +1,10 @@
-package com.opensymphony.sitemesh3.content.memory;
+package org.sitemesh.content.memory;
 
-import com.opensymphony.sitemesh3.content.Content;
-import com.opensymphony.sitemesh3.content.ContentChunk;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.tagprocessor.CharSequenceBuffer;
-import com.opensymphony.sitemesh3.tagprocessor.util.CharSequenceList;
+import org.sitemesh.content.Content;
+import org.sitemesh.content.ContentChunk;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.tagprocessor.CharSequenceBuffer;
+import org.sitemesh.tagprocessor.util.CharSequenceList;
 
 import java.io.IOException;
 

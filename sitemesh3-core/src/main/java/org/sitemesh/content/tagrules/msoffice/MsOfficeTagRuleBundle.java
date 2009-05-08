@@ -1,14 +1,14 @@
-package com.opensymphony.sitemesh3.content.tagrules.msoffice;
+package org.sitemesh.content.tagrules.msoffice;
 
-import com.opensymphony.sitemesh3.tagprocessor.State;
-import com.opensymphony.sitemesh3.tagprocessor.StateTransitionRule;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
-import com.opensymphony.sitemesh3.content.tagrules.html.ExportTagToContentRule;
-import com.opensymphony.sitemesh3.SiteMeshContext;
+import org.sitemesh.tagprocessor.State;
+import org.sitemesh.tagprocessor.StateTransitionRule;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.content.tagrules.TagRuleBundle;
+import org.sitemesh.content.tagrules.html.ExportTagToContentRule;
+import org.sitemesh.SiteMeshContext;
 
 /**
- * {@link com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle} that adds document properties from MS Office Word and Excel
+ * {@link org.sitemesh.content.tagrules.TagRuleBundle} that adds document properties from MS Office Word and Excel
  * documents that have been saved as HTML.
  *
  * <p>These are:</p>

@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.config;
+package org.sitemesh.config;
 
 /**
  * Responsible for instantiating objects - converting from strings in a config file to a real instance.
@@ -7,7 +7,7 @@ package com.opensymphony.sitemesh3.config;
  * but this can be replaced. e.g. To connect to a dependency injection framework, lookup from
  * a registry, do custom classloading, etc.</p>
  *
- * @see com.opensymphony.sitemesh3.config.ObjectFactory.Default
+ * @see org.sitemesh.config.ObjectFactory.Default
  * @author Joe Walnes
  */
 public interface ObjectFactory {

@@ -8,7 +8,7 @@
 
   <filter>
     <filter-name>sitemesh</filter-name>
-    <filter-class>com.opensymphony.sitemesh3.simple.SimpleSiteMeshFilter</filter-class>
+    <filter-class>org.sitemesh.simple.SimpleSiteMeshFilter</filter-class>
     <init-param>
       <param-name>decoratorMappings</param-name>
       <param-value>

@@ -1,13 +1,13 @@
-package com.opensymphony.sitemesh3.content.tagrules.html;
+package org.sitemesh.content.tagrules.html;
 
-import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
-import com.opensymphony.sitemesh3.tagprocessor.State;
-import com.opensymphony.sitemesh3.tagprocessor.StateTransitionRule;
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.content.tagrules.TagRuleBundle;
+import org.sitemesh.tagprocessor.State;
+import org.sitemesh.tagprocessor.StateTransitionRule;
 
 /**
- * {@link com.opensymphony.sitemesh3.content.ContentProcessor} implementation that processes HTML documents.
+ * {@link org.sitemesh.content.ContentProcessor} implementation that processes HTML documents.
  *
  * <p>The following properties will be extracted from the document:</p>
  * <ul>
@@ -27,7 +27,7 @@ import com.opensymphony.sitemesh3.tagprocessor.StateTransitionRule;
  * for documents that are not wrapped in a <code>&lt;body&gt;</code> tag.</p>
  *
  * @author Joe Walnes
- * @see com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor
+ * @see org.sitemesh.content.tagrules.TagBasedContentProcessor
  */
 public class CoreHtmlTagRuleBundle implements TagRuleBundle {
 

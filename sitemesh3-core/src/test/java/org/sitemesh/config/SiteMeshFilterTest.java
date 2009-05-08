@@ -1,12 +1,12 @@
-package com.opensymphony.sitemesh3.config;
+package org.sitemesh.config;
 
-import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
-import com.opensymphony.sitemesh3.content.tagrules.html.ExportTagToContentRule;
-import com.opensymphony.sitemesh3.tagprocessor.State;
-import com.opensymphony.sitemesh3.webapp.WebAppContext;
-import com.opensymphony.sitemesh3.webapp.WebEnvironment;
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.content.tagrules.TagRuleBundle;
+import org.sitemesh.content.tagrules.html.ExportTagToContentRule;
+import org.sitemesh.tagprocessor.State;
+import org.sitemesh.webapp.WebAppContext;
+import org.sitemesh.webapp.WebEnvironment;
 import junit.framework.TestCase;
 
 /**

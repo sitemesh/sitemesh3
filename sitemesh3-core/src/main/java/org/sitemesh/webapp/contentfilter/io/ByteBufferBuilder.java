@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.webapp.contentfilter.io;
+package org.sitemesh.webapp.contentfilter.io;
 
 import java.nio.ByteBuffer;
 import java.util.LinkedList;

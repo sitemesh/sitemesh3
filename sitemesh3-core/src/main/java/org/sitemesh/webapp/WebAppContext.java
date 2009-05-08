@@ -1,11 +1,11 @@
-package com.opensymphony.sitemesh3.webapp;
+package org.sitemesh.webapp;
 
-import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.Content;
-import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.webapp.contentfilter.BasicSelector;
-import com.opensymphony.sitemesh3.webapp.contentfilter.HttpServletResponseBuffer;
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.content.Content;
+import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.webapp.contentfilter.BasicSelector;
+import org.sitemesh.webapp.contentfilter.HttpServletResponseBuffer;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -29,13 +29,13 @@ public class WebAppContext implements SiteMeshContext {
 
     /**
      * Key that the {@link ContentProperty} is stored under in the {@link HttpServletRequest}
-     * attribute. It is "com.opensymphony.sitemesh3.content.Content".
+     * attribute. It is "org.sitemesh.content.Content".
      */
     public static final String CONTENT_KEY = Content.class.getName();
 
     /**
      * Key that the {@link WebAppContext} is stored under in the {@link HttpServletRequest}
-     * attribute. It is "com.opensymphony.sitemesh3.SiteMeshContext".
+     * attribute. It is "org.sitemesh.SiteMeshContext".
      */
     public static final String CONTEXT_KEY = SiteMeshContext.class.getName();
 

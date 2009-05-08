@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.tagprocessor;
+package org.sitemesh.tagprocessor;
 
 import java.util.Arrays;
 import java.io.IOException;

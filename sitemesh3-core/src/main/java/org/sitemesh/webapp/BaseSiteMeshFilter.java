@@ -1,10 +1,10 @@
-package com.opensymphony.sitemesh3.webapp;
+package org.sitemesh.webapp;
 
-import com.opensymphony.sitemesh3.DecoratorSelector;
-import com.opensymphony.sitemesh3.content.Content;
-import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.webapp.contentfilter.ContentBufferingFilter;
-import com.opensymphony.sitemesh3.webapp.contentfilter.Selector;
+import org.sitemesh.DecoratorSelector;
+import org.sitemesh.content.Content;
+import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.webapp.contentfilter.ContentBufferingFilter;
+import org.sitemesh.webapp.contentfilter.Selector;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ import java.nio.CharBuffer;
  * subclassed.</p>
  *
  * <p>For an easy to configure implementation, use
- * {@link com.opensymphony.sitemesh3.config.SiteMeshFilter}.</p>
+ * {@link org.sitemesh.config.SiteMeshFilter}.</p>
  *
  * @author Joe Walnes
  * @author Scott Farquhar
@@ -60,7 +60,7 @@ public class BaseSiteMeshFilter extends ContentBufferingFilter {
     /**
      * The {@link Selector} provides the rules for whether SiteMesh should be
      * used for a specific request. For a basic implementation, use
-     * {@link com.opensymphony.sitemesh3.webapp.contentfilter.BasicSelector}.
+     * {@link org.sitemesh.webapp.contentfilter.BasicSelector}.
      */
     public void setSelector(Selector selector) {
         this.selector = selector;

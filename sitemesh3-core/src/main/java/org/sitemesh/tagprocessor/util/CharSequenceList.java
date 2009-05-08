@@ -1,6 +1,6 @@
-package com.opensymphony.sitemesh3.tagprocessor.util;
+package org.sitemesh.tagprocessor.util;
 
-import com.opensymphony.sitemesh3.tagprocessor.CharSequenceBuffer;
+import org.sitemesh.tagprocessor.CharSequenceBuffer;
 
 import java.io.IOException;
 import java.util.Collections;

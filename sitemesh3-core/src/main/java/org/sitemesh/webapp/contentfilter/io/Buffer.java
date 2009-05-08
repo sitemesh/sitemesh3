@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.webapp.contentfilter.io;
+package org.sitemesh.webapp.contentfilter.io;
 
 import javax.servlet.ServletOutputStream;
 import java.io.CharArrayWriter;

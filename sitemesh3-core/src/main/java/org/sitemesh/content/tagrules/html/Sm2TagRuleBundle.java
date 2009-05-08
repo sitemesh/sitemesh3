@@ -1,12 +1,12 @@
-package com.opensymphony.sitemesh3.content.tagrules.html;
+package org.sitemesh.content.tagrules.html;
 
-import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
-import com.opensymphony.sitemesh3.tagprocessor.State;
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.content.tagrules.TagRuleBundle;
+import org.sitemesh.tagprocessor.State;
 
 /**
- * {@link com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle} that adds additional properties as used by SiteMesh 2 and earlier.
+ * {@link org.sitemesh.content.tagrules.TagRuleBundle} that adds additional properties as used by SiteMesh 2 and earlier.
  *
  * <p>These are:</p>
  * <ul>

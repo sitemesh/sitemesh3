@@ -1,12 +1,12 @@
-package com.opensymphony.sitemesh3.webapp;
+package org.sitemesh.webapp;
 
-import com.opensymphony.sitemesh3.content.Content;
-import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
-import com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle;
-import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
-import com.opensymphony.sitemesh3.config.PathBasedDecoratorSelector;
-import com.opensymphony.sitemesh3.webapp.contentfilter.BasicSelector;
+import org.sitemesh.content.Content;
+import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.content.tagrules.TagBasedContentProcessor;
+import org.sitemesh.content.tagrules.decorate.DecoratorTagRuleBundle;
+import org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle;
+import org.sitemesh.config.PathBasedDecoratorSelector;
+import org.sitemesh.webapp.contentfilter.BasicSelector;
 import junit.framework.TestCase;
 
 import javax.servlet.ServletException;

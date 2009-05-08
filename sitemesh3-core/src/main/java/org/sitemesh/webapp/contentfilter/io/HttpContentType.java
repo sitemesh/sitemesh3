@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.webapp.contentfilter.io;
+package org.sitemesh.webapp.contentfilter.io;
 
 /**
  * Extracts the type and encoding from an HTTP Content-Type header.

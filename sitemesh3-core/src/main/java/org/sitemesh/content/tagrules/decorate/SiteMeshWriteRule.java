@@ -1,10 +1,10 @@
-package com.opensymphony.sitemesh3.content.tagrules.decorate;
+package org.sitemesh.content.tagrules.decorate;
 
-import com.opensymphony.sitemesh3.tagprocessor.BasicBlockRule;
-import com.opensymphony.sitemesh3.tagprocessor.Tag;
-import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.Content;
+import org.sitemesh.tagprocessor.BasicBlockRule;
+import org.sitemesh.tagprocessor.Tag;
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.content.Content;
 
 import java.io.IOException;
 

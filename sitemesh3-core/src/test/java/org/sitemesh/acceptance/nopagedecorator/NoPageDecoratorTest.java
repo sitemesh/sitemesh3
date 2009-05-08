@@ -1,11 +1,11 @@
-package com.opensymphony.sitemesh3.acceptance.nopagedecorator;
+package org.sitemesh.acceptance.nopagedecorator;
 
 import junit.framework.Test;
-import com.opensymphony.sitemesh3.webapp.WebEnvironment;
-import com.opensymphony.sitemesh3.webapp.WebAppContext;
-import com.opensymphony.sitemesh3.config.SiteMeshFilter;
-import com.opensymphony.sitemesh3.config.SiteMeshConfig;
-import com.opensymphony.sitemesh3.acceptance.AcceptanceTestSuiteBuilder;
+import org.sitemesh.webapp.WebEnvironment;
+import org.sitemesh.webapp.WebAppContext;
+import org.sitemesh.config.SiteMeshFilter;
+import org.sitemesh.config.SiteMeshConfig;
+import org.sitemesh.acceptance.AcceptanceTestSuiteBuilder;
 
 /**
  * Tests that content still renders (with inline decorators), even if there is no page decorator specified.

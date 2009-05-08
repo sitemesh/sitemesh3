@@ -1,9 +1,9 @@
-package com.opensymphony.sitemesh3.content.tagrules.html;
+package org.sitemesh.content.tagrules.html;
 
-import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
-import com.opensymphony.sitemesh3.tagprocessor.State;
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.content.tagrules.TagRuleBundle;
+import org.sitemesh.tagprocessor.State;
 
 /**
  * {@link TagRuleBundle} that exports all {@code <div>} elements as properties.

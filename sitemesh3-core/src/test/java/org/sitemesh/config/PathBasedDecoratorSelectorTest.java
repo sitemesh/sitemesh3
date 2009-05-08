@@ -1,9 +1,9 @@
-package com.opensymphony.sitemesh3.config;
+package org.sitemesh.config;
 
-import com.opensymphony.sitemesh3.DecoratorSelector;
-import com.opensymphony.sitemesh3.SiteMeshContextStub;
-import com.opensymphony.sitemesh3.content.Content;
-import com.opensymphony.sitemesh3.content.memory.InMemoryContent;
+import org.sitemesh.DecoratorSelector;
+import org.sitemesh.SiteMeshContextStub;
+import org.sitemesh.content.Content;
+import org.sitemesh.content.memory.InMemoryContent;
 import junit.framework.TestCase;
 
 import java.io.IOException;

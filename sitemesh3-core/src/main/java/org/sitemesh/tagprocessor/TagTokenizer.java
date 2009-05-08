@@ -5,7 +5,7 @@
  * (this will be run automatically on other mvn goals such as 'compile', 'package', etc).
  */
 
-package com.opensymphony.sitemesh3.tagprocessor;
+package org.sitemesh.tagprocessor;
 
 import java.io.IOException;
 import java.io.Reader;

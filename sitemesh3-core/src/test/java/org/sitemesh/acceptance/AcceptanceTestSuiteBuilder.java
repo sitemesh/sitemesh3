@@ -1,8 +1,8 @@
-package com.opensymphony.sitemesh3.acceptance;
+package org.sitemesh.acceptance;
 
 import junit.framework.TestSuite;
 import junit.framework.TestCase;
-import com.opensymphony.sitemesh3.webapp.WebEnvironment;
+import org.sitemesh.webapp.WebEnvironment;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class AcceptanceTestSuiteBuilder {
 
-    private static final File BASE_DIR = new File("src/test/java/com/opensymphony/sitemesh3/acceptance");
+    private static final File BASE_DIR = new File("src/test/java/org/sitemesh/acceptance");
 
     public static TestSuite buildWebAppSuite(String suiteName, final WebEnvironment webEnvironment) throws IOException {
         TestSuite suite = new TestSuite(suiteName);

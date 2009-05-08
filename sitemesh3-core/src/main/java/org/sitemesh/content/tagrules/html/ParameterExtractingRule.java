@@ -1,8 +1,8 @@
-package com.opensymphony.sitemesh3.content.tagrules.html;
+package org.sitemesh.content.tagrules.html;
 
-import com.opensymphony.sitemesh3.tagprocessor.BasicRule;
-import com.opensymphony.sitemesh3.tagprocessor.Tag;
-import com.opensymphony.sitemesh3.content.ContentProperty;
+import org.sitemesh.tagprocessor.BasicRule;
+import org.sitemesh.tagprocessor.Tag;
+import org.sitemesh.content.ContentProperty;
 
 /**
  * Extracts the contents of any elements that look like

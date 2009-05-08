@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.content;
+package org.sitemesh.content;
 
 /**
  * Represents a node of a tree-like data structure.

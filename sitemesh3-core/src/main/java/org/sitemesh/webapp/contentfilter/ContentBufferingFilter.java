@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.webapp.contentfilter;
+package org.sitemesh.webapp.contentfilter;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

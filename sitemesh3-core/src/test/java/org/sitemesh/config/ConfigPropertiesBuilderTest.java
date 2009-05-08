@@ -1,16 +1,16 @@
-package com.opensymphony.sitemesh3.config;
+package org.sitemesh.config;
 
-import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.SiteMeshContextStub;
-import com.opensymphony.sitemesh3.content.Content;
-import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.memory.InMemoryContent;
-import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
-import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
-import com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle;
-import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
-import com.opensymphony.sitemesh3.tagprocessor.State;
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.SiteMeshContextStub;
+import org.sitemesh.content.Content;
+import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.content.memory.InMemoryContent;
+import org.sitemesh.content.tagrules.TagBasedContentProcessor;
+import org.sitemesh.content.tagrules.TagRuleBundle;
+import org.sitemesh.content.tagrules.decorate.DecoratorTagRuleBundle;
+import org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle;
+import org.sitemesh.tagprocessor.State;
 import junit.framework.TestCase;
 
 import java.io.IOException;

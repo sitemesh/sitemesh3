@@ -1,9 +1,9 @@
-package com.opensymphony.sitemesh3.webapp.contentfilter;
+package org.sitemesh.webapp.contentfilter;
 
-import com.opensymphony.sitemesh3.webapp.contentfilter.io.Buffer;
-import com.opensymphony.sitemesh3.webapp.contentfilter.io.RoutablePrintWriter;
-import com.opensymphony.sitemesh3.webapp.contentfilter.io.RoutableServletOutputStream;
-import com.opensymphony.sitemesh3.webapp.contentfilter.io.HttpContentType;
+import org.sitemesh.webapp.contentfilter.io.Buffer;
+import org.sitemesh.webapp.contentfilter.io.RoutablePrintWriter;
+import org.sitemesh.webapp.contentfilter.io.RoutableServletOutputStream;
+import org.sitemesh.webapp.contentfilter.io.HttpContentType;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;

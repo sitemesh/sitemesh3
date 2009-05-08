@@ -1,9 +1,9 @@
-package com.opensymphony.sitemesh3.content.tagrules.decorate;
+package org.sitemesh.content.tagrules.decorate;
 
-import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.tagprocessor.State;
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.content.tagrules.TagRuleBundle;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.tagprocessor.State;
 
 /**
  * {@link TagRuleBundle} for custom SiteMesh tags used for building/applying decorators.

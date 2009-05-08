@@ -144,7 +144,7 @@
                         <configuration>
                             <outputDirectory>src/main/java</outputDirectory>
                             <lexDefinitions>
-                                <lexFile>src/main/java/com/opensymphony/sitemesh3/tagprocessor/lexer.flex</lexFile>
+                                <lexFile>src/main/java/org/sitemesh/tagprocessor/lexer.flex</lexFile>
                             </lexDefinitions>
                         </configuration>
                     </execution>

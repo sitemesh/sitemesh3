@@ -1,13 +1,13 @@
-package com.opensymphony.sitemesh3.config;
+package org.sitemesh.config;
 
-import com.opensymphony.sitemesh3.DecoratorSelector;
-import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.Content;
-import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
-import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
-import com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle;
-import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
+import org.sitemesh.DecoratorSelector;
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.content.Content;
+import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.content.tagrules.TagBasedContentProcessor;
+import org.sitemesh.content.tagrules.TagRuleBundle;
+import org.sitemesh.content.tagrules.decorate.DecoratorTagRuleBundle;
+import org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
@@ -18,9 +18,9 @@ import java.util.Arrays;
  * Use in conjunction with {@link SiteMeshFilter}.
  *
  * <p>Defaults to intercepting content of type {@code text/html}, using a
- * {@link com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor} with the rules from
- * {@link com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle} and
- * {@link com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle}.
+ * {@link org.sitemesh.content.tagrules.TagBasedContentProcessor} with the rules from
+ * {@link org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle} and
+ * {@link org.sitemesh.content.tagrules.decorate.DecoratorTagRuleBundle}.
  *
  * <p>The minimum required to make this useful is to add a decorator path by calling
  * {@link #addDecoratorPath(String, String)}.
@@ -92,8 +92,8 @@ public class SiteMeshConfig<C extends SiteMeshContext> implements DecoratorSelec
     /**
      * Change the {@link ContentProcessor} implementation.
      *
-     * <p>Note: this will override any {@link com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle}s that have been configured
-     * using {@link #setTagRuleBundles(com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle[])}.</p>
+     * <p>Note: this will override any {@link org.sitemesh.content.tagrules.TagRuleBundle}s that have been configured
+     * using {@link #setTagRuleBundles(org.sitemesh.content.tagrules.TagRuleBundle[])}.</p>
      */
     public SiteMeshConfig<C> setContentProcessor(ContentProcessor contentProcessor) {
         this.contentProcessor = contentProcessor;

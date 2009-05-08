@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.webapp.contentfilter;
+package org.sitemesh.webapp.contentfilter;
 
 import junit.framework.TestCase;
 
@@ -8,7 +8,7 @@ import javax.servlet.ServletException;
 import java.nio.CharBuffer;
 import java.io.IOException;
 
-import com.opensymphony.sitemesh3.webapp.WebEnvironment;
+import org.sitemesh.webapp.WebEnvironment;
 
 /**
  * This test sets up a complete {@link WebEnvironment} and tests the {@link ContentBufferingFilter}

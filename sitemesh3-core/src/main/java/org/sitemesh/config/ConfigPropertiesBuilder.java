@@ -1,7 +1,7 @@
-package com.opensymphony.sitemesh3.config;
+package org.sitemesh.config;
 
-import com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle;
-import com.opensymphony.sitemesh3.content.ContentProcessor;
+import org.sitemesh.content.tagrules.TagRuleBundle;
+import org.sitemesh.content.ContentProcessor;
 
 import java.util.Map;
 
@@ -17,15 +17,15 @@ import java.util.Map;
  * or commas, that should attempt to be decorated. Defaults to <code>text/html</code>.</p>
  *
  * <p><b><code>tagRuleBundles</code></b> (optional): The <i>names</i> of any
- * additional {@link com.opensymphony.sitemesh3.content.tagrules.TagRuleBundle}s to install, separated by whitespace or commas.
+ * additional {@link org.sitemesh.content.tagrules.TagRuleBundle}s to install, separated by whitespace or commas.
  * Thiese will be added to the default bundles (as set up in {@link SiteMeshConfig#configureDefaults()}):
- * {@link com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle} and
- * {@link com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle}.
+ * {@link org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle} and
+ * {@link org.sitemesh.content.tagrules.decorate.DecoratorTagRuleBundle}.
  * Note: The <code>contentProcessor</code> and <code>tagRuleBundles</code> are mutually exclusive
  * - you cannot set them both.</p>
  *
  * <p><b><code>contentProcessor</code></b> (optional): The <i>name</i> of the
- * {@link com.opensymphony.sitemesh3.content.ContentProcessor} to use.
+ * {@link org.sitemesh.content.ContentProcessor} to use.
  * Note: The <code>contentProcessor</code> and <code>tagRuleBundles</code> are mutually exclusive
  * - you cannot set them both.</p>
  *

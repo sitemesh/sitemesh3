@@ -1,11 +1,11 @@
-package com.opensymphony.sitemesh3.content.tagrules;
+package org.sitemesh.content.tagrules;
 
-import com.opensymphony.sitemesh3.tagprocessor.State;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.SiteMeshContext;
+import org.sitemesh.tagprocessor.State;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.SiteMeshContext;
 
 /**
- * A bundle of {@link com.opensymphony.sitemesh3.tagprocessor.TagRule}s.
+ * A bundle of {@link org.sitemesh.tagprocessor.TagRule}s.
  *
  * @author Joe Walnes
  */

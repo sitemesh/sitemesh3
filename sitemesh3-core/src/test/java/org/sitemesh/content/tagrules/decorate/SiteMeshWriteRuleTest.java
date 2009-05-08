@@ -1,9 +1,9 @@
-package com.opensymphony.sitemesh3.content.tagrules.decorate;
+package org.sitemesh.content.tagrules.decorate;
 
-import com.opensymphony.sitemesh3.SiteMeshContextStub;
-import com.opensymphony.sitemesh3.content.Content;
-import com.opensymphony.sitemesh3.content.memory.InMemoryContent;
-import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
+import org.sitemesh.SiteMeshContextStub;
+import org.sitemesh.content.Content;
+import org.sitemesh.content.memory.InMemoryContent;
+import org.sitemesh.tagprocessor.TagProcessor;
 import junit.framework.TestCase;
 
 import java.io.IOException;

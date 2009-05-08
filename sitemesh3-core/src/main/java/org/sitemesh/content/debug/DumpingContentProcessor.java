@@ -1,9 +1,9 @@
-package com.opensymphony.sitemesh3.content.debug;
+package org.sitemesh.content.debug;
 
-import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.content.Content;
-import com.opensymphony.sitemesh3.SiteMeshContext;
+import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.content.Content;
+import org.sitemesh.SiteMeshContext;
 
 import java.nio.CharBuffer;
 import java.io.IOException;

@@ -1,8 +1,8 @@
-package com.opensymphony.sitemesh3.config;
+package org.sitemesh.config;
 
-import com.opensymphony.sitemesh3.webapp.BaseSiteMeshFilter;
-import com.opensymphony.sitemesh3.webapp.WebAppContext;
-import com.opensymphony.sitemesh3.webapp.contentfilter.BasicSelector;
+import org.sitemesh.webapp.BaseSiteMeshFilter;
+import org.sitemesh.webapp.WebAppContext;
+import org.sitemesh.webapp.contentfilter.BasicSelector;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -19,9 +19,9 @@ import java.util.Map;
  * for the definition of these.
  *
  * <p>Defaults to intercepting content of type {@code text/html}, using a
- * {@link com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor} with the rules from
- * {@link com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle} and
- * {@link com.opensymphony.sitemesh3.content.tagrules.decorate.DecoratorTagRuleBundle}.
+ * {@link org.sitemesh.content.tagrules.TagBasedContentProcessor} with the rules from
+ * {@link org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle} and
+ * {@link org.sitemesh.content.tagrules.decorate.DecoratorTagRuleBundle}.
  *
  * <p>The minimum required to make this useful is to add a {@code decoratorMappings} init parameter.</p>
  *
@@ -29,7 +29,7 @@ import java.util.Map;
  * <pre>
  *  &lt;filter&gt;
  *    &lt;filter-name&gt;sitemesh&lt;/filter-name&gt;
- *    &lt;filter-class&gt;com.opensymphony.sitemesh3.config.SiteMeshFilter&lt;/filter-class&gt;
+ *    &lt;filter-class&gt;org.sitemesh.config.SiteMeshFilter&lt;/filter-class&gt;
  *    &lt;init-param&gt;
  *      &lt;param-name&gt;decoratorMappings&lt;/param-name&gt;
  *      &lt;param-value&gt;

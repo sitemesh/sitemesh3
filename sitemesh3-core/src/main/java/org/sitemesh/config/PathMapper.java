@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.config;
+package org.sitemesh.config;
 
 import java.util.HashMap;
 import java.util.Map;

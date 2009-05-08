@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.webapp;
+package org.sitemesh.webapp;
 
 import org.mortbay.io.Buffer;
 import org.mortbay.io.ByteArrayBuffer;

@@ -7,7 +7,7 @@
  */
 
 // class headers
-package com.opensymphony.sitemesh3.tagprocessor;
+package org.sitemesh.tagprocessor;
 %%
 
 // class and lexer definitions

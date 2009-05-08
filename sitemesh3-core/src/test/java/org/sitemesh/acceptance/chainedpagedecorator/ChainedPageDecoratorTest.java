@@ -1,10 +1,10 @@
-package com.opensymphony.sitemesh3.acceptance.chainedpagedecorator;
+package org.sitemesh.acceptance.chainedpagedecorator;
 
-import com.opensymphony.sitemesh3.acceptance.AcceptanceTestSuiteBuilder;
-import com.opensymphony.sitemesh3.config.SiteMeshConfig;
-import com.opensymphony.sitemesh3.config.SiteMeshFilter;
-import com.opensymphony.sitemesh3.webapp.WebAppContext;
-import com.opensymphony.sitemesh3.webapp.WebEnvironment;
+import org.sitemesh.acceptance.AcceptanceTestSuiteBuilder;
+import org.sitemesh.config.SiteMeshConfig;
+import org.sitemesh.config.SiteMeshFilter;
+import org.sitemesh.webapp.WebAppContext;
+import org.sitemesh.webapp.WebEnvironment;
 import junit.framework.Test;
 
 /**

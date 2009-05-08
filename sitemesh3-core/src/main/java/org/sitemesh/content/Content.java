@@ -1,6 +1,6 @@
-package com.opensymphony.sitemesh3.content;
+package org.sitemesh.content;
 
-import com.opensymphony.sitemesh3.tagprocessor.CharSequenceBuffer;
+import org.sitemesh.tagprocessor.CharSequenceBuffer;
 
 /**
  * @author Joe Walnes

@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.tagprocessor;
+package org.sitemesh.tagprocessor;
 
 /**
  * Defines a set of methods that allows {@link TagRule}s to

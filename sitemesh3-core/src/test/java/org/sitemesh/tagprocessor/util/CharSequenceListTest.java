@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.tagprocessor.util;
+package org.sitemesh.tagprocessor.util;
 
 import junit.framework.TestCase;
 

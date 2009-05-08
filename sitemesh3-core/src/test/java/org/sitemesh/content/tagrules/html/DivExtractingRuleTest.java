@@ -1,8 +1,8 @@
-package com.opensymphony.sitemesh3.content.tagrules.html;
+package org.sitemesh.content.tagrules.html;
 
-import com.opensymphony.sitemesh3.content.Content;
-import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
+import org.sitemesh.content.Content;
+import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.content.tagrules.TagBasedContentProcessor;
 import junit.framework.TestCase;
 
 import java.io.IOException;

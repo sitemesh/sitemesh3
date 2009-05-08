@@ -1,8 +1,8 @@
-package com.opensymphony.sitemesh3.content.tagrules.html;
+package org.sitemesh.content.tagrules.html;
 
-import com.opensymphony.sitemesh3.content.ContentProperty;
-import com.opensymphony.sitemesh3.tagprocessor.BasicBlockRule;
-import com.opensymphony.sitemesh3.tagprocessor.Tag;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.tagprocessor.BasicBlockRule;
+import org.sitemesh.tagprocessor.Tag;
 
 import java.io.IOException;
 

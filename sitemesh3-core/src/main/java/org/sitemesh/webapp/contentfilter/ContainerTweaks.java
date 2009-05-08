@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.webapp.contentfilter;
+package org.sitemesh.webapp.contentfilter;
 
 /**
  * Provides details of Servlet container tweaks to apply

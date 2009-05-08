@@ -1,8 +1,8 @@
-package com.opensymphony.sitemesh3.config;
+package org.sitemesh.config;
 
-import com.opensymphony.sitemesh3.DecoratorSelector;
-import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.Content;
+import org.sitemesh.DecoratorSelector;
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.content.Content;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.config;
+package org.sitemesh.config;
 
 /**
  * Thrown if SiteMesh cannot be configured sufficiently.

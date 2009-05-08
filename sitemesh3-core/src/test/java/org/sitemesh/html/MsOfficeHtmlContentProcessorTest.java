@@ -1,13 +1,13 @@
-package com.opensymphony.sitemesh3.html;
+package org.sitemesh.html;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.IOException;
 
-import com.opensymphony.sitemesh3.content.tagrules.html.CoreHtmlTagRuleBundle;
-import com.opensymphony.sitemesh3.content.tagrules.msoffice.MsOfficeTagRuleBundle;
-import com.opensymphony.sitemesh3.content.tagrules.TagBasedContentProcessor;
+import org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle;
+import org.sitemesh.content.tagrules.msoffice.MsOfficeTagRuleBundle;
+import org.sitemesh.content.tagrules.TagBasedContentProcessor;
 
 public class MsOfficeHtmlContentProcessorTest {
 

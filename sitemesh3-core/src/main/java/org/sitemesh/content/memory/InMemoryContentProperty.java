@@ -1,6 +1,6 @@
-package com.opensymphony.sitemesh3.content.memory;
+package org.sitemesh.content.memory;
 
-import com.opensymphony.sitemesh3.content.ContentProperty;
+import org.sitemesh.content.ContentProperty;
 
 import java.util.Collections;
 import java.util.HashMap;

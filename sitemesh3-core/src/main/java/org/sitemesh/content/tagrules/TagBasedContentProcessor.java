@@ -1,10 +1,10 @@
-package com.opensymphony.sitemesh3.content.tagrules;
+package org.sitemesh.content.tagrules;
 
-import com.opensymphony.sitemesh3.SiteMeshContext;
-import com.opensymphony.sitemesh3.content.Content;
-import com.opensymphony.sitemesh3.content.ContentProcessor;
-import com.opensymphony.sitemesh3.content.memory.InMemoryContent;
-import com.opensymphony.sitemesh3.tagprocessor.TagProcessor;
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.content.Content;
+import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.content.memory.InMemoryContent;
+import org.sitemesh.tagprocessor.TagProcessor;
 
 import java.io.IOException;
 import java.nio.CharBuffer;

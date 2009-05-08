@@ -1,4 +1,4 @@
-package com.opensymphony.sitemesh3.webapp;
+package org.sitemesh.webapp;
 
 import java.io.File;
 import java.io.FileReader;
