@@ -1,9 +1,9 @@
-package com.opensymphony.sitemesh3.acceptance.caching;
+package org.sitemesh.acceptance.caching;
 
-import com.opensymphony.sitemesh3.webapp.WebEnvironment;
-import com.opensymphony.sitemesh3.webapp.WebAppContext;
-import com.opensymphony.sitemesh3.config.SiteMeshConfig;
-import com.opensymphony.sitemesh3.config.SiteMeshFilter;
+import org.sitemesh.webapp.WebEnvironment;
+import org.sitemesh.webapp.WebAppContext;
+import org.sitemesh.config.SiteMeshConfig;
+import org.sitemesh.config.SiteMeshFilter;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
