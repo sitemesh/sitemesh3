@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<project>
+
+  <parent>
+    <artifactId>sitemesh-parent</artifactId>
+    <groupId>org.sitemesh</groupId>
+    <version>3.0.0-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.sitemesh</groupId>
+  <artifactId>sitemesh-docs</artifactId>
+
+  <packaging>war</packaging>
+  <name>SiteMesh Documentation</name>
+
+  <build>
+    <finalName>sitemesh-docs</finalName>
+    <plugins>
+      <!-- Jetty plugin. Allows quick testing via: mvn jetty:run -->
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>${pom.groupId}</groupId>
+      <artifactId>sitemesh</artifactId>
+      <version>3.0.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+</project>
