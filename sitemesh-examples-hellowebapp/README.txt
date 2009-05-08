@@ -7,9 +7,9 @@ To build:
   
 To test:
   mvn jetty:run 
-  Goto http://localhost:8080/sitemesh3-examples-hellowebapp/
+  Goto http://localhost:8080/sitemesh-examples-hellowebapp/
 
 To test on a different port, use: mvn -Djetty.port=1234 jetty:run.
 
-Alternatively, you can deploy the packaged war (target/sitemesh3-examples-hellowebapp.war)
+Alternatively, you can deploy the packaged war (target/sitemesh-examples-hellowebapp.war)
 to another Servlet engine.

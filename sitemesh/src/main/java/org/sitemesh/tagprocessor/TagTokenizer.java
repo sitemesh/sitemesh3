@@ -1,7 +1,7 @@
 /*
  * IF YOU ARE HAVING TROUBLE COMPILING THIS CLASS, IT IS PROBABLY BECAUSE Lexer.java IS MISSING.
  *
- * To regenerate Lexer.java, run 'mvn jflex:generate' from the sitemesh3-core directory
+ * To regenerate Lexer.java, run 'mvn jflex:generate' from the sitemesh directory
  * (this will be run automatically on other mvn goals such as 'compile', 'package', etc).
  */
 

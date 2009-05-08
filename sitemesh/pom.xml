@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>opensymphony</groupId>
+        <groupId>org.sitemesh</groupId>
         <artifactId>sitemesh-parent</artifactId>
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>sitemesh3-core</artifactId>
+    <artifactId>sitemesh</artifactId>
 
     <name>The Sitemesh Core Project</name>
 
@@ -19,7 +19,7 @@
         required.
     </description>
 
-    <url>http://www.opensymphony.com/sitemesh</url>
+    <url>http://www.sitemesh.org/</url>
 
     <organization>
         <name>OpenSymphony</name>
@@ -49,22 +49,22 @@
     <ciManagement/>
 
     <issueManagement>
-        <system>JIRA</system>
-        <url>http://jira.opensymphony.com/browse/SIM</url>
+        <system>Bitbucket</system>
+        <url>http://bitbucket.org/sitemesh/sitemesh-3-java/issues/</url>
     </issueManagement>
 
     <scm>
-        <connection>scm:hg:http://bitbucket.org/joewalnes/sitemesh-3-java/sitemesh3-core</connection>
+        <connection>scm:hg:https://bitbucket.org/sitemesh/sitemesh-3-java/sitemesh</connection>
         <developerConnection>
-            scm:hg:http://bitbucket.org/joewalnes/sitemesh-3-java/sitemesh3-core
+            scm:hg:http://bitbucket.org/sitemesh/sitemesh-3-java/sitemesh
         </developerConnection>
-        <url>http://bitbucket.org/joewalnes/sitemesh-3-java/sitemesh3-core</url>
+        <url>http://bitbucket.org/joewalnes/sitemesh-3-java/sitemesh</url>
     </scm>
 
     <licenses>
         <license>
-            <name>The OpenSymphony Software License 1.1</name>
-            <url>http://www.opensymphony.com/sitemesh/license.action</url>
+            <name>Apache License v2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
 

@@ -3,19 +3,19 @@
 
   <parent>
     <artifactId>sitemesh-parent</artifactId>
-    <groupId>opensymphony</groupId>
+    <groupId>org.sitemesh</groupId>
     <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>opensymphony</groupId>
-  <artifactId>sitemesh3-docs</artifactId>
+  <groupId>org.sitemesh</groupId>
+  <artifactId>sitemesh-docs</artifactId>
 
   <packaging>war</packaging>
   <name>SiteMesh Documentation</name>
 
   <build>
-    <finalName>sitemesh3-docs</finalName>
+    <finalName>sitemesh-docs</finalName>
     <plugins>
       <!-- Jetty plugin. Allows quick testing via: mvn jetty:run -->
       <plugin>
@@ -28,7 +28,7 @@
   <dependencies>
     <dependency>
       <groupId>${pom.groupId}</groupId>
-      <artifactId>sitemesh3-core</artifactId>
+      <artifactId>sitemesh</artifactId>
       <version>3.0.0-SNAPSHOT</version>
     </dependency>
   </dependencies>

@@ -1,6 +1,6 @@
 /*
  * This is the definition (lexer.flex) for the auto-generated lexer (Lexer.java) created by JFlex <http://jflex.de/>.
- * To regenerate Lexer.java, run 'mvn jflex:generate' from the sitemesh3-core directory
+ * To regenerate Lexer.java, run 'mvn jflex:generate' from the sitemesh directory
  * (this will be run automatically on other mvn goals such as 'compile', 'package', etc).
  *
  * @author Joe Walnes

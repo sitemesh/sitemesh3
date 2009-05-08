@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     
     <modelVersion>4.0.0</modelVersion>
-    <groupId>opensymphony</groupId>
+    <groupId>org.sitemesh</groupId>
     <artifactId>sitemesh-parent</artifactId>
     <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -13,18 +13,13 @@
         The Sitemesh parent POM.
     </description>
 
-    <url>http://www.opensymphony.com/sitemesh</url>
-
-    <organization>
-        <name>OpenSymphony</name>
-        <url>http://www.opensymphony.com/</url>
-    </organization>
+    <url>http://www.sitemesh.org/</url>
 
     <modules>
-        <module>sitemesh3-core</module>
-        <module>sitemesh3-docs</module>
-        <module>sitemesh3-tools-benchmark</module>
-        <module>sitemesh3-examples-hellowebapp</module>
+        <module>sitemesh</module>
+        <module>sitemesh-docs</module>
+        <module>sitemesh-tools-benchmark</module>
+        <module>sitemesh-examples-hellowebapp</module>
     </modules>
     
     <developers>
@@ -50,22 +45,22 @@
     <ciManagement/>
 
     <issueManagement>
-        <system>JIRA</system>
-        <url>http://jira.opensymphony.com/browse/SIM</url>
+        <system>Bitbucket</system>
+        <url>http://bitbucket.org/sitemesh/sitemesh-3-java/issues/</url>
     </issueManagement>
 
     <scm>
-        <connection>scm:hg:http://bitbucket.org/joewalnes/sitemesh-3-java/</connection>
+        <connection>scm:hg:http://bitbucket.org/sitemesh/sitemesh-3-java/</connection>
         <developerConnection>
-            scm:hg:http://bitbucket.org/joewalnes/sitemesh-3-java/
+            scm:hg:https://bitbucket.org/sitemesh/sitemesh-3-java/
         </developerConnection>
-        <url>http://bitbucket.org/joewalnes/sitemesh-3-java/</url>
+        <url>http://bitbucket.org/sitemesh/sitemesh-3-java/</url>
     </scm>
 
     <licenses>
         <license>
-            <name>The OpenSymphony Software License 1.1</name>
-            <url>http://www.opensymphony.com/sitemesh/license.action</url>
+            <name>Apache License v2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
 

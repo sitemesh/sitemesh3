@@ -8,7 +8,7 @@
 
   <filter>
     <filter-name>sitemesh</filter-name>
-    <filter-class>org.sitemesh.simple.SimpleSiteMeshFilter</filter-class>
+    <filter-class>org.sitemesh.config.SiteMeshFilter</filter-class>
     <init-param>
       <param-name>decoratorMappings</param-name>
       <param-value>
