@@ -1,35 +1,26 @@
-<?xml version="1.0"?>
 <project>
+  <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <artifactId>sitemesh-parent</artifactId>
     <groupId>org.sitemesh</groupId>
     <version>3.0.0-SNAPSHOT</version>
+    <relativePath>../</relativePath>
   </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.sitemesh</groupId>
   <artifactId>sitemesh-examples-hellowebapp</artifactId>
-
+  <name>SiteMesh example: Hello world web-app</name>
   <packaging>war</packaging>
-  <name>SiteMesh Example: Hello world web-application</name>
 
   <build>
     <finalName>sitemesh-examples-hellowebapp</finalName>
-    <plugins>
-      <!-- Jetty plugin. Allows quick testing via: mvn jetty:run -->
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-      </plugin>
-    </plugins>
   </build>
 
   <dependencies>
     <dependency>
-      <groupId>${pom.groupId}</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>sitemesh</artifactId>
-      <version>3.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

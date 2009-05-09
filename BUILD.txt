@@ -1,10 +1,28 @@
 === Building SiteMesh 3 ===
 
-Requirements: JDK 1.6, Maven 2
+Build requirements: JDK 1.6, Maven 2.0.9.
 
-# Compile code, run tests, and package jar/war files.
-mvn package
+To perform a full build:
+  mvn
+This will compile code, run tests, package into jars/wars and install in the local repository for *all* modules.
 
-# Clean up all built files.
-mvn clean
+Clean up all built files:
+  mvn clean
+
+You can also run mvn from a module directory to work just with that.
+
+=== Modules ===
+
+The subdirectories in this package are modules. They are:
+
+* sitemesh : Main SiteMesh project
+* sitemesh-docs: End-user documentation
+* sitemesh-examples-*: End user examples
+* sitemesh-tools-*: Tools used by SiteMesh development team
+
+=== IDE instructions ===
+
+IntelliJ 8: Create new project from existing structure (Maven), using pom.xml in sitemesh module.
+
+
 
