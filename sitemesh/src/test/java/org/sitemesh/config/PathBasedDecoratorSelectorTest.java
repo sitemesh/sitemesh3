@@ -1,10 +1,10 @@
 package org.sitemesh.config;
 
+import junit.framework.TestCase;
 import org.sitemesh.DecoratorSelector;
 import org.sitemesh.SiteMeshContextStub;
 import org.sitemesh.content.Content;
 import org.sitemesh.content.memory.InMemoryContent;
-import junit.framework.TestCase;
 
 import java.io.IOException;
 
@@ -24,19 +24,19 @@ public class PathBasedDecoratorSelectorTest extends TestCase {
         assertEquals(
                 join("/decorators/admin.jsp"),
                 join(selector.selectDecoratorPaths(content,
-                        new SiteMeshContextStub().withRequestPath("/admin/foo"))));
+                        new SiteMeshContextStub().withPath("/admin/foo"))));
         assertEquals(
                 join("/decorators/thingy.jsp"),
                 join(selector.selectDecoratorPaths(content,
-                        new SiteMeshContextStub().withRequestPath("/thingy"))));
+                        new SiteMeshContextStub().withPath("/thingy"))));
         assertEquals(
                 join("/decorators/default.jsp"),
                 join(selector.selectDecoratorPaths(content,
-                        new SiteMeshContextStub().withRequestPath("/thingy-not"))));
+                        new SiteMeshContextStub().withPath("/thingy-not"))));
         assertEquals(
                 join("/1.jsp", "/2.jsp", "/3.jsp"),
                 join(selector.selectDecoratorPaths(content,
-                        new SiteMeshContextStub().withRequestPath("/multiple"))));
+                        new SiteMeshContextStub().withPath("/multiple"))));
     }
 
     public void testReturnsEmptyArrayForUnMappedPaths() throws IOException {
@@ -47,9 +47,9 @@ public class PathBasedDecoratorSelectorTest extends TestCase {
         assertEquals(
                 join("A", "B"),
                 join(selector.selectDecoratorPaths(content,
-                        new SiteMeshContextStub().withRequestPath("/a/foo"))));
+                        new SiteMeshContextStub().withPath("/a/foo"))));
         assertEquals(0, selector.selectDecoratorPaths(content,
-                        new SiteMeshContextStub().withRequestPath("/b/foo")).length);
+                new SiteMeshContextStub().withPath("/b/foo")).length);
     }
 
     private static String join(String... strings) {

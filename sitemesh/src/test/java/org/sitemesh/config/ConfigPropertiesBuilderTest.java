@@ -1,5 +1,6 @@
 package org.sitemesh.config;
 
+import junit.framework.TestCase;
 import org.sitemesh.SiteMeshContext;
 import org.sitemesh.SiteMeshContextStub;
 import org.sitemesh.content.Content;
@@ -11,7 +12,6 @@ import org.sitemesh.content.tagrules.TagRuleBundle;
 import org.sitemesh.content.tagrules.decorate.DecoratorTagRuleBundle;
 import org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle;
 import org.sitemesh.tagprocessor.State;
-import junit.framework.TestCase;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
@@ -72,6 +72,7 @@ public class ConfigPropertiesBuilderTest extends TestCase {
         public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
             // no-op.
         }
+
         @Override
         public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
             // No op.
@@ -84,6 +85,7 @@ public class ConfigPropertiesBuilderTest extends TestCase {
         public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
             // no-op.
         }
+
         @Override
         public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
             // No op.
@@ -145,13 +147,13 @@ public class ConfigPropertiesBuilderTest extends TestCase {
 
         Content someContent = new InMemoryContent();
         assertArrayEquals(
-                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withRequestPath("/a/foo")),
+                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withPath("/a/foo")),
                 "/decorator/a");
         assertArrayEquals(
-                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withRequestPath("/b/foo")),
+                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withPath("/b/foo")),
                 "/decorator/b");
         assertArrayEquals(
-                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withRequestPath("/c/foo"))
+                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withPath("/c/foo"))
                 /* nothing */);
     }
 
@@ -164,16 +166,16 @@ public class ConfigPropertiesBuilderTest extends TestCase {
 
         Content someContent = new InMemoryContent();
         assertArrayEquals(
-                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withRequestPath("/a/foo")),
+                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withPath("/a/foo")),
                 "/decorator/a1", "/decorator/a2");
         assertArrayEquals(
-                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withRequestPath("/b/foo")),
+                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withPath("/b/foo")),
                 "/decorator/b1", "/decorator/b2");
         assertArrayEquals(
-                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withRequestPath("/c/foo")),
+                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withPath("/c/foo")),
                 "/decorator/c");
         assertArrayEquals(
-                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withRequestPath("/d/foo"))
+                config.selectDecoratorPaths(someContent, new SiteMeshContextStub().withPath("/d/foo"))
                 /* nothing */);
     }
 

@@ -1,5 +1,6 @@
 package org.sitemesh.webapp;
 
+import org.sitemesh.BaseSiteMeshContext;
 import org.sitemesh.SiteMeshContext;
 import org.sitemesh.content.Content;
 import org.sitemesh.content.ContentProcessor;
@@ -12,7 +13,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.CharBuffer;
@@ -25,7 +25,7 @@ import java.nio.CharBuffer;
  * @author Joe Walnes
  * @author Mike Cannon-Brookes
  */
-public class WebAppContext implements SiteMeshContext {
+public class WebAppContext extends BaseSiteMeshContext {
 
     /**
      * Key that the {@link ContentProperty} is stored under in the {@link HttpServletRequest}
@@ -43,18 +43,15 @@ public class WebAppContext implements SiteMeshContext {
     private final HttpServletRequest request;
     private final HttpServletResponse response;
     private final ServletContext servletContext;
-    private final ContentProcessor contentProcessor;
-
-    private Content currentContent;
 
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
                          ContentProcessor contentProcessor) {
+        super(contentProcessor);
         this.contentType = contentType;
         this.request = request;
         this.response = response;
         this.servletContext = servletContext;
-        this.contentProcessor = contentProcessor;
     }
 
     public HttpServletRequest getRequest() {
@@ -74,7 +71,7 @@ public class WebAppContext implements SiteMeshContext {
     }
 
     @Override
-    public String getRequestPath() {
+    public String getPath() {
         return getRequestPath(request);
     }
 
@@ -97,37 +94,6 @@ public class WebAppContext implements SiteMeshContext {
         }
     }
 
-    @Override
-    public Content decorate(String decoratorName, Content content) throws IOException {
-        if (decoratorName == null) {
-            return null;
-        }
-
-        class CharBufferWriter extends CharArrayWriter {
-            public CharBuffer toCharBuffer() {
-                return CharBuffer.wrap(this.buf, 0, this.count);
-            }
-        }
-        CharBufferWriter out = new CharBufferWriter();
-        decorate(decoratorName, content, out);
-
-        CharBuffer decorated = out.toCharBuffer();
-
-        Content lastContent = currentContent;
-        currentContent = content;
-        try {
-            // TODO: Don't reprocess the content properties.
-            return contentProcessor.build(decorated, this);
-        } finally {
-            currentContent = lastContent;
-        }
-    }
-
-    @Override
-    public Content getContentToMerge() {
-        return currentContent;
-    }
-
     /**
      * Dispatches to another path to render a decorator.
      *
@@ -139,6 +105,7 @@ public class WebAppContext implements SiteMeshContext {
      * {@link #CONTENT_KEY} and
      * {@link #CONTEXT_KEY} respectively.</p>
      */
+    @Override
     protected void decorate(String decoratorPath, Content content, Writer out) throws IOException {
         // Wrap response so output gets buffered.
         HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, new BasicSelector() {

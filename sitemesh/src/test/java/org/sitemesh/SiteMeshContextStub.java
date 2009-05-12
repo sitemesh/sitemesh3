@@ -11,16 +11,16 @@ import java.io.IOException;
  */
 public class SiteMeshContextStub implements SiteMeshContext {
 
-    private String requestPath;
+    private String path;
     private Content contentToMerge;
 
     @Override
-    public String getRequestPath() {
-        return requestPath;
+    public String getPath() {
+        return path;
     }
 
-    public SiteMeshContextStub withRequestPath(String requestPath) {
-        this.requestPath = requestPath;
+    public SiteMeshContextStub withPath(String path) {
+        this.path = path;
         return this;
     }
 

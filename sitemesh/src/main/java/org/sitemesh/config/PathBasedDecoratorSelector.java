@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /**
  * {@link DecoratorSelector} implementation that selects a decorator based on the
- * incoming {@link SiteMeshContext#getRequestPath()} and the mappings setup.
+ * incoming {@link SiteMeshContext#getPath()} and the mappings setup.
  *
  * <h3>Example</h3>
  * <pre>
@@ -17,9 +17,9 @@ import java.io.IOException;
  * &nbsp;    .put("/admin/*", "/decorators/admin.html")
  * &nbsp;    .put("/thingy", "/decorators/thingy.html")
  * </pre>
- * @see PathMapper
  *
  * @author Joe Walnes
+ * @see PathMapper
  */
 public class PathBasedDecoratorSelector implements DecoratorSelector {
 
@@ -34,7 +34,7 @@ public class PathBasedDecoratorSelector implements DecoratorSelector {
 
     @Override
     public String[] selectDecoratorPaths(Content content, SiteMeshContext siteMeshContext) throws IOException {
-        String[] result = pathMapper.get(siteMeshContext.getRequestPath());
+        String[] result = pathMapper.get(siteMeshContext.getPath());
         return result == null ? EMPTY : result;
     }
 }

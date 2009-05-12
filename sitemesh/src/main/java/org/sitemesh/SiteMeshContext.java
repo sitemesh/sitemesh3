@@ -6,7 +6,10 @@ import java.io.IOException;
 
 public interface SiteMeshContext {
 
-    String getRequestPath();
+    /**
+     * Get path of the page currently being displayed.
+     */
+    String getPath();
 
     Content decorate(String decoratorName, Content content) throws IOException;
 
