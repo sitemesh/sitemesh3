@@ -23,6 +23,8 @@ import java.util.List;
  */
 public class FileSystemDirectory implements Directory {
 
+    // TODO: File locking to prevent corruption from multiple threads/processes.
+
     private final File rootDir;
     private final Charset encoding;
 
