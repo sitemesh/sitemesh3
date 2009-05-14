@@ -1,14 +1,15 @@
 package org.sitemesh.acceptance;
 
-import junit.framework.TestSuite;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.sitemesh.offline.SiteMeshOfflineGenerator;
 import org.sitemesh.webapp.WebEnvironment;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Scanner;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
 
 /**
  * @author Joe Walnes
@@ -17,8 +18,17 @@ public class AcceptanceTestSuiteBuilder {
 
     private static final File BASE_DIR = new File("src/test/java/org/sitemesh/acceptance");
 
-    public static TestSuite buildWebAppSuite(String suiteName, final WebEnvironment webEnvironment) throws IOException {
+    public static TestSuite buildWebAppAndOfflineSuite(String suiteName,
+                                                       WebEnvironment webEnvironment,
+                                                       SiteMeshOfflineGenerator offlineGenerator) throws IOException {
         TestSuite suite = new TestSuite(suiteName);
+        suite.addTest(buildWebAppSuite(suiteName, webEnvironment));
+        suite.addTest(buildOfflineSuite(suiteName, offlineGenerator));
+        return suite;
+    }
+
+    public static TestSuite buildWebAppSuite(String suiteName, final WebEnvironment webEnvironment) throws IOException {
+        TestSuite suite = new TestSuite(suiteName + "-webapp");
 
         File expectedDir = getExpectedDir(suiteName);
         final Map<String, String> expected = AcceptanceTestSuiteBuilder.readFiles(expectedDir);
@@ -29,6 +39,23 @@ public class AcceptanceTestSuiteBuilder {
                     webEnvironment.doGet("/" + fileName);
                     assertEquals(reduceWhitespace(expected.get(fileName)),
                             reduceWhitespace(webEnvironment.getBody()));
+                }
+            });
+        }
+        return suite;
+    }
+
+    public static TestSuite buildOfflineSuite(String suiteName, final SiteMeshOfflineGenerator generator) throws IOException {
+        TestSuite suite = new TestSuite(suiteName + "-offline");
+
+        File expectedDir = getExpectedDir(suiteName);
+        final Map<String, String> expected = AcceptanceTestSuiteBuilder.readFiles(expectedDir);
+        for (final String fileName : expected.keySet()) {
+            suite.addTest(new TestCase(fileName) {
+                @Override
+                protected void runTest() throws Throwable {
+                    assertEquals(reduceWhitespace(expected.get(fileName)),
+                            reduceWhitespace(generator.process(fileName).toString()));
                 }
             });
         }
