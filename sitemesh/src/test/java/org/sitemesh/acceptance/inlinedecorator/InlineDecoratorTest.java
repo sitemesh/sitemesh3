@@ -6,6 +6,7 @@ import org.sitemesh.config.SiteMeshConfig;
 import org.sitemesh.config.SiteMeshFilter;
 import org.sitemesh.offline.SiteMeshOfflineGenerator;
 import org.sitemesh.offline.directory.FileSystemDirectory;
+import org.sitemesh.offline.directory.InMemoryDirectory;
 import org.sitemesh.webapp.WebEnvironment;
 
 import java.nio.charset.Charset;
@@ -34,7 +35,8 @@ public class InlineDecoratorTest {
         // Create offline site generator.
         SiteMeshOfflineGenerator offlineGenerator = new SiteMeshOfflineGenerator(
                 siteMeshConfig, siteMeshConfig,
-                new FileSystemDirectory(AcceptanceTestSuiteBuilder.getInputDir(suiteName), Charset.defaultCharset()));
+                new FileSystemDirectory(AcceptanceTestSuiteBuilder.getInputDir(suiteName), Charset.defaultCharset()),
+                new InMemoryDirectory());
 
         // Build suites.
         return AcceptanceTestSuiteBuilder.buildWebAppAndOfflineSuite(suiteName, webEnvironment, offlineGenerator);

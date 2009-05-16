@@ -3,10 +3,12 @@ package org.sitemesh.acceptance;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.sitemesh.offline.SiteMeshOfflineGenerator;
+import org.sitemesh.offline.directory.Directory;
 import org.sitemesh.webapp.WebEnvironment;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.CharBuffer;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -47,6 +49,7 @@ public class AcceptanceTestSuiteBuilder {
 
     public static TestSuite buildOfflineSuite(String suiteName, final SiteMeshOfflineGenerator generator) throws IOException {
         TestSuite suite = new TestSuite(suiteName + "-offline");
+        final Directory destinationDirectory = generator.getDestinationDirectory();
 
         File expectedDir = getExpectedDir(suiteName);
         final Map<String, String> expected = AcceptanceTestSuiteBuilder.readFiles(expectedDir);
@@ -54,8 +57,10 @@ public class AcceptanceTestSuiteBuilder {
             suite.addTest(new TestCase(fileName) {
                 @Override
                 protected void runTest() throws Throwable {
+                    generator.process(fileName);
+                    CharBuffer result = destinationDirectory.load(fileName);
                     assertEquals(reduceWhitespace(expected.get(fileName)),
-                            reduceWhitespace(generator.process(fileName).toString()));
+                            reduceWhitespace(result.toString()));
                 }
             });
         }

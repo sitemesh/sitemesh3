@@ -17,6 +17,7 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
 
     // Dependencies.
     private Directory sourceDir;
+    private Directory destinationDir;
     private PathBasedDecoratorSelector decoratorSelector;
 
     // Object under test.
@@ -26,11 +27,12 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         sourceDir = new InMemoryDirectory();
+        destinationDir = new InMemoryDirectory();
         decoratorSelector = new PathBasedDecoratorSelector();
 
         generator = new SiteMeshOfflineGenerator(
                 new TagBasedContentProcessor(new CoreHtmlTagRuleBundle(), new DecoratorTagRuleBundle()),
-                decoratorSelector, sourceDir);
+                decoratorSelector, sourceDir, destinationDir);
     }
 
     public void testDecoratesContentInDirectory() throws Exception {
@@ -39,8 +41,10 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
 
         decoratorSelector.put("/*", "/mydecorator.html");
 
+        generator.process("/mycontent.html");
+
         assertEquals("Title = Some title",
-                generator.process("/mycontent.html").toString());
+                destinationDir.load("/mycontent.html").toString());
     }
 
     public void testDecoratesContentPassedIn() throws Exception {
@@ -49,7 +53,7 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
         decoratorSelector.put("/*", "/mydecorator.html");
 
         assertEquals("Title = Some title",
-                generator.process("/mycontent.html", wrap("<title>Some title</title>")).toString());
+                generator.processContent("/mycontent.html", wrap("<title>Some title</title>")).toString());
     }
 
     public void testSupportsDecoratingInlineContent() throws Exception {
@@ -67,6 +71,8 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
 
         decoratorSelector.put("/*", "/decorators/page.html");
 
+        generator.process("/hello.html");
+
         assertEquals(
                 "PAGE\n" +
                         "\n" +
@@ -75,7 +81,7 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
                         "INLINE Title:block B Body:<i>B</i> /INLINE\n" +
                         "\n" +
                         "/PAGE",
-                generator.process("/hello.html").toString());
+                destinationDir.load("/hello.html").toString());
     }
 
     public void testSupportsDecoratingInlineContentInDecorators() throws Exception {
@@ -97,6 +103,8 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
 
         decoratorSelector.put("/*", "/decorators/page.html");
 
+        generator.process("/hello.html");
+
         assertEquals(
                 "PAGE\n" +
                         "INNER\n" +
@@ -105,6 +113,6 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
                         "INLINE Title:block B Body:INNER<i>B</i>/INNER /INLINE\n" +
                         "/INNER\n" +
                         "/PAGE",
-                generator.process("/hello.html").toString());
+                destinationDir.load("/hello.html").toString());
     }
 }
