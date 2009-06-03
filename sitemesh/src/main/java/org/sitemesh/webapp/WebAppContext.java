@@ -131,7 +131,8 @@ public class WebAppContext extends BaseSiteMeshContext {
             CharBuffer buffer = responseBuffer.getBuffer();
             out.append(buffer);
         } catch (ServletException e) {
-            throw new IOException("Could not dispatch to decorator: ", e);
+            //noinspection ThrowableInstanceNeverThrown
+            throw (IOException) new IOException("Could not dispatch to decorator").initCause(e);
         } finally {
             // Restore previous state.
             request.setAttribute(CONTENT_KEY, oldContent);

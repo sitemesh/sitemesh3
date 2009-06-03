@@ -61,7 +61,7 @@ public class SiteMeshConfig<C extends SiteMeshContext> implements DecoratorSelec
     }
 
     public TagRuleBundle[] getTagRuleBundles() {
-        return Arrays.copyOf(tagRuleBundles, tagRuleBundles.length);
+        return tagRuleBundles.clone();
     }
 
     /**
@@ -77,7 +77,8 @@ public class SiteMeshConfig<C extends SiteMeshContext> implements DecoratorSelec
         // Not the most efficient way of doing this, but convenient and this typically
         // only ever happens at application initialization.
         TagRuleBundle[] oldTagRuleBundles = getTagRuleBundles();
-        TagRuleBundle[] newTagRuleBundles = Arrays.copyOf(oldTagRuleBundles, oldTagRuleBundles.length + additionalTagRuleBundles.length);
+        TagRuleBundle[] newTagRuleBundles = new TagRuleBundle[oldTagRuleBundles.length + additionalTagRuleBundles.length];
+        System.arraycopy(oldTagRuleBundles, 0, newTagRuleBundles, 0, newTagRuleBundles.length);
         System.arraycopy(additionalTagRuleBundles, 0, newTagRuleBundles, oldTagRuleBundles.length, additionalTagRuleBundles.length);
         return setTagRuleBundles(newTagRuleBundles);
     }

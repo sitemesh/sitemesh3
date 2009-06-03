@@ -20,7 +20,7 @@ public class TagBasedContentProcessor implements ContentProcessor {
     private final TagRuleBundle[] tagRuleBundles;
 
     public TagBasedContentProcessor(TagRuleBundle... tagRuleBundles) {
-        this.tagRuleBundles = Arrays.copyOf(tagRuleBundles, tagRuleBundles.length);
+        this.tagRuleBundles = tagRuleBundles.clone();
     }
 
     public Content build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
@@ -46,6 +46,6 @@ public class TagBasedContentProcessor implements ContentProcessor {
     }
 
     public TagRuleBundle[] getTagRuleBundles() {
-        return Arrays.copyOf(tagRuleBundles, tagRuleBundles.length);
+        return tagRuleBundles.clone();
     }
 }

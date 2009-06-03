@@ -27,7 +27,7 @@ class PropertiesParser {
             return null;
         }
         string = string.trim();
-        if (string.isEmpty()) {
+        if (string.length() == 0) {
             return null;
         }
         return string;
