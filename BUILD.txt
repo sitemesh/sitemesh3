@@ -1,6 +1,6 @@
 === Building SiteMesh 3 ===
 
-Build requirements: JDK 1.6, Maven 2.0.9.
+Build requirements: JDK 1.5, Maven 2.0.9.
 
 To perform a full build:
   mvn
