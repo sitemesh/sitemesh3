@@ -70,7 +70,6 @@ public class WebAppContext extends BaseSiteMeshContext {
         return contentType;
     }
 
-    @Override
     public String getPath() {
         return getRequestPath(request);
     }

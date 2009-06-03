@@ -20,7 +20,6 @@ public interface ObjectFactory {
      * with the default constructor.
      */
     public static class Default implements ObjectFactory {
-        @Override
         public Object create(String name) throws SiteMeshConfigException {
             try {
                 Class cls = Class.forName(name);

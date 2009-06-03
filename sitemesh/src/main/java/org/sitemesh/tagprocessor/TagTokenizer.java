@@ -379,27 +379,22 @@ public class TagTokenizer {
         public int attributeCount = 0;
         public String[] attributes = new String[10]; // name1, value1, name2, value2...
 
-        @Override
         public String getName() {
             return name;
         }
 
-        @Override
         public Tag.Type getType() {
             return type;
         }
 
-        @Override
         public void writeTo(Appendable out) throws IOException {
             out.append(input.subSequence(position, position + length));
         }
 
-        @Override
         public int getAttributeCount() {
             return attributeCount / 2;
         }
 
-        @Override
         public int getAttributeIndex(String name, boolean caseSensitive) {
             if (attributeCount == 0)
                 return -1;
@@ -413,17 +408,14 @@ public class TagTokenizer {
             return -1;
         }
 
-        @Override
         public String getAttributeName(int index) {
             return attributes[index * 2];
         }
 
-        @Override
         public String getAttributeValue(int index) {
             return attributes[index * 2 + 1];
         }
 
-        @Override
         public String getAttributeValue(String name, boolean caseSensitive) {
             if (attributeCount == 0)
                 return null;
@@ -437,12 +429,10 @@ public class TagTokenizer {
             return null;
         }
 
-        @Override
         public boolean hasAttribute(String name, boolean caseSensitive) {
             return getAttributeIndex(name, caseSensitive) > -1;
         }
 
-        @Override
         public String toString() {
             return input.subSequence(position, position + length).toString();
         }

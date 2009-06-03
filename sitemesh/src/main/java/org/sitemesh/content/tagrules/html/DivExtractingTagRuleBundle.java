@@ -12,12 +12,10 @@ import org.sitemesh.tagprocessor.State;
  */
 public class DivExtractingTagRuleBundle implements TagRuleBundle {
 
-    @Override
     public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         defaultState.addRule("div", new DivExtractingRule(contentProperty.getChild("div")));
     }
 
-    @Override
     public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         // No op.
     }

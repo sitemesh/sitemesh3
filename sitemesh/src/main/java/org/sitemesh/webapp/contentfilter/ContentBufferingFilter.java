@@ -63,13 +63,11 @@ public abstract class ContentBufferingFilter implements Filter {
     private FilterConfig filterConfig;
     private ContainerTweaks containerTweaks;
 
-    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
         this.containerTweaks = initContainerTweaks();
     }
 
-    @Override
     public void destroy() {
         filterConfig = null;
         containerTweaks = null;
@@ -88,7 +86,6 @@ public abstract class ContentBufferingFilter implements Filter {
         return containerTweaks;
     }
 
-    @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
 

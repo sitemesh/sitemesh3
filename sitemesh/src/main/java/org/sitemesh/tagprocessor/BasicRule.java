@@ -11,10 +11,8 @@ public abstract class BasicRule implements TagRule {
 
     protected TagProcessorContext tagProcessorContext;
 
-    @Override
     public abstract void process(Tag tag) throws IOException;
 
-    @Override
     public void setTagProcessorContext(TagProcessorContext tagProcessorContext) {
         this.tagProcessorContext = tagProcessorContext;
     }

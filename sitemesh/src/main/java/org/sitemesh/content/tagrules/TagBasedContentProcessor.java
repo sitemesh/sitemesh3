@@ -23,7 +23,6 @@ public class TagBasedContentProcessor implements ContentProcessor {
         this.tagRuleBundles = Arrays.copyOf(tagRuleBundles, tagRuleBundles.length);
     }
 
-    @Override
     public Content build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
         Content content = new InMemoryContent();
         content.getData().setValue(data);

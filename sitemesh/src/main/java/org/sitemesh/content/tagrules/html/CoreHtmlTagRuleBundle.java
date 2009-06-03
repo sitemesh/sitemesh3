@@ -31,7 +31,6 @@ import org.sitemesh.tagprocessor.StateTransitionRule;
  */
 public class CoreHtmlTagRuleBundle implements TagRuleBundle {
 
-    @Override
     public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         // Core rules for SiteMesh to be functional.
         defaultState.addRule("head", new ExportTagToContentRule(contentProperty.getChild("head"), false));
@@ -44,7 +43,6 @@ public class CoreHtmlTagRuleBundle implements TagRuleBundle {
         defaultState.addRule("xml", new StateTransitionRule(new State()));
     }
 
-    @Override
     public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         // In the event that no <body> tag was captured, use the default buffer contents instead
         // (i.e. the whole document, except anything that was written to other buffers).

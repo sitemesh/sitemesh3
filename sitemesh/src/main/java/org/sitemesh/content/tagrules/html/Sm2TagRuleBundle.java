@@ -22,7 +22,6 @@ import org.sitemesh.tagprocessor.State;
  */
 public class Sm2TagRuleBundle implements TagRuleBundle {
 
-    @Override
     public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         // Detect framesets.
         defaultState.addRule("frameset", new FramesetRule(contentProperty.getChild("frameset")));
@@ -37,7 +36,6 @@ public class Sm2TagRuleBundle implements TagRuleBundle {
         defaultState.addRule("content", new ContentBlockExtractingRule(contentProperty.getChild("page")));
     }
 
-    @Override
     public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         // No op.
     }

@@ -27,7 +27,6 @@ public class BasicSelector implements Selector {
         this.includeErrorPages = includeErrorPages;
     }
 
-    @Override
     public boolean shouldBufferForContentType(String contentType, String mimeType, String encoding) {
         if (mimeType == null) {
             return false;
@@ -40,12 +39,10 @@ public class BasicSelector implements Selector {
         return false;
     }
 
-    @Override
     public boolean shouldAbortBufferingForHttpStatusCode(int statusCode) {
         return statusCode == 200 || includeErrorPages && statusCode >= 400;
     }
 
-    @Override
     public boolean shouldBufferForRequest(HttpServletRequest request) {
         return !filterAlreadyAppliedForRequest(request);
     }

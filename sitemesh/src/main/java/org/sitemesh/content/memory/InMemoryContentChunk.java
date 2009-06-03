@@ -20,22 +20,18 @@ class InMemoryContentChunk implements ContentChunk {
         this.owner = owner;
     }
 
-    @Override
     public boolean hasValue() {
         return value != null;
     }
 
-    @Override
     public String getValue() {
         return value != null ? value.toString() : null;
     }
 
-    @Override
     public String getNonNullValue() {
         return value != null ? value.toString() : "";
     }
 
-    @Override
     public void writeValueTo(Appendable out) throws IOException {
         if (value == null) {
             return;
@@ -48,17 +44,14 @@ class InMemoryContentChunk implements ContentChunk {
         }
     }
 
-    @Override
     public void setValue(CharSequence value) {
         this.value = value;
     }
 
-    @Override
     public String toString() {
         return getNonNullValue();
     }
 
-    @Override
     public Content getOwningContent() {
         return owner;
     }

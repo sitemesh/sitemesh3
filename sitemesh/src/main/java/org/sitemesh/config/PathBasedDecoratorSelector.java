@@ -32,7 +32,6 @@ public class PathBasedDecoratorSelector implements DecoratorSelector {
         return this;
     }
 
-    @Override
     public String[] selectDecoratorPaths(Content content, SiteMeshContext siteMeshContext) throws IOException {
         String[] result = pathMapper.get(siteMeshContext.getPath());
         return result == null ? EMPTY : result;

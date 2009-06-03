@@ -35,7 +35,6 @@ public class OfflineContext extends BaseSiteMeshContext {
         this.path = path;
     }
 
-    @Override
     public String getPath() {
         return path;
     }

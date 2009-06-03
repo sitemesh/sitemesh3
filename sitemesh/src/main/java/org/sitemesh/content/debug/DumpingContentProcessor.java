@@ -24,7 +24,6 @@ public class DumpingContentProcessor implements ContentProcessor {
         this.debugOut = debugOut;
     }
 
-    @Override
     public Content build(CharBuffer data, SiteMeshContext context) throws IOException {
         Content result = contentProcessor.build(data, context);
         dump(result, debugOut);

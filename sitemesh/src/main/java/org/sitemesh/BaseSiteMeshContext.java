@@ -25,7 +25,6 @@ public abstract class BaseSiteMeshContext implements SiteMeshContext {
 
     protected abstract void decorate(String decoratorPath, Content content, Writer out) throws IOException;
 
-    @Override
     public Content decorate(String decoratorName, Content content) throws IOException {
         if (decoratorName == null) {
             return null;
@@ -50,7 +49,6 @@ public abstract class BaseSiteMeshContext implements SiteMeshContext {
         }
     }
 
-    @Override
     public Content getContentToMerge() {
         return currentContent;
     }

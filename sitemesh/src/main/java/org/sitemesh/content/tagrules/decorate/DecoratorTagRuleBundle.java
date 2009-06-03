@@ -12,14 +12,12 @@ import org.sitemesh.tagprocessor.State;
  */
 public class DecoratorTagRuleBundle implements TagRuleBundle {
 
-    @Override
     public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         // TODO: Support real XML namespaces.
         defaultState.addRule("sitemesh:write", new SiteMeshWriteRule(siteMeshContext));
         defaultState.addRule("sitemesh:decorate", new SiteMeshDecorateRule(siteMeshContext));
     }
 
-    @Override
     public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         // No op.
     }

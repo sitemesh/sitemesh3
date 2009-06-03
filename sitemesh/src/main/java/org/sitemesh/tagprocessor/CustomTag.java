@@ -52,7 +52,6 @@ public class CustomTag implements Tag {
         }
     }
 
-    @Override
     public void writeTo(Appendable out) throws IOException {
         // Calculate length of written tag up front, so we can allocate a
         // buffer of the correct size.
@@ -95,7 +94,6 @@ public class CustomTag implements Tag {
         out.append(tag);
     }
 
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof CustomTag)) return false;
@@ -106,7 +104,6 @@ public class CustomTag implements Tag {
                 && !(name != null ? !name.equals(customTag.name) : customTag.name != null);
     }
 
-    @Override
     public int hashCode() {
         int result = (attributes != null ? attributes.hashCode() : 0);
         result = 29 * result + (name != null ? name.hashCode() : 0);
@@ -127,12 +124,10 @@ public class CustomTag implements Tag {
 
     // ---------- Standard methods to implement Tag interface ------
 
-    @Override
     public int getAttributeCount() {
         return attributeCount / 2;
     }
 
-    @Override
     public int getAttributeIndex(String name, boolean caseSensitive) {
         if (attributes == null) {
             return -1;
@@ -147,17 +142,14 @@ public class CustomTag implements Tag {
         return -1;
     }
 
-    @Override
     public String getAttributeName(int index) {
         return attributes[index * 2];
     }
 
-    @Override
     public String getAttributeValue(int index) {
         return attributes[index * 2 + 1];
     }
 
-    @Override
     public String getAttributeValue(String name, boolean caseSensitive) {
         int attributeIndex = getAttributeIndex(name, caseSensitive);
         if (attributeIndex == -1) {
@@ -167,12 +159,10 @@ public class CustomTag implements Tag {
         }
     }
 
-    @Override
     public boolean hasAttribute(String name, boolean caseSensitive) {
         return getAttributeIndex(name, caseSensitive) > -1;
     }
 
-    @Override
     public String getName() {
         return name;
     }
@@ -180,7 +170,6 @@ public class CustomTag implements Tag {
     /**
      * Type of tag.
      */
-    @Override
     public Tag.Type getType() {
         return type;
     }

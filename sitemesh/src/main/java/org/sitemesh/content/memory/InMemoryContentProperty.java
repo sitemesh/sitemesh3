@@ -38,12 +38,10 @@ class InMemoryContentProperty extends InMemoryContentChunk implements ContentPro
         this.isRoot = false;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public ContentProperty[] getFullPath() {
         // Determine size of array.
         int size = 0;
@@ -62,17 +60,14 @@ class InMemoryContentProperty extends InMemoryContentChunk implements ContentPro
         return result;
     }
 
-    @Override
     public boolean hasChildren() {
         return children != null && !children.isEmpty();
     }
 
-    @Override
     public boolean hasChild(String childName) {
         return children != null && children.containsKey(childName);
     }
 
-    @Override
     public ContentProperty getChild(String childName) {
         if (children == null) {
             children = new HashMap<String, ContentProperty>();
@@ -90,22 +85,18 @@ class InMemoryContentProperty extends InMemoryContentChunk implements ContentPro
         return new InMemoryContentProperty(childName, this);
     }
 
-    @Override
     public ContentProperty getParent() {
         return parent;
     }
 
-    @Override
     public Iterable<ContentProperty> getChildren() {
         return this;
     }
 
-    @Override
     public Iterator<ContentProperty> iterator() {
         return children == null ? EMPTY_ITERATOR : children.values().iterator();
     }
 
-    @Override
     public Iterable<ContentProperty> getDescendants() {
         return walk(this, new LinkedList<ContentProperty>());
     }

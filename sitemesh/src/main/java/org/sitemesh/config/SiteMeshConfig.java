@@ -133,12 +133,10 @@ public class SiteMeshConfig<C extends SiteMeshContext> implements DecoratorSelec
         return this;
     }
 
-    @Override
     public String[] selectDecoratorPaths(Content content, C context) throws IOException {
         return decoratorSelector.selectDecoratorPaths(content, context);
     }
 
-    @Override
     public Content build(CharBuffer data, SiteMeshContext siteMeshContext) throws IOException {
         return contentProcessor.build(data, siteMeshContext);
     }

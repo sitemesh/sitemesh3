@@ -57,17 +57,14 @@ public class InMemoryContent implements Content {
         };
     }
 
-    @Override
     public ContentProperty getExtractedProperties() {
         return rootProperty;
     }
 
-    @Override
     public ContentChunk getData() {
         return data;
     }
 
-    @Override
     public CharSequenceBuffer createDataOnlyBuffer() {
         return new CharSequenceList() {
             @Override

@@ -39,13 +39,11 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
         this.selector = selector;
 
         routablePrintWriter = new RoutablePrintWriter(new RoutablePrintWriter.DestinationFactory() {
-            @Override
             public PrintWriter activateDestination() throws IOException {
                 return originalResponse.getWriter();
             }
         });
         routableServletOutputStream = new RoutableServletOutputStream(new RoutableServletOutputStream.DestinationFactory() {
-            @Override
             public ServletOutputStream create() throws IOException {
                 return originalResponse.getOutputStream();
             }

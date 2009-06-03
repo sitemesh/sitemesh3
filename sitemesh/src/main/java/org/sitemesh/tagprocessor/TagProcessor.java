@@ -60,24 +60,20 @@ public class TagProcessor {
         final TagProcessorContext context = new Context(out);
         TagTokenizer tokenizer = new TagTokenizer(in, new TagTokenizer.TokenHandler() {
 
-            @Override
             public boolean shouldProcessTag(String name) {
                 return currentState.shouldProcessTag(name.toLowerCase());
             }
 
-            @Override
             public void tag(Tag tag) throws IOException {
                 TagRule tagRule = currentState.getRule(tag.getName().toLowerCase());
                 tagRule.setTagProcessorContext(context);
                 tagRule.process(tag);
             }
 
-            @Override
             public void text(CharSequence text) throws IOException {
                 currentState.handleText(text, context);
             }
 
-            @Override
             public void warning(String message, int line, int column) {
                 // Warnings are ignored. Keep on processing.
             }
@@ -95,17 +91,14 @@ public class TagProcessor {
             size = 1;
         }
 
-        @Override
         public State currentState() {
             return currentState;
         }
 
-        @Override
         public void changeState(State newState) {
             currentState = newState;
         }
 
-        @Override
         public void pushBuffer(CharSequenceBuffer customBuffer) {
             if(size == buffers.length) {
               CharSequenceBuffer[] newBuffers = new CharSequenceBuffer[buffers.length * 2];
@@ -115,22 +108,18 @@ public class TagProcessor {
             buffers[size++] = customBuffer;
         }
 
-        @Override
         public void pushBuffer() {
             pushBuffer(new CharSequenceList());
         }
 
-        @Override
         public Appendable currentBuffer() {
             return buffers[size - 1];
         }
 
-        @Override
         public CharSequence currentBufferContents() {
             return buffers[size - 1];
         }
 
-        @Override
         public void popBuffer() {
             buffers[--size] = null;
         }

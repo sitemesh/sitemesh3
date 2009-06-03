@@ -21,7 +21,6 @@ import org.sitemesh.SiteMeshContext;
  */
 public class MsOfficeTagRuleBundle implements TagRuleBundle {
 
-    @Override
     public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         // When inside <xml><o:documentproperties>...</o:documentproperties></xml>,
         // capture every tag that has an o: prefix.
@@ -38,7 +37,6 @@ public class MsOfficeTagRuleBundle implements TagRuleBundle {
 
     }
 
-    @Override
     public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
         // No op.
     }

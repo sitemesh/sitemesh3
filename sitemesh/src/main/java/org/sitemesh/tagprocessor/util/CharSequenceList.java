@@ -36,13 +36,11 @@ public class CharSequenceList implements CharSequenceBuffer {
 
     private final LinkedList<CharSequence> list = new LinkedList<CharSequence>();
 
-    @Override
     public Appendable append(CharSequence csq) {
         list.add(csq);
         return this;
     }
 
-    @Override
     public Appendable append(CharSequence csq, int start, int end) {
         return append(csq.subSequence(start, end));
     }
@@ -53,35 +51,29 @@ public class CharSequenceList implements CharSequenceBuffer {
      * more efficient to build these up externally in a StringBuilder, and then pass that
      * to {@link #append(CharSequence)}.
      */
-    @Override
     public Appendable append(char c) {
         return append(String.valueOf(c));
     }
 
-    @Override
     public int length() {
         // TODO
         throw new UnsupportedOperationException();
     }
 
-    @Override
     public char charAt(int index) {
         // TODO
         throw new UnsupportedOperationException();
     }
 
-    @Override
     public CharSequence subSequence(int start, int end) {
         // TODO
         throw new UnsupportedOperationException();
     }
 
-    @Override
     public Iterator<CharSequence> iterator() {
         return Collections.unmodifiableList(list).iterator();
     }
 
-    @Override
     public String toString() {
         try {
             StringBuilder out = new StringBuilder();
@@ -92,7 +84,6 @@ public class CharSequenceList implements CharSequenceBuffer {
         }
     }
 
-    @Override
     public void writeTo(Appendable out) throws IOException {
         for (CharSequence charSequence : list) {
             if (charSequence instanceof CharSequenceBuffer) {
