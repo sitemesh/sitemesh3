@@ -14,7 +14,6 @@ public class SiteMeshContextStub implements SiteMeshContext {
     private String path;
     private Content contentToMerge;
 
-    @Override
     public String getPath() {
         return path;
     }
@@ -24,12 +23,10 @@ public class SiteMeshContextStub implements SiteMeshContext {
         return this;
     }
 
-    @Override
     public Content decorate(String decoratorName, Content content) throws IOException {
         throw new UnsupportedOperationException("Not supported by SiteMeshContextStub");
     }
 
-    @Override
     public Content getContentToMerge() {
         return contentToMerge;
     }

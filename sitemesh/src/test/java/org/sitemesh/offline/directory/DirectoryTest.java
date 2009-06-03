@@ -130,7 +130,7 @@ public abstract class DirectoryTest extends TestCase {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         directory.load("file", Channels.newChannel(out));
-        assertBytesEqual(string.getBytes(shiftJis), out.toByteArray());
+        assertBytesEqual(string.getBytes(shiftJis.name()), out.toByteArray());
     }
 
     public void testListsAllFilePaths() throws IOException {

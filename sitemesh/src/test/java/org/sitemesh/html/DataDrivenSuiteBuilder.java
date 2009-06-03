@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.ByteArrayInputStream;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -96,7 +97,7 @@ public class DataDrivenSuiteBuilder {
 
     private static String cleanExpectedProperties(String string) throws IOException {
         Properties expectedProperties = new Properties();
-        expectedProperties.load(new StringReader(trimSafely(string)));
+        expectedProperties.load(new ByteArrayInputStream(trimSafely(string).getBytes()));
         return sortMapAndDumpAsString(expectedProperties);
     }
 

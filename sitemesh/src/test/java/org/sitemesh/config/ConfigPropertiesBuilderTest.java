@@ -68,12 +68,10 @@ public class ConfigPropertiesBuilderTest extends TestCase {
 
     // Supports previous test.
     public static class MyTagRuleBundle implements TagRuleBundle {
-        @Override
         public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
             // no-op.
         }
 
-        @Override
         public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
             // No op.
         }
@@ -81,12 +79,10 @@ public class ConfigPropertiesBuilderTest extends TestCase {
 
     // Supports previous test.
     public static class AnotherTagRuleBundle implements TagRuleBundle {
-        @Override
         public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
             // no-op.
         }
 
-        @Override
         public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
             // No op.
         }
@@ -104,7 +100,6 @@ public class ConfigPropertiesBuilderTest extends TestCase {
     public static class MyContentProcessor implements ContentProcessor {
         public static final Content MY_RETURNED_CONTENT = new InMemoryContent();
 
-        @Override
         public Content build(CharBuffer data, SiteMeshContext context) throws IOException {
             return MY_RETURNED_CONTENT;
         }
@@ -182,7 +177,6 @@ public class ConfigPropertiesBuilderTest extends TestCase {
     public void testCanBeHookedUpToOtherObjectFactories() throws SiteMeshConfigException {
         final ContentProcessor aContentProcessor = new MyContentProcessor();
         ObjectFactory someDependencyInjectionFramework = new ObjectFactory() {
-            @Override
             public Object create(String className) throws SiteMeshConfigException {
                 if (className.equals("foo")) {
                     return aContentProcessor;

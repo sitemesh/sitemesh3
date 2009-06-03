@@ -78,7 +78,7 @@ public class SiteMeshConfig<C extends SiteMeshContext> implements DecoratorSelec
         // only ever happens at application initialization.
         TagRuleBundle[] oldTagRuleBundles = getTagRuleBundles();
         TagRuleBundle[] newTagRuleBundles = new TagRuleBundle[oldTagRuleBundles.length + additionalTagRuleBundles.length];
-        System.arraycopy(oldTagRuleBundles, 0, newTagRuleBundles, 0, newTagRuleBundles.length);
+        System.arraycopy(oldTagRuleBundles, 0, newTagRuleBundles, 0, oldTagRuleBundles.length);
         System.arraycopy(additionalTagRuleBundles, 0, newTagRuleBundles, oldTagRuleBundles.length, additionalTagRuleBundles.length);
         return setTagRuleBundles(newTagRuleBundles);
     }
