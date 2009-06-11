@@ -2,14 +2,12 @@ package org.sitemesh.acceptance.inlinedecorator;
 
 import junit.framework.Test;
 import org.sitemesh.acceptance.AcceptanceTestSuiteBuilder;
-import org.sitemesh.config.SiteMeshConfig;
-import org.sitemesh.config.SiteMeshFilter;
+import org.sitemesh.builder.BaseSiteMeshBuilder;
+import org.sitemesh.builder.SiteMeshFilterBuilder;
+import org.sitemesh.builder.SiteMeshOfflineGeneratorBuilder;
 import org.sitemesh.offline.SiteMeshOfflineGenerator;
-import org.sitemesh.offline.directory.FileSystemDirectory;
 import org.sitemesh.offline.directory.InMemoryDirectory;
 import org.sitemesh.webapp.WebEnvironment;
-
-import java.nio.charset.Charset;
 
 /**
  * Tests inline decorators using the &lt;sitemesh:decorate&;gt; tag.
@@ -22,24 +20,29 @@ public class InlineDecoratorTest {
     public static Test suite() throws Exception {
         String suiteName = "inlinedecorator";
 
-        // Config used by both web-app and offline suites.
-        SiteMeshConfig siteMeshConfig = new SiteMeshConfig()
-                .addDecoratorPath("/*", "/page-decorator.html");
+        // Configure SiteMesh Filter and offline generator.
+        SiteMeshFilterBuilder filterBuilder = new SiteMeshFilterBuilder();
+        SiteMeshOfflineGeneratorBuilder offlineGeneratorBuilder = new SiteMeshOfflineGeneratorBuilder()
+                .setSourceDirectory(AcceptanceTestSuiteBuilder.getInputDir(suiteName))
+                .setDestinationDirectory(new InMemoryDirectory());
+        commonSetup(filterBuilder);
+        commonSetup(offlineGeneratorBuilder);
 
         // Create web environment (Servlet container, configured with Servlets, Filters, content, etc).
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*", new SiteMeshFilter(siteMeshConfig))
+                .addFilter("/*", filterBuilder.create())
                 .setRootDir(AcceptanceTestSuiteBuilder.getInputDir(suiteName))
                 .create();
 
         // Create offline site generator.
-        SiteMeshOfflineGenerator offlineGenerator = new SiteMeshOfflineGenerator(
-                siteMeshConfig, siteMeshConfig,
-                new FileSystemDirectory(AcceptanceTestSuiteBuilder.getInputDir(suiteName), Charset.defaultCharset()),
-                new InMemoryDirectory());
+        SiteMeshOfflineGenerator offlineGenerator = offlineGeneratorBuilder.create();
 
         // Build suites.
         return AcceptanceTestSuiteBuilder.buildWebAppAndOfflineSuite(suiteName, webEnvironment, offlineGenerator);
+    }
+
+    private static void commonSetup(BaseSiteMeshBuilder builder) {
+        builder.addDecoratorPath("/*", "/page-decorator.html");
     }
 
 }
