@@ -21,7 +21,7 @@ import java.io.IOException;
  * @author Joe Walnes
  * @see PathMapper
  */
-public class PathBasedDecoratorSelector implements DecoratorSelector {
+public class PathBasedDecoratorSelector<C extends SiteMeshContext> implements DecoratorSelector<C> {
 
     private static final String[] EMPTY = {};
 
@@ -32,7 +32,7 @@ public class PathBasedDecoratorSelector implements DecoratorSelector {
         return this;
     }
 
-    public String[] selectDecoratorPaths(Content content, SiteMeshContext siteMeshContext) throws IOException {
+    public String[] selectDecoratorPaths(Content content, C siteMeshContext) throws IOException {
         String[] result = pathMapper.get(siteMeshContext.getPath());
         return result == null ? EMPTY : result;
     }
