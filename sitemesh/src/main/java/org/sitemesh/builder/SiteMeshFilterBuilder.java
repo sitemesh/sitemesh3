@@ -1,6 +1,6 @@
 package org.sitemesh.builder;
 
-import org.sitemesh.webapp.BaseSiteMeshFilter;
+import org.sitemesh.webapp.SiteMeshFilter;
 
 import javax.servlet.Filter;
 
@@ -54,7 +54,7 @@ public class SiteMeshFilterBuilder
      * Create the SiteMesh Filter.
      */
     public Filter create() {
-        return new BaseSiteMeshFilter(
+        return new SiteMeshFilter(
                 getSelector(),
                 getContentProcessor(),
                 getDecoratorSelector());

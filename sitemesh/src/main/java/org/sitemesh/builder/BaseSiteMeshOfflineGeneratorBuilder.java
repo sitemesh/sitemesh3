@@ -20,7 +20,7 @@ import java.io.File;
  * @see org.sitemesh.offline.SiteMeshOfflineGenerator
  */
 public abstract class BaseSiteMeshOfflineGeneratorBuilder<BUILDER extends BaseSiteMeshOfflineGeneratorBuilder>
-        extends BaseSiteMeshBuilder<BUILDER, OfflineContext> {
+        extends BaseSiteMeshBuilder<BUILDER, OfflineContext, SiteMeshOfflineGenerator> {
 
     private Directory sourceDirectory;
     private Directory destinationDirectory;
@@ -28,6 +28,7 @@ public abstract class BaseSiteMeshOfflineGeneratorBuilder<BUILDER extends BaseSi
     /**
      * Create the SiteMeshOfflineGenerator.
      */
+    @Override
     public abstract SiteMeshOfflineGenerator create();
 
     // --------------------------------------------------------------

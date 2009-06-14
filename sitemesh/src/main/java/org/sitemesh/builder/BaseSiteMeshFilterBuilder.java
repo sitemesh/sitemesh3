@@ -11,13 +11,13 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Functionality for building a {@link org.sitemesh.webapp.BaseSiteMeshFilter}.
+ * Functionality for building a {@link org.sitemesh.webapp.SiteMeshFilter}.
  * Inherits common functionality from {@link BaseSiteMeshBuilder}.
  *
  * <p>Clients should use the concrete {@link SiteMeshFilterBuilder} implementation.</p>
  *
  * @see BaseSiteMeshBuilder
- * @see org.sitemesh.webapp.BaseSiteMeshFilter
+ * @see org.sitemesh.webapp.SiteMeshFilter
  *
  * @param <BUILDER> The type to return from the builder methods. Subclasses
  *                  should type this as their own class type.
@@ -25,7 +25,7 @@ import java.util.Collection;
  * @author Joe Walnes
  */
 public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuilder>
-        extends BaseSiteMeshBuilder<BUILDER, WebAppContext> {
+        extends BaseSiteMeshBuilder<BUILDER, WebAppContext, Filter> {
 
     private Collection<String> mimeTypes;
 
@@ -35,6 +35,7 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
     /**
      * Create the SiteMesh Filter.
      */
+    @Override
     public abstract Filter create();
 
     /**

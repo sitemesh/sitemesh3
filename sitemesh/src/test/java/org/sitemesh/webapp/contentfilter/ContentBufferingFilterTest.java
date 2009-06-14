@@ -19,9 +19,8 @@ import org.sitemesh.webapp.WebEnvironment;
 public class ContentBufferingFilterTest extends TestCase {
 
     private static abstract class MyContentBufferingFilter extends ContentBufferingFilter {
-        @Override
-        protected Selector getSelector(HttpServletRequest request) {
-            return new BasicSelector(false, "text/html");
+        protected MyContentBufferingFilter() {
+            super(new BasicSelector(false, "text/html"));
         }
     }
 

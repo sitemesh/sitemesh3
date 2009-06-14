@@ -1,4 +1,4 @@
-package org.sitemesh.config;
+package org.sitemesh.config.properties;
 
 import java.util.Map;
 import java.util.LinkedHashMap;

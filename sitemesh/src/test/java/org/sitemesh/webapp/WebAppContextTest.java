@@ -34,7 +34,7 @@ public class WebAppContextTest extends TestCase {
         };
 
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
-                .addFilter("/*", new BaseSiteMeshFilter(
+                .addFilter("/*", new SiteMeshFilter(
                         new BasicSelector("text/html"),
                         new TagBasedContentProcessor(new CoreHtmlTagRuleBundle()),
                         new PathBasedDecoratorSelector().put("/*", "/mydecorator")
@@ -53,7 +53,7 @@ public class WebAppContextTest extends TestCase {
                 new CoreHtmlTagRuleBundle(), new DecoratorTagRuleBundle());
 
         WebEnvironment web = new WebEnvironment.Builder()
-                .addFilter("/*", new BaseSiteMeshFilter(
+                .addFilter("/*", new SiteMeshFilter(
                         new BasicSelector("text/html"),
                         processor,
                         new PathBasedDecoratorSelector()
@@ -92,7 +92,7 @@ public class WebAppContextTest extends TestCase {
                 new CoreHtmlTagRuleBundle(), new DecoratorTagRuleBundle());
 
         WebEnvironment web = new WebEnvironment.Builder()
-                .addFilter("/*", new BaseSiteMeshFilter(
+                .addFilter("/*", new SiteMeshFilter(
                         new BasicSelector("text/html"),
                         processor,
                         new PathBasedDecoratorSelector()

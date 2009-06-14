@@ -1,4 +1,4 @@
-package org.sitemesh.config;
+package org.sitemesh.config.properties;
 
 import junit.framework.TestCase;
 

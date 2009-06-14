@@ -12,7 +12,7 @@ package org.sitemesh.config;
  */
 public interface ObjectFactory {
 
-    Object create(String name) throws SiteMeshConfigException;
+    Object create(String name) throws IllegalArgumentException;
 
     /**
      * Default implementation of {@link ObjectFactory} that treats the object
@@ -20,16 +20,16 @@ public interface ObjectFactory {
      * with the default constructor.
      */
     public static class Default implements ObjectFactory {
-        public Object create(String name) throws SiteMeshConfigException {
+        public Object create(String name) {
             try {
                 Class cls = Class.forName(name);
                 return cls.newInstance();
             } catch (ClassNotFoundException e) {
-                throw new SiteMeshConfigException("Could not instantiate " + name, e);
+                throw new IllegalArgumentException("Could not instantiate " + name, e);
             } catch (InstantiationException e) {
-                throw new SiteMeshConfigException("Could not instantiate " + name, e);
+                throw new IllegalArgumentException("Could not instantiate " + name, e);
             } catch (IllegalAccessException e) {
-                throw new SiteMeshConfigException("Could not instantiate " + name, e);
+                throw new IllegalArgumentException("Could not instantiate " + name, e);
             }
         }
     }

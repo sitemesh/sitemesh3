@@ -23,11 +23,12 @@ import java.util.LinkedList;
  * @param <BUILDER> The type to return from the builder methods. Subclasses
  *                  should type this as their own class type.
  * @param <CONTEXT> The type of SiteMesh context used.
+ * @param <RESULT>  The resulting type built by the builder.
  *
  * @author Joe Walnes
  */
 public abstract class BaseSiteMeshBuilder
-        <BUILDER extends BaseSiteMeshBuilder, CONTEXT extends SiteMeshContext> {
+        <BUILDER extends BaseSiteMeshBuilder, CONTEXT extends SiteMeshContext, RESULT> {
 
     private List<TagRuleBundle> tagRuleBundles = new LinkedList<TagRuleBundle>();
     private ContentProcessor customContentProcessor;
@@ -39,6 +40,8 @@ public abstract class BaseSiteMeshBuilder
     protected BaseSiteMeshBuilder() {
         setupDefaults();
     }
+
+    public abstract RESULT create() throws IllegalStateException;
 
     /**
      * Setup default settings. Subclasses can override this to add more settings.

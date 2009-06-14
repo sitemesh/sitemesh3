@@ -12,12 +12,12 @@ import java.nio.CharBuffer;
  * of a response to a temporary buffer where it can then be post-processed
  * before being served.
  * <p>
- * Subclasses should implement:
+ * Subclasses should:
  * <ul>
- * <li>{@link #getSelector(HttpServletRequest)}: Which provides rules for
+ * <li>Pass in a {@link Selector} to the constructor: Which provides rules for
  * selecting which requests this filter should be applied to.
  * For a basic implementation, use  {@link BasicSelector}.</li>
- * <li>{@link #postProcess(String, CharBuffer, HttpServletRequest, HttpServletResponse)}:
+ * <li>Implement {@link #postProcess(String, CharBuffer, HttpServletRequest, HttpServletResponse)}:
  * Perform the actual post processing of the content that was buffered.</li>
  * </ul> 
  * <h2>Example</h2>
@@ -26,9 +26,8 @@ import java.nio.CharBuffer;
  * 'sheep' with 'cheese'. Yes, it's pointless, but should illustrate usage.</p>
  * <pre>
  * public class SheepToCheeseFilter extends ContentBufferingFilter {
- *   public Selector getSelector() {
- *
- *     return new BasicSelector("text/plain");
+ *   public SheepToCheeseFilter() {
+ *     super(new BasicSelector("text/plain"));
  *   }
  *   public boolean postProcess(String contentType, CharBuffer buffer,
  *                              HttpServletRequest request, HttpServletResponse response) {
@@ -50,7 +49,14 @@ import java.nio.CharBuffer;
  */
 public abstract class ContentBufferingFilter implements Filter {
 
-    protected abstract Selector getSelector(HttpServletRequest request);
+    private final Selector selector;
+
+    protected ContentBufferingFilter(Selector selector) {
+        if (selector == null) {
+            throw new IllegalArgumentException("selector cannot be null");
+        }
+        this.selector = selector;
+    }
 
     /**
      * @return Whether the content was processed. If false, the original content shall
@@ -91,14 +97,12 @@ public abstract class ContentBufferingFilter implements Filter {
 
         FilterConfig filterConfig = getFilterConfig();
         if (filterConfig == null) {
-            throw new ServletException("Filter.init() has not been called.");
+            throw new ServletException(getClass().getName() + ".init() has not been called.");
         }
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         ServletContext servletContext = filterConfig.getServletContext();
-
-        Selector selector = getSelector(request);
 
         if (!selector.shouldBufferForRequest(request)) {
             // Optimization: If the content doesn't need to be buffered,
