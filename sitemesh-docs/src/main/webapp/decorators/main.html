@@ -33,6 +33,23 @@
 	padding: 10px;
       }
 
+      /* Top links */
+      #topLinks {
+	text-align: right;
+      }
+
+      #topLinks a {
+	padding: 0.5em;
+	display: inline-block;
+	margin: 0;
+	font-size: 110%;
+      }
+
+      #topLinks a.selected {
+        background-color: #fb9d2c;
+	color: #ffffff;
+      }
+
       /* Curve the corners of the page to match the logo. Works on FireFox/Safari/Chrome, but not IE/Opera (though degrades nicely). */
       #layoutContainer {
 	border-radius: 15px;
@@ -55,16 +72,26 @@
 	-webkit-border-bottom-left-radius: 10px;
 	-webkit-border-bottom-right-radius: 10px;
       }
+ 
     </style>
     <sitemesh:write property='head'/>
   </head>
   <body>
     <div id='layoutContainer'>
       <div class='layoutSection'>
-        <a href="./index.html"><img src='decorators/sitemesh-logo.gif' width='330' height='82' alt='SiteMesh 3' border='0' style='float:left; padding-right: 20px'/></a>
-	<p>This site is a work in progress. If you got here my mistake, you're probably looking for the
-	<a href="http://www.opensymphony.com/sitemesh/">SiteMesh 2 documentation</a>.</p>
-	<br style='clear:left'/>
+        <a href="http://www.sitemesh.org/" title="Return to SiteMesh homepage"><img src='decorators/sitemesh-logo.gif' width='330' height='82' alt='SiteMesh 3' border='0' style='float: left; padding-right: 20px'/></a>
+	    <div id="topLinks">
+	      <a href="http://www.sitemesh.org/overview/" title="Learn about what SiteMesh is, why it's useful, and how it can help you">Overview</a>
+          <a href="http://www.sitemesh.org/download/" title="Download the latest version of the SiteMesh library, examples and documentation">Download</a>
+          <a class="selected" href="http://docs.sitemesh.org/" title="Browse the SiteMesh user manual">Documentation</a>
+	      <a href="http://www.sitemesh.org/discuss/" title="Get help, and discuss SiteMesh with other users">Discuss</a>
+	      <a href="http://www.sitemesh.org/contribute/" title="Get involved in the SiteMesh project - suggest features, report issues, contribute changes...">Contribute</a>
+	    </div>
+	    <p id="linkTitle">
+	      This site is a work in progress. If you got here my mistake, you're probably looking for the
+	      <a href="http://www.opensymphony.com/sitemesh/">SiteMesh 2 documentation</a>.
+	    </p>
+	    <span style='clear:left'></span>
       </div>
       <div class='layoutSection' style='background-color: white; text-align: justify;'>
         <h1 style='margin: 0;'><sitemesh:write property='title'/></h1>
