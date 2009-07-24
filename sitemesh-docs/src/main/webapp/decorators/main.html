@@ -6,56 +6,127 @@
       /* Shared style */
       body {
         font-family: "Trebuchet MS", verdana, arial, sans-serif;
-	font-size: 12px;
-	background: #cacaca url('decorators/background.png') repeat-x scroll 0 0;
-	padding: 0;
+        font-size: 12px;
+        background: #cacaca url('decorators/background.png') repeat-x scroll 0 0;
+        padding: 0;
       }
       pre {
         background-color: #eeeeee;
-	border: 1px solid #aaaaaa;
-	padding: 4px;
-	margin: 20px;
-	overflow: auto;
+        border: 1px solid #aaaaaa;
+        padding: 4px;
+        margin: 20px;
+        overflow: auto;
       }
 
       /* Decorator layout */
       #layoutContainer {
         width: 800px;
-	border: 1px solid #aaaaaa;
-	margin: 0 auto;
-	padding: 4px 0 0 4px;
-	background-color: #cccccc;
+        border: 1px solid #aaaaaa;
+        margin: 0 auto;
+        padding: 4px 0 0 4px;
+        background-color: #cccccc;
       }
       .layoutSection {
-	border: 1px solid #aaaaaa;
-	background-color: #eeeeee;
-	margin: 0 4px 4px 0;
-	padding: 10px;
+        border: 1px solid #aaaaaa;
+        background-color: #ffffff;
+        margin: 0 4px 4px 0;
+        padding: 10px;
       }
+
+      /* Top links */
+      #topLinks {
+        text-align: right;
+      }
+
+      #topLinks a {
+        padding: 0.5em;
+        display: inline-block;
+        margin: 0;
+        font-size: 110%;
+      }
+
+      #topLinks a:hover {
+        background-color: #f9f9f9;
+      }
+
+      #topLinks a.selected {
+        background-color: #fb9d2c;
+        color: #ffffff;
+      }
+
+      /* Curve the corners of the page to match the logo. Works on FireFox/Safari/Chrome, but not IE/Opera (though degrades nicely). */
+      #layoutContainer {
+        border-radius: 15px;
+        -moz-border-radius: 15px;
+        -webkit-border-radius: 15px;
+      }
+      .layoutSection:first-child {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        -moz-border-radius-topleft: 10px;
+        -moz-border-radius-topright: 10px;
+        -webkit-border-top-left-radius: 10px;
+        -webkit-border-top-right-radius: 10px;
+      }
+      .layoutSection:last-child {
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        -moz-border-radius-bottomleft: 10px;
+        -moz-border-radius-bottomright: 10px;
+        -webkit-border-bottom-left-radius: 10px;
+        -webkit-border-bottom-right-radius: 10px;
+      }
+ 
     </style>
     <sitemesh:write property='head'/>
   </head>
   <body>
     <div id='layoutContainer'>
       <div class='layoutSection'>
-        <a href="./index.html"><img src='decorators/sitemesh-logo.png' width='317' height='122' alt='SiteMesh 3' border='0'/></a>
+        <a href="http://www.sitemesh.org/" title="Return to SiteMesh homepage"><img src='decorators/sitemesh-logo.gif' width='330' height='82' alt='SiteMesh 3' border='0' style='float: left; padding-right: 20px'/></a>
+        <div id="topLinks">
+          <a href="http://www.sitemesh.org/overview/" title="Learn about what SiteMesh is, why it's useful, and how it can help you">Overview</a>
+          <a href="http://www.sitemesh.org/download/" title="Download the latest version of the SiteMesh library, examples and documentation">Download</a>
+          <a class="selected" href="http://docs.sitemesh.org/" title="Browse the SiteMesh user manual">Documentation</a>
+          <a href="http://www.sitemesh.org/discuss/" title="Get help, and discuss SiteMesh with other users">Discuss</a>
+          <a href="http://www.sitemesh.org/contribute/" title="Get involved in the SiteMesh project - suggest features, report issues, contribute changes...">Contribute</a>
+        </div>
+        <p id="linkTitle">
+            This site is a work in progress. If you got here my mistake, you're probably looking for the
+            <a href="http://www.opensymphony.com/sitemesh/">SiteMesh 2 documentation</a>.
+        </p>
+        <span style='clear:left'></span>
       </div>
       <div class='layoutSection' style='background-color: white; text-align: justify;'>
         <h1 style='margin: 0;'><sitemesh:write property='title'/></h1>
 
         <sitemesh:write property='body'>
-	  <h1>Here is a title</h1>
-	  <p>Main body goes here.<p>
-	  <p>Blah de blah blah blah blah blah blah de blah blah blah blah blah blah de blah blah blah blah blah blah.
-	  Blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah. 
-	  Blah de blah blah blah blah blah blah de blah blah blah blah blah blah de blah blah blah blah blah blah.
-	  Blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah. </p>	  
-	</sitemesh:write>
+          <h1>Here is a title</h1>
+          <p>Main body goes here.<p>
+          <p>Blah de blah blah blah blah blah blah de blah blah blah blah blah blah de blah blah blah blah blah blah.
+          Blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah. 
+          Blah de blah blah blah blah blah blah de blah blah blah blah blah blah de blah blah blah blah blah blah.
+          Blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah. </p>	  
+        </sitemesh:write>
 
       </div>
       <div class='layoutSection' style='text-align: center'>
         &copy; 1999-2009 - This site built with SiteMesh (of course)
       </div>
     </div>
+
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+    try {
+      var pageTracker = _gat._getTracker("UA-110973-3");
+      pageTracker._setDomainName(".sitemesh.org"); // Track across all *.sitemesh.org subdomains.
+      pageTracker._trackPageview();
+    } catch(err) {}
+    </script>
+
   </body>
 </html>
