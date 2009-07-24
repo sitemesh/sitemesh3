@@ -189,6 +189,19 @@ public abstract class BaseSiteMeshBuilder
     }
 
     /**
+     * Add multiple decorator paths to be used for a specific content path. Use this to apply multiple
+     * decorators to a single page.
+     *
+     * <p>Note: If {@link #setCustomDecoratorSelector(DecoratorSelector)} is called,
+     * any decorator paths are ignored, as they are only used by the default
+     * DecoratorSelector implementation.</p>
+     */
+    public BUILDER addDecoratorPaths(String contentPath, List<String> decoratorPaths) {
+        pathBasedDecoratorSelector.put(contentPath, decoratorPaths.toArray(new String[decoratorPaths.size()]));
+        return self();
+    }
+
+    /**
      * Add a decorator path to be used for a specific content path.
      *
      * <p>Note: If {@link #setCustomDecoratorSelector(DecoratorSelector)} is called,

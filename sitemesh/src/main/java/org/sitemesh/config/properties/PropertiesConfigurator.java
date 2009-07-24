@@ -28,6 +28,7 @@ public class PropertiesConfigurator {
 
         // TagRuleBundles
         String[] ruleSetNames = properties.getStringArray(TAG_RULE_BUNDLES_PARAM);
+        // TODO: Support clearTagRuleBundles()
         for (String ruleSetName : ruleSetNames) {
             builder.addTagRuleBundle((TagRuleBundle) objectFactory.create(ruleSetName));
         }

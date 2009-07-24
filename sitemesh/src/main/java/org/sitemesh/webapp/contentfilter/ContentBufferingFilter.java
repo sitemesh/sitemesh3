@@ -97,6 +97,7 @@ public abstract class ContentBufferingFilter implements Filter {
 
         FilterConfig filterConfig = getFilterConfig();
         if (filterConfig == null) {
+            // TODO: Is this really necessary? Can we survive without init() being called?
             throw new ServletException(getClass().getName() + ".init() has not been called.");
         }
 

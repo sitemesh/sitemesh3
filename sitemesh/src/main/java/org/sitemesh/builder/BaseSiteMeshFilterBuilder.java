@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.Filter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Functionality for building a {@link org.sitemesh.webapp.SiteMeshFilter}.
@@ -71,6 +73,17 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
      */
     public BUILDER setMimeTypes(String... mimeTypes) {
         this.mimeTypes = Arrays.asList(mimeTypes);
+        return self();
+    }
+
+    /**
+     * Set MIME types that the Filter should intercept. The default
+     * is <code>{"text/html"}</code>.
+     *
+     * <p>Note: The MIME types are ignored if {@link #setCustomSelector(Selector)} is called.</p>
+     */
+    public BUILDER setMimeTypes(List<String> mimeTypes) {
+        this.mimeTypes = mimeTypes;
         return self();
     }
 
