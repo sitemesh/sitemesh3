@@ -2,17 +2,20 @@ package org.sitemesh.config;
 
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.properties.PropertiesFilterConfigurator;
+import org.sitemesh.config.xml.XmlFilterConfigurator;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.FilterChain;
+import javax.servlet.*;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Enumeration;
 import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
 
 /**
@@ -107,7 +110,7 @@ public class ConfigurableSiteMeshFilter implements Filter {
         Map<String, String> initParams = new HashMap<String, String>();
         for (Enumeration initParameterNames = filterConfig.getInitParameterNames(); initParameterNames.hasMoreElements();) {
             String key = (String) initParameterNames.nextElement();
-            String value = filterConfig.getInitParameter(key);
+            String value = filterConfig.getInitParameter(key).trim();
             initParams.put(key, value);
         }
         return initParams;
@@ -115,17 +118,86 @@ public class ConfigurableSiteMeshFilter implements Filter {
 
     @SuppressWarnings("UnusedDeclaration")
     protected Filter setup(FilterConfig filterConfig, Map<String, String> initParams) throws ServletException {
+        ObjectFactory objectFactory = getObjectFactory();
         SiteMeshFilterBuilder builder = new SiteMeshFilterBuilder();
-        new PropertiesFilterConfigurator(getObjectFactory(), initParams)
+
+        new PropertiesFilterConfigurator(objectFactory, initParams)
                 .configureFilter(builder);
 
+        new XmlFilterConfigurator(getObjectFactory(),
+                loadConfigXml(filterConfig, getConfigFileName(initParams)))
+                .configureFilter(builder);
 
         return builder.create();
     }
 
-    protected ObjectFactory.Default getObjectFactory() {
+    /**
+     * Gets the SiteMesh XML config file name.
+     * Looks for a 'config' property in the Filter init-params. 
+     * If not found, defaults to '/WEB-INF/sitemesh3.xml'.
+     */
+    protected String getConfigFileName(Map<String, String> initParams) {
+        String config = initParams.get("config");
+        if (config == null || config.isEmpty()) {
+            config = "/WEB-INF/sitemesh3.xml";
+        }
+        return config;
+    }
+
+    protected ObjectFactory getObjectFactory() {
         return new ObjectFactory.Default();
     }
 
+    /**
+     * Load the XML config file. Will try a number of locations until it finds the file.
+     * <pre>
+     * - Will first search for a file on disk relative to the root of the web-app.
+     * - Then a file with the absolute path.
+     * - Then a file as a resource in the ServletContext (allowing for files embedded in a .war file).
+     * - If none of those find the file, null will be returned.
+     * </pre>
+     */
+    protected Element loadConfigXml(FilterConfig filterConfig, String configFilePath) throws ServletException {
+        // TODO: Don't do this every request!
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+
+            File configFile = new File(configFilePath);
+
+            ServletContext servletContext = filterConfig.getServletContext();
+
+            if (servletContext.getRealPath(configFilePath) != null) {
+                configFile = new File(servletContext.getRealPath(configFilePath));
+            }
+
+            if (configFile.canRead()) {
+                try {
+                    Document document = documentBuilder.parse(configFile);
+                    return document.getDocumentElement();
+                } catch (SAXException e) {
+                    throw new ServletException("Could not parse " + configFile.getAbsolutePath(), e);
+                }
+            } else {
+                InputStream stream = servletContext.getResourceAsStream(configFilePath);
+                if (stream == null) {
+                    return null;
+                }
+                try {
+                    Document document = documentBuilder.parse(stream);
+                    return document.getDocumentElement();
+                } catch (SAXException e) {
+                    throw new ServletException("Could not parse " + configFilePath + " (loaded by ServletContext)", e);
+                } finally {
+                    stream.close();
+                }
+            }
+
+        } catch (IOException e) {
+            throw new ServletException(e);
+        } catch (ParserConfigurationException e) {
+            throw new ServletException("Could not initialize DOM parser", e);
+        }
+    }
 }
 
