@@ -5,6 +5,7 @@ import org.sitemesh.content.Content;
 import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.webapp.contentfilter.ContentBufferingFilter;
 import org.sitemesh.webapp.contentfilter.Selector;
+import org.sitemesh.webapp.contentfilter.HttpServletRequestFilterable;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -87,5 +88,10 @@ public class SiteMeshFilter extends ContentBufferingFilter {
                                           HttpServletResponse response) {
         return new WebAppContext(contentType, request, response,
                 getFilterConfig().getServletContext(), contentProcessor);
+    }
+
+    @Override
+    protected HttpServletRequest wrapRequest(HttpServletRequest request) {
+        return new HttpServletRequestFilterable(request);
     }
 }

@@ -148,7 +148,7 @@ public abstract class ContentBufferingFilter implements Filter {
 
         // Apply next filter/servlet, writing response to buffer.
         HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, selector);
-        filterChain.doFilter(request, responseBuffer);
+        filterChain.doFilter(wrapRequest(request), responseBuffer);
         CharBuffer buffer = responseBuffer.getBuffer();
 
         // If content was buffered, post-process it.
@@ -179,4 +179,10 @@ public abstract class ContentBufferingFilter implements Filter {
         }
     }
 
+    /**
+     * Override to wrap the HttpServletRequest sent to the end point to be buffered.
+     */
+    protected HttpServletRequest wrapRequest(HttpServletRequest request) {
+        return request;
+    }
 }
