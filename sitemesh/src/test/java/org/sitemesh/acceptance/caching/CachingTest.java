@@ -1,9 +1,7 @@
 package org.sitemesh.acceptance.caching;
 
 import org.sitemesh.webapp.WebEnvironment;
-import org.sitemesh.webapp.WebAppContext;
-import org.sitemesh.config.SiteMeshConfig;
-import org.sitemesh.config.SiteMeshFilter;
+import org.sitemesh.builder.SiteMeshFilterBuilder;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -51,8 +49,7 @@ public class CachingTest extends TestCase {
         web = new WebEnvironment.Builder()
                 .addServlet("/content", contentServlet)
                 .addServlet("/decorator", decoratorServlet)
-                .addFilter("/*", new SiteMeshFilter(new SiteMeshConfig<WebAppContext>()
-                        .addDecoratorPath("/content", "/decorator")))
+                .addFilter("/*", new SiteMeshFilterBuilder().addDecoratorPath("/content", "/decorator").create())
                 .create();
     }
 
