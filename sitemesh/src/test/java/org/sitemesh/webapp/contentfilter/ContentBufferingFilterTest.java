@@ -31,7 +31,7 @@ public class ContentBufferingFilterTest extends TestCase {
                 .addFilter("/filtered", new MyContentBufferingFilter() {
                     @Override
                     protected boolean postProcess(String contentType, CharBuffer buffer,
-                                              HttpServletRequest request, HttpServletResponse response)
+                                              HttpServletRequest request, HttpServletResponse response, ResponseMetaData metaData)
                             throws IOException, ServletException {
                         // Convert content to uppercase.
                         response.getOutputStream().print(buffer.toString().toUpperCase());
@@ -65,7 +65,7 @@ public class ContentBufferingFilterTest extends TestCase {
                 .addStaticContent("/filtered", "text/html", "1")
                 .addFilter("/filtered", new MyContentBufferingFilter() {
                     @Override
-                    protected boolean postProcess(String contentType, CharBuffer buffer, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+                    protected boolean postProcess(String contentType, CharBuffer buffer, HttpServletRequest request, HttpServletResponse response, ResponseMetaData metaData) throws IOException, ServletException {
                         response.getOutputStream().print("1234567890");
                         return true;
                     }
@@ -89,7 +89,7 @@ public class ContentBufferingFilterTest extends TestCase {
                 .addFilter("/*", new MyContentBufferingFilter() {
                     @Override
                     protected boolean postProcess(String contentType, CharBuffer buffer,
-                                              HttpServletRequest request, HttpServletResponse response)
+                                              HttpServletRequest request, HttpServletResponse response, ResponseMetaData metaData)
                             throws IOException, ServletException {
                         response.getOutputStream().print("FILTERED");
                         return true;

@@ -6,6 +6,7 @@ import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.webapp.contentfilter.ContentBufferingFilter;
 import org.sitemesh.webapp.contentfilter.Selector;
 import org.sitemesh.webapp.contentfilter.HttpServletRequestFilterable;
+import org.sitemesh.webapp.contentfilter.ResponseMetaData;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -60,9 +61,10 @@ public class SiteMeshFilter extends ContentBufferingFilter {
      */
     @Override
     protected boolean postProcess(String contentType, CharBuffer buffer,
-                                  HttpServletRequest request, HttpServletResponse response)
+                                  HttpServletRequest request, HttpServletResponse response,
+                                  ResponseMetaData metaData)
             throws IOException, ServletException {
-        WebAppContext context = createContext(contentType, request, response);
+        WebAppContext context = createContext(contentType, request, response, metaData);
         Content content = contentProcessor.build(buffer, context);
         if (content == null) {
             return false;
@@ -85,9 +87,9 @@ public class SiteMeshFilter extends ContentBufferingFilter {
      * types of context.
      */
     protected WebAppContext createContext(String contentType, HttpServletRequest request,
-                                          HttpServletResponse response) {
+                                          HttpServletResponse response, ResponseMetaData metaData) {
         return new WebAppContext(contentType, request, response,
-                getFilterConfig().getServletContext(), contentProcessor);
+                getFilterConfig().getServletContext(), contentProcessor, metaData);
     }
 
     @Override

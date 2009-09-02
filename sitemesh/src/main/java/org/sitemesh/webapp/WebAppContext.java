@@ -8,6 +8,7 @@ import org.sitemesh.content.ContentProperty;
 import org.sitemesh.webapp.contentfilter.BasicSelector;
 import org.sitemesh.webapp.contentfilter.HttpServletResponseBuffer;
 import org.sitemesh.webapp.contentfilter.HttpServletRequestFilterable;
+import org.sitemesh.webapp.contentfilter.ResponseMetaData;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -44,15 +45,17 @@ public class WebAppContext extends BaseSiteMeshContext {
     private final HttpServletRequest request;
     private final HttpServletResponse response;
     private final ServletContext servletContext;
+    private final ResponseMetaData metaData;
 
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
-                         ContentProcessor contentProcessor) {
+                         ContentProcessor contentProcessor, ResponseMetaData metaData) {
         super(contentProcessor);
         this.contentType = contentType;
         this.request = request;
         this.response = response;
         this.servletContext = servletContext;
+        this.metaData = metaData;
     }
 
     public HttpServletRequest getRequest() {
@@ -107,8 +110,9 @@ public class WebAppContext extends BaseSiteMeshContext {
      */
     @Override
     protected void decorate(String decoratorPath, Content content, Writer out) throws IOException {
+        HttpServletRequest filterableRequest = new HttpServletRequestFilterable(request);
         // Wrap response so output gets buffered.
-        HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, new BasicSelector() {
+        HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, metaData, new BasicSelector() {
             @Override
             public boolean shouldBufferForContentType(String contentType, String mimeType, String encoding) {
                 return true; // We know we should buffer.
@@ -126,7 +130,7 @@ public class WebAppContext extends BaseSiteMeshContext {
 
         try {
             // Main dispatch.
-            dispatch(request, responseBuffer, decoratorPath);
+            dispatch(filterableRequest, responseBuffer, decoratorPath);
 
             // Write out the buffered output.
             CharBuffer buffer = responseBuffer.getBuffer();
@@ -151,8 +155,7 @@ public class WebAppContext extends BaseSiteMeshContext {
         if (dispatcher == null) {
             throw new ServletException("Not found: " + path);
         }
-        HttpServletRequest filterableRequest = new HttpServletRequestFilterable(request);
-        dispatcher.include(filterableRequest, response);
+        dispatcher.include(request, response);
     }
 
 }

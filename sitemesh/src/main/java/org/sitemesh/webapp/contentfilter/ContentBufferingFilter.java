@@ -17,7 +17,7 @@ import java.nio.CharBuffer;
  * <li>Pass in a {@link Selector} to the constructor: Which provides rules for
  * selecting which requests this filter should be applied to.
  * For a basic implementation, use  {@link BasicSelector}.</li>
- * <li>Implement {@link #postProcess(String, CharBuffer, HttpServletRequest, HttpServletResponse)}:
+ * <li>Implement {@link #postProcess(String, CharBuffer, HttpServletRequest, HttpServletResponse, ResponseMetaData)}:
  * Perform the actual post processing of the content that was buffered.</li>
  * </ul> 
  * <h2>Example</h2>
@@ -63,7 +63,8 @@ public abstract class ContentBufferingFilter implements Filter {
      *         be written back out.
      */
     protected abstract boolean postProcess(String contentType, CharBuffer buffer,
-                                           HttpServletRequest request, HttpServletResponse response)
+                                           HttpServletRequest request, HttpServletResponse response,
+                                           ResponseMetaData responseMetaData)
             throws IOException, ServletException;
 
     private FilterConfig filterConfig;
@@ -147,16 +148,22 @@ public abstract class ContentBufferingFilter implements Filter {
                                         HttpServletResponse response, Selector selector) throws IOException, ServletException {
 
         // Apply next filter/servlet, writing response to buffer.
-        HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, selector);
+        ResponseMetaData metaData = new ResponseMetaData();
+        HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, metaData, selector);
         filterChain.doFilter(wrapRequest(request), responseBuffer);
         CharBuffer buffer = responseBuffer.getBuffer();
 
         // If content was buffered, post-process it.
         if (buffer != null) {
-            boolean processed = postProcess(responseBuffer.getContentType(), buffer, request, response);
+            boolean processed = postProcess(responseBuffer.getContentType(), buffer, request, response, metaData);
             if (!processed) {
                 writeOriginal(response, buffer, responseBuffer);
             }
+        }
+
+        long lastModified = metaData.getLastModified();
+        if (lastModified > -1 && !response.containsHeader("Last-Modified")) {
+            response.setDateHeader("Last-Modified", lastModified);
         }
 
     }

@@ -31,11 +31,14 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     private final RoutablePrintWriter routablePrintWriter;
     private final RoutableServletOutputStream routableServletOutputStream;
     private final Selector selector;
+    private final ResponseMetaData metaData;
 
     private Buffer buffer;
 
-    public HttpServletResponseBuffer(final HttpServletResponse originalResponse, Selector selector) {
+
+    public HttpServletResponseBuffer(final HttpServletResponse originalResponse, ResponseMetaData metaData, Selector selector) {
         super(originalResponse);
+        this.metaData = metaData;
         this.selector = selector;
 
         routablePrintWriter = new RoutablePrintWriter(new RoutablePrintWriter.DestinationFactory() {
@@ -162,10 +165,11 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     @Override
     public void setHeader(String name, String value) {
         // Prevent content-length being set if buffering.
-        if (name.toLowerCase().equals("content-type")) {
+        String lowerName = name.toLowerCase();
+        if (lowerName.equals("content-type")) {
             // ensure ContentType is always set through setContentType()
             setContentType(value);
-        } else if (buffer == null || !name.toLowerCase().equals("content-length")) {
+        } else if (buffer == null || !lowerName.equals("content-length")) {
             super.setHeader(name, value);
         }
     }
@@ -194,6 +198,24 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
         // Prevent content-length being set if buffering.
         if (buffer == null || !name.toLowerCase().equals("content-length")) {
             super.addIntHeader(name, value);
+        }
+    }
+
+    @Override
+    public void setDateHeader(String name, long value) {
+        if (name.toLowerCase().equals("last-modified")) {
+            metaData.updateLastModified(value);
+        } else {
+            super.setDateHeader(name, value);
+        }
+    }
+
+    @Override
+    public void addDateHeader(String name, long value) {
+        if (name.toLowerCase().equals("last-modified")) {
+            metaData.updateLastModified(value);
+        } else {
+            super.addDateHeader(name, value);
         }
     }
 
