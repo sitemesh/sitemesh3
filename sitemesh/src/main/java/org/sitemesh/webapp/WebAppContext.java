@@ -7,6 +7,7 @@ import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.content.ContentProperty;
 import org.sitemesh.webapp.contentfilter.BasicSelector;
 import org.sitemesh.webapp.contentfilter.HttpServletResponseBuffer;
+import org.sitemesh.webapp.contentfilter.HttpServletRequestFilterable;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -150,7 +151,8 @@ public class WebAppContext extends BaseSiteMeshContext {
         if (dispatcher == null) {
             throw new ServletException("Not found: " + path);
         }
-        dispatcher.include(request, response);
+        HttpServletRequest filterableRequest = new HttpServletRequestFilterable(request);
+        dispatcher.include(filterableRequest, response);
     }
 
 }
