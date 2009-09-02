@@ -120,9 +120,6 @@ public class CachingTest extends TestCase {
                 expectedLastModifiedDate.toHttpHeaderFormat(), web.getHeader(LAST_MODIFIED));
         assertEquals("Expected content to be decorated",
                 "<html><body>Decorated: Content</body></html>", web.getBody());
-
-        assertTrue(contentServlet.handledGetRequest());
-        assertTrue(decoratorServlet.handledGetRequest());
     }
 
     /**
@@ -131,9 +128,6 @@ public class CachingTest extends TestCase {
     private void assertReturnedNotModified() {
         assertEquals("Expected request to return NOT MODIFIED (304) status.",
                 HttpServletResponse.SC_NOT_MODIFIED,  web.getStatus());
-
-        assertFalse(contentServlet.handledGetRequest());
-        assertFalse(decoratorServlet.handledGetRequest());
     }
 
     /**
@@ -141,8 +135,7 @@ public class CachingTest extends TestCase {
      *
      * <p>If the If-Modified-Header in the request is older than the date passed
      * into {@link #setLastModified(LastModifiedDate)}, then the content
-     * will be returned as normal (this can be tested with
-     * {@link #handledGetRequest()}. Otherwise, a NOT_MODIFIED response
+     * will be returned as normal. Otherwise, a NOT_MODIFIED response
      * will be returned.</p>
      *
      * <p>It is actually {@link javax.servlet.http.HttpServlet} that implements
@@ -152,7 +145,6 @@ public class CachingTest extends TestCase {
     private static class CachingServlet extends HttpServlet {
 
         private LastModifiedDate lastModifiedDate;
-        private boolean handledGetRequest;
         private final String content;
 
         /**
@@ -184,14 +176,6 @@ public class CachingTest extends TestCase {
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
             response.setContentType("text/html");
             response.getWriter().print(content);
-            handledGetRequest = true;
-        }
-
-        /**
-         * Returns whether doGet() was called.
-         */
-        public boolean handledGetRequest() {
-            return handledGetRequest;
         }
 
     }

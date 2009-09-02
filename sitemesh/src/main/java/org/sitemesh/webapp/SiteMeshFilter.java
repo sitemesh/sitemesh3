@@ -78,6 +78,19 @@ public class SiteMeshFilter extends ContentBufferingFilter {
         if (content == null) {
             return false;
         }
+
+        // Ensure both content and decorators are used to generate HTTP caching headers.
+        long lastModified = metaData.getLastModified();
+        long ifModifiedSince = request.getDateHeader("If-Modified-Since");
+        if (lastModified > -1 && !response.containsHeader("Last-Modified")) {
+            if (ifModifiedSince < (lastModified / 1000 * 1000)) {
+                response.setDateHeader("Last-Modified", lastModified);
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                return true;
+            }
+        }
+
         content.getData().writeValueTo(response.getWriter());
         return true;
     }

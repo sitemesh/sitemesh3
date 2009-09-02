@@ -161,11 +161,6 @@ public abstract class ContentBufferingFilter implements Filter {
             }
         }
 
-        long lastModified = metaData.getLastModified();
-        if (lastModified > -1 && !response.containsHeader("Last-Modified")) {
-            response.setDateHeader("Last-Modified", lastModified);
-        }
-
     }
 
     /**
