@@ -155,7 +155,7 @@ public class WebAppContext extends BaseSiteMeshContext {
         if (dispatcher == null) {
             throw new ServletException("Not found: " + path);
         }
-        dispatcher.include(request, response);
+        dispatcher.forward(request, response);
     }
 
 }
