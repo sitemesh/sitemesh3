@@ -148,27 +148,26 @@ public class CachingTest extends TestCase {
         assertReturnedFreshPageModifiedOn(NEWER_DATE);
     }
 
-// TODO: Handle these edge cases.    
-//    public void testServesFreshPageForBigExcludedMimeTypeIfClientTimeNotKnown() throws Exception {
-//        bigImageServlet.setLastModified(OLDER_DATE);
-//
-//        getFresh("/bigimage");
-//        assertReturnedFreshPageModifiedOn(OLDER_DATE);
-//    }
-//
-//    public void testServesNotModifiedForBigExcludedMimeTypeIfNoModified() throws Exception {
-//        bigImageServlet.setLastModified(OLDER_DATE);
-//
-//        getIfModifiedSince("/bigimage", OLDER_DATE);
-//        assertReturnedNotModified();
-//    }
-//
-//    public void testServesFreshPageForBigExcludedMimeTypeIfModified() throws Exception {
-//        bigImageServlet.setLastModified(NEWER_DATE);
-//
-//        getIfModifiedSince("/bigimage", OLDER_DATE);
-//        assertReturnedFreshPageModifiedOn(NEWER_DATE);
-//    }
+    public void testServesFreshPageForBigExcludedMimeTypeIfClientTimeNotKnown() throws Exception {
+        bigImageServlet.setLastModified(OLDER_DATE);
+
+        getFresh("/bigimage");
+        assertReturnedFreshPageModifiedOn(OLDER_DATE);
+    }
+
+    public void testServesNotModifiedForBigExcludedMimeTypeIfNoModified() throws Exception {
+        bigImageServlet.setLastModified(OLDER_DATE);
+
+        getIfModifiedSince("/bigimage", OLDER_DATE);
+        assertReturnedNotModified();
+    }
+
+    public void testServesFreshPageForBigExcludedMimeTypeIfModified() throws Exception {
+        bigImageServlet.setLastModified(NEWER_DATE);
+
+        getIfModifiedSince("/bigimage", OLDER_DATE);
+        assertReturnedFreshPageModifiedOn(NEWER_DATE);
+    }
 
     // ------- Test helpers -------
 

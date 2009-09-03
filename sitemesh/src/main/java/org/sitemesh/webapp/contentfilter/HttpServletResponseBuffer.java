@@ -43,11 +43,13 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
 
         routablePrintWriter = new RoutablePrintWriter(new RoutablePrintWriter.DestinationFactory() {
             public PrintWriter activateDestination() throws IOException {
+                preCommit();
                 return originalResponse.getWriter();
             }
         });
         routableServletOutputStream = new RoutableServletOutputStream(new RoutableServletOutputStream.DestinationFactory() {
             public ServletOutputStream create() throws IOException {
+                preCommit();
                 return originalResponse.getOutputStream();
             }
         });
@@ -121,14 +123,22 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
         buffer = null;
         routablePrintWriter.updateDestination(new RoutablePrintWriter.DestinationFactory() {
             public PrintWriter activateDestination() throws IOException {
+                preCommit();
                 return getResponse().getWriter();
             }
         });
         routableServletOutputStream.updateDestination(new RoutableServletOutputStream.DestinationFactory() {
             public ServletOutputStream create() throws IOException {
+                preCommit();
                 return getResponse().getOutputStream();
             }
         });
+    }
+
+    /**
+     * Hook that is called just before the response is committed. Last chance to modify headers.
+     */
+    protected void preCommit() {
     }
 
     /**
