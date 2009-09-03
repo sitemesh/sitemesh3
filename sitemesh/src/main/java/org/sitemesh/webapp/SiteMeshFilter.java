@@ -5,7 +5,6 @@ import org.sitemesh.content.Content;
 import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.webapp.contentfilter.ContentBufferingFilter;
 import org.sitemesh.webapp.contentfilter.Selector;
-import org.sitemesh.webapp.contentfilter.HttpServletRequestFilterable;
 import org.sitemesh.webapp.contentfilter.ResponseMetaData;
 
 import javax.servlet.ServletException;
@@ -79,18 +78,6 @@ public class SiteMeshFilter extends ContentBufferingFilter {
             return false;
         }
 
-        // Ensure both content and decorators are used to generate HTTP caching headers.
-        long lastModified = metaData.getLastModified();
-        long ifModifiedSince = request.getDateHeader("If-Modified-Since");
-        if (lastModified > -1 && !response.containsHeader("Last-Modified")) {
-            if (ifModifiedSince < (lastModified / 1000 * 1000)) {
-                response.setDateHeader("Last-Modified", lastModified);
-            } else {
-                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                return true;
-            }
-        }
-
         content.getData().writeValueTo(response.getWriter());
         return true;
     }
@@ -105,8 +92,4 @@ public class SiteMeshFilter extends ContentBufferingFilter {
                 getFilterConfig().getServletContext(), contentProcessor, metaData);
     }
 
-    @Override
-    protected HttpServletRequest wrapRequest(HttpServletRequest request) {
-        return new HttpServletRequestFilterable(request);
-    }
 }

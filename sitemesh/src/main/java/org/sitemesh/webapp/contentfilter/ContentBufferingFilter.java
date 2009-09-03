@@ -154,11 +154,39 @@ public abstract class ContentBufferingFilter implements Filter {
         CharBuffer buffer = responseBuffer.getBuffer();
 
         // If content was buffered, post-process it.
+        boolean processed = false;
         if (buffer != null) {
-            boolean processed = postProcess(responseBuffer.getContentType(), buffer, request, response, metaData);
-            if (!processed) {
-                writeOriginal(response, buffer, responseBuffer);
+            processed = postProcess(responseBuffer.getContentType(), buffer, request, response, metaData);
+        }
+
+        // Ensure both content and decorators are used to generate HTTP caching headers.
+        if (!response.isCommitted()) {
+            long lastModified = metaData.getLastModified();
+            long ifModifiedSince = request.getDateHeader("If-Modified-Since");
+            if (lastModified > -1 && !response.containsHeader("Last-Modified")) {
+                if (ifModifiedSince < (lastModified / 1000 * 1000)) {
+                    response.setDateHeader("Last-Modified", lastModified);
+                } else {
+                    response.reset();
+                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                    return;
+                }
             }
+        } else {
+            // We get here if:
+            // * The filter has intercepted a request.
+            // * And Selector.shouldBufferForRequest() has returned true.
+            // * But Selector.shouldBufferForContentType() has returned false.
+            // * AND the size of the body exceeds that of the ServletRequest buffer.
+            // It's rare, but possible.
+            // In this case, it's too late to modify the HTTP headers, so we lose
+            // HTTP caching abilities.
+            // TODO: Handle this edge case.
+        }
+
+        // If no decoratoes applied, and we have some buffered content, write the original.
+        if (buffer != null && !processed) {
+            writeOriginal(response, buffer, responseBuffer);
         }
 
     }
@@ -185,6 +213,6 @@ public abstract class ContentBufferingFilter implements Filter {
      * Override to wrap the HttpServletRequest sent to the end point to be buffered.
      */
     protected HttpServletRequest wrapRequest(HttpServletRequest request) {
-        return request;
+        return new HttpServletRequestFilterable(request);
     }
 }

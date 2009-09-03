@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -31,6 +32,9 @@ public class CachingTest extends TestCase {
 
     // Two Servlets, one that serves the content for the request, and one that serves the decorator.
     private CachingServlet contentServlet;
+    private CachingServlet imageServlet;
+    private CachingServlet bigImageServlet;
+    private CachingServlet excludedContentServlet;
     private CachingServlet decoratorServlet;
 
     // The web container.
@@ -44,12 +48,21 @@ public class CachingTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        contentServlet = new CachingServlet("<html><body>Content</body></html>");
-        decoratorServlet = new CachingServlet("<html><body>Decorated: <sitemesh:write property='body'/></body></html>");
+        contentServlet = new CachingServlet("text/html", "<html><body>Content</body></html>");
+        imageServlet = new CachingServlet("image/gif", ";)");
+        bigImageServlet = new LargeContentServlet("image/gif", ":)");
+        excludedContentServlet = new CachingServlet("text/html", "<html><body>Undecorated Content</body></html>");
+        decoratorServlet = new CachingServlet("text/html", "<html><body>Decorated: <sitemesh:write property='body'/></body></html>");
         web = new WebEnvironment.Builder()
                 .addServlet("/content", contentServlet)
+                .addServlet("/excluded-content", excludedContentServlet)
+                .addServlet("/image", imageServlet)
+                .addServlet("/bigimage", bigImageServlet)
                 .addServlet("/decorator", decoratorServlet)
-                .addFilter("/*", new SiteMeshFilterBuilder().addDecoratorPath("/content", "/decorator").create())
+                .addFilter("/*", new SiteMeshFilterBuilder()
+                        .addDecoratorPath("/*", "/decorator")
+                        .addExcludedPath("/excluded-content")
+                        .create())
                 .create();
     }
 
@@ -57,7 +70,7 @@ public class CachingTest extends TestCase {
         contentServlet.setLastModified(NEWER_DATE);
         decoratorServlet.setLastModified(OLDER_DATE);
 
-        getIfModifiedSince(OLDER_DATE);
+        getIfModifiedSince("/content", OLDER_DATE);
         assertReturnedFreshPageModifiedOn(NEWER_DATE);
     }
 
@@ -65,7 +78,7 @@ public class CachingTest extends TestCase {
         contentServlet.setLastModified(OLDER_DATE);
         decoratorServlet.setLastModified(NEWER_DATE);
 
-        getIfModifiedSince(OLDER_DATE);
+        getIfModifiedSince("/content", OLDER_DATE);
         assertReturnedFreshPageModifiedOn(NEWER_DATE);
     }
 
@@ -73,7 +86,7 @@ public class CachingTest extends TestCase {
         contentServlet.setLastModified(NEWER_DATE);
         decoratorServlet.setLastModified(NEWER_DATE);
 
-        getIfModifiedSince(OLDER_DATE);
+        getIfModifiedSince("/content", OLDER_DATE);
         assertReturnedFreshPageModifiedOn(NEWER_DATE);
     }
 
@@ -81,7 +94,7 @@ public class CachingTest extends TestCase {
         contentServlet.setLastModified(OLDER_DATE);
         decoratorServlet.setLastModified(OLDER_DATE);
 
-        getIfModifiedSince(OLDER_DATE);
+        getIfModifiedSince("/content", OLDER_DATE);
         assertReturnedNotModified();
     }
 
@@ -89,25 +102,90 @@ public class CachingTest extends TestCase {
         contentServlet.setLastModified(NEWER_DATE);
         decoratorServlet.setLastModified(OLDER_DATE);
 
-        getFresh();
+        getFresh("/content");
         assertReturnedFreshPageModifiedOn(NEWER_DATE);
     }
+
+    public void testServesFreshPageForExcludedContentIfClientTimeNotKnown() throws Exception {
+        excludedContentServlet.setLastModified(OLDER_DATE);
+
+        getFresh("/excluded-content");
+        assertReturnedFreshPageModifiedOn(OLDER_DATE);
+    }
+
+    public void testServesNotModifiedForExcludedContentIfNoModified() throws Exception {
+        excludedContentServlet.setLastModified(OLDER_DATE);
+
+        getIfModifiedSince("/excluded-content", OLDER_DATE);
+        assertReturnedNotModified();
+    }
+
+    public void testServesFreshPageForContentMimeTypeIfModified() throws Exception {
+        excludedContentServlet.setLastModified(NEWER_DATE);
+
+        getIfModifiedSince("/excluded-content", OLDER_DATE);
+        assertReturnedFreshPageModifiedOn(NEWER_DATE);
+    }
+
+    public void testServesFreshPageForExcludedMimeTypeIfClientTimeNotKnown() throws Exception {
+        imageServlet.setLastModified(OLDER_DATE);
+
+        getFresh("/image");
+        assertReturnedFreshPageModifiedOn(OLDER_DATE);
+    }
+
+    public void testServesNotModifiedForExcludedMimeTypeIfNoModified() throws Exception {
+        imageServlet.setLastModified(OLDER_DATE);
+
+        getIfModifiedSince("/image", OLDER_DATE);
+        assertReturnedNotModified();
+    }
+
+    public void testServesFreshPageForExcludedMimeTypeIfModified() throws Exception {
+        imageServlet.setLastModified(NEWER_DATE);
+
+        getIfModifiedSince("/image", OLDER_DATE);
+        assertReturnedFreshPageModifiedOn(NEWER_DATE);
+    }
+
+// TODO: Handle these edge cases.    
+//    public void testServesFreshPageForBigExcludedMimeTypeIfClientTimeNotKnown() throws Exception {
+//        bigImageServlet.setLastModified(OLDER_DATE);
+//
+//        getFresh("/bigimage");
+//        assertReturnedFreshPageModifiedOn(OLDER_DATE);
+//    }
+//
+//    public void testServesNotModifiedForBigExcludedMimeTypeIfNoModified() throws Exception {
+//        bigImageServlet.setLastModified(OLDER_DATE);
+//
+//        getIfModifiedSince("/bigimage", OLDER_DATE);
+//        assertReturnedNotModified();
+//    }
+//
+//    public void testServesFreshPageForBigExcludedMimeTypeIfModified() throws Exception {
+//        bigImageServlet.setLastModified(NEWER_DATE);
+//
+//        getIfModifiedSince("/bigimage", OLDER_DATE);
+//        assertReturnedFreshPageModifiedOn(NEWER_DATE);
+//    }
 
     // ------- Test helpers -------
 
     /**
      * Make the HTTP request to the (decorated) content, passing an If-Modified-Since HTTP header.
      */
-    private void getIfModifiedSince(LastModifiedDate ifModifiedSinceDate) throws Exception {
-        web.doGet("/content", IF_MODIFIED_SINCE, ifModifiedSinceDate.toHttpHeaderFormat());
+    private void getIfModifiedSince(String path, LastModifiedDate ifModifiedSinceDate) throws Exception {
+        web.doGet(path, IF_MODIFIED_SINCE, ifModifiedSinceDate.toHttpHeaderFormat());
     }
 
     /**
      * Make the HTTP request to the (decorated) content, as if the browser was requesting
      * it for the first time (i.e. without an If-Modified-Since HTTP header).
+     * @param path
      */
-    private void getFresh() throws Exception {
-        web.doGet("/content");
+    private void getFresh(String path) throws Exception {
+        web.doGet(path);
     }
 
     /**
@@ -115,11 +193,9 @@ public class CachingTest extends TestCase {
      */
     private void assertReturnedFreshPageModifiedOn(LastModifiedDate expectedLastModifiedDate) {
         assertEquals("Expected request to return OK (200) status.",
-                HttpServletResponse.SC_OK,  web.getStatus());
+                HttpServletResponse.SC_OK, web.getStatus());
         assertEquals("Incorrect Last-Modified header returned",
                 expectedLastModifiedDate.toHttpHeaderFormat(), web.getHeader(LAST_MODIFIED));
-        assertEquals("Expected content to be decorated",
-                "<html><body>Decorated: Content</body></html>", web.getBody());
     }
 
     /**
@@ -127,7 +203,7 @@ public class CachingTest extends TestCase {
      */
     private void assertReturnedNotModified() {
         assertEquals("Expected request to return NOT MODIFIED (304) status.",
-                HttpServletResponse.SC_NOT_MODIFIED,  web.getStatus());
+                HttpServletResponse.SC_NOT_MODIFIED, web.getStatus());
     }
 
     /**
@@ -145,12 +221,19 @@ public class CachingTest extends TestCase {
     private static class CachingServlet extends HttpServlet {
 
         private LastModifiedDate lastModifiedDate;
-        private final String content;
+        protected final char[] content;
+        protected final String contentType;
 
         /**
          * @param content HTML content that Servlet should serve.
          */
-        public CachingServlet(String content) {
+        public CachingServlet(String contentType, String content) {
+            this.contentType = contentType;
+            this.content = content.toCharArray();
+        }
+
+        public CachingServlet(String contentType, char[] content) {
+            this.contentType = contentType;
             this.content = content;
         }
 
@@ -174,10 +257,25 @@ public class CachingTest extends TestCase {
          */
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            response.setContentType("text/html");
-            response.getWriter().print(content);
+            response.setContentType(contentType);
+            response.getWriter().write(content);
         }
 
+    }
+
+    private static class LargeContentServlet extends CachingServlet {
+        public LargeContentServlet(String contentType, String content) {
+            super(contentType, content);
+        }
+
+        @Override
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            response.setContentType(contentType);
+            PrintWriter out = response.getWriter();
+            for (int i = 0; i < 100000; i++) { // Large enough to exceed the Servlet engine buffer.
+                out.print(content);
+            }
+        }
     }
 
     /**
