@@ -106,6 +106,39 @@ public class CachingTest extends TestCase {
         assertReturnedFreshPageModifiedOn(NEWER_DATE);
     }
 
+    public void testDoesNotServeLastModifiedHeaderIfContetDoesNot() throws Exception {
+        contentServlet.setLastModified(null);
+        decoratorServlet.setLastModified(NEWER_DATE);
+
+        getIfModifiedSince("/content", NEWER_DATE);
+        assertReturnedFreshPageModifiedOn(null);
+
+        getFresh("/content");
+        assertReturnedFreshPageModifiedOn(null);
+    }
+
+    public void testDoesNotServeLastModifiedHeaderIfDecoratorDoesNot() throws Exception {
+        contentServlet.setLastModified(NEWER_DATE);
+        decoratorServlet.setLastModified(null);
+
+        getIfModifiedSince("/content", NEWER_DATE);
+        assertReturnedFreshPageModifiedOn(null);
+
+        getFresh("/content");
+        assertReturnedFreshPageModifiedOn(null);
+    }
+
+    public void testDoesNotServeLastModifiedHeaderIfNeitherContentNorDecoratorDo() throws Exception {
+        contentServlet.setLastModified(null);
+        decoratorServlet.setLastModified(null);
+
+        getIfModifiedSince("/content", NEWER_DATE);
+        assertReturnedFreshPageModifiedOn(null);
+
+        getFresh("/content");
+        assertReturnedFreshPageModifiedOn(null);
+    }
+
     public void testServesFreshPageForExcludedContentIfClientTimeNotKnown() throws Exception {
         excludedContentServlet.setLastModified(OLDER_DATE);
 
@@ -194,7 +227,8 @@ public class CachingTest extends TestCase {
         assertEquals("Expected request to return OK (200) status.",
                 HttpServletResponse.SC_OK, web.getStatus());
         assertEquals("Incorrect Last-Modified header returned",
-                expectedLastModifiedDate.toHttpHeaderFormat(), web.getHeader(LAST_MODIFIED));
+                expectedLastModifiedDate == null ? null : expectedLastModifiedDate.toHttpHeaderFormat(),
+                web.getHeader(LAST_MODIFIED));
     }
 
     /**

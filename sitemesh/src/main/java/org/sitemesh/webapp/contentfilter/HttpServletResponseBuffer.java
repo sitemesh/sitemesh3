@@ -41,6 +41,8 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
         this.metaData = metaData;
         this.selector = selector;
 
+        metaData.beginNewResponse();
+
         routablePrintWriter = new RoutablePrintWriter(new RoutablePrintWriter.DestinationFactory() {
             public PrintWriter activateDestination() throws IOException {
                 preCommit();
