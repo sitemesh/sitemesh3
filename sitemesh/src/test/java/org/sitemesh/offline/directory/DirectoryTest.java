@@ -25,7 +25,7 @@ import java.util.List;
  */
 public abstract class DirectoryTest extends TestCase {
 
-    private static final Charset UTF8 = Charset.forName("UTF-8");
+    protected static final Charset UTF8 = Charset.forName("UTF-8");
 
     /**
      * Factory method that should be implemented by subclasses

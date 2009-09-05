@@ -53,6 +53,16 @@ public class FileSystemDirectory implements Directory {
 
     public void save(String path, CharBuffer contents) throws IOException {
         File file = getFileByPath(path);
+
+        // If file already contains contents, don't bother saving.
+        // This is to play nicely with incremental builds.
+        if (file.exists()) {
+            CharBuffer oldContents = load(path);
+            if (oldContents.equals(contents)) {
+                return;
+            }
+        }
+
         file.getParentFile().mkdirs();
         Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), encoding));
         try {
@@ -112,7 +122,7 @@ public class FileSystemDirectory implements Directory {
         }
     }
 
-    private File getFileByPath(String path) {
+    public File getFileByPath(String path) {
         return new File(rootDir, path);
     }
 
