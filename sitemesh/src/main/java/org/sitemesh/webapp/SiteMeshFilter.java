@@ -25,7 +25,7 @@ import java.nio.CharBuffer;
  * subclassed.</p>
  *
  * <p>For an easy to configure implementation, use
- * {@link org.sitemesh.config.properties.InitParamConfiguredSiteMeshFilter}.</p>
+ * {@link org.sitemesh.config.ConfigurableSiteMeshFilter}.</p>
  *
  * @author Joe Walnes
  * @author Scott Farquhar

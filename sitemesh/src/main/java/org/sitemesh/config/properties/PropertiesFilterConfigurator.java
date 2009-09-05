@@ -43,7 +43,7 @@ import java.util.Map;
 public class PropertiesFilterConfigurator extends PropertiesConfigurator {
 
     // DEVELOPER NOTE: If adding new fields, please update the JavaDoc above,
-    //                 and also duplicate it in InitParamConfiguredSiteMeshFilter
+    //                 and also duplicate it in ConfigurableSiteMeshFilter
     //                 to make it easier for users to find.
 
     // Property names.

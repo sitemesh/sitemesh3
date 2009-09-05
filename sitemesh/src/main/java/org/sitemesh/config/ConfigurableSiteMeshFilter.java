@@ -28,7 +28,7 @@ import java.io.InputStream;
  * <pre>
  *  &lt;filter&gt;
  *    &lt;filter-name&gt;sitemesh&lt;/filter-name&gt;
- *    &lt;filter-class&gt;org.sitemesh.config.properties.InitParamConfiguredSiteMeshFilter&lt;/filter-class&gt;
+ *    &lt;filter-class&gt;org.sitemesh.config.ConfigurableSiteMeshFilter&lt;/filter-class&gt;
  *    &lt;init-param&gt;
  *      &lt;param-name&gt;decoratorMappings&lt;/param-name&gt;
  *      &lt;param-value&gt;
