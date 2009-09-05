@@ -55,9 +55,9 @@ public class InMemoryDirectory implements Directory {
         files.put(path, buffer);
     }
 
-    public void copy(String path, Directory destinationDirectory, String destionationPath) throws IOException {
+    public void copy(String path, Directory destinationDirectory, String destinationPath) throws IOException {
         final ByteBuffer sourceData = getDataByPath(path);
-        destinationDirectory.save(destionationPath, new ReadableByteChannel() {
+        destinationDirectory.save(destinationPath, new ReadableByteChannel() {
             public int read(ByteBuffer dst) throws IOException {
                 ByteBuffer buffer = dst.put(sourceData);
                 return buffer.position();

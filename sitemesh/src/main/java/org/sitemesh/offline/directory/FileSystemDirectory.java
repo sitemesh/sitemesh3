@@ -17,6 +17,8 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.CheckedInputStream;
+import java.util.zip.CRC32;
 
 /**
  * Disk backed {@link Directory} implementation that uses java.io.File.
@@ -103,24 +105,67 @@ public class FileSystemDirectory implements Directory {
     }
 
     public void save(String path, ReadableByteChannel channelToReadFrom, int length) throws IOException {
-        File file = getFileByPath(path);
-        file.getParentFile().mkdirs();
-        FileChannel destinationChannel = new FileOutputStream(file).getChannel();
+        // Steps:
+        // 1. Create a temporary file to save to.
+        // 2. Save the contents there.
+        // 3. Check if the contents are different to that on disk.
+        // 4. If so, rename the file to the final file, otherwise discard the temp file.
+        // These steps ensure that the final file does not get overwritten if the contents
+        // have not changed.
+        File tempFile = getFileByPath(path + ".tmp");
+        File finalFile = getFileByPath(path);
+        boolean requiresTempFile = finalFile.exists();
+        finalFile.getParentFile().mkdirs();
+        FileChannel destinationChannel = new FileOutputStream(requiresTempFile ? tempFile : finalFile).getChannel();
         try {
             destinationChannel.transferFrom(channelToReadFrom, 0, length);
         } finally {
             destinationChannel.close();
         }
+        if (requiresTempFile) {
+            if (computeChecksum(tempFile) == computeChecksum(finalFile)) {
+                tempFile.delete();
+            } else {
+                finalFile.delete();
+                tempFile.renameTo(finalFile);
+            }
+        }
     }
 
-    public void copy(String path, Directory destinationDirectory, String destionationPath) throws IOException {
+    private long computeChecksum(File file) throws IOException {
+        CheckedInputStream checkedInput = new CheckedInputStream(new FileInputStream(file), new CRC32());
+        try {
+            while (checkedInput.read() > -1);
+        } finally {
+            checkedInput.close();
+        }
+        return checkedInput.getChecksum().getValue();
+    }
+
+    public void copy(String path, Directory destinationDirectory, String destinationPath) throws IOException {
         FileChannel sourceChannel = new FileInputStream(getFileByPath(path)).getChannel();
         try {
-            destinationDirectory.save(destionationPath, sourceChannel, (int)sourceChannel.size());
+            destinationDirectory.save(destinationPath, sourceChannel, (int)sourceChannel.size());
         } finally {
             sourceChannel.close();
         }
     }
+
+    /**
+     * new ReadableByteChannel() {
+            public int read(ByteBuffer dst) throws IOException {
+                ByteBuffer buffer = dst.put(sourceData);
+                return buffer.position();
+            }
+
+            public boolean isOpen() {
+                return true;
+            }
+
+            public void close() throws IOException {
+            }
+        }
+     */
 
     public File getFileByPath(String path) {
         return new File(rootDir, path);

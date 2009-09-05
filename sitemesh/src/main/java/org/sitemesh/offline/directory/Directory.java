@@ -49,8 +49,8 @@ public interface Directory {
      *
      * @param path                 Path of file to copy (from this Directory)
      * @param destinationDirectory Target directory (may be this)
-     * @param destionationPath     Path under target directory.
+     * @param destinationPath     Path under target directory.
      */
-    void copy(String path, Directory destinationDirectory, String destionationPath) throws IOException;
+    void copy(String path, Directory destinationDirectory, String destinationPath) throws IOException;
 
 }
