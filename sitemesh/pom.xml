@@ -52,6 +52,19 @@
         </executions>
       </plugin>
 
+      <!-- Make the Jar executable: java -jar sitemesh.jar invokes the offline site generator tool. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.sitemesh.config.cmdline.CommandLineLauncher</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
       <!-- Only run *Test.java based tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
