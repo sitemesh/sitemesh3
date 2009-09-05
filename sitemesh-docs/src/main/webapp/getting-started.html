@@ -49,11 +49,8 @@
     
     <p>The SiteMesh library should be downloaded<!-- TODO: link --> and placed in <code><b>/WEB-INF/lib/</b></code>. [<a href="cookbook/maven.html">Instructions for Maven users</a>]</p>
 
-    <h2>Configuration</h2>
+    <h2>Setup</h2>
     
-    <p>There are a few different ways to configure SiteMesh3 depending on your preference and needs, including programmatically in Java, an XML config fle or inline in the standard <code>/WEB-INF/web.xml</code>. 
-    For simplicity, the example here uses the inline <code>/WEB-INF/web.xml</code> approach.</p>
-
     <p>Insert the SiteMesh Filter in <code><b>/WEB-INF/web.xml</b></code>:</p>
 <pre class='code'>&lt;web-app&gt;
 
@@ -61,11 +58,7 @@
  
   &lt;filter&gt;
     &lt;filter-name&gt;<b>sitemesh</b>&lt;/filter-name&gt;
-    &lt;filter-class&gt;<b>org.sitemesh.config.SiteMeshFilter</b>&lt;/filter-class&gt;
-    &lt;init-param&gt;
-      &lt;param-name&gt;<b>decoratorMappings</b>&lt;/param-name&gt;
-      &lt;param-value&gt;<b>/*=/decorator.html</b>&lt;/param-value&gt;
-    &lt;/init-param&gt;
+    &lt;filter-class&gt;<b>org.sitemesh.config.ConfigurableSiteMeshFilter</b>&lt;/filter-class&gt;
   &lt;/filter&gt;
 
   &lt;filter-mapping&gt;
@@ -75,10 +68,6 @@
 
 &lt;/web-app&gt;</pre>
 
-    <p>Notice the <code><b>decoratorMappings</b></code> parameter with the value <code><b>/*=/decorator.html</b></code>. 
-    This tells SiteMesh that requests matching the path <code>/*</code> (i.e. all of them) should be decorated with <code>/decorator.html</code> - this file will be created further down this
-    guide.</p>
-    
     <p>Deploy the web-application to your Servlet container. From this point onwards, this tutorial assumes the web-app is running at <code><b>http://myserver/</b></code>.
     
     <h2>Creating a decorator</h2>
@@ -134,6 +123,21 @@
 
     <p>In this example, the decorator is a static <code>.html</code> file, but if you want the decorator to be more dynamic, technologies such as JSP, FreeMarker, etc can be used. 
     SiteMesh doesn't care - it just needs a path that can be served content by the Servlet engine.</p>
+
+    <h2>Configuration</h2>
+
+    <p>SiteMesh needs to be configured to know about this decorator and what it should do with it.</p>
+
+    <p>The configuration file should be created at  <code><b>/WEB-INF/sitemesh3.xml</b></code>:</p>
+<pre class='code'>&lt;sitemesh&gt;
+  &lt;mapping path="<b>/*</b>" decorator="<b>/decorator.html</b>"/&gt;
+&lt;/sitemesh&gt;</pre>
+
+    <p>This tells SiteMesh that requests matching the path <code>/*</code> (i.e. all requests) should be decorated with <code>/decorator.html</code> that we just created.</p>
+
+    <p><i>If you don't like the idea of having to use XML to configure SiteMesh, don't worry - there are alternative mechanisms including 
+    directly in <code>WEB-INF/web.xml</code>, programatically through a Java API, through Spring, by naming convention, or any custom way you may choose to plug in. 
+    These are explained further in <a href="configuration.html">another article</a>.</i></p>
     
     <h2>Creating some content</h2>
 
@@ -189,7 +193,7 @@
     <p>A quick recap:</p>
     <ul>
       <li>SiteMesh is installed by dropping the library jar in <code><b>/WEB-INF/lib</b></code> and creating a filter (with mapping) in <code><b>/WEB-INF/web.xml</b></code></li>
-      <li>It can be configured by adding a <code><b>decoratorMappings</b></code> init-param to the filter, or through <a href="configuration.html">other configuration methods</a></li>
+      <li>It can be configured by creating a <code><b>/WEB-INF/sitemesh3.xml</b></code> file, or through <a href="configuration.html">other configuration methods</a></li>
       <li>The filter intercepts requests to <b>Content</b>, runs it through the <b>Content Processor</b> and merges with a <b>Decorator</b>
       <li>The <b>Content</b> is defined by an HTML page, that contains the vanilla HTML content of the site</li>
       <li>The <b>Decorator</b> is also defined by an HTML page, that contains the look and feel of the site, and placeholder <code><b>&lt;sitemesh:write&gt;</b></code> tags to indicate where the <b>Content</b> should be merged in</li>
