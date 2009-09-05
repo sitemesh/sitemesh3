@@ -7,13 +7,13 @@ import java.nio.channels.WritableByteChannel;
 import java.util.List;
 
 /**
- * Abstraction over a directory of files. SiteMeshOfflineGenerator to be plugged
+ * Abstraction over a directory of files. Allows SiteMeshOffline to be plugged
  * into different sources/destinations.
  *
  * <p>Typically, you'd use {@link FileSystemDirectory} that reads/writes to disk.</p>
  *
  * @author Joe Walnes
- * @see org.sitemesh.offline.SiteMeshOfflineGenerator
+ * @see org.sitemesh.offline.SiteMeshOffline
  * @see FileSystemDirectory
  */
 public interface Directory {

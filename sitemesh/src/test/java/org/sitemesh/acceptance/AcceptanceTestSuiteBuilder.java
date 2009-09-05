@@ -2,7 +2,7 @@ package org.sitemesh.acceptance;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.sitemesh.offline.SiteMeshOfflineGenerator;
+import org.sitemesh.offline.SiteMeshOffline;
 import org.sitemesh.offline.directory.Directory;
 import org.sitemesh.webapp.WebEnvironment;
 
@@ -22,10 +22,10 @@ public class AcceptanceTestSuiteBuilder {
 
     public static TestSuite buildWebAppAndOfflineSuite(String suiteName,
                                                        WebEnvironment webEnvironment,
-                                                       SiteMeshOfflineGenerator offlineGenerator) throws IOException {
+                                                       SiteMeshOffline offline) throws IOException {
         TestSuite suite = new TestSuite(suiteName);
         suite.addTest(buildWebAppSuite(suiteName, webEnvironment));
-        suite.addTest(buildOfflineSuite(suiteName, offlineGenerator));
+        suite.addTest(buildOfflineSuite(suiteName, offline));
         return suite;
     }
 
@@ -47,9 +47,9 @@ public class AcceptanceTestSuiteBuilder {
         return suite;
     }
 
-    public static TestSuite buildOfflineSuite(String suiteName, final SiteMeshOfflineGenerator generator) throws IOException {
+    public static TestSuite buildOfflineSuite(String suiteName, final SiteMeshOffline offline) throws IOException {
         TestSuite suite = new TestSuite(suiteName + "-offline");
-        final Directory destinationDirectory = generator.getDestinationDirectory();
+        final Directory destinationDirectory = offline.getDestinationDirectory();
 
         File expectedDir = getExpectedDir(suiteName);
         final Map<String, String> expected = AcceptanceTestSuiteBuilder.readFiles(expectedDir);
@@ -57,7 +57,7 @@ public class AcceptanceTestSuiteBuilder {
             suite.addTest(new TestCase(fileName) {
                 @Override
                 protected void runTest() throws Throwable {
-                    generator.process(fileName);
+                    offline.process(fileName);
                     CharBuffer result = destinationDirectory.load(fileName);
                     assertEquals(reduceWhitespace(expected.get(fileName)),
                             reduceWhitespace(result.toString()));

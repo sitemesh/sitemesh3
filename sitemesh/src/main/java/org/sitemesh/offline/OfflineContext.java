@@ -17,7 +17,7 @@ import java.io.Writer;
  * or a custom source/target.</p>
  *
  * @author Joe Walnes
- * @see org.sitemesh.offline.SiteMeshOfflineGenerator
+ * @see SiteMeshOffline
  * @see org.sitemesh.offline.directory.Directory
  * @see org.sitemesh.SiteMeshContext
  */
