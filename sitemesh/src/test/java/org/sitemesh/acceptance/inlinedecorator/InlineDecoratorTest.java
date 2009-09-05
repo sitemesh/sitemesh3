@@ -4,8 +4,8 @@ import junit.framework.Test;
 import org.sitemesh.acceptance.AcceptanceTestSuiteBuilder;
 import org.sitemesh.builder.BaseSiteMeshBuilder;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
-import org.sitemesh.builder.SiteMeshOfflineGeneratorBuilder;
-import org.sitemesh.offline.SiteMeshOfflineGenerator;
+import org.sitemesh.builder.SiteMeshOfflineBuilder;
+import org.sitemesh.offline.SiteMeshOffline;
 import org.sitemesh.offline.directory.InMemoryDirectory;
 import org.sitemesh.webapp.WebEnvironment;
 
@@ -22,11 +22,11 @@ public class InlineDecoratorTest {
 
         // Configure SiteMesh Filter and offline generator.
         SiteMeshFilterBuilder filterBuilder = new SiteMeshFilterBuilder();
-        SiteMeshOfflineGeneratorBuilder offlineGeneratorBuilder = new SiteMeshOfflineGeneratorBuilder()
+        SiteMeshOfflineBuilder offlineBuilder = new SiteMeshOfflineBuilder()
                 .setSourceDirectory(AcceptanceTestSuiteBuilder.getInputDir(suiteName))
                 .setDestinationDirectory(new InMemoryDirectory());
         commonSetup(filterBuilder);
-        commonSetup(offlineGeneratorBuilder);
+        commonSetup(offlineBuilder);
 
         // Create web environment (Servlet container, configured with Servlets, Filters, content, etc).
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
@@ -35,10 +35,10 @@ public class InlineDecoratorTest {
                 .create();
 
         // Create offline site generator.
-        SiteMeshOfflineGenerator offlineGenerator = offlineGeneratorBuilder.create();
+        SiteMeshOffline offline = offlineBuilder.create();
 
         // Build suites.
-        return AcceptanceTestSuiteBuilder.buildWebAppAndOfflineSuite(suiteName, webEnvironment, offlineGenerator);
+        return AcceptanceTestSuiteBuilder.buildWebAppAndOfflineSuite(suiteName, webEnvironment, offline);
     }
 
     private static void commonSetup(BaseSiteMeshBuilder builder) {

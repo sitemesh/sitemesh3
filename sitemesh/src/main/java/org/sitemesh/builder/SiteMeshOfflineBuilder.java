@@ -1,13 +1,13 @@
 package org.sitemesh.builder;
 
-import org.sitemesh.offline.SiteMeshOfflineGenerator;
+import org.sitemesh.offline.SiteMeshOffline;
 
 /**
- * Convenient API for building the a {@link org.sitemesh.offline.SiteMeshOfflineGenerator}.
+ * Convenient API for building the a {@link org.sitemesh.offline.SiteMeshOffline}.
  *
  * <p>This follows the API builder pattern - each method returns a reference to the original builder
  * so they can be chained together. When configured, call the {@link #create()} method which will
- * return the final immutable {@link org.sitemesh.offline.SiteMeshOfflineGenerator}.</p>
+ * return the final immutable {@link org.sitemesh.offline.SiteMeshOffline}.</p>
  *
  * <p>At the very least, <b>sourceDirectory</b> and <b>destinationDirectory must be set</b> before
  * calling {@link #create()}, otherwise an {@link IllegalStateException} will be thrown.</p>
@@ -16,14 +16,14 @@ import org.sitemesh.offline.SiteMeshOfflineGenerator;
  *
  * <pre>
  * // Simplest example...
- * SiteMeshOfflineGenerator siteMeshOfflineGenerator = new SiteMeshOfflineGeneratorBuilder()
+ * SiteMeshOffline siteMeshOffline = new SiteMeshOfflineBuilder()
  *     .setDirectory("src/html")
  *     .setDestinationDirectory("dest/html")
  *     .addDecoratorPath("/*", "/decorator.html")
  *     .create();
  *
  * // A few more options (shows applying multiple decorators to a single page)...
- * SiteMeshOfflineGenerator siteMeshOfflineGenerator = new SiteMeshOfflineGeneratorBuilder()
+ * SiteMeshOffline siteMeshOffline = new SiteMeshOfflineBuilder()
  *     .setDirectory(new File("src/html"))
  *     .setDestinationDirectory(new File("dest/html"))
  *     .addDecoratorPaths("/*", "/decorators/main-layout.html", "/decorators-common-style.html")
@@ -32,7 +32,7 @@ import org.sitemesh.offline.SiteMeshOfflineGenerator;
  *     .create();
  *
  * // If you want to get a bit crazy and totally customize SiteMesh...
- * SiteMeshOfflineGenerator siteMeshOfflineGenerator = new SiteMeshOfflineGeneratorBuilder()
+ * SiteMeshOffline siteMeshOffline = new SiteMeshOfflineBuilder()
  *     .setDirectory(new MyDirectoryThatLoadsFromDatabase())
  *     .setDestinationDirectory(new InMemoryDirectory())
  *     .setCustomContentProcessor(new MySvgContentProcessor())
@@ -44,16 +44,16 @@ import org.sitemesh.offline.SiteMeshOfflineGenerator;
  *
  * <p>This is only for advanced users who need to change the behavior of the builder...</p>
  *
- * <p>If you ever find the need to subclass SiteMeshOfflineGeneratorBuilder (e.g. to add more convenience
+ * <p>If you ever find the need to subclass SiteMeshOfflineBuilder (e.g. to add more convenience
  * methods, to change the implementation returned, or add new functionality), it is instead recommended
- * that you extends {@link BaseSiteMeshOfflineGeneratorBuilder}. This way, the generic type signature can
+ * that you extends {@link BaseSiteMeshOfflineBuilder}. This way, the generic type signature can
  * be altered.</p>
  *
  * @author Joe Walnes
  */
 
-public final class SiteMeshOfflineGeneratorBuilder 
-        extends BaseSiteMeshOfflineGeneratorBuilder<SiteMeshOfflineGeneratorBuilder> {
+public final class SiteMeshOfflineBuilder
+        extends BaseSiteMeshOfflineBuilder<SiteMeshOfflineBuilder> {
 
     /**
      * Create the SiteMeshOfflineGenerator.
@@ -61,8 +61,8 @@ public final class SiteMeshOfflineGeneratorBuilder
      * @throws IllegalStateException unless both the source and destionation
      *                               directories have been set.
      */
-    public SiteMeshOfflineGenerator create() throws IllegalStateException {
-        return new SiteMeshOfflineGenerator(
+    public SiteMeshOffline create() throws IllegalStateException {
+        return new SiteMeshOffline(
                 getContentProcessor(),
                 getDecoratorSelector(),
                 getSourceDirectory(),

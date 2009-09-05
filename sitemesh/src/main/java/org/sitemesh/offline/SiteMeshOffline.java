@@ -18,23 +18,23 @@ import java.nio.CharBuffer;
  * ContentProcessor contentProcessor = // your ContentProcesor
  * DecoratorSelector decoratorSelector = // your DecoratorSelector
  *
- * SiteMeshOfflineGenerator generator = new SiteMeshOfflineGenerator(
+ * SiteMeshOffline siteMeshOffline = new SiteMeshOffline(
  *     contentProcessor, decoratorSelector, sourceDir, destinationDir);
  *
- * generator.process("somecontent.html");
- * generator.process("morecontent.html");
+ * siteMeshOffline.process("somecontent.html");
+ * siteMeshOffline.process("morecontent.html");
  * </pre>
  *
  * @author Joe Walnes
  */
-public class SiteMeshOfflineGenerator {
+public class SiteMeshOffline {
 
     private final ContentProcessor contentProcessor;
     private final DecoratorSelector<OfflineContext> decoratorSelector;
     private final Directory sourceDirectory;
     private final Directory destinationDirectory;
 
-    public SiteMeshOfflineGenerator(ContentProcessor contentProcessor,
+    public SiteMeshOffline(ContentProcessor contentProcessor,
                                     DecoratorSelector<OfflineContext> decoratorSelector,
                                     Directory sourceDirectory,
                                     Directory destinationDirectory) {

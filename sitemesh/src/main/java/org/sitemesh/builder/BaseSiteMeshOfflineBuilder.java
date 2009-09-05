@@ -1,6 +1,6 @@
 package org.sitemesh.builder;
 
-import org.sitemesh.offline.SiteMeshOfflineGenerator;
+import org.sitemesh.offline.SiteMeshOffline;
 import org.sitemesh.offline.OfflineContext;
 import org.sitemesh.offline.directory.Directory;
 import org.sitemesh.offline.directory.FileSystemDirectory;
@@ -8,19 +8,19 @@ import org.sitemesh.offline.directory.FileSystemDirectory;
 import java.io.File;
 
 /**
- * Functionality for building a {@link org.sitemesh.offline.SiteMeshOfflineGenerator}.
+ * Functionality for building a {@link org.sitemesh.offline.SiteMeshOffline}.
  * Inherits common functionality from {@link BaseSiteMeshBuilder}.
  *
- * <p>Clients should use the concrete {@link SiteMeshOfflineGeneratorBuilder} implementation.</p>
+ * <p>Clients should use the concrete {@link SiteMeshOfflineBuilder} implementation.</p>
  *
  * @author Joe Walnes
  * @param <BUILDER> The type to return from the builder methods. Subclasses
  * should type this as their own class type.
  * @see BaseSiteMeshBuilder
- * @see org.sitemesh.offline.SiteMeshOfflineGenerator
+ * @see org.sitemesh.offline.SiteMeshOffline
  */
-public abstract class BaseSiteMeshOfflineGeneratorBuilder<BUILDER extends BaseSiteMeshOfflineGeneratorBuilder>
-        extends BaseSiteMeshBuilder<BUILDER, OfflineContext, SiteMeshOfflineGenerator> {
+public abstract class BaseSiteMeshOfflineBuilder<BUILDER extends BaseSiteMeshOfflineBuilder>
+        extends BaseSiteMeshBuilder<BUILDER, OfflineContext, SiteMeshOffline> {
 
     private Directory sourceDirectory;
     private Directory destinationDirectory;
@@ -29,7 +29,7 @@ public abstract class BaseSiteMeshOfflineGeneratorBuilder<BUILDER extends BaseSi
      * Create the SiteMeshOfflineGenerator.
      */
     @Override
-    public abstract SiteMeshOfflineGenerator create();
+    public abstract SiteMeshOffline create();
 
     // --------------------------------------------------------------
     // Source Directory setup.

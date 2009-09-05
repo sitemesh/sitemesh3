@@ -13,7 +13,7 @@ import static java.nio.CharBuffer.wrap;
 /**
  * @author Joe Walnes
  */
-public class SiteMeshOfflineGeneratorTest extends TestCase {
+public class SiteMeshOfflineTest extends TestCase {
 
     // Dependencies.
     private Directory sourceDir;
@@ -21,7 +21,7 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
     private PathBasedDecoratorSelector decoratorSelector;
 
     // Object under test.
-    private SiteMeshOfflineGenerator generator;
+    private SiteMeshOffline offline;
 
     @Override
     protected void setUp() throws Exception {
@@ -30,7 +30,7 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
         destinationDir = new InMemoryDirectory();
         decoratorSelector = new PathBasedDecoratorSelector();
 
-        generator = new SiteMeshOfflineGenerator(
+        offline = new SiteMeshOffline(
                 new TagBasedContentProcessor(new CoreHtmlTagRuleBundle(), new DecoratorTagRuleBundle()),
                 decoratorSelector, sourceDir, destinationDir);
     }
@@ -41,7 +41,7 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
 
         decoratorSelector.put("/*", "/mydecorator.html");
 
-        generator.process("/mycontent.html");
+        offline.process("/mycontent.html");
 
         assertEquals("Title = Some title",
                 destinationDir.load("/mycontent.html").toString());
@@ -53,7 +53,7 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
         decoratorSelector.put("/*", "/mydecorator.html");
 
         assertEquals("Title = Some title",
-                generator.processContent("/mycontent.html", wrap("<title>Some title</title>")).toString());
+                offline.processContent("/mycontent.html", wrap("<title>Some title</title>")).toString());
     }
 
     public void testSupportsDecoratingInlineContent() throws Exception {
@@ -71,7 +71,7 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
 
         decoratorSelector.put("/*", "/decorators/page.html");
 
-        generator.process("/hello.html");
+        offline.process("/hello.html");
 
         assertEquals(
                 "PAGE\n" +
@@ -103,7 +103,7 @@ public class SiteMeshOfflineGeneratorTest extends TestCase {
 
         decoratorSelector.put("/*", "/decorators/page.html");
 
-        generator.process("/hello.html");
+        offline.process("/hello.html");
 
         assertEquals(
                 "PAGE\n" +

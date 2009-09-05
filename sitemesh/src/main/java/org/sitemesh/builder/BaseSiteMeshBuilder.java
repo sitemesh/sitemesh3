@@ -15,10 +15,10 @@ import java.util.LinkedList;
 
 /**
  * Common functionality for {@link BaseSiteMeshFilterBuilder} and
- * {@link BaseSiteMeshOfflineGeneratorBuilder}.
+ * {@link BaseSiteMeshOfflineBuilder}.
  *
  * @see BaseSiteMeshFilterBuilder
- * @see BaseSiteMeshOfflineGeneratorBuilder
+ * @see BaseSiteMeshOfflineBuilder
  *
  * @param <BUILDER> The type to return from the builder methods. Subclasses
  *                  should type this as their own class type.
