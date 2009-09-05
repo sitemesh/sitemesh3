@@ -27,6 +27,12 @@ public class PropertiesParserTest extends TestCase {
         assertNull(propertiesParser.getString("other"));
     }
 
+    public void testSearchesFallbackPropertiesUntilFindingAResult() {
+        properties.put("foo", "bar");
+        assertEquals("bar", propertiesParser.getString("flimp", "flump", "foo", "foot"));
+        assertNull(propertiesParser.getString("other", "out", "oooh"));
+    }
+
     public void testDiscardsLeadingAndTrailingWhitespace() {
         properties.put("foo", "  \n ba r ");
         properties.put("other", "   \n  ");

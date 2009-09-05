@@ -116,4 +116,29 @@ public class FileSystemDirectory implements Directory {
         return new File(rootDir, path);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FileSystemDirectory that = (FileSystemDirectory) o;
+
+        if (encoding != null ? !encoding.equals(that.encoding) : that.encoding != null) return false;
+        if (rootDir != null ? !rootDir.equals(that.rootDir) : that.rootDir != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = rootDir != null ? rootDir.hashCode() : 0;
+        result = 31 * result + (encoding != null ? encoding.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append("FileSystemDirectory{rootDir=").append(rootDir)
+                .append(", encoding=").append(encoding).append('}').toString();
+    }
 }

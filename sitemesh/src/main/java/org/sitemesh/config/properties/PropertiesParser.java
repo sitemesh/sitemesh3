@@ -21,16 +21,17 @@ class PropertiesParser {
      *
      * Will return null if property is not found, empty or whitespace only.
      */
-    String getString(String key) {
-        String string = properties.get(key);
-        if (string == null) {
-            return null;
+    String getString(String... keysToSearch) {
+        for (String key : keysToSearch) {
+            String string = properties.get(key);
+            if (string != null) {
+                string = string.trim();
+                if (string.length() > 0) {
+                    return string;
+                }
+            }
         }
-        string = string.trim();
-        if (string.length() == 0) {
-            return null;
-        }
-        return string;
+        return null;
     }
 
     /**
