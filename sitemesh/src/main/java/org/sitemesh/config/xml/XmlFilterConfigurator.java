@@ -46,7 +46,8 @@ public class XmlFilterConfigurator extends XmlConfigurator {
     }
 
     private boolean isTrue(String string) {
-        return string != null && string.trim().equalsIgnoreCase("true");
+        String lower = string == null ? "" : string.trim().toLowerCase();
+        return lower.equals("true") || lower.equals("1") || lower.equals("yes");
     }
 
 }

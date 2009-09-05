@@ -6,7 +6,7 @@ import org.sitemesh.config.ObjectFactory;
 import java.util.Map;
 
 /**
- * Configures a SiteMesh Builder from string key/value pairs. The keys are:
+ * Configures a SiteMeshFilterBuilder from string key/value pairs. The keys are:
  *
  * <p><b><code>decoratorMappings</code></b>: A list of mappings of path patterns to decorators.
  * Each entry should consist of pattern=decorator, separated by whitespace or commas. If multiple decorators
