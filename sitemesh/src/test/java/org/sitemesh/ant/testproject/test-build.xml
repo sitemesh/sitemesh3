@@ -12,6 +12,33 @@
                   destdir="out/simplewebapp1"
                   includes="**/*.html"
                   excludes="decorators/*"/>
+
+    </target>
+
+    <target name="sitemeshfileset">
+
+        <sitemesh destdir="out/sitemeshfileset"
+                  config="in/sitemeshfileset/WEB-INF/sitemesh3.xml">
+
+            <sitemeshfileset dir="in/sitemeshfileset">
+                <include name="**/*.html"/>
+                <exclude name="decorators/*"/>
+            </sitemeshfileset>
+
+        </sitemesh>
+    </target>
+
+    <target name="sitemeshfilesetWithDecorator">
+
+        <sitemesh destdir="out/sitemeshfilesetWithDecorator">
+
+            <sitemeshfileset dir="in/sitemeshfilesetWithDecorator"
+                             decorator="decorators/decorator.html">
+                <include name="**/*.html"/>
+                <exclude name="decorators/*"/>
+            </sitemeshfileset>
+
+        </sitemesh>
     </target>
 
 </project>
