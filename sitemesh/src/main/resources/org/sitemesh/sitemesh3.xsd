@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<xsd:schema targetNamespace="http://sitemesh.org/xml/config"
+            xmlns:config="http://sitemesh.org/xml/config"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified"
+            version="3.0.0">
+
+    <xsd:element name="sitemesh">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="mapping"
+                             type="config:mapping"
+                             minOccurs="0"/>
+                <xsd:element name="content-processor"
+                             type="config:content-processor"
+                             minOccurs="0"/>
+                <xsd:element name="mime-type" type="xsd:string" minOccurs="0"   maxOccurs="unbounded"/>
+                <xsd:element name="source-dir" type="xsd:string" minOccurs="0"  maxOccurs="unbounded"/>
+                <xsd:element name="dest-dir" type="xsd:string" minOccurs="0"    maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:attributeGroup name="mapping-attribute-group">
+        <xsd:attribute name="path" type="xsd:string"/>
+        <xsd:attribute name="decorator" type="xsd:string"/>
+        <xsd:attribute name="exclude" type="xsd:boolean" default="false"/>
+    </xsd:attributeGroup>
+
+    <xsd:complexType name="mapping">
+        <xsd:sequence>
+            <xsd:element name="path" type="xsd:string"/>
+            <xsd:element name="decorator" type="xsd:string"/>
+        </xsd:sequence>
+        <xsd:attributeGroup ref="mapping-attribute-group"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="content-processor">
+            <xsd:sequence>
+                <xsd:element ref="config:tag-rule-bundle"/>
+            </xsd:sequence>
+            <xsd:attribute name="class" type="xsd:string"/>
+    </xsd:complexType>
+
+    <xsd:element name="tag-rule-bundle">
+        <xsd:complexType>
+            <xsd:attribute name="class" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>
