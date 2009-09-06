@@ -1,6 +1,16 @@
 <html>
 	<head>
 		<title>Building offline websites with SiteMesh</title>
+        <style>
+            .attribute{
+                color: blue;
+                font-weight: bold;
+            }
+            .node {
+                color: #330099;
+                font-weight: bold;
+            }
+        </style>
 	</head>
 	<body>
 	
@@ -75,36 +85,112 @@
 		<pre class="code">java -jar sitemesh-3.x.jar -src project/src -config project/sitemesh.xml -dest project/build index.html page1.html page2.html</pre>
 		
 		<h2>Ant Task</h2>
-		
-		<h4>Installation</h4>
-		<pre class="code">&lt;project name="my-ant-project"&gt;
 
-  <b>&lt;taskdef name="sitemesh" 
-           classname="org.sitemesh.ant.SiteMeshTask"
-           classpath="path/to/sitemesh-3.x.jar"/&gt;</b>
+        <h3>Overview</h3>
+        <p>The sitemesh.jar comes prepackaged with a custom Ant task that can be used for offline processing. In the following examples, we're going to look
+        at how to install and use the SiteMeshTask to generate static content in the offline mode.</p>
+
+        <h3>SiteMeshTask</h3>
+        <p>The SiteMeshTask defines the following attributes:</p>
+        <ol>
+            <li>destDir - The output folder in which all of the decorated files will be placed.</li>
+            <li>config - The location of the SiteMesh configuration file.</li>
+            <li>srcdir - The source directory which contains all of the files to be decorated.</li>
+            <li>includes - An Ant style filter of what files to include.</li>
+            <li>excludes - An Ant style filter of what files to exclude.</li>
+        </ol>
+        <p>The SiteMeshTask can also accept the following child nodes:</p>
+        <ol>
+            <li>fileset - The standard Ant <a href="http://ant.apache.org/manual/CoreTypes/fileset.html">FileSet</a> that will use the srcdir of the sitemesh node.</li>
+            <li>sitemeshfileset - A custom SiteMesh FileSet that supports an additional attribute called "decorator" which can be used to associate a decorator with the
+                given FileSet.</li>
+        </ol>
+
+        <h3>Getting started!</h3>
+        <p>The below provides a high level outline of what steps we're going to cover in this section.</p>
+        <ol>
+            <li>Create a SiteMesh configuration file.</li>
+            <li>Register the SiteMeshTask with Ant</li>
+            <li>Define the &lt;<span class="node">sitemesh</span>/&gt; node.</li>
+            <li>Execute Ant</li>
+        </ol>
+
+        <h4>1. Creating the SiteMesh configuration file</h4>
+        <p>The SiteMeshTask can be given a configuration file to tell SiteMesh how to decorate files. The power of this feature is that the configuration is then
+            externalized from the buid.xml file. In our first two examples, we're going to show how to use this form of the SiteMeshTask. Below is a very simple
+            SiteMesh configuration file that applies the main.html decorator to all pages.</p>
+    <pre>&lt;<span class="node">sitemesh</span>&gt;
+  &lt;<span class="node">mapping</span> <span class="attribute">path</span>="/*" <span class="attribute">decorator</span>="/decorators/main.html"/&gt;
+&lt;<span class="node">/sitemesh</span>&gt;
+</pre>
+
+		<h4>2. Registering SiteMeshTask with Ant</h4>
+        <p>In order to use SiteMesh from within Ant, the first thing you will need to do is register the SiteMeshTask with Ant using the following
+        &lt;<span class="node">taskdef</span>/&gt; declaration.</p>
+		<pre class="code">&lt;<span class="node">project</span> <span class="attribute">name</span>="my-ant-project"&gt;
+
+  <b>&lt;<span class="node">taskdef</span> <span class="attribute">name</span>="sitemesh"
+           <span class="attribute">classname</span>="org.sitemesh.ant.SiteMeshTask"
+           <span class="attribute">classpath</span>="path/to/sitemesh-3.x.jar"/&gt;</b>
 
   ...
-	
-&lt;/project&gt;</pre>
 
-    <h4>Example</h4>
+&lt;<span class="node">/project</span>&gt;</pre>
+        <p>For more information on registering custom tasks within Ant, please see <a href="http://ant.apache.org/manual/tutorial-writing-tasks.html" target="_new">Writing Ant Tasks</a>.</p>
 
-		<pre class="code">&lt;project name="my-ant-project"&gt;
+        <h4>3. Define the &lt;<span class="node">sitemesh</span>/&gt; node.</h4>
+        <p>Now that we've created the SiteMesh configuration file and registered the SiteMeshTask with Ant, it's time to start using SiteMesh within our tasks.</p>
 
-  &lt;taskdef name="sitemesh" 
-           classname="org.sitemesh.ant.SiteMeshTask"
-           classpath="path/to/sitemesh-3.x.jar"/&gt;
+        <h5>Using the sitemesh task without a fileset.</h5>
+        <p>Let's look at how to provide &lt;<span class="node">sitemesh</span>/&gt; with a configuration file and tell it what directories to include or exclude.</p>
+        <p>In this example, we're going to process all of the files stored in "project/src" and place the decorated files into "project/build".</p>
+		<pre class="code">&lt;<span class="node">project</span> <span class="attribute">name</span>="my-ant-project"&gt;
 
-  &lt;target name="my-target"&gt;
-    <b>&lt;sitemesh srcdir="project/src"
-              config="project/sitemesh.xml"
-              destdir="project/build"
-              includes="**/*.html"
-              excludes="decorators/*"/&gt;</b>
-  &lt;/target&gt;
+  &lt;<span class="node">target</span> <span class="attribute">name</span>="my-target"&gt;
+    <b>&lt;<span class="node">sitemesh</span> <span class="attribute">srcdir</span>="project/src"
+              <span class="attribute">config</span>="project/sitemesh.xml"
+              <span class="attribute">destdir</span>="project/build"
+              <span class="attribute">includes></span>="**/*.html"
+              <span class="attribute">excludes</span>="decorators/*"/&gt;</b>
+  &lt;<span class="node">/target</span>&gt;
  
-&lt;/project&gt;</pre>
+&lt;<span class="node">/project</span>&gt;</pre>
 
+        <p>The benefit to the above is that all configuration is externalized from the the build.xml file.</p>
 
+        <h5>Using the sitemesh task with the sitemeshfileset</h5>
+        <p>In the below example, multiple source folders are used by provided a sitemeshfileset. This provides greater control over what folders
+        should be included or excluded, but still leverage a common destination folder and configuration file.</p>
+	<pre class="code">&lt;<span class="node">project</span> <span class="attribute">name</span>="my-ant-project"&gt;
+
+         &lt;<span class="node">sitemesh</span> <span class="attribute">destdir</span>="site/documentation"
+                  <span class="attribute">config</span>="config/sitemesh.xml"&gt;
+            &lt;<span class="node">sitemeshfileset</span> <span class="attribute">dir</span>="documentation"&gt;
+                &lt;<span class="node">include</span> <span class="attribute">name</span>="**/*.html"/&gt;
+                &lt;<span class="node">exclude</span> <span class="attribute">name</span>="private/*"/&gt;
+            &lt;<span class="node">/sitemeshfileset</span>&gt;
+
+            &lt;<span class="node">sitemeshfileset</span> <span class="attribute">dir</span>="presentation"&gt;
+                &lt;<span class="node">include</span> <span class="attribute">name</span>="**/*.html"/&gt;
+            &lt;<span class="node">/sitemeshfileset</span>&gt;
+        &lt;<span class="node">/sitemesh</span>&gt;
+        
+&lt;<span class="node">/project</span>&gt;</pre>
+
+        <h5>Using the sitemesh task with the sitemeshfileset with an associated decorator</h5>
+        <p>In our finaly example, a decorator will be used on each sitemeshfileset.</p>
+	<pre class="code">&lt;<span class="node">project</span> <span class="attribute">name</span>="my-ant-project"&gt;
+
+    &lt;<span class="node">target</span> <span class="attribute">name</span>="generate-with-custom-decorator"
+            <span class="attribute">description</span>="Generate static content that's internal to the company."&gt;
+        &lt;<span class="node">sitemesh</span> <span class="attribute">destdir</span>="site/documentation"&gt;
+            &lt;<span class="node">sitemeshfileset</span> <span class="attribute">dir</span>="documentation"
+                             <span class="attribute">decorator</span>="decorators/private.html"&gt;
+                &lt;<span class="node">include</span> <span class="attribute">name</span>="private/*.html"/&gt;
+            &lt;<span class="node">/sitemeshfileset</span>&gt;
+        &lt;<span class="node">/sitemesh</span>&gt;
+    &lt;<span class="node">/target</span>&gt;
+
+&lt;<span class="node">/project</span>&gt;</pre>
 	</body>
 </html>
