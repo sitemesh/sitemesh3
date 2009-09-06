@@ -22,7 +22,7 @@
     <module>sitemesh-tools-benchmark</module>
     <module>sitemesh-examples-hellowebapp</module>
   </modules>
-    
+
   <developers>
     <developer>
       <id>joewalnes</id>
