@@ -44,8 +44,8 @@ public class PropertiesOfflineConfigurator extends PropertiesConfigurator {
 
     private final PropertiesParser properties;
 
-    public static final String[] SOURCE_DIR_PARAM = {"src", "srcdir", "source", "in", "i"};
-    public static final String[] DEST_DIR_PARAM = {"dest", "destdir", "destination", "out", "o"};
+    protected static final String[] SOURCE_DIR_PARAM = {"src", "srcdir", "source", "in", "i"};
+    protected static final String[] DEST_DIR_PARAM = {"dest", "destdir", "destination", "out", "o"};
 
     public PropertiesOfflineConfigurator(ObjectFactory objectFactory, Map<String, String> properties) {
         super(objectFactory, properties);
