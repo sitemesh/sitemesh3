@@ -1,0 +1,17 @@
+<project name="test">
+
+    <taskdef name="sitemesh" classname="org.sitemesh.ant.SiteMeshTask"/>
+
+    <target name="clean">
+        <delete dir="out"/>
+    </target>
+
+    <target name="simplewebapp1">
+        <sitemesh srcdir="in/simplewebapp"
+                  config="in/simplewebapp/WEB-INF/sitemesh3.xml"
+                  destdir="out/simplewebapp1"
+                  includes="**/*.html"
+                  excludes="decorators/*"/>
+    </target>
+
+</project>

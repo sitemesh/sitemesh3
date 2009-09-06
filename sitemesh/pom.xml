@@ -88,6 +88,12 @@
       <version>2.5</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.7.1</version>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- Dependencies used by tests -->
     <dependency>
@@ -106,6 +112,12 @@
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty-util</artifactId>
       <version>6.1.14</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant-testutil</artifactId>
+      <version>1.7.1</version>
       <scope>test</scope>
     </dependency>
 
