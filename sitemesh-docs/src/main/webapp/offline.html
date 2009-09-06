@@ -1,0 +1,110 @@
+<html>
+	<head>
+		<title>Building offline websites with SiteMesh</title>
+	</head>
+	<body>
+	
+		<p>A new feature in SiteMesh 3 is being able to apply decorators to content as an offline task, typically as part of a build step.</p>
+		
+		<p>If both your content and your decorators are static, this offers a few benefits:</p>
+		<ul>
+			<li>Allows final content to be distributed as pre-generated folder. Useful for including documentation with products without having to include a full Servlet compliant web-server.</li>
+			<li>Cuts down server loads - most web-server architectures are optimized for serving static files.</li>
+			<li>Provides more flexibility on where you can host content.</li>
+		</ul>
+		
+		<p>It's also possible to reuse decorators and configuration between a web application that generates decorated content on the fly,
+		and offline generated files.</p>
+		
+		<h2>Usage</h2>
+
+		<p>There are a few different approaches to invoking the SiteMesh offline generator:</p>
+		<ol>
+			<li><b>Command line interface</b></li>
+			<li><b><a href="http://ant.apache.org/">Apache Ant</a> task</b></li>
+			<li><b>Java API</b> (this can be embedded in applications, or used from higher level languages such as JRuby, Groovy or Scala)</li>
+		</ol>
+		
+		<p>Each of these can have the mappings of the decorators passed directly to them, or load from the SiteMesh <a href="configuration.html">configuration file</a>.</p>
+
+		<p>Use the approach that suits your project.</p>
+		
+		<h2>Command line interface</h2>
+		
+		<p>You can invoke the command line interface by running the executable sitemesh.jar. It requires Java 5 but no other dependencies.</p>
+		
+		<p>Invoking on it's own will output a detailed help message:</p>
+		
+		<pre class="code"><b>java -jar sitemesh-3.x.jar</b></pre>
+		
+		<h4>Arguments</h4>
+		<p>The following arguments need to be passed to the command line:</p>
+		<table class="definitionTable">
+			<tr>
+				<td><b><code>-src</code></b></td>
+				<td>Required</td>
+				<td>Path to source directory, containing content and decorators</td>
+			</tr>
+			<tr>
+				<td><b><code>-dest</code></b></td>
+				<td>Required</td>
+				<td>Path to destination directory, where decorated content will be written</td>
+			</tr>
+			<tr>
+				<td><b><code>-dest</code></b></td>
+				<td>Required</td>
+				<td>Path to destination directory, where decorated content will be written</td>
+			</tr>
+			<tr>
+				<td><b><code>-config</code></b></td>
+				<td rowspan="2">One of these</td>
+				<td>Path to <a href="configuration.html">configuration file</a></td>
+			</tr>
+			<tr>
+				<td><b><code>-decoratorMapping</code></b></td>
+				<td>TODO</a></td>
+			</tr>
+			<tr>
+				<td><b><code>FILE1 FILE2 FILE3...</code></b></td>
+				<td>Required</td>
+				<td>List of content files to apply decorators to. These must be relative to the <code>src</code> directory</td>
+			</tr>
+		</table>
+		
+		<h4>Example</h4>
+		<pre class="code">java -jar sitemesh-3.x.jar -src project/src -config project/sitemesh.xml -dest project/build index.html page1.html page2.html</pre>
+		
+		<h2>Ant Task</h2>
+		
+		<h4>Installation</h4>
+		<pre class="code">&lt;project name="my-ant-project"&gt;
+
+  <b>&lt;taskdef name="sitemesh" 
+           classname="org.sitemesh.ant.SiteMeshTask"
+           classpath="path/to/sitemesh-3.x.jar"/&gt;</b>
+
+  ...
+	
+&lt;/project&gt;</pre>
+
+    <h4>Example</h4>
+
+		<pre class="code">&lt;project name="my-ant-project"&gt;
+
+  &lt;taskdef name="sitemesh" 
+           classname="org.sitemesh.ant.SiteMeshTask"
+           classpath="path/to/sitemesh-3.x.jar"/&gt;
+
+  &lt;target name="my-target"&gt;
+    <b>&lt;sitemesh srcdir="project/src"
+              config="project/sitemesh.xml"
+              destdir="project/build"
+              includes="**/*.html"
+              excludes="decorators/*"/&gt;</b>
+  &lt;/target&gt;
+ 
+&lt;/project&gt;</pre>
+
+
+	</body>
+</html>
