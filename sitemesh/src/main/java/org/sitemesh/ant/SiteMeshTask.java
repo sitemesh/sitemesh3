@@ -14,6 +14,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.List;
+import java.util.LinkedList;
 
 /**
  * @author Richard L. Burton III - SmartCode LLC
@@ -36,13 +38,13 @@ public class SiteMeshTask extends MatchingTask {
     /**
      * The files to decorate with SiteMesh.
      */
-    private Vector<FileSet> resources = new Vector<FileSet>();
+    private List<FileSet> resources = new LinkedList<FileSet>();
 
     @Override
     public void execute() throws BuildException {
         verify();
 
-        Vector<FileSet> implicitFileSet = getImplicitAndExplicitFileSet();
+        List<FileSet> implicitFileSet = getImplicitAndExplicitFileSet();
         processFileSet(implicitFileSet);
     }
 
@@ -51,7 +53,7 @@ public class SiteMeshTask extends MatchingTask {
      *
      * @return The FileSets to process.
      */
-    protected Vector<FileSet> getImplicitAndExplicitFileSet() {
+    protected List<FileSet> getImplicitAndExplicitFileSet() {
         Vector<FileSet> vfss = new Vector<FileSet>();
         FileSet fs = (FileSet) getImplicitFileSet().clone();
 
@@ -87,7 +89,7 @@ public class SiteMeshTask extends MatchingTask {
      * @param filesets The set of files to be processed.
      * @throws BuildException When there's a problem decorating the files.
      */
-    protected void processFileSet(Vector<FileSet> filesets) {
+    protected void processFileSet(List<FileSet> filesets) {
         for (FileSet fileset : filesets) {
             DirectoryScanner directoryScanner = fileset.getDirectoryScanner(getProject());
             directoryScanner.setBasedir(fileset.getDir(getProject()));

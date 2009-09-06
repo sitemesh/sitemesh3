@@ -35,7 +35,7 @@ import java.io.IOException;
 public class SiteMeshTaskTestSuite {
 
     public static Test suite() {
-        final File baseDir = new File("sitemesh/src/test/java/org/sitemesh/ant/testproject");
+        final File baseDir = new File("src/test/java/org/sitemesh/ant/testproject");
 
         final FileFilter fileFilter = new FileFilter() {
             public boolean accept(File file) {
