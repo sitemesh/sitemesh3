@@ -17,7 +17,7 @@ rm -rf release && mkdir release &&
   mkdir release/sitemesh-$RELEASE_VERSION
 	#cp pom.xml *.txt release/sitemesh-$RELEASE_VERSION
 	for MODULE in $MODULES_TO_PACKAGE
-	do																																																																																																															
+	do
 		mkdir -p release/sitemesh-$RELEASE_VERSION/$MODULE
 		cp -R $MODULE/{src,pom.xml,*.txt} release/sitemesh-$RELEASE_VERSION/$MODULE/ 2>/dev/null
 		cp $MODULE/target/$MODULE-$POM_VERSION.jar release/sitemesh-$RELEASE_VERSION/$MODULE-$RELEASE_VERSION.jar 2>/dev/null
@@ -27,10 +27,10 @@ rm -rf release && mkdir release &&
 	
 	# Create archives
 	cd release
-  echo "Creating release/sitemesh-$RELEASE_VERSION.tgz"
-  tar czf sitemesh-$RELEASE_VERSION.tgz sitemesh-$RELEASE_VERSION
-  echo "Creating release/sitemesh-$RELEASE_VERSION.zip"
-  zip -q sitemesh-$RELEASE_VERSION.zip sitemesh-$RELEASE_VERSION
+        echo "Creating release/sitemesh-$RELEASE_VERSION.tgz"
+        tar czf sitemesh-$RELEASE_VERSION.tgz sitemesh-$RELEASE_VERSION
+        echo "Creating release/sitemesh-$RELEASE_VERSION.zip"
+        zip -q sitemesh-$RELEASE_VERSION.zip sitemesh-$RELEASE_VERSION
 	rm -rf sitemesh-$RELEASE_VERSION
 	cd ..
 	
