@@ -44,15 +44,28 @@
   </developers>
 
   <issueManagement>
-    <system>Bitbucket</system>
-    <url>http://bitbucket.org/sitemesh/sitemesh-3-java/issues/</url>
+    <system>GitHub</system>
+    <url>http://github.com/sitemesh/sitemesh3/issues</url>
   </issueManagement>
 
   <scm>
-    <connection>scm:hg:http://bitbucket.org/sitemesh/sitemesh-3-java/</connection>
-    <developerConnection>scm:hg:https://bitbucket.org/sitemesh/sitemesh-3-java/</developerConnection>
-    <url>http://bitbucket.org/sitemesh/sitemesh-3-java/</url>
+    <connection>scm:git:git://github.com/sitemesh/sitemesh3.git</connection>
+    <developerConnection>scm:git:git@github.com:sitemesh/sitemesh3.git</developerConnection>
+    <url>http://github.com/sitemesh/sitemesh3/</url>
   </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>github-release</id>
+      <name>Sonatype GitHub Release Repository</name>
+      <url>http://oss.sonatype.org/content/repositories/github-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>github-snapshot</id>
+      <name>Sonatype GitHub Snapshot Repository</name>
+      <url>http://oss.sonatype.org/content/repositories/github-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <build>
     <defaultGoal>install</defaultGoal>
