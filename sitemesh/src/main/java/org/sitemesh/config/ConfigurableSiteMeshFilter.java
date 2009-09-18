@@ -7,17 +7,23 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import javax.servlet.*;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Enumeration;
-import java.util.logging.Logger;
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * A SiteMesh filter that can be dropped in to web.xml, that does not require having to write any Java code.
@@ -231,7 +237,7 @@ public class ConfigurableSiteMeshFilter implements Filter {
      */
     protected String getConfigFileName() {
         String config = configProperties.get(CONFIG_FILE_PARAM);
-        if (config == null || config.isEmpty()) {
+        if (config == null || config.length() == 0) {
             config = CONFIG_FILE_DEFAULT;
         }
         return config;
