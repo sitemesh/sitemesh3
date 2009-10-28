@@ -184,6 +184,19 @@ public class WebEnvironment {
             return this;
         }
 
+        public Builder addStatusCodeFail(String path, final int statusCode, final String contentType, final String content) {
+          addServlet(path, new HttpServlet() {
+              @Override
+              protected void doGet(HttpServletRequest request, HttpServletResponse response)
+                      throws ServletException, IOException {
+              		response.setStatus(statusCode);
+                  response.setContentType(contentType);
+                  response.getOutputStream().print(content);
+              }
+          });
+          return this;
+      }
+
         public Builder serveResourcesFrom(String path) {
             context.setResourceBase(path);
             return this;

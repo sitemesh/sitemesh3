@@ -40,7 +40,7 @@ public class BasicSelector implements Selector {
     }
 
     public boolean shouldAbortBufferingForHttpStatusCode(int statusCode) {
-        return statusCode == 200 || includeErrorPages && statusCode >= 400;
+        return !(statusCode == 200 || includeErrorPages && statusCode >= 400);
     }
 
     public boolean shouldBufferForRequest(HttpServletRequest request) {

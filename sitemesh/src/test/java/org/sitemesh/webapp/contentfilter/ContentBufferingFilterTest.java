@@ -59,6 +59,25 @@ public class ContentBufferingFilterTest extends TestCase {
                 webEnvironment.getRawResponse());
 
     }
+    
+    public void testStatusCode404DoesntProcess() throws Exception {
+      WebEnvironment webEnvironment = new WebEnvironment.Builder()
+      .addStatusCodeFail("/filtered", 404, "text/html", "1")
+      .addFilter("/filtered", new MyContentBufferingFilter() {
+          @Override
+          protected boolean postProcess(String contentType, CharBuffer buffer, HttpServletRequest request, HttpServletResponse response, ResponseMetaData metaData) throws IOException, ServletException {
+//          	throw new RuntimeException("not me!");
+          	return false;
+          }
+      })
+      .create();
+
+      webEnvironment.doGet("/filtered");
+      
+      assertEquals(404, webEnvironment.getStatus());
+      // did a code coverage check and it does check the status line
+    }
+    
 
     public void testUpdatesContentLengthHeader() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
