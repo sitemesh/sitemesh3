@@ -34,6 +34,7 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     private final ResponseMetaData metaData;
 
     private Buffer buffer;
+    private boolean bufferingWasDisabled = false;
 
 
     public HttpServletResponseBuffer(final HttpServletResponse originalResponse, ResponseMetaData metaData, Selector selector) {
@@ -123,6 +124,7 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
      */
     protected void disableBuffering() {
         buffer = null;
+        bufferingWasDisabled = true;
         routablePrintWriter.updateDestination(new RoutablePrintWriter.DestinationFactory() {
             public PrintWriter activateDestination() throws IOException {
                 preCommit();
@@ -135,6 +137,10 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
                 return getResponse().getOutputStream();
             }
         });
+    }
+    
+    public boolean bufferingWasDisabled() {
+    	return bufferingWasDisabled;
     }
 
     /**

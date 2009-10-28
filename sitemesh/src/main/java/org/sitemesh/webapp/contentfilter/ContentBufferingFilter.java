@@ -171,7 +171,7 @@ public abstract class ContentBufferingFilter implements Filter {
 
         // If content was buffered, post-process it.
         boolean processed = false;
-        if (buffer != null) {
+        if (buffer != null && !responseBuffer.bufferingWasDisabled()) {
             processed = postProcess(responseBuffer.getContentType(), buffer, request, response, metaData);
         }
 

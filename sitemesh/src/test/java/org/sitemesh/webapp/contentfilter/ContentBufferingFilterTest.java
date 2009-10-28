@@ -1,12 +1,13 @@
 package org.sitemesh.webapp.contentfilter;
 
-import junit.framework.TestCase;
+import java.io.IOException;
+import java.nio.CharBuffer;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-import java.nio.CharBuffer;
-import java.io.IOException;
+
+import junit.framework.TestCase;
 
 import org.sitemesh.webapp.WebEnvironment;
 
@@ -22,6 +23,12 @@ public class ContentBufferingFilterTest extends TestCase {
         protected MyContentBufferingFilter() {
             super(new BasicSelector(false, "text/html"));
         }
+    }
+    
+    private static abstract class MyContentBufferingFilterDecorateErrorPages extends ContentBufferingFilter {
+      protected MyContentBufferingFilterDecorateErrorPages() {
+          super(new BasicSelector(true, "text/html"));
+      }
     }
 
     public void testCanRewriteContent() throws Exception {
@@ -66,8 +73,8 @@ public class ContentBufferingFilterTest extends TestCase {
       .addFilter("/filtered", new MyContentBufferingFilter() {
           @Override
           protected boolean postProcess(String contentType, CharBuffer buffer, HttpServletRequest request, HttpServletResponse response, ResponseMetaData metaData) throws IOException, ServletException {
-//          	throw new RuntimeException("not me!");
-          	return false;
+          	response.getOutputStream().print("1234567890");
+          	return true;
           }
       })
       .create();
@@ -75,9 +82,43 @@ public class ContentBufferingFilterTest extends TestCase {
       webEnvironment.doGet("/filtered");
       
       assertEquals(404, webEnvironment.getStatus());
+      assertEquals(
+          "HTTP/1.1 404 Not Found\n" +
+                  "Content-Type: text/html\n" +
+                  "Transfer-Encoding: chunked\n" +
+                  "\n" +
+                  "1\n" +
+                  "1\n" +
+                  "0", // <---
+          webEnvironment.getRawResponse());
       // did a code coverage check and it does check the status line
     }
-    
+
+    public void testErrorPagesShouldBeMarkedUp() throws Exception {
+      WebEnvironment webEnvironment = new WebEnvironment.Builder()
+      .addStatusCodeFail("/filtered", 404, "text/html", "1")
+      .addFilter("/filtered", new MyContentBufferingFilterDecorateErrorPages() {
+          @Override
+          protected boolean postProcess(String contentType, CharBuffer buffer, HttpServletRequest request, HttpServletResponse response, ResponseMetaData metaData) throws IOException, ServletException {
+          	response.getOutputStream().print("1234567890");
+          	return true;
+          }
+      })
+      .create();
+
+      webEnvironment.doGet("/filtered");
+      
+      assertEquals(404, webEnvironment.getStatus());
+      assertEquals(
+          "HTTP/1.1 404 Not Found\n" +
+                  "Content-Type: text/html\n" +
+                  "Content-Length: 10\n" + // <---
+                  "\n" +
+                  "1234567890",
+          webEnvironment.getRawResponse());
+      // with this check, we now have a fully covered status line
+    }
+
 
     public void testUpdatesContentLengthHeader() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
