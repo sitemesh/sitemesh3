@@ -5,13 +5,9 @@ import junit.framework.TestSuite;
 import static junit.framework.Assert.assertEquals;
 import org.apache.tools.ant.BuildFileTest;
 import org.apache.tools.ant.util.FileUtils;
+import org.sitemesh.TestUtil;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileReader;
-import java.io.Reader;
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Ant target test suite.
@@ -34,8 +30,8 @@ import java.io.IOException;
  */
 public class SiteMeshTaskTestSuite {
 
-    public static Test suite() {
-        final File baseDir = new File("src/test/java/org/sitemesh/ant/testproject");
+    public static Test suite() throws FileNotFoundException {
+        final File baseDir = TestUtil.findDir("sitemesh/src/test/java/org/sitemesh/ant/testproject");
 
         final FileFilter fileFilter = new FileFilter() {
             public boolean accept(File file) {

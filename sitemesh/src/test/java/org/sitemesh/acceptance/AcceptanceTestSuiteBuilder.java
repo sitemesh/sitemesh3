@@ -2,11 +2,13 @@ package org.sitemesh.acceptance;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.sitemesh.TestUtil;
 import org.sitemesh.offline.SiteMeshOffline;
 import org.sitemesh.offline.directory.Directory;
 import org.sitemesh.webapp.WebEnvironment;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.CharBuffer;
 import java.util.Map;
@@ -17,8 +19,6 @@ import java.util.TreeMap;
  * @author Joe Walnes
  */
 public class AcceptanceTestSuiteBuilder {
-
-    private static final File BASE_DIR = new File("src/test/java/org/sitemesh/acceptance");
 
     public static TestSuite buildWebAppAndOfflineSuite(String suiteName,
                                                        WebEnvironment webEnvironment,
@@ -80,11 +80,11 @@ public class AcceptanceTestSuiteBuilder {
         return map;
     }
 
-    private static File getExpectedDir(String suiteName) {
-        return new File(new File(BASE_DIR, suiteName), "expected");
+    private static File getExpectedDir(String suiteName) throws FileNotFoundException {
+        return new File(new File(TestUtil.findDir("sitemesh/src/test/java/org/sitemesh/acceptance"), suiteName), "expected");
     }
 
-    public static File getInputDir(String suiteName) {
-        return new File(new File(BASE_DIR, suiteName), "input");
+    public static File getInputDir(String suiteName) throws FileNotFoundException {
+        return new File(new File(TestUtil.findDir("sitemesh/src/test/java/org/sitemesh/acceptance"), suiteName), "input");
     }
 }

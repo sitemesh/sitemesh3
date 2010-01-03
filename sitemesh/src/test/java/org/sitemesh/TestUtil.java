@@ -1,6 +1,7 @@
 package org.sitemesh;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 
 /**
@@ -68,6 +69,18 @@ public class TestUtil {
         if (file.exists()) {
             file.delete();
         }
+    }
+
+    public static File findDir(String path) throws FileNotFoundException {
+        File dir1 = new File(path);
+        if (dir1.exists()) {
+            return dir1;
+        }
+        File dir2 = new File(path.replaceFirst(".*/", ""));
+        if (dir2.exists()) {
+            return dir2;
+        }
+        throw new FileNotFoundException("Could not find " + dir1.getAbsolutePath() + " or " + dir2.getAbsolutePath());
     }
 
 }

@@ -1,5 +1,6 @@
 package org.sitemesh.html;
 
+import org.sitemesh.TestUtil;
 import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.content.ContentProperty;
 import org.sitemesh.content.Content;
@@ -35,7 +36,7 @@ public class DataDrivenSuiteBuilder {
      */
     public static void buildSuite(TestSuite suite, ContentProcessor processor, String... inputFileNames)
             throws IOException {
-        File testDataDir = new File("src/test/java/org/sitemesh/html/testdata");
+        File testDataDir = TestUtil.findDir("sitemesh/src/test/java/org/sitemesh/html/testdata");
 
         for (String inputFileName : inputFileNames) {
             File inputFile = new File(testDataDir, inputFileName);
