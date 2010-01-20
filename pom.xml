@@ -18,7 +18,6 @@
 
   <modules>
     <module>sitemesh</module>
-    <module>sitemesh-tools-benchmark</module>
     <module>sitemesh-examples-hellowebapp</module>
   </modules>
 

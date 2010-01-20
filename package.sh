@@ -7,7 +7,7 @@
 POM_VERSION=3.0.0-SNAPSHOT
 RELEASE_VERSION=3.0-alpha-1
 
-MODULES_TO_PACKAGE="sitemesh sitemesh-examples-* sitemesh-tools-benchmark"
+MODULES_TO_PACKAGE="sitemesh sitemesh-examples-*"
 
 mvn clean && mvn package
 

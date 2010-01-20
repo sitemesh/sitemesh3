@@ -17,7 +17,6 @@ The subdirectories in this package are modules. They are:
 
 * sitemesh : Main SiteMesh project
 * sitemesh-examples-*: End user examples
-* sitemesh-tools-*: Tools used by SiteMesh development team
 
 === IDE instructions ===
 
