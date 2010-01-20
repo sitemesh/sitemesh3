@@ -76,7 +76,7 @@ public class TestUtil {
         if (dir1.exists()) {
             return dir1;
         }
-        File dir2 = new File(path.replaceFirst(".*/", ""));
+        File dir2 = new File(path.replaceFirst("[^/]*/", ""));
         if (dir2.exists()) {
             return dir2;
         }
