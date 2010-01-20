@@ -16,13 +16,12 @@ You can also run mvn from a module directory to work just with that.
 The subdirectories in this package are modules. They are:
 
 * sitemesh : Main SiteMesh project
-* sitemesh-docs: End-user documentation
 * sitemesh-examples-*: End user examples
 * sitemesh-tools-*: Tools used by SiteMesh development team
 
 === IDE instructions ===
 
-IntelliJ 8: Create new project from existing structure (Maven), using pom.xml in sitemesh module.
+IntelliJ 9: Create new project from existing structure (Maven), using pom.xml in sitemesh module.
 
 
 

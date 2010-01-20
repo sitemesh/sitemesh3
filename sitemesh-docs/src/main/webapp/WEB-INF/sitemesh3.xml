@@ -1,3 +1,0 @@
-<sitemesh>
-  <mapping path="/*" decorator="/decorators/main.html"/>
-</sitemesh>
