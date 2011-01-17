@@ -1,0 +1,12 @@
+<!-- THIS FILE IS ONLY REQUIRED IF YOU WANT TO DEPLOY TO GOOGLE APP ENGINE. THIS IS NOT NEEDED FOR SITEMESH -->
+<appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
+    <application>sitemesh-examples-hellowebapp</application>
+    <version>1</version>
+    <system-properties>
+        <property name="file.encoding" value="UTF-8"/>
+    </system-properties>
+    <precompilation-enabled>true</precompilation-enabled>
+    <static-files>
+        <exclude path="**.html" />
+    </static-files>
+</appengine-web-app>
