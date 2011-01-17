@@ -16,7 +16,7 @@ or if you prefer tomcat:
   Goto http://localhost:8080/
 
 or Google App Engine:
-  mvn gae:run
+  mvn package gae:run
   Goto http://localhost:8080/
 
 Alternatively, you can deploy the packaged war (target/sitemesh-examples-hellowebapp.war)
