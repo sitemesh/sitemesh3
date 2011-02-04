@@ -56,12 +56,12 @@
     <repository>
       <id>github-release</id>
       <name>Sonatype GitHub Release Repository</name>
-      <url>http://oss.sonatype.org/content/repositories/github-releases/</url>
+      <url>https://oss.sonatype.org/content/repositories/github-releases/</url>
     </repository>
     <snapshotRepository>
       <id>github-snapshot</id>
       <name>Sonatype GitHub Snapshot Repository</name>
-      <url>http://oss.sonatype.org/content/repositories/github-snapshots/</url>
+      <url>https://oss.sonatype.org/content/repositories/github-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 
