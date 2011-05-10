@@ -1,6 +1,8 @@
-package org.sitemesh.sitemesh;
+package org.sitemesh.maven2Plugin;
 
-import org.sitemesh.sitemesh.Setting;
+import org.sitemesh.maven2Plugin.MyMojo;
+import org.sitemesh.maven2Plugin.DecoratorMapping;
+import org.sitemesh.maven2Plugin.Setting;
 
 import java.io.File;
 import java.net.URL;

@@ -1,4 +1,4 @@
-package org.sitemesh.sitemesh;
+package org.sitemesh.maven2Plugin;
 
 import java.io.File;
 import java.util.List;

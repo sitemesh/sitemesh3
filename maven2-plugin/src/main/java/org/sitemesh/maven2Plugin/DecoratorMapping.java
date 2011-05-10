@@ -1,4 +1,4 @@
-package org.sitemesh.sitemesh;
+package org.sitemesh.maven2Plugin;
 
 /**
  * @author nichole
