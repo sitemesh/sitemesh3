@@ -22,7 +22,7 @@ and edit the entries for your project.
                         <decoratorMappings>
                             <!-- sitemesh needs these to be relative to sourceDirectory -->
                             <decoratorMapping>
-                                <contentFilePattern>/index.html</contentFilePattern>
+                                <contentFilePattern>/*.html</contentFilePattern>
                                 <decoratorFileName>/mobile_decorator.html</decoratorFileName>
                             </decoratorMapping>
                         <decoratorMappings>
