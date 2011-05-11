@@ -79,7 +79,13 @@ public class WebAppContext extends BaseSiteMeshContext {
     }
 
     public static String getRequestPath(HttpServletRequest request) {
-        String result = request.getServletPath();
+        String result   = request.getServletPath();
+        String pathInfo = request.getPathInfo();
+
+        if (pathInfo != null) {
+        	result = result + pathInfo;
+        }
+        
         // getServletPath() returns null unless the mapping corresponds to a servlet
         if (result == null) {
             String requestURI = request.getRequestURI();
