@@ -4,6 +4,8 @@ import org.sitemesh.tagprocessor.BasicRule;
 import org.sitemesh.tagprocessor.Tag;
 import org.sitemesh.content.ContentProperty;
 
+import java.io.IOException;
+
 /**
  * Exports any attributes on the <code>&lt;html&gt;</code> tag
  * as page properties.
@@ -19,12 +21,13 @@ public class HtmlAttributesRule extends BasicRule {
     }
 
     @Override
-    public void process(Tag tag) {
+    public void process(Tag tag) throws IOException {
         if (tag.getType() == Tag.Type.OPEN) {
             for (int i = 0; i < tag.getAttributeCount(); i++) {
                 propertyToExport.getChild(tag.getAttributeName(i)).setValue(tag.getAttributeValue(i));
             }
         }
+        tag.writeTo(tagProcessorContext.currentBuffer());
     }
 
 }
