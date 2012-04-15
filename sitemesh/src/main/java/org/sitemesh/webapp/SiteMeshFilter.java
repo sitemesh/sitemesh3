@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.CharBuffer;
 
 /**
@@ -77,8 +78,11 @@ public class SiteMeshFilter extends ContentBufferingFilter {
         if (content == null) {
             return false;
         }
-
-        content.getData().writeValueTo(response.getWriter());
+        try {
+            content.getData().writeValueTo(response.getWriter());
+        } catch (IllegalStateException ise) {  // If getOutputStream() has already been called
+            content.getData().writeValueTo(new PrintStream(response.getOutputStream()));
+        }
         return true;
     }
 
