@@ -1,0 +1,41 @@
+/*
+ */
+
+import org.apache.ivy.plugins.resolver.URLResolver
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'war'
+apply plugin: 'jetty'
+
+
+def compatibilityVersion = 1.5
+sourceCompatibility = compatibilityVersion
+targetCompatibility = compatibilityVersion
+
+jettyRun.contextPath = ''
+jettyRun.webAppSourceDirectory = file("$rootDir")
+
+dependencies {
+    runtime fileTree(dir: 'lib', include: '*.jar')
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        output.classesDir = file('web-app/WEB-INF/classes')
+    }
+}
+
+dependencies {
+    groovy 'org.codehaus.groovy:groovy-all:1.8.4'
+
+    testCompile 'javax.servlet:servlet-api:2.5'
+}
+
+clean.doLast {
+     delete sourceSets*.output.classesDir
+}
