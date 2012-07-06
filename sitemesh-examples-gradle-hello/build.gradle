@@ -1,41 +1,24 @@
 /*
+ * build.gradle for SiteMesh 3 Hello World Demo
+ *
+ * SiteMesh 3: http://wiki.sitemesh.org/display/sitemesh3/Home
+ * Gradle: http://www.gradle.org/
  */
 
-import org.apache.ivy.plugins.resolver.URLResolver
-
 apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'war'
 apply plugin: 'jetty'
 
 
-def compatibilityVersion = 1.5
-sourceCompatibility = compatibilityVersion
-targetCompatibility = compatibilityVersion
-
+// Keep everything simple by making webapp root the project root and the context '' (aka '/')
 jettyRun.contextPath = ''
 jettyRun.webAppSourceDirectory = file("$rootDir")
 
 dependencies {
+    // scope 'groupID:artifactID:version'
     runtime 'org.sitemesh:sitemesh:3.0-alpha-2'
 }
 
 repositories {
+    // Use Maven Central Repo to search for Dependencies
     mavenCentral()
-}
-
-sourceSets {
-    main {
-        output.classesDir = file('web-app/WEB-INF/classes')
-    }
-}
-
-dependencies {
-    groovy 'org.codehaus.groovy:groovy-all:1.8.4'
-
-    testCompile 'javax.servlet:servlet-api:2.5'
-}
-
-clean.doLast {
-     delete sourceSets*.output.classesDir
 }
