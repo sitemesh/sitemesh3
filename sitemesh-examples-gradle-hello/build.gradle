@@ -1,0 +1,24 @@
+/*
+ * build.gradle for SiteMesh 3 Hello World Demo
+ *
+ * SiteMesh 3: http://wiki.sitemesh.org/display/sitemesh3/Home
+ * Gradle: http://www.gradle.org/
+ */
+
+apply plugin: 'java'
+apply plugin: 'jetty'
+
+
+// Keep everything simple by making webapp root the project root and the context '' (aka '/')
+jettyRun.contextPath = ''
+jettyRun.webAppSourceDirectory = file("$rootDir")
+
+dependencies {
+    // scope 'groupID:artifactID:version'
+    runtime 'org.sitemesh:sitemesh:3.0-alpha-2'
+}
+
+repositories {
+    // Use Maven Central Repo to search for Dependencies
+    mavenCentral()
+}
