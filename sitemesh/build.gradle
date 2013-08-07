@@ -1,0 +1,34 @@
+
+
+description = 'SiteMesh library'
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version:'4.5'
+    testCompile group: 'org.mortbay.jetty', name: 'jetty', version:'6.1.14'
+    testCompile group: 'org.mortbay.jetty', name: 'jetty-util', version:'6.1.14'
+    testCompile group: 'org.apache.ant', name: 'ant-testutil', version:'1.7.1'
+    compile 'de.jflex:jflex:1.4.3'
+    compile(group: 'javax.servlet', name: 'servlet-api', version:'2.5') {
+       /* This dependency was originally in the Maven provided scope, but the project was not of type war.
+       This behavior is not yet supported by Gradle, so this dependency has been converted to a compile dependency.
+       Please review and delete this closure when resolved. */
+    }
+    compile(group: 'org.apache.ant', name: 'ant', version:'1.7.1') {
+       /* This dependency was originally in the Maven provided scope, but the project was not of type war.
+       This behavior is not yet supported by Gradle, so this dependency has been converted to a compile dependency.
+       Please review and delete this closure when resolved. */
+    }
+}
+
+
+task generateLexer {
+    // Generate the lexer
+    ant.taskdef classname: 'JFlex.anttask.JFlexTask', name: 'jflex', classpath: configurations.compile.asPath
+    ant.jflex(file: "src/main/java/org/sitemesh/tagprocessor/lexer.flex", destdir: "src/main/java/")
+}
+
+compileJava.dependsOn generateLexer
+
+test {
+     exclude '**/**$**'   
+}

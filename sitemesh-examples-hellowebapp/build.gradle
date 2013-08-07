@@ -1,0 +1,9 @@
+
+
+description = 'SiteMesh example: Hello world web-app'
+
+apply plugin: 'war'
+
+dependencies {
+  compile project(':sitemesh')
+}
