@@ -1,0 +1,5 @@
+rootProject.name = 'sitemesh-parent'
+include ':sitemesh', ':sitemesh-examples-hellowebapp'
+
+project(':sitemesh').projectDir = "$rootDir/sitemesh" as File
+project(':sitemesh-examples-hellowebapp').projectDir = "$rootDir/sitemesh-examples-hellowebapp" as File
