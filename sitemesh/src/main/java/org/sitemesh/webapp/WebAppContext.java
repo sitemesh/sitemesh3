@@ -2,6 +2,7 @@ package org.sitemesh.webapp;
 
 import org.sitemesh.BaseSiteMeshContext;
 import org.sitemesh.SiteMeshContext;
+import org.sitemesh.config.PathMapper;
 import org.sitemesh.content.Content;
 import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.content.ContentProperty;
@@ -118,7 +119,7 @@ public class WebAppContext extends BaseSiteMeshContext {
     protected void decorate(String decoratorPath, Content content, Writer out) throws IOException {
         HttpServletRequest filterableRequest = new HttpServletRequestFilterable(request);
         // Wrap response so output gets buffered.
-        HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, metaData, new BasicSelector() {
+        HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, metaData, new BasicSelector(new PathMapper<Boolean>()) {
             @Override
             public boolean shouldBufferForContentType(String contentType, String mimeType, String encoding) {
                 return true; // We know we should buffer.

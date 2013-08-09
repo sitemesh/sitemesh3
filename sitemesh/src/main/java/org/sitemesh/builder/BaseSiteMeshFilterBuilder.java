@@ -106,16 +106,7 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
         if (customSelector != null) {
             return customSelector;
         } else {
-            String[] mimeTypesArray = mimeTypes.toArray(new String[mimeTypes.size()]);
-            return new BasicSelector(mimeTypesArray) {
-                // TODO: Move the exclusion functionality into BasicSelector.
-                @Override
-                public boolean shouldBufferForRequest(HttpServletRequest request) {
-                    String requestPath = WebAppContext.getRequestPath(request);
-                    return super.shouldBufferForRequest(request)
-                            && excludesMapper.get(requestPath) == null;
-                }
-            };
+            return new BasicSelector(excludesMapper, mimeTypes.toArray(new String[mimeTypes.size()]));
         }
     }
 

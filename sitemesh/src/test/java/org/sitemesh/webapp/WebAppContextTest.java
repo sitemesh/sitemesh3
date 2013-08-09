@@ -1,20 +1,23 @@
 package org.sitemesh.webapp;
 
-import org.sitemesh.content.Content;
-import org.sitemesh.content.ContentProcessor;
-import org.sitemesh.content.tagrules.TagBasedContentProcessor;
-import org.sitemesh.content.tagrules.decorate.DecoratorTagRuleBundle;
-import org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle;
-import org.sitemesh.config.PathBasedDecoratorSelector;
-import org.sitemesh.webapp.contentfilter.BasicSelector;
-import junit.framework.TestCase;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+
+import junit.framework.TestCase;
+
+import org.sitemesh.config.PathBasedDecoratorSelector;
+import org.sitemesh.config.PathMapper;
+import org.sitemesh.content.Content;
+import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.content.tagrules.TagBasedContentProcessor;
+import org.sitemesh.content.tagrules.decorate.DecoratorTagRuleBundle;
+import org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle;
+import org.sitemesh.webapp.contentfilter.BasicSelector;
 
 /**
  * @author Joe Walnes
@@ -35,7 +38,7 @@ public class WebAppContextTest extends TestCase {
 
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilter(
-                        new BasicSelector("text/html"),
+                        new BasicSelector(new PathMapper<Boolean>(), "text/html"),
                         new TagBasedContentProcessor(new CoreHtmlTagRuleBundle()),
                         new PathBasedDecoratorSelector().put("/*", "/mydecorator")
                 ))
@@ -54,7 +57,7 @@ public class WebAppContextTest extends TestCase {
 
         WebEnvironment web = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilter(
-                        new BasicSelector("text/html"),
+                        new BasicSelector(new PathMapper<Boolean>(), "text/html"),
                         processor,
                         new PathBasedDecoratorSelector()
                                 .put("/*", "/decorators/page.html")
@@ -93,7 +96,7 @@ public class WebAppContextTest extends TestCase {
 
         WebEnvironment web = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilter(
-                        new BasicSelector("text/html"),
+                        new BasicSelector(new PathMapper<Boolean>(), "text/html"),
                         processor,
                         new PathBasedDecoratorSelector()
                                 .put("/*", "/decorators/page.html")

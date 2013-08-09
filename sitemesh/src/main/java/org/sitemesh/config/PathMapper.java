@@ -1,7 +1,10 @@
 package org.sitemesh.config;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The PathMapper is used to map file patterns to keys, and find an approriate
@@ -27,8 +30,21 @@ import java.util.Map;
  * @author Joe Walnes
  * @author Mike Cannon-Brookes
  * @author Hani Suleiman
+ * @author Vladimir Orany
  */
 public class PathMapper<T> {
+    
+    public static final Set<String> DEFAULT_KEYS;
+    
+    static {
+        Set<String> set = new HashSet<String>();
+        set.add("/");
+        set.add("*");
+        set.add("**");
+        set.add("/*");
+        set.add("/**");
+        DEFAULT_KEYS = Collections.unmodifiableSet(set);
+    }
 
     private final Map<String, T> mappings = new HashMap<String, T>();
 
@@ -49,6 +65,15 @@ public class PathMapper<T> {
         if (mapped == null) return null;
         return mappings.get(mapped);
     }
+    
+    /** Retrieve appropriate pattern by matching patterns with supplied path. */
+    public String getPatternInUse(String path) {
+        if (path == null) path = "/";
+        String result = findExactKey(path);
+        if (result == null) result = findComplexKey(path);
+        if (result == null) result = findDefaultKey();
+        return result;
+    }
 
     /** Check if path matches exact pattern ( /blah/blah.jsp ). */
     private String findExactKey(String path) {
@@ -60,7 +85,7 @@ public class PathMapper<T> {
         String result = null;
 
         for (String key : mappings.keySet()) {
-            if (key.length() > 1 && (key.indexOf('?') != -1 || key.indexOf('*') != -1) && match(key, path, false)) {
+            if (isComplexKey(key) && match(key, path, false)) {
                 if (result == null || key.length() > result.length()) {
                     // longest key wins
                     result = key;
@@ -70,10 +95,27 @@ public class PathMapper<T> {
         return result;
     }
 
+    /**
+     * Return <code>true</code> if the key contains wild cards.
+     * @param key key under test
+     * @return <code>true</code> if the key contains wild cards
+     */
+    public static boolean isComplexKey(String key) {
+        return key.length() > 1 && (key.indexOf('?') != -1 || key.indexOf('*') != -1);
+    }
+    
+    /**
+     * Return <code>true</code> if the key default key matching all paths.
+     * @param key key under test
+     * @return <code>true</code> if the key default key matching all paths
+     */
+    public static boolean isDefaultKey(String key) {
+        return DEFAULT_KEYS.contains(key);
+    }
+
     /** Look for root pattern ( / ). */
     private String findDefaultKey() {
-        String[] defaultKeys = {"/", "*", "/*"};
-        for (String defaultKey : defaultKeys) {
+        for (String defaultKey : DEFAULT_KEYS) {
             if (mappings.containsKey(defaultKey)) return defaultKey;
         }
         return null;
@@ -225,5 +267,23 @@ public class PathMapper<T> {
             }
         }
         return true;
+    }
+
+    /**
+     * Wheter the first pattern is more specific than the second one.
+     * Exact patterns are more specific than complex patterns and 
+     * complex patterns are more specific than default patterns.
+     * @param exclusionPattern pattern which must be more or equally specific to return <code>true</code>
+     * @param decoratorPattern pattern which must be less specific to return <code>true</code>
+     * @return <code>true</code> if the first pattern is more specific than the second one
+     */
+    public static boolean isMoreSpecific(String exclusionPattern, String decoratorPattern) {
+        if(isDefaultKey(decoratorPattern)) {
+            return true;
+        }
+        if(isComplexKey(decoratorPattern)){
+            return !isDefaultKey(decoratorPattern);
+        }
+        return !isComplexKey(exclusionPattern) && !isDefaultKey(exclusionPattern);
     }
 }
