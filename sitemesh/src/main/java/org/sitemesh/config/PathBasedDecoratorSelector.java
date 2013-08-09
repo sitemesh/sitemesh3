@@ -36,4 +36,12 @@ public class PathBasedDecoratorSelector<C extends SiteMeshContext> implements De
         String[] result = pathMapper.get(siteMeshContext.getPath());
         return result == null ? EMPTY : result;
     }
+    
+    /**
+     * Returns path mapper in use.
+     * @return path mapper in use
+     */
+    public PathMapper<String[]> getPathMapper() {
+        return pathMapper;
+    }
 }
