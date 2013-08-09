@@ -282,6 +282,9 @@ public class PathMapper<T> {
             return true;
         }
         if(isComplexKey(decoratorPattern)){
+            if(isComplexKey(exclusionPattern)) {
+                return exclusionPattern.length() >= decoratorPattern.length();
+            }
             return !isDefaultKey(decoratorPattern);
         }
         return !isComplexKey(exclusionPattern) && !isDefaultKey(exclusionPattern);

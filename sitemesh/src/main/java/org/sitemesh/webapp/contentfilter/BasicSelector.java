@@ -22,8 +22,16 @@ public class BasicSelector implements Selector {
     private final boolean includeErrorPages;
     private final PathMapper<Boolean> excludesMapper;
 
+    public BasicSelector(String... mimeTypesToBuffer) {
+        this(new PathMapper<Boolean>(), false, mimeTypesToBuffer);
+    }
+
     public BasicSelector(PathMapper<Boolean> excludesMapper, String... mimeTypesToBuffer) {
         this(excludesMapper, false, mimeTypesToBuffer);
+    }
+
+    public BasicSelector(boolean includeErrorPages, String... mimeTypesToBuffer) {
+        this(new PathMapper<Boolean>(), includeErrorPages, mimeTypesToBuffer);
     }
 
     public BasicSelector(PathMapper<Boolean> excludesMapper, boolean includeErrorPages, String... mimeTypesToBuffer) {
