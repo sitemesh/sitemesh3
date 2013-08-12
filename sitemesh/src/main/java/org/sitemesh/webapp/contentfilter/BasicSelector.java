@@ -2,6 +2,9 @@ package org.sitemesh.webapp.contentfilter;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.sitemesh.config.PathMapper;
+import org.sitemesh.webapp.WebAppContext;
+
 /**
  * Basic implementation of {@link Selector}. Will select OK responses that match a particular
  * MIME type, and (optionally) error pages. It will also only kick in once per request.
@@ -17,14 +20,24 @@ public class BasicSelector implements Selector {
 
     private final String[] mimeTypesToBuffer;
     private final boolean includeErrorPages;
+    private final PathMapper<Boolean> excludesMapper;
 
     public BasicSelector(String... mimeTypesToBuffer) {
-        this(false, mimeTypesToBuffer);
+        this(new PathMapper<Boolean>(), false, mimeTypesToBuffer);
+    }
+
+    public BasicSelector(PathMapper<Boolean> excludesMapper, String... mimeTypesToBuffer) {
+        this(excludesMapper, false, mimeTypesToBuffer);
     }
 
     public BasicSelector(boolean includeErrorPages, String... mimeTypesToBuffer) {
+        this(new PathMapper<Boolean>(), includeErrorPages, mimeTypesToBuffer);
+    }
+
+    public BasicSelector(PathMapper<Boolean> excludesMapper, boolean includeErrorPages, String... mimeTypesToBuffer) {
         this.mimeTypesToBuffer = mimeTypesToBuffer;
         this.includeErrorPages = includeErrorPages;
+        this.excludesMapper    = excludesMapper;
     }
 
     public boolean shouldBufferForContentType(String contentType, String mimeType, String encoding) {
@@ -56,6 +69,10 @@ public class BasicSelector implements Selector {
             request.setAttribute(ALREADY_APPLIED_KEY, true);
             return false;
         }
+    }
+
+    @Override public String excludePatternInUse(HttpServletRequest request) {
+        return excludesMapper.getPatternInUse(WebAppContext.getRequestPath(request));
     }
 
 }

@@ -210,4 +210,8 @@ public abstract class ContentBufferingFilter implements Filter {
     protected HttpServletRequest wrapRequest(HttpServletRequest request) {
         return new HttpServletRequestFilterable(request);
     }
+    
+    protected Selector getSelector() {
+        return selector;
+    }
 }

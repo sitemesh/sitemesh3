@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
 
+import org.sitemesh.config.PathMapper;
 import org.sitemesh.webapp.WebEnvironment;
 
 /**
@@ -21,13 +22,13 @@ public class ContentBufferingFilterTest extends TestCase {
 
     private static abstract class MyContentBufferingFilter extends ContentBufferingFilter {
         protected MyContentBufferingFilter() {
-            super(new BasicSelector(false, "text/html"));
+            super(new BasicSelector(new PathMapper<Boolean>(), false, "text/html"));
         }
     }
     
     private static abstract class MyContentBufferingFilterDecorateErrorPages extends ContentBufferingFilter {
       protected MyContentBufferingFilterDecorateErrorPages() {
-          super(new BasicSelector(true, "text/html"));
+          super(new BasicSelector(new PathMapper<Boolean>(), true, "text/html"));
       }
     }
 

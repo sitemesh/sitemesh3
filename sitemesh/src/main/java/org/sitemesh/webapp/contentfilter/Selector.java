@@ -36,4 +36,11 @@ public interface Selector {
      * elements like path, attributes, cookies, etc may influence this.
      */
     boolean shouldBufferForRequest(HttpServletRequest request);
+
+    /**
+     * Return pattern used for excluding request path if the path is excluded or <code>null</code>.
+     * @param request servlet request
+     * @return  pattern used for excluding request path if the path is excluded or <code>null</code>
+     */
+    String excludePatternInUse(HttpServletRequest request);
 }
