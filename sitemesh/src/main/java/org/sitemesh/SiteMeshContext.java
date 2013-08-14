@@ -1,6 +1,7 @@
 package org.sitemesh;
 
 import org.sitemesh.content.Content;
+import org.sitemesh.content.ContentProcessor;
 
 import java.io.IOException;
 
@@ -19,5 +20,11 @@ public interface SiteMeshContext {
      * rest of the time, this will return null.
      */
     Content getContentToMerge();
+    
+    /**
+     * ContentProcessor used by this context.
+     * @return processor used by this context.
+     */
+    ContentProcessor getContentProcessor();
 
 }

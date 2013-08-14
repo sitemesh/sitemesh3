@@ -42,7 +42,8 @@ public class BasicPageDecoratorTest {
     }
 
     private static void commonSetup(BaseSiteMeshBuilder builder) {
-        builder.addDecoratorPath("/*", "/decorator.html");
+        builder.addDecoratorPath("/hello**", "/hello-decorator.html");
+        builder.addDecoratorPath("/write**", "/write-decorator.html");
     }
 
 }

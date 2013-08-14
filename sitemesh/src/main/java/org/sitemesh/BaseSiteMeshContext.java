@@ -52,5 +52,9 @@ public abstract class BaseSiteMeshContext implements SiteMeshContext {
     public Content getContentToMerge() {
         return currentContent;
     }
+    
+    public ContentProcessor getContentProcessor() {
+        return contentProcessor;
+    }
 
 }
