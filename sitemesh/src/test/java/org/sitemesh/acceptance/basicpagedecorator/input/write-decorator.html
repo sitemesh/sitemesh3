@@ -1,0 +1,17 @@
+<!-- Common header -->
+<html>
+  <head>
+    <title><sitemesh:write property='title'/></title>
+    <sitemesh:write property='head'/>
+  </head>
+  <body id='<sitemesh:write property="body.id"/>' class='<sitemesh:write property="body.class"/> <sitemesh:write property="meta.test"/>'>
+	<input id='meta.test' type='hidden' value='<sitemesh:write property="meta.test"/>' />
+    <h1 style="text-align:center"><sitemesh:write property='title'/></h1>
+
+    <!-- body -->
+    <sitemesh:write property='body'/>
+    <!-- end of body -->
+
+  </body>
+</html>
+<!-- Common footer -->

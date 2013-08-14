@@ -1,10 +1,13 @@
 package org.sitemesh.content.tagrules.html;
 
-import org.sitemesh.tagprocessor.BasicBlockRule;
-import org.sitemesh.tagprocessor.Tag;
-import org.sitemesh.content.ContentProperty;
-
 import java.io.IOException;
+import java.nio.CharBuffer;
+
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.content.ContentProperty;
+import org.sitemesh.tagprocessor.BasicBlockRule;
+import org.sitemesh.tagprocessor.CustomTag;
+import org.sitemesh.tagprocessor.Tag;
 
 /**
  * Exports the contents of a match tag to property of the passed in {@link ContentProperty}.
@@ -32,16 +35,18 @@ public class ExportTagToContentRule extends BasicBlockRule {
 
     private final ContentProperty targetProperty;
     private final boolean includeInContent;
-
+    private final SiteMeshContext context;
+;
     /**
      * @param targetProperty   ContentProperty to export tag contents to.
      * @param includeInContent Whether the tag should be included in the content (if false, it will be stripped
      *                         from the current ContentProperty that is being written to.
      * @see ExportTagToContentRule
      */
-    public ExportTagToContentRule(ContentProperty targetProperty, boolean includeInContent) {
+    public ExportTagToContentRule(SiteMeshContext context, ContentProperty targetProperty, boolean includeInContent) {
         this.targetProperty = targetProperty;
         this.includeInContent = includeInContent;
+        this.context = context;
     }
 
     @Override
@@ -50,10 +55,31 @@ public class ExportTagToContentRule extends BasicBlockRule {
         // Given a tag: '<foo>hello</foo>'
         // INNER contents refers to 'hello'
         // OUTER contents refers to '<foo>hello</foo>'
+        
+        Tag t = tag;
 
         // Export all attributes of the opening tag as child nodes on the target ContentProperty.
-        for (int i = 0; i < tag.getAttributeCount(); i++) {
-            targetProperty.getChild(tag.getAttributeName(i)).setValue(tag.getAttributeValue(i));
+        for (int i = 0; i < t.getAttributeCount(); i++) {
+            // attributes of tags using this rule doesn't expand sitemesh:write
+            // https://github.com/sitemesh/sitemesh3/issues/23
+            String value = t.getAttributeValue(i);
+            
+            // only if there might be another tag inside the attribute
+            if(value.indexOf('<') < value.indexOf('>')){
+                StringBuilder sb = new StringBuilder();
+                context.getContentProcessor().build(CharBuffer.wrap(value), context).getData().writeValueTo(sb);
+                value = sb.toString();
+                
+                if(!(t instanceof CustomTag)){
+                    t = new CustomTag(t);
+                }
+                  
+                CustomTag custom = (CustomTag) t;
+                custom.setAttributeValue(i, value);
+                
+            }
+                
+            targetProperty.getChild(t.getAttributeName(i)).setValue(value);
         }
 
         // Push a buffer for the OUTER contents.
@@ -68,7 +94,7 @@ public class ExportTagToContentRule extends BasicBlockRule {
         }
 
         // Write opening tag to OUTER buffer.
-        tag.writeTo(tagProcessorContext.currentBuffer());
+        t.writeTo(tagProcessorContext.currentBuffer());
 
         // Push a new buffer for storing the INNER contents.
         tagProcessorContext.pushBuffer();
