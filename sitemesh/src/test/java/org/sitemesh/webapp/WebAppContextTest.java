@@ -40,7 +40,8 @@ public class WebAppContextTest extends TestCase {
                 .addFilter("/*", new SiteMeshFilter(
                         new BasicSelector(new PathMapper<Boolean>(), "text/html"),
                         new TagBasedContentProcessor(new CoreHtmlTagRuleBundle()),
-                        new PathBasedDecoratorSelector().put("/*", "/mydecorator")
+                        new PathBasedDecoratorSelector().put("/*", "/mydecorator"),
+                        false
                 ))
                 .addStaticContent("/mycontent", "text/html", "<title>Some title</title>")
                 .addServlet("/mydecorator", decoratorServlet)
@@ -60,7 +61,8 @@ public class WebAppContextTest extends TestCase {
                         new BasicSelector(new PathMapper<Boolean>(), "text/html"),
                         processor,
                         new PathBasedDecoratorSelector()
-                                .put("/*", "/decorators/page.html")
+                                .put("/*", "/decorators/page.html"),
+                        false
                 ))
                 .addStaticContent("/hello.html", "text/html", "" +
                         "<body>\n" +
@@ -99,7 +101,8 @@ public class WebAppContextTest extends TestCase {
                         new BasicSelector(new PathMapper<Boolean>(), "text/html"),
                         processor,
                         new PathBasedDecoratorSelector()
-                                .put("/*", "/decorators/page.html")
+                                .put("/*", "/decorators/page.html"),
+                        false
                 ))
                 .addStaticContent("/hello.html", "text/html", "" +
                         "<body>\n" +

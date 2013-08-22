@@ -9,6 +9,9 @@
     <xsd:element name="sitemesh">
         <xsd:complexType>
             <xsd:sequence>
+                <xsd:element name="includeErrorPages"
+                             type="xsd:boolean"
+                             minOccurs="0"/>
                 <xsd:element name="mapping"
                              type="config:mapping"
                              minOccurs="0"/>
