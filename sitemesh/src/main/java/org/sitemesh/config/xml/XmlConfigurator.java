@@ -39,20 +39,29 @@ public class XmlConfigurator {
 
         // Decorator mappings
         for (Xml mapping : xml.children("mapping")) {
-            String path = mapping.child("path").text(mapping.attribute("path", "/*"));
-
-            List<String> decorators = new ArrayList<String>();
-            if (mapping.attribute("decorator") != null) {
-                decorators.add(mapping.attribute("decorator"));
-            }
-            for (Xml decorator : mapping.children("decorator")) {
-                if (decorator.text() != null) {
-                    decorators.add(decorator.text());
+            List<Xml> paths = xml.children("path");
+            if (!paths.isEmpty()) {
+                for (Xml path : xml.children("mapping")) {
+                    addDecoratorPaths(builder, mapping, path.text());
                 }
+            } else {
+                addDecoratorPaths(builder, mapping, mapping.attribute("path", "/*"));
             }
-
-            builder.addDecoratorPaths(path, decorators);
         }
+    }
+
+    private void addDecoratorPaths(BaseSiteMeshBuilder builder, Xml mapping, String path) {
+        List<String> decorators = new ArrayList<String>();
+        if (mapping.attribute("decorator") != null) {
+            decorators.add(mapping.attribute("decorator"));
+        }
+        for (Xml decorator : mapping.children("decorator")) {
+            if (decorator.text() != null) {
+                decorators.add(decorator.text());
+            }
+        }
+
+        builder.addDecoratorPaths(path, decorators);
     }
 
 }
