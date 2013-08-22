@@ -47,16 +47,19 @@ public class WebAppContext extends BaseSiteMeshContext {
     private final HttpServletResponse response;
     private final ServletContext servletContext;
     private final ResponseMetaData metaData;
+    private final boolean includeErrorPages;
 
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
-                         ContentProcessor contentProcessor, ResponseMetaData metaData) {
+                         ContentProcessor contentProcessor, ResponseMetaData metaData,
+                         boolean includeErrorPages) {
         super(contentProcessor);
         this.contentType = contentType;
         this.request = request;
         this.response = response;
         this.servletContext = servletContext;
         this.metaData = metaData;
+        this.includeErrorPages = includeErrorPages;
     }
 
     public HttpServletRequest getRequest() {
@@ -119,7 +122,7 @@ public class WebAppContext extends BaseSiteMeshContext {
     protected void decorate(String decoratorPath, Content content, Writer out) throws IOException {
         HttpServletRequest filterableRequest = new HttpServletRequestFilterable(request);
         // Wrap response so output gets buffered.
-        HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, metaData, new BasicSelector(new PathMapper<Boolean>()) {
+        HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, metaData, new BasicSelector(new PathMapper<Boolean>(), includeErrorPages) {
             @Override
             public boolean shouldBufferForContentType(String contentType, String mimeType, String encoding) {
                 return true; // We know we should buffer.

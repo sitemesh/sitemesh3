@@ -49,6 +49,7 @@ public class PropertiesFilterConfigurator extends PropertiesConfigurator {
     // Property names.
     public static final String EXCLUDE_PARAM = "exclude";
     public static final String MIME_TYPES_PARAM = "mimeTypes";
+    public static final String INCLUDE_ERROR_PAGES_PARAM = "includeErrorPages";
 
     private final PropertiesParser properties;
 
@@ -63,6 +64,12 @@ public class PropertiesFilterConfigurator extends PropertiesConfigurator {
         configureCommon(builder);
 
         // Filter specific configuration...
+        
+        // Error page inclusion
+        String includeErrorPagesString = properties.getString(INCLUDE_ERROR_PAGES_PARAM);
+        if ("true".equals(includeErrorPagesString) || "1".equals(includeErrorPagesString)) {
+            builder.setIncludeErrorPages(true);
+        }
 
         // Excludes
         String[] excludes = properties.getStringArray(EXCLUDE_PARAM);

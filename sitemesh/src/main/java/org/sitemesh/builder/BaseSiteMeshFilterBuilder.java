@@ -33,6 +33,7 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
 
     private PathMapper<Boolean> excludesMapper = new PathMapper<Boolean>();
     private Selector customSelector;
+    private boolean includeErrorPages;
 
     /**
      * Create the SiteMesh Filter.
@@ -49,6 +50,7 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
     protected void setupDefaults() {
         super.setupDefaults();
         setMimeTypes("text/html");
+        setIncludeErrorPages(false);
     }
 
     // --------------------------------------------------------------
@@ -86,6 +88,17 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
         this.mimeTypes = mimeTypes;
         return self();
     }
+    
+    /**
+     * Set if the error pages should be decorated as well.
+     * The default is <code>false</code>.
+     *
+     * <p>Note: The error pages inclusion is ignored if {@link #setCustomSelector(Selector)} is called.</p>
+     */
+    public BUILDER setIncludeErrorPages(boolean includeErrorPages) {
+        this.includeErrorPages = includeErrorPages;
+        return self();
+    }
 
     /**
      * Set a custom {@link Selector}.
@@ -106,8 +119,16 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
         if (customSelector != null) {
             return customSelector;
         } else {
-            return new BasicSelector(excludesMapper, mimeTypes.toArray(new String[mimeTypes.size()]));
+            return new BasicSelector(excludesMapper, includeErrorPages, mimeTypes.toArray(new String[mimeTypes.size()]));
         }
+    }
+    
+    /**
+     * If error pages should be also decorated.
+     * @return if error pages should be also decorated.
+     */
+    public boolean isIncludeErrorPages() {
+        return includeErrorPages;
     }
 
 }
