@@ -22,6 +22,12 @@ public class XmlFilterConfigurator extends XmlConfigurator {
         configureCommon(builder);
 
         // Filter specific configuration...
+        
+        // Error pages inclusion
+        String includeErrorPagesString = xml.child("includeErrorPages").text("false");
+        if ("true".equals(includeErrorPagesString) || "1".equals(includeErrorPagesString)) {
+            builder.setIncludeErrorPages(true);
+        }
 
         // Excludes
         for (Xml mapping : xml.children("mapping")) {

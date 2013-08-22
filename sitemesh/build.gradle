@@ -33,6 +33,10 @@ dependencies {
     lexer 'de.jflex:jflex:1.4.3'
 }
 
+javadoc {
+    classpath = project.configurations.provided
+}
+
 
 task generateLexer {
     // Generate the lexer

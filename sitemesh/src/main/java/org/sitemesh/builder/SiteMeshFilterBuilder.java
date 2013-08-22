@@ -57,7 +57,8 @@ public class SiteMeshFilterBuilder
         return new SiteMeshFilter(
                 getSelector(),
                 getContentProcessor(),
-                getDecoratorSelector());
+                getDecoratorSelector(),
+                isIncludeErrorPages());
     }
 
 }

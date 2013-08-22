@@ -41,6 +41,7 @@ public class SiteMeshFilter extends ContentBufferingFilter {
 
     private final ContentProcessor contentProcessor;
     private final DecoratorSelector<WebAppContext> decoratorSelector;
+    private final boolean includeErrorPages;
 
     /**
      * @param selector Provides the rules for whether SiteMesh should be
@@ -49,7 +50,7 @@ public class SiteMeshFilter extends ContentBufferingFilter {
      */
     public SiteMeshFilter(Selector selector,
                           ContentProcessor contentProcessor,
-                          DecoratorSelector<WebAppContext> decoratorSelector) {
+                          DecoratorSelector<WebAppContext> decoratorSelector, boolean includeErrorPages) {
         super(selector);
         if (contentProcessor == null) {
             throw new IllegalArgumentException("contentProcessor cannot be null");
@@ -59,6 +60,7 @@ public class SiteMeshFilter extends ContentBufferingFilter {
         }
         this.contentProcessor = contentProcessor;
         this.decoratorSelector = decoratorSelector;
+        this.includeErrorPages = includeErrorPages;
     }
 
     /**
@@ -126,7 +128,7 @@ public class SiteMeshFilter extends ContentBufferingFilter {
     protected WebAppContext createContext(String contentType, HttpServletRequest request,
                                           HttpServletResponse response, ResponseMetaData metaData) {
         return new WebAppContext(contentType, request, response,
-                getFilterConfig().getServletContext(), contentProcessor, metaData);
+                getFilterConfig().getServletContext(), contentProcessor, metaData, includeErrorPages);
     }
 
 }
