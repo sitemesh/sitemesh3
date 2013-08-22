@@ -42,6 +42,28 @@ public class PathMapperTest extends TestCase {
         assertNull(pathMapper.get(""));
         assertNull(pathMapper.get("/somenonexistingpath"));
     }
+    
+    public void testGetPatternInUse() throws Exception {
+        assertEquals("/myexactfile.html",   pathMapper.getPatternInUse("/myexactfile.html"));
+        assertEquals("/*/admin/*.??ml",     pathMapper.getPatternInUse("/blah/admin/myexactfile.gzml"));
+        assertEquals("*",                   pathMapper.getPatternInUse("/blah.txt"));
+    }
+    
+    public void testKeyTypeChecks() throws Exception {
+        assertTrue(PathMapper.isComplexKey("/admin/*"));
+        assertFalse(PathMapper.isComplexKey("/admin/my.file"));
+        assertTrue(PathMapper.isDefaultKey("/*"));
+        assertFalse(PathMapper.isComplexKey("/admin/my.file"));
+        
+        assertTrue(PathMapper.isMoreSpecific("*", "/*"));
+        assertTrue(PathMapper.isMoreSpecific("/admin/*", "/*"));
+        assertTrue(PathMapper.isMoreSpecific("/admin/my.file", "/admin/*"));
+        assertTrue(PathMapper.isMoreSpecific("/admin/*", "/*.xml"));
+        assertTrue(PathMapper.isMoreSpecific("/admin/my.file", "/admin/*"));
+        
+        assertFalse(PathMapper.isMoreSpecific("*.xml", "/admin/*.xml"));
+        
+    }
 
     public void testFindExactKey() throws Exception {
         assertEquals("exact1", pathMapper.get("/myexactfile.html"));

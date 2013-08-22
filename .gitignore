@@ -4,3 +4,8 @@ target/
 *.iws
 *.iml
 .idea
+.gradle
+/build
+/.classpath
+/.project
+/.settings

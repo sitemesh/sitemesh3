@@ -1,0 +1,95 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.2'
+    }
+}
+
+apply plugin: 'nexus'
+
+configurations {
+    provided
+    lexer
+}
+
+sourceSets {
+    main { compileClasspath += configurations.provided }
+}
+
+description = 'SiteMesh library'
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version:'4.5'
+    testCompile group: 'org.mortbay.jetty', name: 'jetty', version:'6.1.14'
+    testCompile group: 'org.mortbay.jetty', name: 'jetty-util', version:'6.1.14'
+    testCompile group: 'org.apache.ant', name: 'ant-testutil', version:'1.7.1'
+    
+    provided 'javax.servlet:javax.servlet-api:3.0.1'
+    provided 'org.apache.ant:ant:1.7.1'
+    
+    lexer 'de.jflex:jflex:1.4.3'
+}
+
+
+task generateLexer {
+    // Generate the lexer
+    ant.taskdef classname: 'JFlex.anttask.JFlexTask', name: 'jflex', classpath: configurations.lexer.asPath
+    ant.jflex(file: "src/main/java/org/sitemesh/tagprocessor/lexer.flex", destdir: "src/main/java/")
+}
+
+compileJava.dependsOn generateLexer
+
+test {
+     exclude '**/**$**'   
+}
+
+modifyPom {
+    project {
+        name 'Gradle Sonatype Nexus plugin'
+        description 'Gradle plugin that provides tasks for configuring and uploading artifacts to Sonatype Nexus.'
+        url 'https://github.com/bmuschko/gradle-nexus-plugin'
+        inceptionYear '2012'
+
+        scm {
+            url 'http://github.com/sitemesh/sitemesh3/'
+            connection 'scm:git:git://github.com/sitemesh/sitemesh3.git'
+            developerConnection 'scm:git:git@github.com:sitemesh/sitemesh3.git'
+        }
+        
+        issueManagement {
+            system 'GitHub'
+            url 'http://github.com/sitemesh/sitemesh3/issues'
+        }
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'joewalnes'
+                name 'Joe Walnes'
+                email 'joe dot walnes at gmail'
+                roles {
+                    role 'Owner'
+                    role 'Committer'
+                }
+            }
+            developer {
+                id 'rburton'
+                name 'Richard L. Burton III'
+                email 'rburton@codehaus.org'
+                roles {
+                    role 'Committer'
+                }
+            }
+        }
+    }
+}

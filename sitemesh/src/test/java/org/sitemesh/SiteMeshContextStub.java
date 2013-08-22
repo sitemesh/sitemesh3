@@ -1,8 +1,9 @@
 package org.sitemesh;
 
-import org.sitemesh.content.Content;
-
 import java.io.IOException;
+
+import org.sitemesh.content.Content;
+import org.sitemesh.content.ContentProcessor;
 
 /**
  * Stub {@link SiteMeshContext} implementation, for use in tests.
@@ -13,6 +14,7 @@ public class SiteMeshContextStub implements SiteMeshContext {
 
     private String path;
     private Content contentToMerge;
+    private ContentProcessor contentProcessor;
 
     public String getPath() {
         return path;
@@ -33,5 +35,13 @@ public class SiteMeshContextStub implements SiteMeshContext {
 
     public void setContentToMerge(Content contentToMerge) {
         this.contentToMerge = contentToMerge;
+    }
+    
+    public ContentProcessor getContentProcessor() {
+        return contentProcessor;
+    }
+    
+    public void setContentProcessor(ContentProcessor contentProcessor) {
+        this.contentProcessor = contentProcessor;
     }
 }

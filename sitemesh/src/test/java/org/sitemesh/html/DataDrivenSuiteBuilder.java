@@ -42,28 +42,29 @@ public class DataDrivenSuiteBuilder {
             File inputFile = new File(testDataDir, inputFileName);
 
             Map<String, String> expectedBlocks = readBlocks(new FileReader(inputFile));
+
             Content content = processor.build(CharBuffer.wrap(expectedBlocks.get("INPUT")), new SiteMeshContextStub());
             ContentProperty contentProperty = content.getExtractedProperties();
 
             TestSuite inputSuite = new TestSuite(inputFile.getName().replace('.', '_'));
             inputSuite.addTest(new AssertTrimmedTest(
-                    "testTitle",
+                    inputSuite.getName() + "_testTitle",
                     expectedBlocks.get("TITLE"),
                     contentProperty.getChild("title").getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
-                    "testBody",
+                    inputSuite.getName() + "_testBody",
                     expectedBlocks.get("BODY"),
                     contentProperty.getChild("body").getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
-                    "testHead",
+                    inputSuite.getName() + "_testHead",
                     expectedBlocks.get("HEAD"),
                     contentProperty.getChild("head").getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
-                    "testOriginal",
+                    inputSuite.getName() + "_testOriginal",
                     expectedBlocks.get("INPUT"),
                     content.getData().getValue()));
             inputSuite.addTest(new AssertTrimmedTest(
-                    "testProperties",
+                    inputSuite.getName() + "_testProperties",
                     cleanExpectedProperties(expectedBlocks.get("PROPERTIES")),
                     cleanActualProperties(contentProperty)));
 
@@ -160,7 +161,7 @@ public class DataDrivenSuiteBuilder {
 
         @Override
         protected void runTest() throws Throwable {
-            assertEquals(trimSafely(expected), trimSafely(actual));
+            assertEquals("Assertion failed for test " + getName(), trimSafely(expected), trimSafely(actual));
         }
 
     }

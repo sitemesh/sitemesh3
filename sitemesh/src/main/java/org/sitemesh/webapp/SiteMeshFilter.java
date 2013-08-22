@@ -1,18 +1,24 @@
 package org.sitemesh.webapp;
 
-import org.sitemesh.DecoratorSelector;
-import org.sitemesh.content.Content;
-import org.sitemesh.content.ContentProcessor;
-import org.sitemesh.webapp.contentfilter.ContentBufferingFilter;
-import org.sitemesh.webapp.contentfilter.Selector;
-import org.sitemesh.webapp.contentfilter.ResponseMetaData;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.CharBuffer;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.sitemesh.DecoratorSelector;
+import org.sitemesh.config.PathBasedDecoratorSelector;
+import org.sitemesh.config.PathMapper;
+import org.sitemesh.content.Content;
+import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.webapp.contentfilter.ContentBufferingFilter;
+import org.sitemesh.webapp.contentfilter.ResponseMetaData;
+import org.sitemesh.webapp.contentfilter.Selector;
 
 /**
  * The main SiteMesh Filter.
@@ -86,6 +92,33 @@ public class SiteMeshFilter extends ContentBufferingFilter {
         return true;
     }
 
+    
+    @Override public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException,
+            ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        String exclusionPattern = getSelector().excludePatternInUse(request);
+        if (exclusionPattern != null) {
+            // Ability to override exclusion by more specific pattern
+            if (decoratorSelector instanceof PathBasedDecoratorSelector) {
+                PathBasedDecoratorSelector<WebAppContext> pbds = (PathBasedDecoratorSelector<WebAppContext>) decoratorSelector;
+                String decoratorPattern = pbds.getPathMapper().getPatternInUse(WebAppContext.getRequestPath(request));
+                if(decoratorPattern == null) {
+                    // there is no decorator rule for this exclusion pattern
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+                if(PathMapper.isMoreSpecific(exclusionPattern, decoratorPattern)){
+                    // if the exclusion type is more specific
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+            }
+        }
+        super.doFilter(servletRequest, servletResponse, filterChain);
+    }
+    
+    
     /**
      * Create a context for the current request. This method can be overriden to allow for other
      * types of context.

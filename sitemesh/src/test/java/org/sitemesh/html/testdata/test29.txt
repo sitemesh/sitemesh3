@@ -26,5 +26,7 @@
      </script>
 
 ~~~ BODY ~~~
-
+<html>
+   
+</html>
 

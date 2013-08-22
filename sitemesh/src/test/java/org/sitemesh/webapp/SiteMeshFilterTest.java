@@ -79,7 +79,7 @@ public class SiteMeshFilterTest extends TestCase {
 
     class MyTagRuleBundle implements TagRuleBundle {
         public void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
-            defaultState.addRule("foo", new ExportTagToContentRule(contentProperty.getChild("foo"), true));
+            defaultState.addRule("foo", new ExportTagToContentRule(siteMeshContext, contentProperty.getChild("foo"), true));
         }
         public void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext) {
             // No op.
@@ -100,6 +100,25 @@ public class SiteMeshFilterTest extends TestCase {
         assertEquals("Decorated: Hello world", webEnvironment.getBody());
     }
 
+    public void testMoreSpecificPathWithDecoratorOverridedExcludes() throws Exception {
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addFilter("/*", new SiteMeshFilterBuilder()
+                        .addDecoratorPath("/foo/bar", "/my-decorator")
+                        .addExcludedPath("/foo/*")
+                        .create())
+                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/foo/bar", "text/html", "<title>Hello world</title>")
+                .addStaticContent("/foo/var", "text/html", "<title>Hello world</title>")
+                .create();
+
+        webEnvironment.doGet("/foo/var");
+        assertEquals("/foo/var should NOT have been decorated",
+                "<title>Hello world</title>", webEnvironment.getBody());
+        webEnvironment.doGet("/foo/bar");
+        assertEquals("/foo/bar should have been decorated",
+                "Decorated: Hello world", webEnvironment.getBody());
+    }
+    
     public void testDoesNotDecorateExcludedPaths() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilterBuilder()
