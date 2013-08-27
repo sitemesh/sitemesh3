@@ -99,6 +99,18 @@ public class SiteMeshFilterTest extends TestCase {
         webEnvironment.doGet("/content");
         assertEquals("Decorated: Hello world", webEnvironment.getBody());
     }
+    
+    public void testDecoratorMetaTag() throws Exception {
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addFilter("/*", new SiteMeshFilterBuilder()
+                        .create())
+                .addStaticContent("/my-deco", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/content", "text/html", "<meta name='decorator' content='/my-deco'><title>Hello world</title>")
+                .create();
+
+        webEnvironment.doGet("/content");
+        assertEquals("Decorated: Hello world", webEnvironment.getBody());
+    }
 
     public void testMoreSpecificPathWithDecoratorOverridedExcludes() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
