@@ -7,6 +7,7 @@ import org.sitemesh.content.tagrules.TagBasedContentProcessor;
 import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.DecoratorSelector;
 import org.sitemesh.SiteMeshContext;
+import org.sitemesh.config.MetaTagBasedDecoratorSelector;
 import org.sitemesh.config.PathBasedDecoratorSelector;
 
 import java.util.Arrays;
@@ -34,7 +35,7 @@ public abstract class BaseSiteMeshBuilder
     private ContentProcessor customContentProcessor;
 
     private PathBasedDecoratorSelector<CONTEXT> pathBasedDecoratorSelector
-            = new PathBasedDecoratorSelector<CONTEXT>();
+            = new MetaTagBasedDecoratorSelector<CONTEXT>();
     private DecoratorSelector<CONTEXT> customDecoratorSelector;
 
     protected BaseSiteMeshBuilder() {
