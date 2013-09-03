@@ -49,4 +49,8 @@ public class PropertiesConfigurator {
         }
 
     }
+    
+    protected ObjectFactory getObjectFactory() {
+        return objectFactory;
+    }
 }
