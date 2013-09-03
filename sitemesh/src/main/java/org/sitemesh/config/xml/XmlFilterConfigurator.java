@@ -1,5 +1,6 @@
 package org.sitemesh.config.xml;
 
+import org.sitemesh.DecoratorSelector;
 import org.sitemesh.builder.BaseSiteMeshFilterBuilder;
 import org.sitemesh.config.ObjectFactory;
 import org.w3c.dom.Element;
@@ -16,19 +17,26 @@ public class XmlFilterConfigurator extends XmlConfigurator {
         this.xml = new Xml(siteMeshElement);
     }
 
-    public void configureFilter(BaseSiteMeshFilterBuilder builder) {
+    @SuppressWarnings({
+            "rawtypes", "unchecked"
+    }) public void configureFilter(BaseSiteMeshFilterBuilder builder) {
 
         // Common configuration
         configureCommon(builder);
 
         // Filter specific configuration...
         
+        String customDecoratorSelector = xml.child("decorator-selector").text();
+        if (customDecoratorSelector != null) {
+            builder.setCustomDecoratorSelector((DecoratorSelector) getObjectFactory().create(customDecoratorSelector));
+        }
+        
         // Error pages inclusion
-        String includeErrorPagesString = xml.child("includeErrorPages").text("false");
+        String includeErrorPagesString = xml.child("include-error-pages").text("false");
         if ("true".equals(includeErrorPagesString) || "1".equals(includeErrorPagesString)) {
             builder.setIncludeErrorPages(true);
         }
-
+        
         // Excludes
         for (Xml mapping : xml.children("mapping")) {
             String path = mapping.child("path").text(mapping.attribute("path", "/*"));
@@ -46,9 +54,6 @@ public class XmlFilterConfigurator extends XmlConfigurator {
             }
             builder.setMimeTypes(mimeTypes);
         }
-
-        // Custom selector
-        // TODO
     }
 
     private boolean isTrue(String string) {

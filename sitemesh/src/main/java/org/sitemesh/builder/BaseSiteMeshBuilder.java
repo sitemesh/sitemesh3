@@ -215,12 +215,17 @@ public abstract class BaseSiteMeshBuilder
     }
 
     /**
-     * Set a custom {@link DecoratorSelector}. If called, this will override any paths
+     * Set a custom {@link DecoratorSelector}. If called and decorator selector is not
+     * instance of {@link PathBasedDecoratorSelector}, this will override any paths
      * added with {@link #addDecoratorPath(String, String)} and instead delegate to
      * the custom DecoratorSelector.
      */
     public BUILDER setCustomDecoratorSelector(DecoratorSelector<CONTEXT> decoratorSelector) {
-        this.customDecoratorSelector = decoratorSelector;
+        if(decoratorSelector instanceof PathBasedDecoratorSelector) {
+            this.pathBasedDecoratorSelector = (PathBasedDecoratorSelector<CONTEXT>) decoratorSelector;
+        } else {            
+            this.customDecoratorSelector = decoratorSelector;
+        }
         return self();
     }
 
