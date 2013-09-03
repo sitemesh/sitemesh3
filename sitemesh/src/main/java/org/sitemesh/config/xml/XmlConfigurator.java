@@ -63,5 +63,9 @@ public class XmlConfigurator {
 
         builder.addDecoratorPaths(path, decorators);
     }
+    
+    protected ObjectFactory getObjectFactory() {
+        return objectFactory;
+    }
 
 }

@@ -1,5 +1,6 @@
 package org.sitemesh.config.properties;
 
+import org.sitemesh.DecoratorSelector;
 import org.sitemesh.builder.BaseSiteMeshFilterBuilder;
 import org.sitemesh.config.ObjectFactory;
 
@@ -50,6 +51,7 @@ public class PropertiesFilterConfigurator extends PropertiesConfigurator {
     public static final String EXCLUDE_PARAM = "exclude";
     public static final String MIME_TYPES_PARAM = "mimeTypes";
     public static final String INCLUDE_ERROR_PAGES_PARAM = "includeErrorPages";
+    public static final String DECORATOR_SELECTOR = "decoratorSelector";
 
     private final PropertiesParser properties;
 
@@ -58,7 +60,7 @@ public class PropertiesFilterConfigurator extends PropertiesConfigurator {
         this.properties = new PropertiesParser(properties);
     }
 
-    public void configureFilter(BaseSiteMeshFilterBuilder builder) {
+    @SuppressWarnings("unchecked") public void configureFilter(BaseSiteMeshFilterBuilder builder) {
 
         // Common configuration
         configureCommon(builder);
@@ -69,6 +71,12 @@ public class PropertiesFilterConfigurator extends PropertiesConfigurator {
         String includeErrorPagesString = properties.getString(INCLUDE_ERROR_PAGES_PARAM);
         if ("true".equals(includeErrorPagesString) || "1".equals(includeErrorPagesString)) {
             builder.setIncludeErrorPages(true);
+        }
+        
+        // decorator selector
+        String decoratorSelector = properties.getString(DECORATOR_SELECTOR);
+        if (decoratorSelector != null) {
+            builder.setCustomDecoratorSelector((DecoratorSelector) getObjectFactory().create(decoratorSelector));
         }
 
         // Excludes
