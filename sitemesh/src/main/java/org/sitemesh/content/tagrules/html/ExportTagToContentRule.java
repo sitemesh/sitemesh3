@@ -65,7 +65,7 @@ public class ExportTagToContentRule extends BasicBlockRule {
             String value = t.getAttributeValue(i);
             
             // only if there might be another tag inside the attribute
-            if(value.indexOf('<') < value.indexOf('>')){
+            if(value != null && (value.indexOf('<') < value.indexOf('>'))){
                 StringBuilder sb = new StringBuilder();
                 context.getContentProcessor().build(CharBuffer.wrap(value), context).getData().writeValueTo(sb);
                 value = sb.toString();
