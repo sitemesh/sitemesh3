@@ -45,6 +45,13 @@
         <role>Committer</role>
       </roles>
     </developer>
+    <developer>
+      <id>codeconsole</id>
+      <name>Scott Murphy</name>
+      <roles>
+        <role>Committer</role>
+      </roles>
+    </developer>
   </developers>
 
   <issueManagement>
