@@ -8,7 +8,7 @@
   </parent>
 
   <groupId>org.sitemesh</groupId>
-  <version>3.0.0</version>
+  <version>3.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <artifactId>sitemesh-parent</artifactId>
