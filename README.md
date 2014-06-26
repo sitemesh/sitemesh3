@@ -3,8 +3,8 @@ sitemesh3
 
 SiteMesh 3: Official repository
 
-Current version: 3.0.0-SNAPSHOT
+Current version: 3.0.0
 
-Available here:
+Available on Maven Central here:
 
-https://oss.sonatype.org/content/repositories/snapshots/org/sitemesh/sitemesh/3.0.0-SNAPSHOT/
+http://central.maven.org/maven2/org/sitemesh/sitemesh/3.0.0/
