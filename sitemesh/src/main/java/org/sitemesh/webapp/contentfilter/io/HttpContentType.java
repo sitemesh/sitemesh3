@@ -11,10 +11,12 @@ public class HttpContentType {
     private final String encoding;
 
     public HttpContentType(String fullValue) {
-        // this is the content type + charset. eg: text/html;charset=UTF-8
-        int offset = fullValue.lastIndexOf("charset=");
-        encoding = offset != -1 ? extractContentTypeValue(fullValue, offset + 8) : null;
-        type = extractContentTypeValue(fullValue, 0);
+        if (fullValue != null) {
+            // this is the content type + charset. eg: text/html;charset=UTF-8
+            int offset = fullValue.lastIndexOf("charset=");
+            encoding = offset != -1 ? extractContentTypeValue(fullValue, offset + 8) : null;
+            type = extractContentTypeValue(fullValue, 0);
+        }
     }
 
     private String extractContentTypeValue(String type, int startIndex) {
