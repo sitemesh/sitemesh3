@@ -39,9 +39,9 @@ public class XmlConfigurator {
 
         // Decorator mappings
         for (Xml mapping : xml.children("mapping")) {
-            List<Xml> paths = xml.children("path");
+            List<Xml> paths = mapping.children("path");
             if (!paths.isEmpty()) {
-                for (Xml path : xml.children("mapping")) {
+                for (Xml path : paths) {
                     addDecoratorPaths(builder, mapping, path.text());
                 }
             } else {
