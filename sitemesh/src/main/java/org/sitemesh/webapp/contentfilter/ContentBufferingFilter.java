@@ -19,7 +19,7 @@ import java.nio.CharBuffer;
  * For a basic implementation, use  {@link BasicSelector}.</li>
  * <li>Implement {@link #postProcess(String, CharBuffer, HttpServletRequest, HttpServletResponse, ResponseMetaData)}:
  * Perform the actual post processing of the content that was buffered.</li>
- * </ul> 
+ * </ul>
  * <h2>Example</h2>
  * <p>This primitive example creates a Filter that will intercept responses
  * with a MIME type of text/plain, and replace all occurrences of the word
@@ -60,7 +60,7 @@ public abstract class ContentBufferingFilter implements Filter {
 
     /**
      * @return Whether the content was processed. If false, the original content shall
-     *         be written back out.
+     * be written back out.
      */
     protected abstract boolean postProcess(String contentType, CharBuffer buffer,
                                            HttpServletRequest request, HttpServletResponse response,
@@ -93,7 +93,7 @@ public abstract class ContentBufferingFilter implements Filter {
         return containerTweaks;
     }
 
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain)
             throws IOException, ServletException {
 
         FilterConfig filterConfig = getFilterConfig();
@@ -102,8 +102,8 @@ public abstract class ContentBufferingFilter implements Filter {
             throw new ServletException(getClass().getName() + ".init() has not been called.");
         }
 
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        final HttpServletRequest request = (HttpServletRequest) servletRequest;
+        final HttpServletResponse response = (HttpServletResponse) servletResponse;
         ServletContext servletContext = filterConfig.getServletContext();
 
         if (!selector.shouldBufferForRequest(request)) {
@@ -149,7 +149,7 @@ public abstract class ContentBufferingFilter implements Filter {
 
         // Apply next filter/servlet, writing response to buffer.
         final ResponseMetaData metaData = new ResponseMetaData();
-        HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, metaData, selector) {
+        final HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, metaData, selector) {
             @Override
             public void preCommit() {
                 // Ensure both content and decorators are used to generate HTTP caching headers.
@@ -167,6 +167,42 @@ public abstract class ContentBufferingFilter implements Filter {
         };
 
         filterChain.doFilter(wrapRequest(request), responseBuffer);
+
+        if (request.isAsyncSupported() && request.isAsyncStarted()) {
+            request.getAsyncContext().addListener(new AsyncListener() {
+                @Override
+                public void onComplete(AsyncEvent asyncEvent) throws IOException {
+                    try {
+                        processInternally(responseBuffer, request, response, metaData);
+
+                    } catch (ServletException e) {
+                        throw new RuntimeException("Could not execute request.", e);
+                    }
+                }
+
+                @Override
+                public void onTimeout(AsyncEvent asyncEvent) throws IOException {
+                    throw new RuntimeException("Timeout during SiteMesh3 async request handling.");
+                }
+
+                @Override
+                public void onError(AsyncEvent asyncEvent) throws IOException {
+                    throw new RuntimeException("Error during SiteMesh3 async request handling.", asyncEvent.getThrowable());
+                }
+
+                @Override
+                public void onStartAsync(AsyncEvent asyncEvent) throws IOException {
+                    // ignore
+                }
+            });
+        }
+        else {
+            processInternally(responseBuffer, request, response, metaData);
+        }
+    }
+
+    protected void processInternally(HttpServletResponseBuffer responseBuffer, final HttpServletRequest request,
+                               final HttpServletResponse response, ResponseMetaData metaData) throws IOException, ServletException {
         CharBuffer buffer = responseBuffer.getBuffer();
 
         // If content was buffered, post-process it.
@@ -183,7 +219,6 @@ public abstract class ContentBufferingFilter implements Filter {
         if (buffer != null && !processed) {
             writeOriginal(response, buffer, responseBuffer);
         }
-
     }
 
     /**
@@ -210,7 +245,7 @@ public abstract class ContentBufferingFilter implements Filter {
     protected HttpServletRequest wrapRequest(HttpServletRequest request) {
         return new HttpServletRequestFilterable(request);
     }
-    
+
     protected Selector getSelector() {
         return selector;
     }
