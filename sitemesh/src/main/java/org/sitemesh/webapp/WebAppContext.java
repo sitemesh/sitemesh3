@@ -41,6 +41,12 @@ public class WebAppContext extends BaseSiteMeshContext {
      * attribute. It is "org.sitemesh.SiteMeshContext".
      */
     public static final String CONTEXT_KEY = SiteMeshContext.class.getName();
+    
+    /**
+     * The name of the request attribute under which the original
+     * servlet path is made available to the target of a forward
+     */
+    static final String FORWARD_SERVLET_PATH = "javax.servlet.forward.servlet_path";
 
     private final String contentType;
     private final HttpServletRequest request;
@@ -83,7 +89,15 @@ public class WebAppContext extends BaseSiteMeshContext {
     }
 
     public static String getRequestPath(HttpServletRequest request) {
-        String result   = request.getServletPath();
+        String result   =  null;
+        
+        //Bugfix Servlet 3.1 spec forward
+        if (request.getAttribute(FORWARD_SERVLET_PATH) != null) {
+        	result = (String) request.getAttribute(FORWARD_SERVLET_PATH);
+        } else {
+        	result = request.getServletPath();
+        }
+        
         String pathInfo = request.getPathInfo();
 
         if (pathInfo != null) {
