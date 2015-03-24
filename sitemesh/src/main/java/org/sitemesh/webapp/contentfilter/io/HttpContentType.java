@@ -16,6 +16,9 @@ public class HttpContentType {
             int offset = fullValue.lastIndexOf("charset=");
             encoding = offset != -1 ? extractContentTypeValue(fullValue, offset + 8) : null;
             type = extractContentTypeValue(fullValue, 0);
+        } else {
+            type = null;
+            encoding = null;
         }
     }
 
