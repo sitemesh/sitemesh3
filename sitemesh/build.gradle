@@ -17,7 +17,10 @@ configurations {
 }
 
 sourceSets {
-    main { compileClasspath += configurations.provided }
+    main { 
+		compileClasspath += configurations.provided 
+		java { srcDir { 'build/generated-sources/jflex' } }
+	}
 }
 
 description = 'SiteMesh library'
@@ -42,7 +45,7 @@ javadoc {
 task generateLexer {
     // Generate the lexer
     ant.taskdef classname: 'JFlex.anttask.JFlexTask', name: 'jflex', classpath: configurations.lexer.asPath
-    ant.jflex(file: "src/main/java/org/sitemesh/tagprocessor/lexer.flex", destdir: "src/main/java/")
+    ant.jflex(file: "src/main/java/org/sitemesh/tagprocessor/lexer.flex", destdir: "build/generated-sources/jflex")// "src/main/java/")
 }
 
 compileJava.dependsOn generateLexer
@@ -95,6 +98,13 @@ modifyPom {
                     role 'Committer'
                 }
             }
+            developer {
+                id 'codeconsole'
+                name 'Scott Murphy'
+                roles {
+                    role 'Committer'
+                }
+            }		
         }
     }
 }
