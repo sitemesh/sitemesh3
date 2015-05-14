@@ -12,11 +12,11 @@ To test:
 To test on a different port, use: mvn -Djetty.port=1234 jetty:run.
 
 or if you prefer tomcat:
-  mvn tomcat:run
+  mvn tomcat7:run
   Goto http://localhost:8080/
 
 or Google App Engine:
-  mvn package gae:run
+  mvn package gae:unpack gae:run
   Goto http://localhost:8080/
 
 Alternatively, you can deploy the packaged war (target/sitemesh-examples-hellowebapp.war)

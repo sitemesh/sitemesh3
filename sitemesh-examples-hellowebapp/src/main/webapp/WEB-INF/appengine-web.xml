@@ -9,4 +9,5 @@
     <static-files>
         <exclude path="**.html" />
     </static-files>
+	<threadsafe>true</threadsafe>
 </appengine-web-app>

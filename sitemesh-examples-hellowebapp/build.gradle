@@ -1,8 +1,20 @@
+/*
+ * build.gradle for SiteMesh 3 Hello World Demo
+ *
+ * SiteMesh 3: http://wiki.sitemesh.org/display/sitemesh3/Home
+ * Gradle: http://www.gradle.org/
+ */
 
+defaultTasks 'jettyRun'
+
+apply plugin: 'java'
+apply plugin: 'jetty'
+apply plugin: 'war'
+
+// Keep everything simple by making webapp root the project root and the context '' (aka '/')
+jettyRun.contextPath = ''
 
 description = 'SiteMesh example: Hello world web-app'
-
-apply plugin: 'war'
 
 dependencies {
   compile project(':sitemesh')

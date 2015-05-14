@@ -14,8 +14,6 @@ All required .jar files will be loaded automatically.  You should then see outpu
 
     > Building > :jettyRun > Running at http://localhost:8080/
     
-You can then load [http://localhost:8080/hello.html](http://localhost:8080/hello.html) in your browser and see SiteMesh 3 in action.
-    
-Note: There is a way to run Gradle builds without requiring a previous Gradle install.  If there is interest, that feature could be added to the demo.
+You can then load [http://localhost:8080/hello.html](http://localhost:8080/) in your browser and see SiteMesh 3 in action.
     
 
