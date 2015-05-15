@@ -10,12 +10,30 @@ defaultTasks 'jettyRun'
 apply plugin: 'java'
 apply plugin: 'jetty'
 apply plugin: 'war'
+apply plugin: 'com.bmuschko.tomcat'
 
 // Keep everything simple by making webapp root the project root and the context '' (aka '/')
-jettyRun.contextPath = ''
+jettyRun.contextPath = '/'
+tomcat.contextPath = '/'
 
 description = 'SiteMesh example: Hello world web-app'
 
 dependencies {
-  compile project(':sitemesh')
+//	def tomcatVersion = '8.0.22'
+    def tomcatVersion = '7.0.59'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+           "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}",
+           "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+		   	
+    compile project(':sitemesh')
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.1'
+    }
 }
