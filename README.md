@@ -1,13 +1,11 @@
-sitemesh3
+SiteMesh 3: Official repository
 =========
 
-SiteMesh 3: Official repository
+Current version: 3.0.1
 
-Current version: 3.0.0
+Available for download on Maven Central here:
 
-Available on Maven Central here:
-
-http://central.maven.org/maven2/org/sitemesh/sitemesh/3.0.0/
+http://central.maven.org/maven2/org/sitemesh/sitemesh/3.0.1/
 
 Documentation:
 
