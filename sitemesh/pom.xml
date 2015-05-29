@@ -4,7 +4,7 @@
   <parent>
     <artifactId>sitemesh-parent</artifactId>
     <groupId>org.sitemesh</groupId>
-    <version>3.0.1</version>
+    <version>3.0.2-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
