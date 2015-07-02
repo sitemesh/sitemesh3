@@ -1,5 +1,6 @@
 package org.sitemesh.webapp.contentfilter.io;
 
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
@@ -10,7 +11,7 @@ import java.util.LinkedList;
  * @author Rickard Öberg
  * @author Scott Farquhar
  */
-public class ByteBufferBuilder {
+public class ByteBufferBuilder extends OutputStream {
     private static final int DEFAULT_BLOCK_SIZE = 8192;
 
     /**
@@ -54,6 +55,7 @@ public class ByteBufferBuilder {
         return result;
     }
 
+    @Override
     public void write(int datum) {
         if (index == blockSize) {
             // Create new buffer and store current in linked list
@@ -71,6 +73,7 @@ public class ByteBufferBuilder {
         buffer[index++] = (byte) datum;
     }
 
+    @Override
     public void write(byte[] data, int offset, int length) {
         if (data == null) {
             throw new NullPointerException();
@@ -90,6 +93,12 @@ public class ByteBufferBuilder {
                 index += length;
             }
         }
+    }
+
+    public void reset() {
+        index = 0;
+        size = 0;
+        buffers = null;
     }
 
     @Override

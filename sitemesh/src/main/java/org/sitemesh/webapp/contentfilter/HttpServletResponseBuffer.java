@@ -273,4 +273,22 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
         }
     }
 
+    @Override
+    public void reset() {
+        super.reset();
+
+        this.metaData.reset();
+        if (buffer != null) {
+            buffer.reset();
+        }
+    }
+
+    @Override
+    public void resetBuffer() {
+        super.resetBuffer();
+
+        if (buffer != null) {
+            buffer.resetBuffer();
+        }
+    }
 }

@@ -178,7 +178,7 @@ public class WebEnvironment {
                 protected void doGet(HttpServletRequest request, HttpServletResponse response)
                         throws ServletException, IOException {
                     response.setContentType(contentType);
-                    response.getOutputStream().print(content);
+                    response.getWriter().print(content);
                 }
             });
             return this;
@@ -191,7 +191,7 @@ public class WebEnvironment {
                       throws ServletException, IOException {
               		response.setStatus(statusCode);
                   response.setContentType(contentType);
-                  response.getOutputStream().print(content);
+                  response.getWriter().print(content);
               }
           });
           return this;

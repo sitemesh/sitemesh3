@@ -26,4 +26,9 @@ public class ResponseMetaData {
     public void beginNewResponse() {
         responseCount++;
     }
+
+    public void reset() {
+        lastModified = -1;
+        lastModifiedCount = 0;
+    }
 }
