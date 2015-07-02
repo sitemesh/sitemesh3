@@ -107,7 +107,7 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
         }
         buffer = new Buffer(encoding);
         routablePrintWriter.updateDestination(new RoutablePrintWriter.DestinationFactory() {
-            public PrintWriter activateDestination() {
+            public PrintWriter activateDestination() throws IOException {
                 return buffer.getWriter();
             }
         });

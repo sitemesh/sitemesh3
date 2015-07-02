@@ -17,8 +17,13 @@ import java.nio.CharBuffer;
  */
 public class Buffer {
 
-    private final String encoding;
+    /**
+     * Default encoding if not specified
+     */
+    public static final String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
     private static final CharBuffer EMPTY_BUFFER = CharBuffer.allocate(0);
+
+    private final String encoding;
 
     private final ByteBufferBuilder byteBufferBuilder = new ByteBufferBuilder();
     private PrintWriter exposedWriter;
@@ -28,15 +33,15 @@ public class Buffer {
     private boolean usingOutputStream = false;
 
     public Buffer(String encoding) {
-        this.encoding = encoding;
+        this.encoding = encoding == null ? DEFAULT_CHARACTER_ENCODING : encoding;
     }
 
-    public PrintWriter getWriter() {
+    public PrintWriter getWriter() throws IOException {
         if (usingOutputStream) {
             throw new IllegalStateException("response.getWriter() called after response.getOutputStream()");
         }
         if (exposedWriter == null) {
-            exposedWriter = new PrintWriter(new OutputStreamWriter(byteBufferBuilder)) {
+            exposedWriter = new PrintWriter(new OutputStreamWriter(byteBufferBuilder, encoding)) {
 
                 @Override
                 public void write(char buf[], int off, int len) {
