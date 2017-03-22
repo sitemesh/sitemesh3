@@ -78,6 +78,10 @@ public class SiteMeshFilter extends ContentBufferingFilter {
             return false;
         }
 
+        if (response.containsHeader("Content-Length")) {
+            response.setContentLength(-1);
+        }
+
         String[] decoratorPaths = decoratorSelector.selectDecoratorPaths(content, context);
         for (String decoratorPath : decoratorPaths) {
             content = context.decorate(decoratorPath, content);
