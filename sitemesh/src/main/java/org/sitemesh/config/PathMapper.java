@@ -38,7 +38,9 @@ public class PathMapper<T> {
     
     static {
         Set<String> set = new HashSet<String>();
-        set.add("/");
+        //set.add("/"); //Removed because this prevents an exact exclusion map from applying on a general
+                        //decoratorPattern match. I.e. can't exclude '/'.
+                        //As a consequence of removal, should now have '/**' pattern in decorators.
         set.add("*");
         set.add("**");
         set.add("/*");
