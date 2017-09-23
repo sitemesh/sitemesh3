@@ -95,7 +95,12 @@ public class WebAppContext extends BaseSiteMeshContext {
         if (request.getAttribute(FORWARD_SERVLET_PATH) != null) {
         	result = (String) request.getAttribute(FORWARD_SERVLET_PATH);
         } else {
-        	result = request.getServletPath();
+        	String requestUrl = request.getRequestURL().toString();
+        	if (request.getContextPath().length() == 0) {
+                result = requestUrl.substring(requestUrl.indexOf("/", 1 + requestUrl.indexOf("/", 1 + requestUrl.indexOf("/"))));
+        	} else {
+                result = requestUrl.substring(requestUrl.indexOf(request.getContextPath()) + request.getContextPath().length());
+        	}
         }
         
         String pathInfo = request.getPathInfo();
