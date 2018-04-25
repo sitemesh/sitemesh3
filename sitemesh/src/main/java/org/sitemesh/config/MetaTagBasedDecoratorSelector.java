@@ -13,7 +13,7 @@ import java.io.IOException;
  * <h3>Example</h3>
  * 
  * <pre>
- * <meta name="decorator" content="/my-decorator,/my-other-decorator">
+ * &lt;meta name="decorator" content="/my-decorator,/my-other-decorator"&gt;
  * </pre>
  * 
  * @author Joe Walnes
