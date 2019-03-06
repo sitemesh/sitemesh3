@@ -21,6 +21,7 @@ The subdirectories in this package are modules. They are:
 === IDE instructions ===
 
 IntelliJ 9: Create new project from existing structure (Maven), using pom.xml in sitemesh module.
+ceshi
 
 
 
