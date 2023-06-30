@@ -5,15 +5,15 @@
  * Gradle: http://www.gradle.org/
  */
 
-defaultTasks 'jettyRun'
+defaultTasks 'tomcatRun'
 
 apply plugin: 'java'
-apply plugin: 'jetty'
+//apply plugin: 'jetty'
 apply plugin: 'war'
 apply plugin: 'com.bmuschko.tomcat'
 
 // Keep everything simple by making webapp root the project root and the context '' (aka '/')
-jettyRun.contextPath = '/'
+//jettyRun.contextPath = '/'
 tomcat.contextPath = '/'
 
 description = 'SiteMesh example: Hello world web-app'
@@ -34,6 +34,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.1'
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
     }
 }
