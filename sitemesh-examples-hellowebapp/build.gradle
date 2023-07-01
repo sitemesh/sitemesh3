@@ -7,7 +7,7 @@
 
 plugins {
     id 'war'
-    id "org.gretty" version "3.1.1"
+    id "org.gretty" version "4.0.3"
 }
 gretty {
     contextPath = '/'
@@ -18,5 +18,5 @@ defaultTasks 'jettyRun'
 description = 'SiteMesh example: Hello world web-app'
 
 dependencies {
-    compile project(':sitemesh')
+    implementation project(':sitemesh')
 }

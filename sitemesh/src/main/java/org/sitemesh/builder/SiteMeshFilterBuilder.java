@@ -2,7 +2,7 @@ package org.sitemesh.builder;
 
 import org.sitemesh.webapp.SiteMeshFilter;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 
 /**
  * Convenient API for building the main SiteMesh {@link Filter}.

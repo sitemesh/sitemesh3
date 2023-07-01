@@ -11,11 +11,11 @@ import org.sitemesh.webapp.contentfilter.HttpServletResponseBuffer;
 import org.sitemesh.webapp.contentfilter.HttpServletRequestFilterable;
 import org.sitemesh.webapp.contentfilter.ResponseMetaData;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.CharBuffer;
@@ -46,7 +46,7 @@ public class WebAppContext extends BaseSiteMeshContext {
      * The name of the request attribute under which the original
      * servlet path is made available to the target of a forward
      */
-    static final String FORWARD_SERVLET_PATH = "javax.servlet.forward.servlet_path";
+    static final String FORWARD_SERVLET_PATH = "jakarta.servlet.forward.servlet_path";
 
     private final String contentType;
     private final HttpServletRequest request;

@@ -1,6 +1,6 @@
 package org.sitemesh.webapp.contentfilter;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Rules that will be used by the {@link ContentBufferingFilter} and {@link HttpServletResponseBuffer}
@@ -27,7 +27,7 @@ public interface Selector {
      * For example, some applications may choose to rewrite content of 404 error pages.
      *
      * @param statusCode e.g. 200, 302, 404, 500, etc. See constants in
-     *                   {@link javax.servlet.http.HttpServletResponse}.
+     *                   {@link jakarta.servlet.http.HttpServletResponse}.
      */
     boolean shouldAbortBufferingForHttpStatusCode(int statusCode);
 

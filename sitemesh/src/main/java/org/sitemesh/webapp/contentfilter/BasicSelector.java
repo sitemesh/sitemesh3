@@ -1,6 +1,6 @@
 package org.sitemesh.webapp.contentfilter;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.sitemesh.config.PathMapper;
 import org.sitemesh.webapp.WebAppContext;

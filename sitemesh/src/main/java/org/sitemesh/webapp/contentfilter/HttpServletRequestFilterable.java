@@ -1,7 +1,7 @@
 package org.sitemesh.webapp.contentfilter;
 
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Set;
 import java.util.HashSet;
 

@@ -5,8 +5,8 @@ import org.sitemesh.webapp.WebAppContext;
 import org.sitemesh.webapp.contentfilter.BasicSelector;
 import org.sitemesh.webapp.contentfilter.Selector;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.Filter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.Filter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;

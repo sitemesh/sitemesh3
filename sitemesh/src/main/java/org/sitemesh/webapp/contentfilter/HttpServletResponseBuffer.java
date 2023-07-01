@@ -5,9 +5,9 @@ import org.sitemesh.webapp.contentfilter.io.RoutablePrintWriter;
 import org.sitemesh.webapp.contentfilter.io.RoutableServletOutputStream;
 import org.sitemesh.webapp.contentfilter.io.HttpContentType;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.CharBuffer;
@@ -239,12 +239,6 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
 
     @Override
     public void setStatus(int statusCode) {
-        abortBufferingIfBadStatusCode(statusCode);
-        super.setStatus(statusCode);
-    }
-
-    @Override
-    public void setStatus(int statusCode, String reason) {
         abortBufferingIfBadStatusCode(statusCode);
         super.setStatus(statusCode);
     }

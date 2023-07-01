@@ -1,14 +1,12 @@
 allprojects  {
-  apply plugin: 'maven'
-
   group = 'org.sitemesh'
-  version = '3.0.2-SNAPSHOT'
+  version = '4.0.0-SNAPSHOT'
 }
 
 subprojects {
   apply plugin: 'java'
-  sourceCompatibility = JavaVersion.VERSION_1_6
-  targetCompatibility = JavaVersion.VERSION_1_6
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
 
   repositories {
       mavenLocal()
