@@ -86,6 +86,12 @@ public class SiteMeshFilter extends ContentBufferingFilter {
         if (content == null) {
             return false;
         }
+
+        // Some servlet container's (Tomcat >8.5) will set the content length to the size of the decorator
+        // if it is a static file. Check if content length has already been set and if so, clear it.
+        if (response.containsHeader("Content-Length")) {
+            response.setContentLength(-1);
+        }
         try {
             content.getData().writeValueTo(response.getWriter());
         } catch (IllegalStateException ise) {  // If getOutputStream() has already been called
