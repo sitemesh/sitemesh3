@@ -5,7 +5,7 @@ target/
 *.iml
 .idea
 .gradle
-/build
+build
 /.classpath
 /.project
 /.settings
