@@ -1,0 +1,17 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.13'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile project(':sitemesh')
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-freemarker'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:9.0.76' // jsp
+}
