@@ -1,5 +1,6 @@
 rootProject.name = 'sitemesh-parent'
-include ':sitemesh', ':sitemesh-examples-hellowebapp'
+include ':sitemesh', ':sitemesh-examples-hellowebapp', ':sitemesh-examples-springboot'
 
 project(':sitemesh').projectDir = "$rootDir/sitemesh" as File
 project(':sitemesh-examples-hellowebapp').projectDir = "$rootDir/sitemesh-examples-hellowebapp" as File
+project(':sitemesh-examples-springboot').projectDir = "$rootDir/sitemesh-examples-springboot" as File
