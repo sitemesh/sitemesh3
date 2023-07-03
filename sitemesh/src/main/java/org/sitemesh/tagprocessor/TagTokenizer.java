@@ -13,7 +13,7 @@ import java.nio.CharBuffer;
 
 /**
  * Splits a chunk of HTML into 'text' and 'tag' tokens, for easy processing. Is very tolerant to badly formed HTML.
- * <h3>Usage</h3>
+ * <h2>Usage</h2>
  * <p>You need to supply a custom {@link TokenHandler} that will receive callbacks as text and tags are processed.</p>
  * <pre>char[] input = ...;
  * TokenHandler handler = new MyTokenHandler();
@@ -32,7 +32,7 @@ public class TagTokenizer {
         /**
          * Before attempting to parse a tag, the tokenizer will ask the handler whether the tag should be processed -
          * avoiding additional tag parsing makes the tokenizer quicker.
-         * <p/>
+         * <p></p>
          * If true is returned, the tokenizer will fully parse the tag and pass it into the
          * {@link #tag(Tag)} method.
          * Otherwise, the tokenizer will not try to parse the tag and pass it to the
@@ -42,7 +42,7 @@ public class TagTokenizer {
 
         /**
          * Called when tokenizer encounters an HTML tag (open, close or empty).
-         * <p/>The Tag instance passed in should not be kept beyond the scope of this method as the tokenizer will
+         * <p>The Tag instance passed in should not be kept beyond the scope of this method as the tokenizer will
          * attempt to reuse it.</p>
          */
         void tag(Tag tag) throws IOException;

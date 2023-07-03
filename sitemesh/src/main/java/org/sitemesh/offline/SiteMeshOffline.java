@@ -11,7 +11,7 @@ import java.nio.CharBuffer;
 /**
  * Tools for applying decorators to offline web pages (static content).
  *
- * <h3>Example</h3>
+ * <h2>Example</h2>
  * <pre>
  * Directory sourceDir = new FileSystemDirectory("src/html");
  * Directory dirDir = new FileSystemDirectory("build/html");
