@@ -7,6 +7,7 @@ Currently maintained versions:
 | --------------- | --------------- |
 | Java 8+ | Java 17+ |
 | Servlet API 4.0.1 | Jakarta EE 10 |
+| Spring Boot 2.x Support| Spring Boot 3.x Support |
 |[Master Branch](https://github.com/sitemesh/sitemesh3)| [Jakarta Branch](https://github.com/sitemesh/sitemesh3/tree/jakarta)|
 | [Download](https://oss.sonatype.org/content/repositories/snapshots/org/sitemesh/sitemesh/3.1.0-SNAPSHOT/) | [Download](https://oss.sonatype.org/content/repositories/snapshots/org/sitemesh/sitemesh/3.2.0-SNAPSHOT/)|
 
@@ -20,7 +21,7 @@ git clone https://github.com/sitemesh/sitemesh3
 ./gradlew jar
 ```
 
-4.x
+3.2.x
 ```
 git clone https://github.com/sitemesh/sitemesh3
 git checkout jakarta
