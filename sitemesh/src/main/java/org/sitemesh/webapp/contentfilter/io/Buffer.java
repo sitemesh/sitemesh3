@@ -1,6 +1,8 @@
 package org.sitemesh.webapp.contentfilter.io;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
+
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -46,6 +48,14 @@ public class Buffer {
             }
             byteBufferBuilder = new ByteBufferBuilder();
             exposedStream = new ServletOutputStream() {
+                @Override
+                public boolean isReady() {
+                    return true;
+                }
+
+                @Override
+                public void setWriteListener(WriteListener writeListener) { }
+
                 @Override
                 public void write(int b) {
                     byteBufferBuilder.write(b);
