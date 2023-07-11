@@ -11,7 +11,7 @@ import java.nio.CharBuffer;
 /**
  * A shared buffer, that can provide an interface as either a {@link PrintWriter}
  * (through {@link #getWriter()}) or {@link ServletOutputStream} (through {@link #getOutputStream()}.
- * <p/>
+ * <p></p>
  * The buffered text can be accessed through {@link #toCharBuffer()}.
  *
  * @author Joe Walnes

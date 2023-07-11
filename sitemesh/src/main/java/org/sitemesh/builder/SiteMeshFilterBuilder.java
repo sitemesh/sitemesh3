@@ -11,7 +11,7 @@ import jakarta.servlet.Filter;
  * so they can be chained together. When configured, call the {@link #create()} method which will
  * return the final immutable {@link Filter}.</p>
  *
- * <h3>Examples</h3>
+ * <h2>Examples</h2>
  *
  * <pre>
  * // Simplest example...

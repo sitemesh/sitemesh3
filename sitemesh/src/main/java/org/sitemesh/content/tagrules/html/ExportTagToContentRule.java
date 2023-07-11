@@ -14,14 +14,14 @@ import org.sitemesh.tagprocessor.Tag;
  *
  * Additionally, if this tag has attributes, they will be written as child properties.
  *
- * <h3>Example</h3>
+ * <h2>Example</h2>
  *
  * <pre>
  * // Java
  * myState.addRule("foo", new ExportTagToContentRule(content, "bar");
  *
  * // Input
- * &lt;foo x=1 b=2&gt;hello&lt/foo&gt;
+ * &lt;foo x=1 b=2&gt;hello&lt;/foo&gt;
  *
  * // Exported properties of Content
  * bar=hello

@@ -341,8 +341,8 @@ Exclude a path from being decorated
   </mapping>
 
   <!-- Exclude path from decoration. -->
-  <mapping path="/javadoc/*" exclue="true"/>
-  <mapping path="/brochures/*" exclue="true"/>
+  <mapping path="/javadoc/*" exclude="true"/>
+  <mapping path="/brochures/*" exclude="true"/>
 
 </sitemesh>
 ```

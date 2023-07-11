@@ -82,7 +82,7 @@ import javax.xml.parsers.ParserConfigurationException;
  * <p>The default configuration path of <code>/WEB-INF/sitemesh3.xml</code> can be changed by
  * adding a <code>configFile</code> init-param to the filter.</p>
  *
- * <h1>Reference</h1>
+ * <h2>Reference</h2>
  *
  * <p><b><code>decoratorMappings</code></b>: A list of mappings of path patterns to decorators.
  * Each entry should consist of pattern=decorator, separated by whitespace or commas. If multiple decorators

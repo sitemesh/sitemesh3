@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /**
  * {@link DecoratorSelector} implementation that selects a decorator based on the
- * incoming {@link SiteMeshContext#getPath()} and the mappings setup. <h3>Example</h3>
+ * incoming {@link SiteMeshContext#getPath()} and the mappings setup. <h2>Example</h2>
  * 
  * <pre>
  * DecoratorSelector selector = new PathBasedDecoratorSelector()

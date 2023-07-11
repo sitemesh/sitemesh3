@@ -10,10 +10,10 @@ import java.io.IOException;
  * {@link DecoratorSelector} implementation that selects a decorator based on the
  * meta tag in the page header
  * 
- * <h3>Example</h3>
+ * <h2>Example</h2>
  * 
  * <pre>
- * <meta name="decorator" content="/my-decorator,/my-other-decorator">
+ * &lt;meta name="decorator" content="/my-decorator,/my-other-decorator"&gt;
  * </pre>
  * 
  * @author Joe Walnes

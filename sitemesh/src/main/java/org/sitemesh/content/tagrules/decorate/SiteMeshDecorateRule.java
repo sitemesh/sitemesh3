@@ -19,9 +19,9 @@ import java.io.IOException;
  * <li>The <code>decorator</code> attribute will specify which decorator is used.</li>
  * </ul>
  *
- * <h3>Example</h3>
+ * <h2>Example</h2>
  *
- * <pre>Some content {@code <sitemesh:decorate decorator='/mydecorator' title='foo' cheese='bar'>blah</sitemesh:decorate>}
+ * <pre>Some content {@code <sitemesh:decorate decorator='/mydecorator' title='foo' cheese='bar'>blah</sitemesh:decorate>}</pre>
  *
  * <p>This will apply the decorator named <code>/mydecorator</code>, passing in {@link ContentProperty}
  * with the following properties:</p>

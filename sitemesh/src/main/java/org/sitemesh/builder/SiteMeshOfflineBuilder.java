@@ -12,7 +12,7 @@ import org.sitemesh.offline.SiteMeshOffline;
  * <p>At the very least, <b>sourceDirectory</b> and <b>destinationDirectory must be set</b> before
  * calling {@link #create()}, otherwise an {@link IllegalStateException} will be thrown.</p>
  *
- * <h3>Examples</h3>
+ * <h2>Examples</h2>
  *
  * <pre>
  * // Simplest example...

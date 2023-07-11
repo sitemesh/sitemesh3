@@ -6,6 +6,8 @@ To perform a full build:
   mvn
 This will compile code, run tests, package into jars/wars and install in the local repository for *all* modules.
 
+mvn javadoc:javadoc
+
 Clean up all built files:
   mvn clean
 

@@ -16,10 +16,10 @@ import java.nio.CharBuffer;
  * Wraps an {@link HttpServletResponse}, allowing the output to be buffered. The passed
  * in {@link Selector}, will be used to determine whether to actually do the buffering
  * for the request.
- * <p/>
+ * <p></p>
  * <p>If the response is not buffered, all operations will be delegated
  * back to the original response, unmodified.
- * <p>If the response is buffered, the content written to {@link #getOutputStream()}
+ * </p>If the response is buffered, the content written to {@link #getOutputStream()}
  * and {@link #getWriter()} to an underlying buffer instead, available through
  * {@link #getBuffer()}. Additionally, the 'Content-Length' header will not be passed
  * through to the original response.

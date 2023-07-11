@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Simple command line argument parser that extracts a list of key/value properties and remaining arguments.
  *
- * <h3>Examples:</h3>
+ * <h2>Examples:</h2>
  * <ul>
  *  <li><code>"-firstname", "Joe", "-lastname", "Walnes", "a", "b", "c"</code></li>
  *  <li><code>"--firstname", "Joe", "--lastname", "Walnes", "a", "b", "c"</code></li>
