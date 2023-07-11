@@ -1,14 +1,8 @@
 configurations {
-    provided
     lexer
 }
 
-sourceSets {
-    main { 
-		compileClasspath += configurations.provided 
-		java { srcDir { 'build/generated-sources/jflex' } }
-	}
-}
+sourceSets.main.java.srcDirs += ['build/generated-sources/jflex']
 
 description = 'SiteMesh library'
 
@@ -17,25 +11,17 @@ dependencies {
     testCompile group: 'org.mortbay.jetty', name: 'jetty', version:'6.1.14'
     testCompile group: 'org.mortbay.jetty', name: 'jetty-util', version:'6.1.14'
     testCompile group: 'org.apache.ant', name: 'ant-testutil', version:'1.7.1'
-    
-    provided 'javax.servlet:javax.servlet-api:3.0.1'
-    provided 'org.apache.ant:ant:1.7.1'
+
+    compileOnly 'javax.servlet:javax.servlet-api:3.0.1'
+    compileOnly 'org.apache.ant:ant:1.7.1'
     
     lexer 'de.jflex:jflex:1.4.3'
 }
 
-javadoc {
-    classpath = project.configurations.provided
-}
-
-
 task generateLexer {
-    // Generate the lexer
     ant.taskdef classname: 'JFlex.anttask.JFlexTask', name: 'jflex', classpath: configurations.lexer.asPath
     ant.jflex(file: "src/main/java/org/sitemesh/tagprocessor/lexer.flex", destdir: "build/generated-sources/jflex")// "src/main/java/")
 }
-
-compileJava.dependsOn generateLexer
 
 test {
      exclude '**/**$**'   
