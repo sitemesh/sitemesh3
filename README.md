@@ -1,11 +1,14 @@
 SiteMesh 3: Official repository
 =========
 
-Currently maintained versions: 
+Currently maintained versions:
 
-[3.1.x](https://github.com/sitemesh/sitemesh3) (Java 8+ / Servlet Version 3.1)
-[Download](https://oss.sonatype.org/content/repositories/snapshots/org/sitemesh/sitemesh/3.1.0-SNAPSHOT/)
-[4.x](https://github.com/sitemesh/sitemesh3/tree/jakarta) (Java 17+ / Jakarta EE 10)
+| 3.1.x | 3.2.x | 
+| --------------- | --------------- |
+| Java 8+ | Java 17+ |
+| Servlet API 4.0.1 | Jakarta EE 10 |
+|[Master Branch](https://github.com/sitemesh/sitemesh3)| [Jakarta Branch](https://github.com/sitemesh/sitemesh3/tree/jakarta)|
+| [Download](https://oss.sonatype.org/content/repositories/snapshots/org/sitemesh/sitemesh/3.1.0-SNAPSHOT/) | [Download](https://oss.sonatype.org/content/repositories/snapshots/org/sitemesh/sitemesh/3.2.0-SNAPSHOT/)|
 
 ## Building:
 Currently, there are no maintained versions available on Maven Central. This will be change in the near future.
