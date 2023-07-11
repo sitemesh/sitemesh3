@@ -1,17 +1,74 @@
-allprojects  {
-  apply plugin: 'maven'
-
-  group = 'org.sitemesh'
-  version = '3.1.0-SNAPSHOT'
+plugins {
+    id "java-library"
+    id "maven-publish"
+    id "signing"
+    id("io.github.gradle-nexus.publish-plugin") version "2.0.0-rc-1"
 }
 
-subprojects {
-  apply plugin: 'java'
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+description = 'SiteMesh parent POM'
 
-  repositories {
-      mavenLocal()
-      mavenCentral() // Use Maven Central Repo to search for Dependencies
-  }
+allprojects  {
+    apply plugin: 'maven-publish'
+    apply plugin: 'java-library'
+    apply plugin: 'signing'
+    group = 'org.sitemesh'
+    version = '3.1.0-SNAPSHOT'
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    repositories {
+        mavenCentral() // Use Maven Central Repo to search for Dependencies
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from(components.java)
+                pom {
+                    name = project.description
+                    description = 'SiteMesh is a web-page layout and decoration framework and web- application integration framework to aid in creating sites consisting of many pages for which a consistent look/feel, navigation and layout scheme is required.'
+                    url = 'https://github.com/sitemesh/sitemesh3'
+                    licenses {
+                        license {
+                            name =  'The Apache Software License, Version 2.0'
+                            url =  'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution =  'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'joewalnes'
+                            name = 'Joe Walnes'
+                            email = 'joe dot walnes at gmail'
+                        }
+                        developer {
+                            id = 'rburton'
+                            name = 'Richard L. Burton III'
+                            email = 'rburton@codehaus.org'
+                        }
+                        developer {
+                            id = 'codeconsole'
+                            name = 'Scott Murphy'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git://github.com/sitemesh/sitemesh3.git'
+                        developerConnection = 'scm:git:git@github.com:sitemesh/sitemesh3.git'
+                        url = 'https://github.com/sitemesh/sitemesh3/'
+                    }
+                    issueManagement {
+                        system = 'GitHub'
+                        url = 'https://github.com/sitemesh/sitemesh3/issues'
+                    }
+                }
+            }
+        }
+    }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype()
+    }
 }
