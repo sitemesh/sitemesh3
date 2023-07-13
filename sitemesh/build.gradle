@@ -12,7 +12,8 @@ dependencies {
     lexer 'de.jflex:jflex:1.4.3'
 }
 
-task generateLexer {
+
+compileJava.doFirst {
     ant.taskdef classname: 'JFlex.anttask.JFlexTask', name: 'jflex', classpath: configurations.lexer.asPath
     ant.jflex(file: "src/main/java/org/sitemesh/tagprocessor/lexer.flex", destdir: "build/generated-sources/jflex")// "src/main/java/")
 }
