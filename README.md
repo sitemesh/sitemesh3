@@ -9,11 +9,27 @@ Currently maintained versions:
 | Servlet API 4.0.1 | Jakarta EE 10 |
 | Spring Boot 2.x Support| Spring Boot 3.x Support |
 |[Master Branch](https://github.com/sitemesh/sitemesh3)| [Jakarta Branch](https://github.com/sitemesh/sitemesh3/tree/jakarta)|
+|[Java Docs](https://sitemesh.github.io/sitemesh3/javadoc/3.1.x/)||
 | [Download](https://oss.sonatype.org/content/repositories/snapshots/org/sitemesh/sitemesh/3.1.0-SNAPSHOT/) | [Download](https://oss.sonatype.org/content/repositories/snapshots/org/sitemesh/sitemesh/3.2.0-SNAPSHOT/)|
+
+[Website / Documentation (Built with Offline Generator)](https://sitemesh.github.io/sitemesh-website/)
 
 ## Building:
 Currently, there are no maintained versions available on Maven Central. This will be change in the near future.
-In the meantime, you can build each respective version by checking out that particular branch as follows:
+In the meantime, you can use the OSS snapshot repository
+
+```groovy
+repositories {
+    mavenCentral() 
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
+dependencies {
+    runtimeOnly 'org.sitemesh:sitemesh:3.1.0-SNAPSHOT'
+}
+```
+
+or you can build each respective version by checking out that particular branch as follows:
 
 3.1.x
 ```
@@ -67,6 +83,8 @@ No longer do you need to commit to JSP or Velocity to build your decorators. Lik
 Want to configure purely through Java code, through XML, through Spring, or maybe by convention? It's your choice. And it's easy to plug in your own configuration mechanism.
 
 ### Offline Site Generation
+
+[Working Example Here](https://github.com/sitemesh/sitemesh-website/)
 
 SiteMesh comes with tools to allow you decorators to content for static websites as an offline task. This can be invoked from a command line tool, an Ant task or through a Java API.
 

@@ -1,5 +1,12 @@
 === Building SiteMesh 3 ===
 
+sdk use java 8.0.372-amzn
+./gradlew test
+./gradlew javadoc
+mv sitemesh/build/docs/javadoc/* docs/javadoc/3.1.x 
+./gradlew publishToSonatype
+
+
 Build requirements: JDK 1.5, Maven 2.0.9.
 
 To perform a full build:
