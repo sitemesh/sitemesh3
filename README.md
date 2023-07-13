@@ -16,7 +16,20 @@ Currently maintained versions:
 
 ## Building:
 Currently, there are no maintained versions available on Maven Central. This will be change in the near future.
-In the meantime, you can build each respective version by checking out that particular branch as follows:
+In the meantime, you can use the OSS snapshot repository
+
+```groovy
+repositories {
+    mavenCentral() 
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
+dependencies {
+    runtimeOnly 'org.sitemesh:sitemesh:3.1.0-SNAPSHOT'
+}
+```
+
+or you can build each respective version by checking out that particular branch as follows:
 
 3.1.x
 ```
