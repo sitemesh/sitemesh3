@@ -5,7 +5,7 @@ import org.apache.tools.ant.types.FileSet;
 import java.io.File;
 
 /**
- * A SiteMesh <tt>FileSet</tt> that is aware of what decorator to
+ * A SiteMesh {@link FileSet} that is aware of what decorator to
  * apply for the given set of resource files.
  * @author Richard L. Burton III - SmartCode LLC
  */
