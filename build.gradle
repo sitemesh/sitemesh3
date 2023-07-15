@@ -22,6 +22,11 @@ allprojects  {
         mavenCentral() // Use Maven Central Repo to search for Dependencies
     }
 
+    java {
+        withSourcesJar()
+        withJavadocJar()
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {

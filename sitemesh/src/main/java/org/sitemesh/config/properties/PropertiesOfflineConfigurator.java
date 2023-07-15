@@ -35,7 +35,7 @@ import java.util.Map;
  *
  * <p>Where a <i>name</i> is used, this typically means the fully qualified class name, which must
  * have a default constructor. However, a custom {@link org.sitemesh.config.ObjectFactory} implementation (passed into
- * the {@link #ConfigPropertiesBuilder(org.sitemesh.config.ObjectFactory)} constructor may change the behavior of this
+ * the {@link #PropertiesOfflineConfigurator(ObjectFactory, Map)} )} constructor may change the behavior of this
  * (e.g. to plug into a dependency injection framework).
  *
  * @author Joe Walnes

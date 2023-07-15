@@ -141,7 +141,7 @@ public abstract class BaseSiteMeshBuilder
 
     /**
      * Set the TagRuleBundles. This is the equivalent of calling
-     * {@link #clearTagRuleBundles()} followed by {@link #addTagRuleBundles(Iterable<TagRuleBundle>)}.
+     * {@link #clearTagRuleBundles()} followed by {@link #addTagRuleBundles(Iterable)}.
      *
      * <p>Note: If {@link #setCustomContentProcessor(ContentProcessor)} is called,
      * any TagRuleBundles are ignored, as they are only used by the default ContentProcessor

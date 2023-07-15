@@ -11,7 +11,7 @@ import java.nio.CharBuffer;
 import java.util.Arrays;
 
 /**
- * {@see ContentProcessor} implementation that is build on {@link TagProcessor}.
+ * {@link ContentProcessor} implementation that is build on {@link TagProcessor}.
  *
  * @author Joe Walnes
  */
