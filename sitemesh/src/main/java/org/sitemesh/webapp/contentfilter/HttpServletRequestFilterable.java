@@ -8,7 +8,7 @@ import java.util.HashSet;
 /**
  * This special HttpServletRequestWrapper is used to allow filtering of the HTTP headers
  * by adding them to an exclusion list. The initial need for this wrapper came up when
- * the decorator is modified and the client/browser sends over the <tt>If-Modified-Since</tt>
+ * the decorator is modified and the client/browser sends over the {@code If-Modified-Since}
  * header to the server. The result is the servlet container sends back a 304 and changes
  * to the decorator are never rendered until the requested resource is modified.
  * 
@@ -32,7 +32,7 @@ public class HttpServletRequestFilterable extends HttpServletRequestWrapper {
     }
 
     /**
-     * This customized version of <tt>HttpServletRequest#getHeader(String)</tt> returns
+     * This customized version of {@link HttpServletRequest#getHeader(String)} returns
      * null for any HTTP header that is being filtered out.
      *
      * @param header The HTTP header name.
@@ -57,7 +57,7 @@ public class HttpServletRequestFilterable extends HttpServletRequestWrapper {
     }
 
     /**
-     * This method checks to see if the <tt>header</tt> name is within
+     * This method checks to see if the {@code header} name is within
      * the exclusion list.
      * @param header The header name to check if it's excluded.
      * @return True if the header name is being filtered, false otherwise.
