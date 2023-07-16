@@ -125,7 +125,7 @@ var activeTableTab = "activeTableTab";
 extends javax.servlet.http.HttpServletRequestWrapper</pre>
 <div class="block">This special HttpServletRequestWrapper is used to allow filtering of the HTTP headers
  by adding them to an exclusion list. The initial need for this wrapper came up when
- the decorator is modified and the client/browser sends over the <tt>If-Modified-Since</tt>
+ the decorator is modified and the client/browser sends over the <code>If-Modified-Since</code>
  header to the server. The result is the servlet container sends back a 304 and changes
  to the decorator are never rendered until the requested resource is modified.
  
@@ -207,14 +207,14 @@ extends javax.servlet.http.HttpServletRequestWrapper</pre>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../org/sitemesh/webapp/contentfilter/HttpServletRequestFilterable.html#getHeader-java.lang.String-">getHeader</a></span>(java.lang.String&nbsp;header)</code>
-<div class="block">This customized version of <tt>HttpServletRequest#getHeader(String)</tt> returns
+<div class="block">This customized version of <code>HttpServletRequest.getHeader(String)</code> returns
  null for any HTTP header that is being filtered out.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../org/sitemesh/webapp/contentfilter/HttpServletRequestFilterable.html#isExcluded-java.lang.String-">isExcluded</a></span>(java.lang.String&nbsp;header)</code>
-<div class="block">This method checks to see if the <tt>header</tt> name is within
+<div class="block">This method checks to see if the <code>header</code> name is within
  the exclusion list.</div>
 </td>
 </tr>
@@ -311,7 +311,7 @@ extends javax.servlet.http.HttpServletRequestWrapper</pre>
 <li class="blockList">
 <h4>getHeader</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getHeader(java.lang.String&nbsp;header)</pre>
-<div class="block">This customized version of <tt>HttpServletRequest#getHeader(String)</tt> returns
+<div class="block">This customized version of <code>HttpServletRequest.getHeader(String)</code> returns
  null for any HTTP header that is being filtered out.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
@@ -347,7 +347,7 @@ extends javax.servlet.http.HttpServletRequestWrapper</pre>
 <li class="blockList">
 <h4>isExcluded</h4>
 <pre>protected&nbsp;boolean&nbsp;isExcluded(java.lang.String&nbsp;header)</pre>
-<div class="block">This method checks to see if the <tt>header</tt> name is within
+<div class="block">This method checks to see if the <code>header</code> name is within
  the exclusion list.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
