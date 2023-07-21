@@ -34,13 +34,13 @@ or you can build each respective version by checking out that particular branch 
 3.1.x
 ```
 git clone https://github.com/sitemesh/sitemesh3
+git checkout 3.1.x
 ./gradlew jar
 ```
 
 3.2.x
 ```
 git clone https://github.com/sitemesh/sitemesh3
-git checkout jakarta
 ./gradlew jar
 ```
 
