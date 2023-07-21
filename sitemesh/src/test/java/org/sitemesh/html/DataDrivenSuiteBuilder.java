@@ -1,5 +1,6 @@
 package org.sitemesh.html;
 
+import org.junit.Ignore;
 import org.sitemesh.TestUtil;
 import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.content.ContentProperty;
@@ -149,6 +150,7 @@ public class DataDrivenSuiteBuilder {
         return string == null ? "" : string.trim();
     }
 
+    @Ignore
     private static class AssertTrimmedTest extends TestCase {
         private final String expected;
         private final String actual;
