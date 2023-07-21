@@ -7,6 +7,12 @@ sourceSets.main.java.srcDirs += ['build/generated-sources/jflex']
 description = 'SiteMesh library'
 
 dependencies {
+    testImplementation group: 'junit', name: 'junit', version:'4.5'
+    testImplementation group: 'org.eclipse.jetty', name: 'jetty-io', version:'8.1.17.v20150415'
+    testImplementation group: 'org.eclipse.jetty', name: 'jetty-servlet', version:'11.0.15'
+    testImplementation group: 'org.eclipse.jetty', name: 'jetty-util', version:'11.0.15'
+    testImplementation group: 'org.apache.ant', name: 'ant-testutil', version:'1.7.1'
+
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
     compileOnly 'org.apache.ant:ant:1.7.1'
     lexer 'de.jflex:jflex:1.4.3'

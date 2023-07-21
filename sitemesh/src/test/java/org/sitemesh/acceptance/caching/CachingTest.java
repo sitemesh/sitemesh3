@@ -1,19 +1,23 @@
 package org.sitemesh.acceptance.caching;
 
+import org.eclipse.jetty.http.HttpField;
+import org.eclipse.jetty.http.HttpFields;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.HttpHeaderValue;
 import org.sitemesh.webapp.WebEnvironment;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.TimeZone;
 
 import junit.framework.TestCase;
-import org.mortbay.jetty.HttpFields;
+//import org.eclipse.jetty.server.HttpFields;
 
 /**
  * Tests that HTTP cacheable Servlets behave correctly when decorated.
@@ -247,7 +251,7 @@ public class CachingTest extends TestCase {
      * will be returned as normal. Otherwise, a NOT_MODIFIED response
      * will be returned.</p>
      *
-     * <p>It is actually {@link javax.servlet.http.HttpServlet} that implements
+     * <p>It is actually {@link jakarta.servlet.http.HttpServlet} that implements
      * most of this logic - we just override it's {@link #getLastModified(HttpServletRequest)}
      * method.</p>
      */
@@ -325,12 +329,13 @@ public class CachingTest extends TestCase {
             calendar.set(Calendar.YEAR, year);
         }
 
-        public long getMillis() {
-            return calendar.getTimeInMillis();
+        public long getMillis() { // round due to millis not being sent.
+            return calendar.getTimeInMillis() / 1000 * 1000;
         }
 
-        public String toHttpHeaderFormat() {
-            return HttpFields.formatDate(calendar, false);
+        public String toHttpHeaderFormat() {  // Doesn't sent millis
+            HttpField lastModified = HttpFields.build().addDateField(HttpHeader.LAST_MODIFIED.asString(), calendar.getTimeInMillis()).getField(HttpHeader.LAST_MODIFIED.asString());
+            return lastModified.getValue();
         }
 
     }
