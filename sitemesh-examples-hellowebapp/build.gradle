@@ -1,8 +1,8 @@
 /*
  * build.gradle for SiteMesh 3 Hello World Demo
  *
- * SiteMesh 3: http://wiki.sitemesh.org/display/sitemesh3/Home
- * Gradle: http://www.gradle.org/
+ * SiteMesh 3: https://sitemesh.github.io/sitemesh-website/
+ * Gradle: https://www.gradle.org/
  */
 
 plugins {

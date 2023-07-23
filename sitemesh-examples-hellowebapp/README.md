@@ -1,15 +1,27 @@
 SiteMesh 3 Hello World Demo using Gradle
 =======================================
-This is a very simple 'hello world' [SiteMesh 3](http://wiki.sitemesh.org/display/sitemesh3/SiteMesh+3+Overview) web-application.  It demonstrates applying a page decorator to the content of a website.  It uses the [Gradle build tool](http://www.gradle.org/) to download the SiteMesh jar and run the example using the [Jetty](http://www.eclipse.org/jetty/) WebServer.
+This is a very simple **'Hello World'** [SiteMesh 3](https://sitemesh.github.io/sitemesh-website/overview.html) web-application.  It demonstrates applying a page decorator to the content of a website.  It uses the [Gradle build tool](https://www.gradle.org/) to download the SiteMesh jar and run the example using the [Jetty](https://www.eclipse.org/jetty/) WebServer.
 
-It is essentially the [Getting Started](http://wiki.sitemesh.org/display/sitemesh3/Getting+Started+with+SiteMesh+3) tutorial ready-to-run with Gradle.
+It is essentially the [Getting Started](https://sitemesh.github.io/sitemesh-website/getting-started.html) tutorial ready-to-run with Gradle.
 
-If you do not have Gradle installed on your sytem, you must [install Gradle](http://www.gradle.org/docs/current/userguide/installation.html) before proceeding.
+All you need is Java installed on your computer. 
 
 To run the SiteMesh demo in Jetty:
 
-    gradle jettyRun
+```
+../gradlew jettyRun
+```
     
+
+or use `../gradlew.bat jettyRun` on Windows
+
+If you prefer Tomcat, you can use:
+
+```
+../gradlew tomcatRun
+```
+
+
 All required .jar files will be loaded automatically.  You should then see output similar to the following:
 
     > Building > :jettyRun > Running at http://localhost:8080/
