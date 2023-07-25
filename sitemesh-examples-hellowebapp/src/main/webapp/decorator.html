@@ -1,24 +1,28 @@
 <html>
   <head>
-    <title>SiteMesh example: <sitemesh:write property='title'>Title goes here</sitemesh:write></title>
-    <style type='text/css'>
+    <title>SiteMesh Example: <sitemesh:write property='title'>Title goes here</sitemesh:write></title>
+    <style>
       body { font-family: arial, sans-serif; background-color: #ffffcc; }
       h1, h2, h3, h4 { text-align: center; background-color: #ccffcc; border-top: 1px solid #66ff66; }
       .disclaimer { text-align: center; border-top: 1px solid #cccccc; margin-top: 40px; color: #666666; font-size: smaller; }
     </style>
-    <sitemesh:write property='head'/>
+    <sitemesh:write property="head"/>
   </head>
   <body>
 
-    <h1 class='title'>SiteMesh example site: <sitemesh:write property='title'>Title goes here</sitemesh:write></h1>
+    <h1 class='title'>SiteMesh Example Site: <sitemesh:write property="title">Title goes here</sitemesh:write></h1>
 
-    <sitemesh:write property='body'>Body goes here. Blah blah blah.</sitemesh:write>
+    <sitemesh:write property="body">Body goes here. Blah blah blah.</sitemesh:write>
 
-    <div class='disclaimer'>Site disclaimer. This is an example.</div>
-    <div class='navigation'>
+    <div class="disclaimer">Site disclaimer. This is an example.</div>
+    <div class="navigation">
       <b>Examples:</b>
-      [<a href="./">Static example</a>]
-      [<a href="demo.jsp">Dynamic example</a>]
+      [<a href="./">Static</a>]
+      [<a href="demo.jsp">Dynamic</a>]
+      [<a href="demo.jsp?bootstrap=1">Dynamic Decorator</a>]
+      [<a href="demo.jsp?bootstrap=1&doubled=1">Dynamic Chaining</a>]
+      [<a href="demo.jsp?ex=1">500 Error</a>]
+      [<a href="demo.gsp">404 Error</a>]
     </div>
 
   </body>
