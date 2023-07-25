@@ -38,7 +38,6 @@ public class PathMapper<T> {
     
     static {
         Set<String> set = new HashSet<String>();
-        set.add("/");
         set.add("*");
         set.add("**");
         set.add("/*");
