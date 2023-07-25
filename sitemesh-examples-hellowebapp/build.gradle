@@ -19,7 +19,5 @@ description = 'SiteMesh Example: Hello World Web-app'
 
 dependencies {
     implementation 'javax.servlet:jstl:1.2'
-    // https://docs.oracle.com/javaee/6/javaserverfaces/2.0/docs/pdldocs/facelets/c/tld-summary.html
-    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:2.0.0'
     implementation project(':sitemesh')
 }
