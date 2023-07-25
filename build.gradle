@@ -73,6 +73,10 @@ allprojects  {
     }
 }
 
+signing {
+    sign publishing.publications.mavenJava
+}
+
 nexusPublishing {
     repositories {
         sonatype()
