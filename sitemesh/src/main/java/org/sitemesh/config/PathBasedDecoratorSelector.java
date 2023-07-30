@@ -5,6 +5,7 @@ import org.sitemesh.SiteMeshContext;
 import org.sitemesh.content.Content;
 
 import java.io.IOException;
+import java.util.stream.Stream;
 
 /**
  * {@link DecoratorSelector} implementation that selects a decorator based on the
@@ -26,6 +27,13 @@ public class PathBasedDecoratorSelector<C extends SiteMeshContext> implements De
 
     private final PathMapper<String[]> pathMapper = new PathMapper<String[]>();
 
+    protected String prefix = "";
+
+    public PathBasedDecoratorSelector setPrefix(String prefix) {
+        this.prefix = prefix;
+        return this;
+    }
+
     public PathBasedDecoratorSelector put(String contentPath, String... decoratorPaths) {
         pathMapper.put(contentPath, decoratorPaths);
         return this;
@@ -33,7 +41,13 @@ public class PathBasedDecoratorSelector<C extends SiteMeshContext> implements De
 
     public String[] selectDecoratorPaths(Content content, C siteMeshContext) throws IOException {
         String[] result = pathMapper.get(siteMeshContext.getPath());
-        return result == null ? EMPTY : result;
+        return convertPaths(result == null ? EMPTY : result);
+    }
+
+    protected String[] convertPaths(String[] paths) {
+        return Stream.of(paths)
+                .map(path -> String.format("%s%s", prefix, path))
+                .toArray(String[]::new);
     }
 
     /**

@@ -20,6 +20,12 @@ import java.io.IOException;
  * @see PathMapper
  */
 public class MetaTagBasedDecoratorSelector<C extends SiteMeshContext> extends PathBasedDecoratorSelector<C>{
+    private String mataProperty = "layout";
+
+    public MetaTagBasedDecoratorSelector setMetaProperty(String mataProperty) {
+        this.mataProperty = mataProperty;
+        return this;
+    }
 
     public MetaTagBasedDecoratorSelector put(String contentPath, String... decoratorPaths) {
         super.put(contentPath, decoratorPaths);
@@ -31,13 +37,13 @@ public class MetaTagBasedDecoratorSelector<C extends SiteMeshContext> extends Pa
         // The default HTML processor already extracts these into 'meta.NAME' properties.
         String decorator = content.getExtractedProperties()
                 .getChild("meta")
-                .getChild("decorator")
+                .getChild(mataProperty)
                 .getValue();
 
         if (decorator != null) {
             // If present, return it. 
             // Multiple chained decorators can be specified using commas.
-            return decorator.split(",");
+            return convertPaths(decorator.split(","));
         }
 
         // Otherwise, fallback to the standard configuration
