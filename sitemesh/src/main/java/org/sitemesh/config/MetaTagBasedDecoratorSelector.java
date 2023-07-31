@@ -20,10 +20,10 @@ import java.io.IOException;
  * @see PathMapper
  */
 public class MetaTagBasedDecoratorSelector<C extends SiteMeshContext> extends PathBasedDecoratorSelector<C>{
-    private String metaTagProperty = "decorator";
+    private String metaTagName = "decorator";
 
-    public MetaTagBasedDecoratorSelector setMetaTagProperty(String metaTagProperty) {
-        this.metaTagProperty = metaTagProperty;
+    public MetaTagBasedDecoratorSelector setMetaTagName(String metaTagName) {
+        this.metaTagName = metaTagName;
         return this;
     }
 
@@ -37,7 +37,7 @@ public class MetaTagBasedDecoratorSelector<C extends SiteMeshContext> extends Pa
         // The default HTML processor already extracts these into 'meta.NAME' properties.
         String decorator = content.getExtractedProperties()
                 .getChild("meta")
-                .getChild(metaTagProperty)
+                .getChild(metaTagName)
                 .getValue();
 
         if (decorator != null) {
