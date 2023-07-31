@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Configuration
 @ConfigurationProperties(prefix = "spring.sitemesh.decorator")
-class SiteMeshAutoConfiguration {
+public class SiteMeshAutoConfiguration {
     private List<HashMap<String, String>> mappings;
     public void setMappings(List<HashMap<String, String>> mappings) {
         this.mappings = mappings;
