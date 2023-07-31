@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.13'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+description = 'SiteMesh Spring Boot Starter'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':sitemesh')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}

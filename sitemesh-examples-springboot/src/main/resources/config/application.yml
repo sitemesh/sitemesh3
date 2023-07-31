@@ -1,0 +1,13 @@
+spring:
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
+  freemarker:
+    suffix: .ftl
+  sitemesh:
+    decorator:
+      metaTag: layout
+      mappings:
+        - path: /*
+          decorator: /layouts/decorator.html
