@@ -15,6 +15,8 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
+	// Alternatively, you could not use spring-boot-starter-sitemesh and configure sitemesh manually:
+	/*
 	@Bean
 	public Filter sitemesh3() {
 		return new ConfigurableSiteMeshFilter() {
@@ -24,4 +26,5 @@ public class Application {
 			}
 		};
 	}
+	 */
 }
