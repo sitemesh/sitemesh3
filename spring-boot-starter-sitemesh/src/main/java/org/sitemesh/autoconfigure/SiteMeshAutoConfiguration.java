@@ -3,10 +3,12 @@ package org.sitemesh.autoconfigure;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.ConfigurableSiteMeshFilter;
 import org.sitemesh.config.MetaTagBasedDecoratorSelector;
+import org.sitemesh.content.tagrules.html.Sm2TagRuleBundle;
 import org.sitemesh.webapp.WebAppContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,10 +24,12 @@ public class SiteMeshAutoConfiguration {
         this.mappings = mappings;
     }
 
-    @Value("${spring.sitemesh.decorator.metaTag.prefix:}")
+    @Value("${spring.sitemesh.decorator.prefix:}")
     private String prefix;
-    @Value("${spring.sitemesh.decorator.metaTag.name:decorator}")
+    @Value("${spring.sitemesh.decorator.metaTag:decorator}")
     private String metaTagName;
+    @Value("${spring.sitemesh.decorator.bundles}")
+    private List<String> bundles;
 
     @Bean
     public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3(){
@@ -38,12 +42,22 @@ public class SiteMeshAutoConfiguration {
                     .setMetaTagName(metaTagName)
                     .setPrefix(prefix)
                 );
-                for (Map<String, String> decorator : mappings) {
-                    builder.addDecoratorPath(decorator.get("path"), decorator.get("decorator"));
+                if (mappings != null) {
+                    for (Map<String, String> decorator : mappings) {
+                        builder.addDecoratorPath(decorator.get("path"), decorator.get("decorator"));
+                    }
+                }
+                if (bundles != null) {
+                    for (String bundle : bundles) {
+                        if (bundle.trim().equals("sm2")) {
+                            builder.addTagRuleBundle(new Sm2TagRuleBundle());
+                        }
+                    }
                 }
             }
         });
         registrationBean.addUrlPatterns("/*");
+        registrationBean.setOrder(OrderedFilter.REQUEST_WRAPPER_FILTER_MAX_ORDER + 29);
         return registrationBean;
     }
 }
