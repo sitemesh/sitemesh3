@@ -35,7 +35,7 @@ public class CoreHtmlTagRuleBundle implements TagRuleBundle {
         // Core rules for SiteMesh to be functional.
         defaultState.addRule("head", new ExportTagToContentRule(siteMeshContext, contentProperty.getChild("head"), false));
         defaultState.addRule("title", new ExportTagToContentRule(siteMeshContext, contentProperty.getChild("title"), false));
-        defaultState.addRule("body", new ExportTagToContentRule(siteMeshContext, contentProperty.getChild("body"), false));
+        defaultState.addRule("body", new ExportTagToContentAndMergeBodyAttributesRule(siteMeshContext, contentProperty.getChild("body"), false));
         defaultState.addRule("meta", new MetaTagRule(contentProperty.getChild("meta")));
 
         // Ensure that while in <xml> tag, none of the other rules kick in.
