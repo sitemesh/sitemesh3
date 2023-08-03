@@ -30,7 +30,12 @@ allprojects  {
     publishing {
         publications {
             mavenJava(MavenPublication) {
-                from(components.java)
+                from(project.components.java)
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                }
                 pom {
                     name = project.description
                     description = 'SiteMesh is a web-page layout and decoration framework and web- application integration framework to aid in creating sites consisting of many pages for which a consistent look/feel, navigation and layout scheme is required.'
