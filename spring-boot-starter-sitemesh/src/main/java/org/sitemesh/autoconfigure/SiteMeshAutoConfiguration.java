@@ -28,7 +28,7 @@ public class SiteMeshAutoConfiguration {
     private String prefix;
     @Value("${spring.sitemesh.decorator.metaTag:decorator}")
     private String metaTagName;
-    @Value("${spring.sitemesh.decorator.bundles}")
+    @Value("${spring.sitemesh.decorator.bundles:}")
     private List<String> bundles;
 
     @Bean
@@ -47,11 +47,9 @@ public class SiteMeshAutoConfiguration {
                         builder.addDecoratorPath(decorator.get("path"), decorator.get("decorator"));
                     }
                 }
-                if (bundles != null) {
-                    for (String bundle : bundles) {
-                        if (bundle.trim().equals("sm2")) {
-                            builder.addTagRuleBundle(new Sm2TagRuleBundle());
-                        }
+                for (String bundle : bundles) {
+                    if (bundle.trim().equals("sm2")) {
+                        builder.addTagRuleBundle(new Sm2TagRuleBundle());
                     }
                 }
             }
