@@ -12,6 +12,8 @@ import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.DispatcherType;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,8 @@ public class SiteMeshAutoConfiguration {
         this.mappings = mappings;
     }
 
+    @Value("${spring.sitemesh.includeErrorPages:true}")
+    boolean includeErrorPages;
     @Value("${spring.sitemesh.decorator.prefix:}")
     private String prefix;
     @Value("${spring.sitemesh.decorator.metaTag:decorator}")
@@ -52,9 +56,13 @@ public class SiteMeshAutoConfiguration {
                         builder.addTagRuleBundle(new Sm2TagRuleBundle());
                     }
                 }
+                builder.setIncludeErrorPages(includeErrorPages);
             }
         });
         registrationBean.addUrlPatterns("/*");
+        if (includeErrorPages) {
+            registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR));
+        }
         registrationBean.setOrder(OrderedFilter.REQUEST_WRAPPER_FILTER_MAX_ORDER + 29);
         return registrationBean;
     }
