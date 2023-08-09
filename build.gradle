@@ -26,7 +26,9 @@ allprojects  {
         withSourcesJar()
         withJavadocJar()
     }
+}
 
+subprojects {
     publishing {
         publications {
             mavenJava(MavenPublication) {
@@ -76,10 +78,10 @@ allprojects  {
             }
         }
     }
-}
-
-signing {
-    sign publishing.publications.mavenJava
+    
+    signing {
+        sign publishing.publications.mavenJava
+    }
 }
 
 nexusPublishing {
