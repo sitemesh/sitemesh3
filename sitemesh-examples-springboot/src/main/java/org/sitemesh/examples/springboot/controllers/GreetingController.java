@@ -30,4 +30,10 @@ public class GreetingController {
         model.addAttribute("name", name);
         return internalResourceViewResolver.resolveViewName("greeting", request.getLocale());
     }
+
+    @GetMapping("/greetingError")
+    public View greetingError(@RequestParam(name="name", required=false, defaultValue="World") String name,
+                            Model model, HttpServletRequest request) throws Exception {
+        throw new RuntimeException("Whoops");
+    }
 }
