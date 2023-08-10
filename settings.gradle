@@ -1,2 +1,2 @@
-rootProject.name = 'sitemesh-parent'
+rootProject.name = 'sitemesh3'
 include ':sitemesh', ':sitemesh-examples-hellowebapp', ':sitemesh-examples-springboot', ':spring-boot-starter-sitemesh'
