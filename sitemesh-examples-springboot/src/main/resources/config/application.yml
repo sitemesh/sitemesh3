@@ -11,3 +11,11 @@ spring:
       mappings:
         - path: /*
           decorator: /layouts/decorator.html
+server:
+  error:
+    include-binding-errors: always
+    include-exception: true
+    include-message: always
+    include-stacktrace: always
+#    whitelabel:
+#      enabled: false
