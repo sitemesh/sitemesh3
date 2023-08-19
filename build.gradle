@@ -6,8 +6,6 @@ plugins {
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
 }
 
-description = 'SiteMesh parent POM'
-
 allprojects  {
     apply plugin: 'maven-publish'
     apply plugin: 'java-library'
@@ -39,7 +37,7 @@ subprojects {
                     }
                 }
                 pom {
-                    name = project.description
+                    name = "${project.name}"
                     description = 'SiteMesh is a web-page layout and decoration framework and web- application integration framework to aid in creating sites consisting of many pages for which a consistent look/feel, navigation and layout scheme is required.'
                     url = 'https://github.com/sitemesh/sitemesh3'
                     licenses {
