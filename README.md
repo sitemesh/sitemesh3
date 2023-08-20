@@ -80,7 +80,11 @@ No longer do you need to commit to JSP or Velocity to build your decorators. Lik
 
 ### Simplified Configuration
 
-Want to configure purely through Java code, through XML, through Spring, or maybe by convention? It's your choice. And it's easy to plug in your own configuration mechanism.
+Want to configure purely through Java code, through XML, through Spring, or even by convention. It's your choice. And it's easy to plug in your own configuration mechanism.
+
+### Spring Boot AutoConfiguration Starter
+
+Use the Spring Boot Starter and be up and running in seconds.
 
 ### Offline Site Generation
 
@@ -291,8 +295,13 @@ A quick recap:
 
 SiteMesh supports two main approaches to configurations - XML or Java. It's up to you which you use. In fact, you can even use them both.
 
-XML	
+Html
 * Simplest to get started with
+* Use meta tags to define your decorators and skip configuration completely.
+* Avoids need for any configuration file
+
+XML
+* Easy to get started with
 * Automatically reloads when config file changes
 * Does not require Java programming
 
@@ -300,6 +309,23 @@ Java
 * Allows for greater customization of SiteMesh
 * Avoids yet another configuration file
 * Can be used from higher level languages such as JRuby, Groovy, Scala...
+
+### Html Configuration
+
+All you have to do is add a meta tag inside of your web page and SiteMesh will do the rest of the work!
+
+Example
+```html
+<html>
+  <head>
+      <title>Hello World</title>
+      <meta name="decorator" content="/WEB-INF/layouts/bootstrap.jsp" />
+  </head>
+  <body>
+    <h1>This page will be decorated :)</h1>
+  </body>
+</html>
+```
 
 ### XML based configuration
 
