@@ -198,15 +198,15 @@ At the bare minimum, it should contain:
 ```html
 <html>
   <head>
-    <title><sitemesh:write property='title'/></title>
-    <sitemesh:write property='head'/>
+    <title><sitemesh:write property="title"/></title>
+    <sitemesh:write property="head"/>
   </head>
   <body>
-    <sitemesh:write property='body'/>
+    <sitemesh:write property="body"/>
   </body>
 </html>
 ```
-The` <sitemesh:write property='...'/>` tag will be rewritten by SiteMesh to include properties extracted from the content. There are more properties that can be extracted from the content and it's possible to define your own rules - that will be covered in another tutorial.
+The` <sitemesh:write property="..."/>` tag will be rewritten by SiteMesh to include properties extracted from the content. There are more properties that can be extracted from the content and it's possible to define your own rules - that will be covered in another tutorial.
 
 The bare minimum decorator isn't very useful. Let's add some style and a bit of common layout.
 
@@ -215,8 +215,8 @@ Create the file /decorator.html in your web-app, containing:
 ```html
 <html>
   <head>
-    <title>SiteMesh example: <sitemesh:write property='title'/></title>
-    <style type='text/css'>
+    <title>SiteMesh example: <sitemesh:write property="title"/></title>
+    <style>
       /* Some CSS */
      body { font-family: arial, sans-serif; background-color: #ffffcc; }
      h1, h2, h3, h4 { text-align: center; background-color: #ccffcc;
@@ -225,17 +225,17 @@ Create the file /decorator.html in your web-app, containing:
      .disclaimer { text-align: center; border-top: 1px solid #cccccc;
                    margin-top: 40px; color: #666666; font-size: smaller; }
     </style>
-    <sitemesh:write property='head'/>
+    <sitemesh:write property="head"/>
   </head>
   <body>
 
-    <h1 class='title'>SiteMesh example site: <sitemesh:write property='title'/></h1>
+    <h1 class="title">SiteMesh example site: <sitemesh:write property="title"/></h1>
 
-    <div class='mainBody'>
-      <sitemesh:write property='body'/>
+    <div class="mainBody">
+      <sitemesh:write property="body"/>
     </div>
 
-    <div class='disclaimer'>Site disclaimer. This is an example.</div>
+    <div class="disclaimer">Site disclaimer. This is an example.</div>
 
   </body>
 </html>
@@ -265,7 +265,7 @@ Now to create some content. This is defined in plain HTML content. Create /hello
 <html>
   <head>
     <title>Hello World</title>
-    <meta name='description' content='A simple page'>
+    <meta name="description" content="A simple page">
   </head>
   <body>
     <p>Hello <strong>world</strong>!</p>
@@ -282,7 +282,7 @@ Pointing your browser to http://myserver/hello.html will serve the content you j
 <html>
   <head>
     <title>SiteMesh example: Hello World</title>
-    <style type='text/css'>
+    <style>
       /* Some CSS */
       body { font-family: arial, sans-serif; background-color: #ffffcc; }
       h1, h2, h3, h4 { text-align: center; background-color: #ccffcc;
@@ -291,17 +291,17 @@ Pointing your browser to http://myserver/hello.html will serve the content you j
       .disclaimer { text-align: center; border-top: 1px solid #cccccc;
                     margin-top: 40px; color: #666666; font-size: smaller; }
     </style>
-    <meta name='description' content='A simple page'>
+    <meta name="description" content="A simple page">
   </head>
   <body>
 
-    <h1 class='title'>SiteMesh example site: Hello World</h1>
+    <h1 class="title">SiteMesh example site: Hello World</h1>
 
-    <div class='mainBody'>
+    <div class="mainBody">
       <p>Hello <strong>world</strong>!</p>
     </div>
 
-    <div class='disclaimer'>Site disclaimer. This is an example.</div>
+    <div class="disclaimer">Site disclaimer. This is an example.</div>
 
   </body>
 </html>
