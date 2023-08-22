@@ -3,7 +3,6 @@ package org.sitemesh.acceptance.caching;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpHeader;
-import org.eclipse.jetty.http.HttpHeaderValue;
 import org.sitemesh.webapp.WebEnvironment;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 
@@ -17,7 +16,6 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import junit.framework.TestCase;
-//import org.eclipse.jetty.server.HttpFields;
 
 /**
  * Tests that HTTP cacheable Servlets behave correctly when decorated.
@@ -333,8 +331,9 @@ public class CachingTest extends TestCase {
             return calendar.getTimeInMillis() / 1000 * 1000;
         }
 
-        public String toHttpHeaderFormat() {  // Doesn't sent millis
-            HttpField lastModified = HttpFields.build().addDateField(HttpHeader.LAST_MODIFIED.asString(), calendar.getTimeInMillis()).getField(HttpHeader.LAST_MODIFIED.asString());
+        public String toHttpHeaderFormat() {
+            HttpField lastModified = HttpFields.build().addDateField(HttpHeader.LAST_MODIFIED.asString(),
+                    calendar.getTimeInMillis()).getField(HttpHeader.LAST_MODIFIED);
             return lastModified.getValue();
         }
 
