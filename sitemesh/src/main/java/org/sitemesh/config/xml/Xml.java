@@ -26,7 +26,7 @@ import java.io.IOException;
  *
  * @author Joe Walnes
  */
-class Xml {
+public class Xml {
 
     private final Element element;
 
@@ -49,7 +49,7 @@ class Xml {
      */
     public Xml(String xml) {
         try {
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            DocumentBuilder builder = getSecureDocumentBuilder();
             Document document = builder.parse(new InputSource(new StringReader(xml)));
             this.element = document.getDocumentElement();
         } catch (ParserConfigurationException e) {
@@ -59,6 +59,15 @@ class Xml {
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    public static DocumentBuilder getSecureDocumentBuilder() throws ParserConfigurationException {
+        // https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        dbf.setXIncludeAware(false);
+        dbf.setExpandEntityReferences(false);
+        return dbf.newDocumentBuilder();
     }
 
     /**

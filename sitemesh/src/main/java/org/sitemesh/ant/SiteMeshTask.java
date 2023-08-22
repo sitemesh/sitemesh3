@@ -6,11 +6,11 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
 import org.apache.tools.ant.types.FileSet;
 import org.sitemesh.builder.SiteMeshOfflineBuilder;
 import org.sitemesh.config.ObjectFactory;
+import org.sitemesh.config.xml.Xml;
 import org.sitemesh.config.xml.XmlOfflineConfigurator;
 import org.sitemesh.offline.SiteMeshOffline;
 import org.w3c.dom.Element;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
@@ -172,7 +172,7 @@ public class SiteMeshTask extends MatchingTask {
 
     protected Element parseSiteMeshXmlConfig(File config) throws BuildException {
         try {
-            return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(config).getDocumentElement();
+            return Xml.getSecureDocumentBuilder().parse(config).getDocumentElement();
         } catch (Exception e) {
             throw new BuildException("Could not parse " + config.getAbsolutePath() + " : " + e.getMessage(), e);
         }

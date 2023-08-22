@@ -3,13 +3,13 @@ package org.sitemesh.config.cmdline;
 import org.sitemesh.builder.SiteMeshOfflineBuilder;
 import org.sitemesh.config.ObjectFactory;
 import org.sitemesh.config.properties.PropertiesOfflineConfigurator;
+import org.sitemesh.config.xml.Xml;
 import org.sitemesh.config.xml.XmlOfflineConfigurator;
 import org.sitemesh.offline.SiteMeshOffline;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,7 +88,7 @@ public class CommandLineLauncher {
 
     private static Element parseXml(InputSource input)
             throws IOException, SAXException, ParserConfigurationException {
-        return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input).getDocumentElement();
+        return Xml.getSecureDocumentBuilder().parse(input).getDocumentElement();
     }
 
     private static final String HELP_TEXT = ("" +
