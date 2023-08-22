@@ -13,7 +13,9 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import junit.framework.TestCase;
-import org.mortbay.jetty.HttpFields;
+
+import org.eclipse.jetty.http.HttpFields;
+import org.eclipse.jetty.http.HttpHeader;
 
 /**
  * Tests that HTTP cacheable Servlets behave correctly when decorated.
@@ -325,12 +327,14 @@ public class CachingTest extends TestCase {
             calendar.set(Calendar.YEAR, year);
         }
 
-        public long getMillis() {
-            return calendar.getTimeInMillis();
+        public long getMillis() { // round due to millis not being sent.
+            return calendar.getTimeInMillis() / 1000 * 1000;
         }
 
-        public String toHttpHeaderFormat() {
-            return HttpFields.formatDate(calendar, false);
+        public String toHttpHeaderFormat() {  // Doesn't sent millis
+            HttpFields fields = new HttpFields();
+            fields.putDateField(HttpHeader.LAST_MODIFIED, calendar.getTimeInMillis());
+            return fields.getField(HttpHeader.LAST_MODIFIED).getValue();
         }
 
     }

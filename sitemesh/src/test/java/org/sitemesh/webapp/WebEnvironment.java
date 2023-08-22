@@ -1,17 +1,16 @@
 package org.sitemesh.webapp;
 
-import org.mortbay.io.Buffer;
-import org.mortbay.io.ByteArrayBuffer;
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.HttpParser;
-import org.mortbay.jetty.LocalConnector;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.FilterHolder;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.log.Log;
-import org.mortbay.resource.FileResource;
+import org.eclipse.jetty.http.HttpTester;
+import org.eclipse.jetty.server.LocalConnector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.PathResource;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
@@ -20,10 +19,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.File;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.HashMap;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 /**
  * Sets up a complete web-environment in-process. This includes a Servlet container, Filters, static
@@ -50,7 +49,7 @@ import java.net.URL;
  */
 public class WebEnvironment {
 
-    private final LocalConnector connector;
+    private final ServerConnector connector;
     private String rawResponse;
     private int status;
     private String body;
@@ -59,7 +58,7 @@ public class WebEnvironment {
     /**
      * Use {@link WebEnvironment.Builder} to create a WebEnvironment.
      */
-    private WebEnvironment(LocalConnector connector) {
+    private WebEnvironment(ServerConnector connector) {
         this.connector = connector;
     }
 
@@ -70,7 +69,10 @@ public class WebEnvironment {
      * @param path e.g. "/some/servlet?foo=x"
      */
     public void doGet(String path, String... headerPairs) throws Exception {
-        connector.reopen();
+        if (connector.isOpen()) {
+            connector.close();
+        }
+        connector.open();
         StringBuilder request = new StringBuilder("GET ")
                 .append(path)
                 .append(" HTTP/1.1\r\n");
@@ -84,33 +86,19 @@ public class WebEnvironment {
         }
 
         request.append("\r\n");
-        String response = connector.getResponses(request.toString());
+
+        LocalConnector localConnector = new LocalConnector(connector.getServer());
+        localConnector.start();
+        String response = localConnector.getResponse(request.toString());
         rawResponse = unixLineEndings(response);
 
-        body = null;
+        HttpTester.Response resp = HttpTester.parseResponse(response);
+        body = resp.getContent();
         headers = new HashMap<String, String>();
-
-        new HttpParser(new ByteArrayBuffer(response), new HttpParser.EventHandler() {
-            @Override
-            public void content(Buffer buffer) throws IOException {
-                body = buffer.toString();
-            }
-
-            @Override
-            public void startRequest(Buffer method, Buffer url, Buffer version) throws IOException {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void parsedHeader(Buffer name, Buffer value) throws IOException {
-                headers.put(name.toString(), value.toString());
-            }
-
-            @Override
-            public void startResponse(Buffer version, int status, Buffer reason) throws IOException {
-                WebEnvironment.this.status = status;
-            }
-        }).parse();
+        for (String header : resp.getFieldNamesCollection()) {
+            headers.put(header, resp.get(header));
+        }
+        status = resp.getStatus();
     }
 
     private void addHeader(StringBuilder out, String name, String value) {
@@ -122,7 +110,9 @@ public class WebEnvironment {
      * and content.
      */
     public String getRawResponse() {
-        return rawResponse;
+        return rawResponse
+                .replaceFirst("\\W+Date: .+","")
+                .replaceFirst("\\W+Server: Jetty\\(\\d+\\.\\d+\\.\\d+\\.\\w+\\)","");
     }
 
     public String getBody() {
@@ -147,16 +137,14 @@ public class WebEnvironment {
 
     public static class Builder {
         private final Server server;
-        private final Context context;
-        private LocalConnector connector;
+        private final ServletContextHandler context;
+        private ServerConnector connector;
+        private EnumSet DEFAULT = EnumSet.of(DispatcherType.REQUEST);
 
         public Builder() throws IOException, URISyntaxException {
-            Log.setLog(null);
             server = new Server();
-            connector = new LocalConnector();
-            context = new org.mortbay.jetty.webapp.WebAppContext();
-            context.setBaseResource(new FileResource(new URL("file://ignoreTHIS/")));
-            server.setSendServerVersion(false);
+            connector = new ServerConnector(server);
+            context = new ServletContextHandler();
             server.addConnector(connector);
         }
 
@@ -185,17 +173,17 @@ public class WebEnvironment {
         }
 
         public Builder addStatusCodeFail(String path, final int statusCode, final String contentType, final String content) {
-          addServlet(path, new HttpServlet() {
-              @Override
-              protected void doGet(HttpServletRequest request, HttpServletResponse response)
-                      throws ServletException, IOException {
-              		response.setStatus(statusCode);
-                  response.setContentType(contentType);
-                  response.getOutputStream().print(content);
-              }
-          });
-          return this;
-      }
+            addServlet(path, new HttpServlet() {
+                @Override
+                protected void doGet(HttpServletRequest request, HttpServletResponse response)
+                        throws ServletException, IOException {
+                    response.setStatus(statusCode);
+                    response.setContentType(contentType);
+                    response.getOutputStream().print(content);
+                }
+            });
+            return this;
+        }
 
         public Builder serveResourcesFrom(String path) {
             context.setResourceBase(path);
@@ -203,14 +191,14 @@ public class WebEnvironment {
         }
 
         public Builder addFilter(String path, Filter filter) {
-            context.addFilter(new FilterHolder(filter), path, Handler.DEFAULT);
+            context.addFilter(new FilterHolder(filter), path, DEFAULT);
             return this;
         }
 
         public Builder addFilter(String path, Class<? extends Filter> filterClass, Map<String,String> params) {
             FilterHolder filterHolder = new FilterHolder(filterClass);
             filterHolder.setInitParameters(params);
-            context.addFilter(filterHolder, path, Handler.DEFAULT);
+            context.addFilter(filterHolder, path, DEFAULT);
             return this;
         }
 
@@ -220,12 +208,12 @@ public class WebEnvironment {
         }
 
         public Builder setRootDir(File dir) throws IOException, URISyntaxException {
-            context.setBaseResource(new FileResource(dir.toURI().toURL()));
+            context.setBaseResource(new PathResource(dir.toURI().toURL()));
             return this;
         }
 
         public WebEnvironment create() throws Exception {
-            server.addHandler(context);
+            server.setHandler(new HandlerList(context));
             server.start();
             return new WebEnvironment(connector);
         }

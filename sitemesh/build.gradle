@@ -8,8 +8,9 @@ description = 'SiteMesh library'
 
 dependencies {
     testImplementation group: 'junit', name: 'junit', version:'4.5'
-    testImplementation group: 'org.mortbay.jetty', name: 'jetty', version:'6.1.14'
-    testImplementation group: 'org.mortbay.jetty', name: 'jetty-util', version:'6.1.14'
+    testImplementation group: 'org.eclipse.jetty', name: 'jetty-servlet', version:'9.4.51.v20230217'
+    testImplementation group: 'org.eclipse.jetty', name: 'jetty-util', version:'9.4.51.v20230217'
+    testImplementation 'org.eclipse.jetty:jetty-http:9.4.51.v20230217:tests'
     testImplementation group: 'org.apache.ant', name: 'ant-testutil', version:'1.7.1'
 
     compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
