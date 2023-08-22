@@ -1,8 +1,11 @@
 package org.sitemesh.autoconfigure;
 
+import org.sitemesh.DecoratorSelector;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.ConfigurableSiteMeshFilter;
 import org.sitemesh.config.MetaTagBasedDecoratorSelector;
+import org.sitemesh.config.PathBasedDecoratorSelector;
+import org.sitemesh.config.RequestAttributeDecoratorSelector;
 import org.sitemesh.content.tagrules.html.Sm2TagRuleBundle;
 import org.sitemesh.webapp.WebAppContext;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +37,8 @@ public class SiteMeshAutoConfiguration {
     private String metaTagName;
     @Value("${spring.sitemesh.decorator.bundles:}")
     private List<String> bundles;
+    @Value("${spring.sitemesh.decorator.attribute:}")
+    private String attribute;
 
     @Bean
     public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3(){
@@ -42,7 +47,14 @@ public class SiteMeshAutoConfiguration {
         registrationBean.setFilter(new ConfigurableSiteMeshFilter() {
             @Override
             protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
-                builder.setCustomDecoratorSelector(new MetaTagBasedDecoratorSelector<WebAppContext>()
+                MetaTagBasedDecoratorSelector decoratorSelector;
+                if (attribute != null) {
+                    decoratorSelector = new RequestAttributeDecoratorSelector()
+                        .setDecoratorAttribute(attribute);
+                } else {
+                    decoratorSelector = new MetaTagBasedDecoratorSelector<WebAppContext>();
+                }
+                builder.setCustomDecoratorSelector(decoratorSelector
                     .setMetaTagName(metaTagName)
                     .setPrefix(prefix)
                 );
