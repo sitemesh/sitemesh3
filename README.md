@@ -18,7 +18,6 @@ Currently maintained versions:
 
 You can either download the release build and simply add the sitemesh jar to your classpath or use Gradle or Maven.
 
-
 ```gradle
 dependencies {
     // ... other dependencies
@@ -33,7 +32,26 @@ dependencies {
         <groupId>org.sitemesh</groupId>
         <artifactId>sitemesh</artifactId>
         <version>3.2.0-M1</version>
-        <scope>provided</scope>
+    </dependency>
+</dependencies>
+```
+
+or if you are using Spring Boot, use the config free starter (see example application):
+
+```gradle
+dependencies {
+    // ... other dependencies
+    runtimeOnly 'org.sitemesh:spring-boot-starter-sitemesh:3.2.0-M1'
+}
+```
+
+```xml
+<dependencies>
+    <!-- ... other dependencies -->
+    <dependency>
+        <groupId>org.sitemesh</groupId>
+        <artifactId>spring-boot-starter-sitemesh</artifactId>
+        <version>3.2.0-M1</version>
     </dependency>
 </dependencies>
 ```
