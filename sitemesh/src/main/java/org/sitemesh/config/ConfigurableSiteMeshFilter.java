@@ -2,6 +2,7 @@ package org.sitemesh.config;
 
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.properties.PropertiesFilterConfigurator;
+import org.sitemesh.config.xml.Xml;
 import org.sitemesh.config.xml.XmlFilterConfigurator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -22,7 +23,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
@@ -258,8 +258,7 @@ public class ConfigurableSiteMeshFilter implements Filter {
      */
     protected Element loadConfigXml(FilterConfig filterConfig, String configFilePath) throws ServletException {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+            DocumentBuilder documentBuilder = Xml.getSecureDocumentBuilder();
 
             xmlConfigFile = new File(configFilePath);
 
