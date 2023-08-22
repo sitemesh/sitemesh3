@@ -14,22 +14,32 @@ Currently maintained versions:
 
 [Website / Documentation (Built with Offline Generator)](https://sitemesh.github.io/sitemesh-website/)
 
-## Building:
-Currently, there are no maintained versions available on Maven Central. This will be change in the near future.
-In the meantime, you can use the OSS snapshot repository
+## Installing:
 
-```groovy
-repositories {
-    mavenCentral() 
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-}
+You can either download the release build and simply add the sitemesh jar to your classpath or use Gradle or Maven.
 
+
+```gradle
 dependencies {
-    runtimeOnly 'org.sitemesh:sitemesh:3.1.0-SNAPSHOT'
+    // ... other dependencies
+    runtimeOnly 'org.sitemesh:sitemesh:3.2.0-M1'
 }
 ```
 
-or you can build each respective version by checking out that particular branch as follows:
+```xml
+<dependencies>
+    <!-- ... other dependencies -->
+    <dependency>
+        <groupId>org.sitemesh</groupId>
+        <artifactId>sitemesh</artifactId>
+        <version>3.2.0-M1</version>
+        <scope>provided</scope>
+    </dependency>
+</dependencies>
+```
+
+## Building:
+You can build each respective version by checking out that particular branch as follows:
 
 3.1.x
 ```
@@ -133,10 +143,10 @@ SiteMesh does not care what technologies are used to generate the content or the
 
 ### Dependencies
 
-Running SiteMesh3 requires at least:
+Running SiteMesh requires at least:
 
 * JDK 1.8
-* A Servlet 2.5 compliant container
+* A Servlet 3.x compliant container
 * The SiteMesh runtime library 
 * The SiteMesh library should be downloaded and placed in /WEB-INF/lib/.
 
@@ -319,7 +329,7 @@ Example
 <html>
   <head>
       <title>Hello World</title>
-      <meta name="decorator" content="/WEB-INF/layouts/bootstrap.jsp" />
+      <meta name="decorator" content="/decorator.html" />
   </head>
   <body>
     <h1>This page will be decorated :)</h1>
