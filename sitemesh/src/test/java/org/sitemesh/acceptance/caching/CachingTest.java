@@ -331,7 +331,7 @@ public class CachingTest extends TestCase {
             return calendar.getTimeInMillis() / 1000 * 1000;
         }
 
-        public String toHttpHeaderFormat() {  // Doesn't sent millis
+        public String toHttpHeaderFormat() {
             HttpFields fields = new HttpFields();
             fields.putDateField(HttpHeader.LAST_MODIFIED, calendar.getTimeInMillis());
             return fields.getField(HttpHeader.LAST_MODIFIED).getValue();
