@@ -52,7 +52,7 @@ public class ExportTagToContentAndMergeBodyAttributesRule extends BasicBlockRule
             tagProcessorContext.pushBuffer();
         }
 
-        Content contentToMerge = context.getContentToMerge();
+        Content contentToMerge = context != null? context.getContentToMerge() : null;
         if (contentToMerge != null) { // decorator
             final CustomTag decoratorTag = new CustomTag(t);
             Stream.of("id", "class", "style")
