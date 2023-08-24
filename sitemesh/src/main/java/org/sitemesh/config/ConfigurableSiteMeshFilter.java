@@ -22,6 +22,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -115,6 +116,8 @@ import javax.xml.parsers.ParserConfigurationException;
  * @author Joe Walnes
  * @see PropertiesFilterConfigurator
  */
+
+@WebFilter(filterName="sitemesh", urlPatterns="/*")
 public class ConfigurableSiteMeshFilter implements Filter {
 
     // TODO: This class could needs thorough unit-tests.
