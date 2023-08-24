@@ -8,6 +8,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +18,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -22,8 +27,6 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * A SiteMesh filter that can be dropped in to web.xml, that does not require having to write any Java code.
@@ -115,6 +118,8 @@ import javax.xml.parsers.ParserConfigurationException;
  * @author Joe Walnes
  * @see PropertiesFilterConfigurator
  */
+
+@WebFilter(filterName="sitemesh", urlPatterns="/*")
 public class ConfigurableSiteMeshFilter implements Filter {
 
     // TODO: This class could needs thorough unit-tests.
