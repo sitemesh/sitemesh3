@@ -11,6 +11,7 @@ plugins {
 }
 gretty {
     contextPath = '/'
+    servletContainer = 'tomcat9'
 }
 
 defaultTasks 'jettyRun'
