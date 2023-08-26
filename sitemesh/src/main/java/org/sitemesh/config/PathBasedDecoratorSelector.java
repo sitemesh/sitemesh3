@@ -27,7 +27,7 @@ public class PathBasedDecoratorSelector<C extends SiteMeshContext> implements De
 
     private final PathMapper<String[]> pathMapper = new PathMapper<String[]>();
 
-    protected String prefix = "";
+    protected String prefix = "/WEB-INF/decorators/";
 
     public PathBasedDecoratorSelector setPrefix(String prefix) {
         this.prefix = prefix;
