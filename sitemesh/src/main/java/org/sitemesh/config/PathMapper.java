@@ -84,7 +84,7 @@ public class PathMapper<T> {
         String result = null;
 
         for (String key : mappings.keySet()) {
-            if (isComplexKey(key) && match(key, path, false)) {
+            if (isComplexKey(key) && match(key, path, true)) {
                 if (result == null || key.length() > result.length()) {
                     // longest key wins
                     result = key;
