@@ -4,7 +4,7 @@ import org.sitemesh.SiteMeshContext;
 import org.sitemesh.content.Content;
 import org.sitemesh.webapp.WebAppContext;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 public class RequestAttributeDecoratorSelector<C extends SiteMeshContext> extends MetaTagBasedDecoratorSelector<C>{
