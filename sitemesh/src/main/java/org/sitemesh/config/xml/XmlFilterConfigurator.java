@@ -30,7 +30,12 @@ public class XmlFilterConfigurator extends XmlConfigurator {
         if (customDecoratorSelector != null) {
             builder.setCustomDecoratorSelector((DecoratorSelector) getObjectFactory().create(customDecoratorSelector));
         }
-        
+
+        String decoratorPrefix = xml.child("decorator-prefix").text();
+        if (decoratorPrefix != null) {
+            builder.setDecoratorPrefix(decoratorPrefix);
+        }
+
         // Error pages inclusion
         String includeErrorPagesString = xml.child("include-error-pages").text("false");
         if ("true".equals(includeErrorPagesString) || "1".equals(includeErrorPagesString)) {
