@@ -5,12 +5,14 @@ spring:
       suffix: .jsp
   freemarker:
     suffix: .ftl
-  sitemesh:
-    decorator:
-      metaTag: layout
-      mappings:
-        - path: /*
-          decorator: /layouts/decorator.html
+sitemesh:
+  decorator:
+    metaTag: decorator
+#    bundles: sm2
+    exclusions: /assets/*
+    mappings:
+      - path: /*
+        decorator: default.html
 server:
   error:
     include-binding-errors: always

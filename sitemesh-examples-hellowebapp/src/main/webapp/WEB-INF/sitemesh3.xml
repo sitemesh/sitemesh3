@@ -1,4 +1,5 @@
 <sitemesh>
   <mapping path="/*" decorator="default.html"/>
   <mapping path="/Pretty/*" decorator="bootstrap.jsp"/>
+  <mapping path="/assets/*" exclude="true" />
 </sitemesh>
