@@ -36,7 +36,7 @@ public class PropertiesConfiguratorTest extends TestCase {
         super.setUp();
         properties = new HashMap<String, String>();
         propertiesConfigurator = createConfigurator(new ObjectFactory.Default(), properties);
-        builder = new SiteMeshFilterBuilder();
+        builder = new SiteMeshFilterBuilder().setDecoratorPrefix("");
     }
 
     protected PropertiesConfigurator createConfigurator(ObjectFactory objectFactory, Map<String, String> properties) {

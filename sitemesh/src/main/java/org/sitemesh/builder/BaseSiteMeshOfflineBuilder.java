@@ -1,5 +1,6 @@
 package org.sitemesh.builder;
 
+import org.sitemesh.config.MetaTagBasedDecoratorSelector;
 import org.sitemesh.offline.SiteMeshOffline;
 import org.sitemesh.offline.OfflineContext;
 import org.sitemesh.offline.directory.Directory;

@@ -27,10 +27,10 @@ public class PathBasedDecoratorSelector<C extends SiteMeshContext> implements De
 
     private final PathMapper<String[]> pathMapper = new PathMapper<String[]>();
 
-    protected String prefix = "/WEB-INF/decorators/";
+    protected String prefix = "";
 
     public PathBasedDecoratorSelector setPrefix(String prefix) {
-        this.prefix = prefix;
+        this.prefix = prefix == null? "" : prefix;
         return this;
     }
 

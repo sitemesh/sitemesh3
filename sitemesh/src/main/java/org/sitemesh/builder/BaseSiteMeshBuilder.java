@@ -177,6 +177,17 @@ public abstract class BaseSiteMeshBuilder
     // DecoratorSelector setup
 
     /**
+     * Set a prefix to append to all decorator paths. The default
+     * is <code>/WEB-INF/decorators/"</code>.
+     *
+     * <p>Note: prefix is ignored if {@link #setCustomSelector(Selector)} is called.</p>
+     */
+    public BUILDER setDecoratorPrefix(String prefix) {
+        this.pathBasedDecoratorSelector.setPrefix(prefix);
+        return self();
+    }
+
+    /**
      * Add multiple decorator paths to be used for a specific content path. Use this to apply multiple
      * decorators to a single page.
      *

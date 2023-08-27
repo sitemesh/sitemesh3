@@ -16,9 +16,9 @@ public class SiteMeshFilterTest extends TestCase {
     public void testAppliesDefaultDecoratorToRequests() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilterBuilder()
-                        .addDecoratorPath("/*", "/my-decorator")
+                        .addDecoratorPath("/*", "my-decorator")
                         .create())
-                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/content", "text/html", "<title>Hello world</title>")
                 .create();
 
@@ -29,9 +29,9 @@ public class SiteMeshFilterTest extends TestCase {
     public void testDefaultsToOnlyDecoratingTextHtml() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilterBuilder()
-                        .addDecoratorPath("/*", "/my-decorator")
+                        .addDecoratorPath("/*", "my-decorator")
                         .create())
-                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/html", "text/html", "<title>Hello world</title>")         // <-- text/html
                 .addStaticContent("/other", "other/type", "<title>Hello world</title>") // <-- NOT text/html
                 .create();
@@ -48,10 +48,10 @@ public class SiteMeshFilterTest extends TestCase {
     public void testDecoratesOtherMimeTypesIfSpecifiedWithInitParam() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilterBuilder()
-                        .addDecoratorPath("/*", "/my-decorator")
+                        .addDecoratorPath("/*", "my-decorator")
                         .setMimeTypes("other/type", "foo/bar", "x/y")
                         .create())
-                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/html", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/other1", "other/type", "<title>Hello world</title>")
                 .addStaticContent("/other2", "foo/bar", "<title>Hello world</title>")
@@ -89,10 +89,10 @@ public class SiteMeshFilterTest extends TestCase {
     public void testAllowsCustomTagRuleBundlesToBeAdded() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilterBuilder()
-                        .addDecoratorPath("/*", "/my-decorator")
+                        .addDecoratorPath("/*", "my-decorator")
                         .addTagRuleBundle(new MyTagRuleBundle())
                         .create())
-                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='foo'/>")
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", "Decorated: <sitemesh:write property='foo'/>")
                 .addStaticContent("/content", "text/html", "<foo>Hello world</foo>")
                 .create();
 
@@ -104,8 +104,8 @@ public class SiteMeshFilterTest extends TestCase {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilterBuilder()
                         .create())
-                .addStaticContent("/my-deco", "text/html", "Decorated: <sitemesh:write property='title'/>")
-                .addStaticContent("/content", "text/html", "<meta name='decorator' content='/my-deco'><title>Hello world</title>")
+                .addStaticContent("/WEB-INF/decorators/my-deco", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/content", "text/html", "<meta name='decorator' content='my-deco'><title>Hello world</title>")
                 .create();
 
         webEnvironment.doGet("/content");
@@ -115,10 +115,10 @@ public class SiteMeshFilterTest extends TestCase {
     public void testMoreSpecificPathWithDecoratorOverridedExcludes() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilterBuilder()
-                        .addDecoratorPath("/foo/bar", "/my-decorator")
+                        .addDecoratorPath("/foo/bar", "my-decorator")
                         .addExcludedPath("/foo/*")
                         .create())
-                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/foo/bar", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/foo/var", "text/html", "<title>Hello world</title>")
                 .create();
@@ -134,12 +134,12 @@ public class SiteMeshFilterTest extends TestCase {
     public void testDoesNotDecorateExcludedPaths() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilterBuilder()
-                        .addDecoratorPath("/*", "/my-decorator")
+                        .addDecoratorPath("/*", "my-decorator")
                         .addExcludedPath("/foo/*")
                         .addExcludedPath("*.x")
                         .addExcludedPath("/somefile")
                         .create())
-                .addStaticContent("/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/foo/bar", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/foo/", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/a.x", "text/html", "<title>Hello world</title>")
@@ -176,13 +176,13 @@ public class SiteMeshFilterTest extends TestCase {
     public void testAllowsPathBasedDecoratorMappings() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilterBuilder()
-                        .addDecoratorPath("/*", "/decorator-a")
-                        .addDecoratorPath("/foo/*", "/decorator-b")
-                        .addDecoratorPath("*.bar", "/decorator-c")
+                        .addDecoratorPath("/*", "decorator-a")
+                        .addDecoratorPath("/foo/*", "decorator-b")
+                        .addDecoratorPath("*.bar", "decorator-c")
                         .create())
-                .addStaticContent("/decorator-a", "text/html", "Decorated: <sitemesh:write property='title'/> (by A)")
-                .addStaticContent("/decorator-b", "text/html", "Decorated: <sitemesh:write property='title'/> (by B)")
-                .addStaticContent("/decorator-c", "text/html", "Decorated: <sitemesh:write property='title'/> (by C)")
+                .addStaticContent("/WEB-INF/decorators/decorator-a", "text/html", "Decorated: <sitemesh:write property='title'/> (by A)")
+                .addStaticContent("/WEB-INF/decorators/decorator-b", "text/html", "Decorated: <sitemesh:write property='title'/> (by B)")
+                .addStaticContent("/WEB-INF/decorators/decorator-c", "text/html", "Decorated: <sitemesh:write property='title'/> (by C)")
                 .addStaticContent("/html", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/foo/html", "text/html", "<title>Hello world</title>")
                 .addStaticContent("/x.bar", "text/html", "<title>Hello world</title>")
@@ -202,12 +202,12 @@ public class SiteMeshFilterTest extends TestCase {
     public void testSupportsChainingOfTopLevelDecorators() throws Exception {
         WebEnvironment web = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilterBuilder()
-                        .addDecoratorPaths("/*", "/decorator-inner", "/decorator-inner", "/decorator-outer")
-                        .addDecoratorPath("/foo/*", "/decorator-b")
-                        .addDecoratorPath("*.bar", "/decorator-c")
+                        .addDecoratorPaths("/*", "decorator-inner", "decorator-inner", "decorator-outer")
+                        .addDecoratorPath("/foo/*", "decorator-b")
+                        .addDecoratorPath("*.bar", "decorator-c")
                         .create())
-                .addStaticContent("/decorator-outer", "text/html", "OUTER <sitemesh:write property='body'/> /OUTER")
-                .addStaticContent("/decorator-inner", "text/html", "INNER <sitemesh:write property='body'/> /INNER")
+                .addStaticContent("/WEB-INF/decorators/decorator-outer", "text/html", "OUTER <sitemesh:write property='body'/> /OUTER")
+                .addStaticContent("/WEB-INF/decorators/decorator-inner", "text/html", "INNER <sitemesh:write property='body'/> /INNER")
                 .addStaticContent("/hello.html", "text/html", "<body>CONTENT</body>")
                 .create();
 
