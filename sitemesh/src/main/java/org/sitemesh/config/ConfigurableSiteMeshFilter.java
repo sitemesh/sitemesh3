@@ -4,9 +4,13 @@ import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.properties.PropertiesFilterConfigurator;
 import org.sitemesh.config.xml.Xml;
 import org.sitemesh.config.xml.XmlFilterConfigurator;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +19,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -22,9 +29,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * A SiteMesh filter that can be dropped in to web.xml, that does not require having to write any Java code.
@@ -117,7 +121,8 @@ import javax.xml.parsers.ParserConfigurationException;
  * @see PropertiesFilterConfigurator
  */
 
-@WebFilter(filterName="sitemesh", urlPatterns="/*")
+@WebFilter(filterName="sitemesh", urlPatterns="/*",
+        dispatcherTypes = { DispatcherType.REQUEST, DispatcherType.ERROR } )
 public class ConfigurableSiteMeshFilter implements Filter {
 
     // TODO: This class could needs thorough unit-tests.
