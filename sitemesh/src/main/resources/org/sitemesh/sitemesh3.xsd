@@ -12,6 +12,9 @@
                 <xsd:element name="decorator-selector"
                              type="xsd:string"
                              minOccurs="0"/>
+                <xsd:element name="decorator-prefix"
+                             type="xsd:string"
+                             minOccurs="0"/>
                 <xsd:element name="include-error-pages"
                              type="xsd:boolean"
                              minOccurs="0"/>
