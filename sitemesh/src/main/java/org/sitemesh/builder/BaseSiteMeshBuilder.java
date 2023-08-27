@@ -180,7 +180,7 @@ public abstract class BaseSiteMeshBuilder
      * Set a prefix to append to all decorator paths. The default
      * is <code>/WEB-INF/decorators/"</code>.
      *
-     * <p>Note: prefix is ignored if {@link #setCustomSelector(Selector)} is called.</p>
+     * <p>Note: prefix is ignored if {@link #setCustomDecoratorSelector(DecoratorSelector)} is called</p>
      */
     public BUILDER setDecoratorPrefix(String prefix) {
         this.pathBasedDecoratorSelector.setPrefix(prefix);
