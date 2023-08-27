@@ -4,6 +4,7 @@ import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.properties.PropertiesFilterConfigurator;
 import org.sitemesh.config.xml.Xml;
 import org.sitemesh.config.xml.XmlFilterConfigurator;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -119,7 +121,8 @@ import jakarta.servlet.ServletResponse;
  * @see PropertiesFilterConfigurator
  */
 
-@WebFilter(filterName="sitemesh", urlPatterns="/*")
+@WebFilter(filterName="sitemesh", urlPatterns="/*",
+        dispatcherTypes = { DispatcherType.REQUEST, DispatcherType.ERROR } )
 public class ConfigurableSiteMeshFilter implements Filter {
 
     // TODO: This class could needs thorough unit-tests.
