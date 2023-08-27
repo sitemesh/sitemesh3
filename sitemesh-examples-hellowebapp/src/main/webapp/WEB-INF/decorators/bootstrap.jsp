@@ -33,11 +33,11 @@
 
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="./" class="nav-link px-2">Static</a></li>
-                <li><a href="demo.jsp" class="nav-link px-2">Dynamic</a></li>
-                <li><a href="demo.jsp?bootstrap=1" class="nav-link px-2${empty param.doubled && pageContext.response.status == 200?" link-secondary":""}">Dynamic Decorator</a></li>
-                <li><a href="demo.jsp?bootstrap=1&doubled=1" class="nav-link px-2${!empty param.doubled?" link-secondary":""}">Decorator Chaining</a></li>
-                <li><a href="demo.jsp?ex=1" class="nav-link px-2${pageContext.response.status == 500?" link-secondary":""}">500 Error</a></li>
-                <li><a href="demo.gsp" class="nav-link px-2${pageContext.response.status == 404?" link-secondary":""}">404 Error</a></li>
+                <li><a href="/demo.jsp" class="nav-link px-2">Dynamic</a></li>
+                <li><a href="/demo.jsp?bootstrap=1" class="nav-link px-2${empty param.doubled && pageContext.response.status == 200?" link-secondary":""}">Dynamic Decorator</a></li>
+                <li><a href="/demo.jsp?bootstrap=1&doubled=1" class="nav-link px-2${!empty param.doubled?" link-secondary":""}">Decorator Chaining</a></li>
+                <li><a href="/demo.jsp?ex=1" class="nav-link px-2${pageContext.response.status == 500?" link-secondary":""}">500 Error</a></li>
+                <li><a href="/demo.gsp" class="nav-link px-2${pageContext.response.status == 404?" link-secondary":""}">404 Error</a></li>
             </ul>
 
             <ul class="navbar-nav flex-row flex-wrap ms-md-auto">
