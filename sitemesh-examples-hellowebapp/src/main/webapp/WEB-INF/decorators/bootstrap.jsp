@@ -28,7 +28,7 @@
     <header class="navbar navbar-expand-lg bd-navbar sticky-top bg-primary-subtle">
         <div class="container-fluid">
             <div class="col-md-3 mb-2 mb-md-0">
-                <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">SiteMesh</a>
+                <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none"><img height="40" src="/assets/logo.png" alt="SiteMesh" /></a>
             </div>
 
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">

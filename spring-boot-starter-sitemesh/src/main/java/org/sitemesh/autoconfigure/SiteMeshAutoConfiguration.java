@@ -22,22 +22,24 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
-@ConfigurationProperties(prefix = "spring.sitemesh.decorator")
+@ConfigurationProperties(prefix = "sitemesh.decorator")
 public class SiteMeshAutoConfiguration {
     private List<HashMap<String, String>> mappings;
     public void setMappings(List<HashMap<String, String>> mappings) {
         this.mappings = mappings;
     }
 
-    @Value("${spring.sitemesh.includeErrorPages:true}")
+    @Value("${sitemesh.decorator.exclusions:}")
+    private List<String> exclusions;
+    @Value("${sitemesh.includeErrorPages:true}")
     boolean includeErrorPages;
-    @Value("${spring.sitemesh.decorator.prefix:}")
+    @Value("${sitemesh.decorator.prefix:/decorators/}")
     private String prefix;
-    @Value("${spring.sitemesh.decorator.metaTag:decorator}")
+    @Value("${sitemesh.decorator.metaTag:decorator}")
     private String metaTagName;
-    @Value("${spring.sitemesh.decorator.bundles:}")
+    @Value("${sitemesh.decorator.bundles:}")
     private List<String> bundles;
-    @Value("${spring.sitemesh.decorator.attribute:}")
+    @Value("${sitemesh.decorator.attribute:}")
     private String attribute;
 
     @Bean
@@ -61,6 +63,11 @@ public class SiteMeshAutoConfiguration {
                 if (mappings != null) {
                     for (Map<String, String> decorator : mappings) {
                         builder.addDecoratorPath(decorator.get("path"), decorator.get("decorator"));
+                    }
+                }
+                if (exclusions != null) {
+                    for (String exclusion : exclusions) {
+                        builder.addExcludedPath(exclusion);
                     }
                 }
                 for (String bundle : bundles) {
