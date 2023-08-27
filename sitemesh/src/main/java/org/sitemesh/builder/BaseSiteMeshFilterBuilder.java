@@ -51,6 +51,7 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
         super.setupDefaults();
         setMimeTypes("text/html");
         setIncludeErrorPages(false);
+        setDecoratorPrefix("/WEB-INF/decorators/");
     }
 
     // --------------------------------------------------------------

@@ -60,9 +60,9 @@ public class CachingTest extends TestCase {
                 .addServlet("/excluded-content", excludedContentServlet)
                 .addServlet("/image", imageServlet)
                 .addServlet("/bigimage", bigImageServlet)
-                .addServlet("/decorator", decoratorServlet)
+                .addServlet("/WEB-INF/decorators/decorator", decoratorServlet)
                 .addFilter("/*", new SiteMeshFilterBuilder()
-                        .addDecoratorPath("/*", "/decorator")
+                        .addDecoratorPath("/*", "decorator")
                         .addExcludedPath("/excluded-content")
                         .create())
                 .create();
