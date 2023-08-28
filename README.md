@@ -255,7 +255,7 @@ The configuration file should be created at /WEB-INF/sitemesh3.xml:
 
 ```xml
 <sitemesh>
-  <mapping path="/*" decorator="/decorator.html"/>
+  <mapping path="/*" decorator="decorator.html"/>
 </sitemesh>
 ```
 This tells SiteMesh that requests matching the path /* (i.e. all requests) should be decorated with /decorator.html that we just created.
@@ -352,7 +352,7 @@ Example
 <html>
   <head>
       <title>Hello World</title>
-      <meta name="decorator" content="/decorator.html" />
+      <meta name="decorator" content="decorator.html" />
   </head>
   <body>
     <h1>This page will be decorated :)</h1>
@@ -367,8 +367,8 @@ The configuration file should live in /WEB-INF/sitemesh3.xml in your web-applica
 Example
 ```xml
 <sitemesh>
-  <mapping path="/*" decorator="/decorator.html"/>
-  <mapping path="/admin/*" decorator="/admin-decorator.html"/>
+  <mapping path="/*" decorator="decorator.html"/>
+  <mapping path="/admin/*" decorator="admin-decorator.html"/>
 </sitemesh>
 ```
 
@@ -382,8 +382,8 @@ To use the Java based configuration, subclass org.sitemesh.config.ConfigurableSi
 public class MySiteMeshFilter extends ConfigurableSiteMeshFilter {
     @Override
     protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
-    builder.addDecoratorPath("/*", "/decorator.html")
-    .addDecoratorPath("/admin/*", "/admin/decorator.html");
+    builder.addDecoratorPath("/*", "decorator.html")
+    .addDecoratorPath("/admin/*", "admin/decorator.html");
     }
 }
 ```
@@ -410,16 +410,16 @@ Exclude a path from being decorated
   <mapping decorator="/default-decorator.html"/>
 
   <!-- Map decorators to path patterns. -->
-  <mapping path="/admin/*" decorator="/another-decorator.html"/>
-  <mapping path="/*.special.jsp" decorator="/special-decorator.html"/>
+  <mapping path="/admin/*" decorator="another-decorator.html"/>
+  <mapping path="/*.special.jsp" decorator="special-decorator.html"/>
 
   <!-- Alternative convention. This is more verbose but allows multiple decorators
        to be applied to a single path. -->
   <mapping>
     <path>/articles/*</path>
-    <decorator>/decorators/article.html</decorator>
-    <decorator>/decorators/two-page-layout.html</decorator>
-    <decorator>/decorators/common.html</decorator>
+    <decorator>article.html</decorator>
+    <decorator>rwo-page-layout.html</decorator>
+    <decorator>common.html</decorator>
   </mapping>
 
   <!-- Exclude path from decoration. -->
@@ -436,14 +436,14 @@ public class MySiteMeshFilter extends ConfigurableSiteMeshFilter {
   @Override
   protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
            // Map default decorator. This shall be applied to all paths if no other paths match.
-    builder.addDecoratorPath("/*", "/default-decorator.html") 
+    builder.addDecoratorPath("/*", "default-decorator.html") 
            // Map decorators to path patterns. 
-           .addDecoratorPath("/admin/*", "/another-decorator.html")
-           .addDecoratorPath("/*.special.jsp", "/special-decorator.html")
+           .addDecoratorPath("/admin/*", "another-decorator.html")
+           .addDecoratorPath("/*.special.jsp", "special-decorator.html")
            // Map multiple decorators to the a single path.
-           .addDecoratorPaths("/articles/*", "/decorators/article.html",
-                                             "/decoratos/two-page-layout.html", 
-                                             "/decorators/common.html")
+           .addDecoratorPaths("/articles/*", "article.html",
+                                             "two-page-layout.html", 
+                                             "common.html")
            // Exclude path from decoration.
            .addExcludedPath("/javadoc/*")
            .addExcludedPath("/brochures/*");
