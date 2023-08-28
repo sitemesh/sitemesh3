@@ -1,6 +1,11 @@
 SiteMesh 3: Official repository
 =========
 
+## Kiss Good Bye To Boilerplate Code!!
+## Get Up And Running with a Signle JAR. No Configuration Needed, Just Drop It In!
+
+[Learn SiteMesh 3 in 5 Minutes](https://github.com/sitemesh/sitemesh3/blob/master/QUICKSTART.md)
+
 Currently maintained versions:
 
 | 3.1.x | 3.2.x | 
@@ -10,7 +15,7 @@ Currently maintained versions:
 | Spring Boot 2.x Support| Spring Boot 3.x Support |
 |[3.1.x](https://github.com/sitemesh/sitemesh3/tree/3.1.x)| [Master Branch](https://github.com/sitemesh/sitemesh3)|
 |[Java Docs](https://sitemesh.github.io/sitemesh3/javadoc/3.1.x/)||
-| [Download 3.1.0-M1](https://github.com/sitemesh/sitemesh3/releases/tag/3.1.0-M1) | [Download 3.2.0-M1](https://github.com/sitemesh/sitemesh3/releases/tag/3.2.0-M1)|
+| [Download 3.1.0-M2](https://github.com/sitemesh/sitemesh3/releases/tag/3.1.0-M2) | [Download 3.2.0-M2](https://github.com/sitemesh/sitemesh3/releases/tag/3.2.0-M2)|
 
 [Website / Documentation (Built with Offline Generator)](https://sitemesh.github.io/sitemesh-website/)
 
@@ -21,7 +26,7 @@ You can either download the release build and simply add the sitemesh jar to you
 ```gradle
 dependencies {
     // ... other dependencies
-    runtimeOnly 'org.sitemesh:sitemesh:3.2.0-M1'
+    runtimeOnly 'org.sitemesh:sitemesh:3.2.0-M2'
 }
 ```
 
@@ -31,7 +36,7 @@ dependencies {
     <dependency>
         <groupId>org.sitemesh</groupId>
         <artifactId>sitemesh</artifactId>
-        <version>3.2.0-M1</version>
+        <version>3.2.0-M2</version>
     </dependency>
 </dependencies>
 ```
@@ -41,7 +46,7 @@ or if you are using Spring Boot, use the config free starter (see example applic
 ```gradle
 dependencies {
     // ... other dependencies
-    runtimeOnly 'org.sitemesh:spring-boot-starter-sitemesh:3.2.0-M1'
+    runtimeOnly 'org.sitemesh:spring-boot-starter-sitemesh:3.2.0-M2'
 }
 ```
 
@@ -51,7 +56,7 @@ dependencies {
     <dependency>
         <groupId>org.sitemesh</groupId>
         <artifactId>spring-boot-starter-sitemesh</artifactId>
-        <version>3.2.0-M1</version>
+        <version>3.2.0-M2</version>
     </dependency>
 </dependencies>
 ```
