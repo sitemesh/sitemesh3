@@ -1,8 +1,8 @@
 SiteMesh 3: Official repository
 =========
 
-## Kiss Good Bye To Boilerplate Code!!
-## Get Up And Running with a Signle JAR. No Configuration Needed, Just Drop It In!
+## Kiss Good Bye to Boilerplate Code!!
+## Get Up and Running with a Single JAR. No Configuration Needed, Just Drop it in!
 
 [Learn SiteMesh 3 in 5 Minutes](https://github.com/sitemesh/sitemesh3/blob/master/QUICKSTART.md)
 
