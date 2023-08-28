@@ -11,7 +11,7 @@ allprojects  {
     apply plugin: 'java-library'
     apply plugin: 'signing'
     group = 'org.sitemesh'
-    version = '3.2.0-SNAPSHOT'
+    version = '3.2.0-M2'
 
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
