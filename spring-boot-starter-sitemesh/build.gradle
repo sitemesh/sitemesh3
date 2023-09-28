@@ -1,7 +1,5 @@
 plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.1.1'
-    id 'io.spring.dependency-management' version '1.1.0'
+    id 'java-library'
 }
 
 description = 'SiteMesh Spring Boot Starter'
@@ -11,6 +9,6 @@ repositories {
 }
 
 dependencies {
-    implementation project(':sitemesh')
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    api project(':sitemesh')
+    api 'org.springframework.boot:spring-boot-starter-web:3.1.4'
 }

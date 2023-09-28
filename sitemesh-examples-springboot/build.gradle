@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.1.1'
-	id 'io.spring.dependency-management' version '1.1.0'
+	id 'org.springframework.boot' version '3.1.4'
+	id 'io.spring.dependency-management' version '1.1.3'
 }
 
 description = 'SiteMesh Example: Spring Boot'
@@ -13,8 +13,7 @@ repositories {
 dependencies {
 	implementation project(':spring-boot-starter-sitemesh')
 	implementation project(':sitemesh')
-	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-freemarker'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:10.1.10' // jsp
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper' // jsp
 }
