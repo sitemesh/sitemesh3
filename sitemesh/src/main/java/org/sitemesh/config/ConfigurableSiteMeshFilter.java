@@ -1,10 +1,14 @@
 package org.sitemesh.config;
 
+import org.sitemesh.DecoratorSelector;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.properties.PropertiesFilterConfigurator;
 import org.sitemesh.config.xml.Xml;
 import org.sitemesh.config.xml.XmlFilterConfigurator;
 
+import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.webapp.SiteMeshFilter;
+import org.sitemesh.webapp.WebAppContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -334,6 +338,14 @@ public class ConfigurableSiteMeshFilter implements Filter {
         if (oldFilter != null) {
             oldFilter.destroy();
         }
+    }
+
+    public ContentProcessor getContentProcessor() {
+        return ((SiteMeshFilter) filter).getContentProcessor();
+    }
+
+    public DecoratorSelector<WebAppContext> getDecoratorSelector() {
+        return ((SiteMeshFilter) filter).getDecoratorSelector();
     }
 
 }
