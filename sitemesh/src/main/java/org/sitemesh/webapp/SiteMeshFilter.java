@@ -137,4 +137,11 @@ public class SiteMeshFilter extends ContentBufferingFilter {
                 getFilterConfig().getServletContext(), contentProcessor, metaData, includeErrorPages);
     }
 
+    public ContentProcessor getContentProcessor() {
+        return contentProcessor;
+    }
+
+    public DecoratorSelector<WebAppContext> getDecoratorSelector() {
+        return decoratorSelector;
+    }
 }
