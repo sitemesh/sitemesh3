@@ -46,6 +46,7 @@ public class PathBasedDecoratorSelector<C extends SiteMeshContext> implements De
 
     protected String[] convertPaths(String[] paths) {
         return Stream.of(paths)
+                .filter(path -> !path.trim().isEmpty())
                 .map(path -> String.format("%s%s", prefix, path.trim()))
                 .toArray(String[]::new);
     }
