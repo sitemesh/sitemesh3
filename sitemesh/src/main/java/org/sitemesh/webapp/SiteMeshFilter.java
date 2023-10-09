@@ -128,7 +128,7 @@ public class SiteMeshFilter extends ContentBufferingFilter {
     
     
     /**
-     * Create a context for the current request. This method can be overriden to allow for other
+     * Create a context for the current request. This method can be overridden to allow for other
      * types of context.
      */
     protected WebAppContext createContext(String contentType, HttpServletRequest request,
