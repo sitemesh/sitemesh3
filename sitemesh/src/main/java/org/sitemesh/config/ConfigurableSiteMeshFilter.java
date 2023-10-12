@@ -125,7 +125,7 @@ import javax.servlet.ServletResponse;
  * @see PropertiesFilterConfigurator
  */
 
-@WebFilter(filterName="sitemesh", urlPatterns="/*",
+@WebFilter(filterName="configurableSiteMeshFilter", urlPatterns="/*",
         dispatcherTypes = { DispatcherType.REQUEST, DispatcherType.ERROR } )
 public class ConfigurableSiteMeshFilter implements Filter {
 
