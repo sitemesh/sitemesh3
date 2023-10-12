@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.CharBuffer;
+import java.util.logging.Logger;
 
 /**
  * SiteMesh {@link SiteMeshContext} implementation specifically for webapps running in a Servlet
@@ -54,6 +55,8 @@ public class WebAppContext extends BaseSiteMeshContext {
     private final ServletContext servletContext;
     private final ResponseMetaData metaData;
     private final boolean includeErrorPages;
+
+    private final static Logger logger = Logger.getLogger(WebAppContext.class.getName());
 
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
@@ -155,6 +158,10 @@ public class WebAppContext extends BaseSiteMeshContext {
         try {
             // Main dispatch.
             dispatch(filterableRequest, responseBuffer, decoratorPath);
+
+            if (responseBuffer.getStatus() != 200) {
+                logger.severe(String.format("Error %s processing decorator '%s'", responseBuffer.getStatus(), decoratorPath));
+            }
 
             // Write out the buffered output.
             CharBuffer buffer = responseBuffer.getBuffer();
