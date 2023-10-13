@@ -22,7 +22,7 @@
         }
     </script>
 
-    <sitemesh:write property='head'/>
+    <sitemesh:write property="head"/>
 </head>
 <body>
     <header class="navbar navbar-expand-lg bd-navbar sticky-top bg-primary-subtle">
@@ -67,8 +67,8 @@
         </div>
     </header>
     <div class="container">
-        <h1>SiteMesh Example Site: <sitemesh:write property='title'>Title goes here</sitemesh:write></h1>
-        <sitemesh:write property='body'>Body goes here. Blah blah blah.</sitemesh:write>
+        <h1>SiteMesh Example Site: <sitemesh:write property="title">Title goes here</sitemesh:write></h1>
+        <sitemesh:write property="body">Body goes here. Blah blah blah.</sitemesh:write>
         <footer>Site disclaimer. This is an example.</footer>
     </div>
 
