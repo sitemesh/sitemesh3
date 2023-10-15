@@ -18,12 +18,15 @@ jobs:
         run: |
           mkdir -p ~/.gradle/
           echo ${GRADLE_PROPERTIES} > ~/.gradle/gradle.properties
-      - name: Configure GPG Key
+      - name: Import GPG Key
         env:
           GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
         shell: bash
         run: |
-          echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --import
+          echo -n "$GPG_SIGNING_KEY" | gpg --import
+      - name: Export keyring
+        shell: bash
+        run: |
           gpg --export-secret-keys > ~/.gradle/secring.gpg
       - name: Run build with Gradle Wrapper
         run: ./gradlew test publishToSonatype
