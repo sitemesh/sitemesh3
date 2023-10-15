@@ -1,5 +1,6 @@
 package org.sitemesh.config;
 
+import javax.servlet.*;
 import org.sitemesh.DecoratorSelector;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.properties.PropertiesFilterConfigurator;
@@ -26,14 +27,6 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 
 /**
  * A SiteMesh filter that can be dropped in to web.xml, that does not require having to write any Java code.
@@ -171,6 +164,12 @@ public class ConfigurableSiteMeshFilter implements Filter {
             appProps.load(infoStream);
         } catch (IOException e) { }
         logger.info(String.format("SiteMesh %s initialized with filter name '%s'", appProps.getProperty("git.build.version", ""), filterConfig.getFilterName()));
+
+        for (FilterRegistration filterRegistration : filterConfig.getServletContext().getFilterRegistrations().values()) {
+            if (!filterRegistration.getName().equals(filterConfig.getFilterName()) && filterRegistration.getClassName().equals("org.sitemesh.config.ConfigurableSiteMeshFilter")) {
+                logger.warning(String.format("SiteMesh has already been registered as '%s'. Initializing multiple SiteMesh filters not recommended (%s).", filterRegistration.getName(), filterConfig.getFilterName()));
+            }
+        }
 
         initialized = true;
     }
