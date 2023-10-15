@@ -11,10 +11,10 @@ dependencies {
     testImplementation 'org.eclipse.jetty:jetty-servlet:9.4.51.v20230217'
     testImplementation 'org.eclipse.jetty:jetty-util:9.4.51.v20230217'
     testImplementation 'org.eclipse.jetty:jetty-http:9.4.51.v20230217:tests'
-    testImplementation 'org.apache.ant:ant-testutil:1.7.1'
+    testImplementation 'org.apache.ant:ant-testutil:1.10.14'
 
     compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
-    compileOnly 'org.apache.ant:ant:1.7.1'
+    compileOnly 'org.apache.ant:ant:1.10.14'
     
     lexer 'de.jflex:jflex:1.4.3'
 }
