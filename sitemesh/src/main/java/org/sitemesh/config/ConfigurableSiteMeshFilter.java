@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebFilter;
@@ -164,6 +165,13 @@ public class ConfigurableSiteMeshFilter implements Filter {
         synchronized (configLock) {
             deployNewFilter(setup());
         }
+
+        Properties appProps = new Properties();
+        try (final InputStream infoStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("git.properties")) {
+            appProps.load(infoStream);
+        } catch (IOException e) { }
+        logger.info(String.format("SiteMesh %s initialized with filter name '%s'", appProps.getProperty("git.build.version", ""), filterConfig.getFilterName()));
+
         initialized = true;
     }
 

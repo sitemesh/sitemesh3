@@ -10,6 +10,8 @@ allprojects  {
     apply plugin: 'maven-publish'
     apply plugin: 'java-library'
     apply plugin: 'signing'
+    apply plugin: 'com.gorylenko.gradle-git-properties'
+
     group = 'org.sitemesh'
     version = '3.1.0-SNAPSHOT'
 
