@@ -56,6 +56,26 @@ dependencies {
 </dependencies>
 ```
 
+### Snapshots:
+If you would like to use the latest features, you can use the latest build:
+```gradle
+repositories {
+    mavenCentral() 
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+```
+```gradle
+dependencies {
+    runtimeOnly 'org.sitemesh:sitemesh:3.2.0-SNAPSHOT'
+}
+```
+or
+```gradle
+dependencies {
+    runtimeOnly 'org.sitemesh:sitemesh:3.1.0-SNAPSHOT'
+}
+```
+
 ## Building:
 You can build each respective version by checking out that particular branch as follows:
 
