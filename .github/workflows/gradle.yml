@@ -1,4 +1,4 @@
-name: Build SiteMesh
+name: Build and Publish SiteMesh
 
 on:
   push:
@@ -9,24 +9,23 @@ jobs:
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v3
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+      - name: Set up JDK 1.8 with cache
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+          cache: 'gradle'
+      #      - name: Setup Gradle
+      #        uses: gradle/gradle-build-action@v2
       - name: Restore gradle.properties
         env:
           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-        shell: bash
-        run: |
-          mkdir -p ~/.gradle/
-          echo ${GRADLE_PROPERTIES} > ~/.gradle/gradle.properties
-      - name: Import GPG Key
-        env:
           GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
         shell: bash
         run: |
-          echo -n "$GPG_SIGNING_KEY" | gpg --import
-      - name: Export keyring
-        shell: bash
-        run: |
-          gpg --export-secret-keys > ~/.gradle/secring.gpg
+          mkdir -p ~/.gradle/
+          echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
+          echo "signing.secretKeyRingFile=${HOME}/.gradle/secring.gpg" >> ~/.gradle/gradle.properties
+          echo ${GPG_SIGNING_KEY} | base64 -d > ~/.gradle/secring.gpg
       - name: Run build with Gradle Wrapper
         run: ./gradlew test publishToSonatype
