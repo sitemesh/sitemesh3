@@ -57,7 +57,7 @@ dependencies {
 ```
 
 ### Snapshots:
-If you would like to use the latest features, you can use the latest build:
+If you would like to use the latest features, you can use the latest build from our [snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/org/sitemesh/):
 ```gradle
 repositories {
     mavenCentral() 
