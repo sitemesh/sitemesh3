@@ -1,0 +1,12 @@
+sitemesh:
+  decorator:
+    metaTag: layout
+    bundles: sm2
+    exclusions: /assets/*
+    prefix: /layouts/
+    mappings:
+      - path: /*
+        decorator: main
+spring:
+  main:
+    allow-circular-references: true

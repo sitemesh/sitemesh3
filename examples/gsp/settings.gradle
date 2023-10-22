@@ -1,0 +1,11 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        maven { url "https://repo.grails.org/grails/core/" }
+        gradlePluginPortal()
+    }
+    plugins {
+        id "org.grails.grails-web" version "6.1.0-SNAPSHOT"
+        id "org.grails.grails-gsp" version "6.1.0-SNAPSHOT"
+    }
+}

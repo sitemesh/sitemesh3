@@ -1,0 +1,33 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.16'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id "org.grails.grails-web"
+	id "org.grails.grails-gsp"
+}
+
+description = 'SiteMesh Example: Groovy Server Pages'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+compileGroovyPages {
+	source = project.file("${project.projectDir}/src/main/resources/templates")
+}
+tasks.withType(War).configureEach { War war ->
+	war.dependsOn compileGroovyPages
+}
+
+jar {
+	processResources.exclude('**/*.gsp')
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	maven { url "https://repo.grails.org/grails/core/" }
+}
+
+dependencies {
+	implementation "org.sitemesh:grails-plugin-sitemesh3:2.0.0-SNAPSHOT"
+}
