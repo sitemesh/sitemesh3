@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.sitemesh.DecoratorSelector;
+import org.sitemesh.config.MetaTagBasedDecoratorSelector;
 import org.sitemesh.config.PathBasedDecoratorSelector;
 import org.sitemesh.config.PathMapper;
 import org.sitemesh.content.Content;
@@ -100,30 +101,31 @@ public class SiteMeshFilter extends ContentBufferingFilter {
         return true;
     }
 
-    
-    @Override public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException,
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException,
             ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
-        String exclusionPattern = getSelector().excludePatternInUse(request);
+        String decoratorPattern = null;
+        if (decoratorSelector instanceof PathBasedDecoratorSelector) {
+            PathBasedDecoratorSelector<WebAppContext> pbds = (PathBasedDecoratorSelector<WebAppContext>) decoratorSelector;
+            decoratorPattern = pbds.getPathMapper().getPatternInUse(WebAppContext.getRequestPath((HttpServletRequest) request));
+        }
+
+        // if no decorator pattern and not using a MetaTagBasedDecoratorSelector or RequestAttributeDecoratorSelector, no need to process content.
+        if (decoratorPattern == null && !(decoratorSelector instanceof MetaTagBasedDecoratorSelector)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String exclusionPattern = getSelector().excludePatternInUse((HttpServletRequest) request);
         if (exclusionPattern != null) {
             // Ability to override exclusion by more specific pattern
-            if (decoratorSelector instanceof PathBasedDecoratorSelector) {
-                PathBasedDecoratorSelector<WebAppContext> pbds = (PathBasedDecoratorSelector<WebAppContext>) decoratorSelector;
-                String decoratorPattern = pbds.getPathMapper().getPatternInUse(WebAppContext.getRequestPath(request));
-                if(decoratorPattern == null) {
-                    // there is no decorator rule for this exclusion pattern
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-                if(PathMapper.isMoreSpecific(exclusionPattern, decoratorPattern)){
-                    // if the exclusion type is more specific
-                    filterChain.doFilter(request, response);
-                    return;
-                }
+            if ((decoratorPattern == null) || // MetaTag should not be able to override exclusion rule.
+                    PathMapper.isMoreSpecific(exclusionPattern, decoratorPattern)) {
+                filterChain.doFilter(request, response);
+                return;
             }
         }
-        super.doFilter(servletRequest, servletResponse, filterChain);
+        super.doFilter(request, response, filterChain);
     }
     
     
