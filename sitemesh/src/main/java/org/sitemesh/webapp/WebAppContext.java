@@ -159,7 +159,7 @@ public class WebAppContext extends BaseSiteMeshContext {
             // Main dispatch.
             dispatch(filterableRequest, responseBuffer, decoratorPath);
 
-            if (responseBuffer.getStatus() != 200) {
+            if (responseBuffer.getBufferedStatus() != 200) {
                 logger.severe(String.format("Error %s processing decorator '%s'", responseBuffer.getStatus(), decoratorPath));
             }
 

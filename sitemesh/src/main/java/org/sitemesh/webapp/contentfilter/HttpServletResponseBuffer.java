@@ -35,6 +35,7 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
 
     private Buffer buffer;
     private boolean bufferingWasDisabled = false;
+    private Integer statusCode = null;
 
 
     public HttpServletResponseBuffer(final HttpServletResponse originalResponse, ResponseMetaData metaData, Selector selector) {
@@ -239,7 +240,7 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
 
     @Override
     public void setStatus(int statusCode) {
-        abortBufferingIfBadStatusCode(statusCode);
+        onStatusCodeChange(statusCode);
         super.setStatus(statusCode);
     }
 
@@ -251,26 +252,41 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
 
     @Override
     public void sendError(int statusCode) throws IOException {
-        abortBufferingIfBadStatusCode(statusCode);
+        onStatusCodeChange(statusCode);
         super.sendError(statusCode);
     }
 
     @Override
     public void sendError(int statusCode, String reason) throws IOException {
-        abortBufferingIfBadStatusCode(statusCode);
+        onStatusCodeChange(statusCode);
         super.sendError(statusCode, reason);
     }
 
     @Override
     public void sendRedirect(String location) throws IOException {
-        abortBufferingIfBadStatusCode(HttpServletResponse.SC_TEMPORARY_REDIRECT);
+        onStatusCodeChange(HttpServletResponse.SC_TEMPORARY_REDIRECT);
         super.sendRedirect(location);
+    }
+
+    protected void onStatusCodeChange(int statusCode) {
+        this.statusCode = statusCode;
+        abortBufferingIfBadStatusCode(statusCode);
     }
 
     protected void abortBufferingIfBadStatusCode(int statusCode) {
         if (selector.shouldAbortBufferingForHttpStatusCode(statusCode)) {
             disableBuffering();
         }
+    }
+
+    /**
+     * Gets the Status Code of the Buffered Response.  If a page with a status code other than 200
+     * is being buffered, getStatus() will return that previous status.  Therefore this method exists
+     * to determine the status code only of what is being buffered.
+     * @return Status Code of the Buffered Response
+     */
+    public int getBufferedStatus() {
+        return statusCode != null? statusCode : 200;
     }
 
 }
