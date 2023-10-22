@@ -14,3 +14,6 @@ gradleEnterprise {
 
 rootProject.name = 'sitemesh3'
 include ':sitemesh', ':sitemesh-examples-hellowebapp', ':sitemesh-examples-springboot', ':spring-boot-starter-sitemesh'
+
+project(':sitemesh-examples-hellowebapp').projectDir = file('examples/hellowebapp')
+project(':sitemesh-examples-springboot').projectDir = file('examples/springboot')
