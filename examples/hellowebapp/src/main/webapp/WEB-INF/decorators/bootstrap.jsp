@@ -69,7 +69,8 @@
     <div class="container">
         <h1>SiteMesh Example Site: <sitemesh:write property="title">Title goes here</sitemesh:write></h1>
         <sitemesh:write property="body">Body goes here. Blah blah blah.</sitemesh:write>
-        <footer>Site disclaimer. This is an example.</footer>
+        <jsp:include page="/simple.jsp" />
+        <%@ include file="/WEB-INF/includes/footer.jsp" %>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
