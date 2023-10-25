@@ -37,25 +37,25 @@ public class XmlFilterConfigurator extends XmlConfigurator {
             "rawtypes", "unchecked"
     }) public void configureFilter(BaseSiteMeshFilterBuilder builder) {
 
-        // Common configuration
-        configureCommon(builder);
-
-        // Filter specific configuration...
-        
         String customDecoratorSelector = xml.child("decorator-selector").text();
         if (customDecoratorSelector != null) {
             builder.setCustomDecoratorSelector((DecoratorSelector) getObjectFactory().create(customDecoratorSelector));
         }
 
+        // Common configuration
+        configureCommon(builder);
+
+        // Filter specific configuration...
+
         String decoratorPrefix = xml.child("decorator-prefix").text();
         if (decoratorPrefix != null) {
-            builder.setDecoratorPrefix(decoratorPrefix);
+            builder.setDecoratorPrefix(decoratorPrefix.trim());
         }
 
-        // Error pages inclusion
-        String includeErrorPagesString = xml.child("include-error-pages").text("false");
-        if ("true".equals(includeErrorPagesString) || "1".equals(includeErrorPagesString)) {
-            builder.setIncludeErrorPages(true);
+        // Decorator error pages inclusion
+        String includeErrorPagesString = xml.child("include-error-pages").text();
+        if (includeErrorPagesString != null) {
+            builder.setIncludeErrorPages(isTrue(includeErrorPagesString));
         }
         
         // Excludes
