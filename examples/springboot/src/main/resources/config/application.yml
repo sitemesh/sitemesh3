@@ -8,7 +8,7 @@ spring:
 sitemesh:
   decorator:
     metaTag: decorator
-#    bundles: sm2
+#    tagRuleBundles: org.sitemesh.content.tagrules.html.Sm2TagRuleBundle
     exclusions: /assets/*
     mappings:
       - path: /*
