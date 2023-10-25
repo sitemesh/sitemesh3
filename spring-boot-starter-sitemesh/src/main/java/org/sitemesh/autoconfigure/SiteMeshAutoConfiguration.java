@@ -20,6 +20,7 @@ import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.ConfigurableSiteMeshFilter;
 import org.sitemesh.config.MetaTagBasedDecoratorSelector;
 import org.sitemesh.config.RequestAttributeDecoratorSelector;
+import org.sitemesh.content.tagrules.TagRuleBundle;
 import org.sitemesh.content.tagrules.html.Sm2TagRuleBundle;
 import org.sitemesh.webapp.WebAppContext;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +53,7 @@ public class SiteMeshAutoConfiguration {
     private String prefix;
     @Value("${sitemesh.decorator.metaTag:decorator}")
     private String metaTagName;
-    @Value("${sitemesh.decorator.bundles:}")
+    @Value("${sitemesh.decorator.tagRuleBundles:}")
     private List<String> bundles;
     @Value("${sitemesh.decorator.attribute:}")
     private String attribute;
@@ -87,9 +88,7 @@ public class SiteMeshAutoConfiguration {
                     }
                 }
                 for (String bundle : bundles) {
-                    if (bundle.trim().equals("sm2")) {
-                        builder.addTagRuleBundle(new Sm2TagRuleBundle());
-                    }
+                    builder.addTagRuleBundle((TagRuleBundle) getObjectFactory().create(bundle));
                 }
                 builder.setIncludeErrorPages(includeErrorPages);
             }
