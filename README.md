@@ -1,7 +1,7 @@
 SiteMesh 3: Official repository
 =========
 
-## Kiss Good Bye to Boilerplate Code!!
+## Kiss Good Bye to Boilerplate HTML Code!!
 ## Get Up and Running with a Single JAR. No Configuration Needed, Just Drop it in!
 
 [Learn SiteMesh 3 in 5 Minutes](https://github.com/sitemesh/sitemesh3/blob/master/QUICKSTART.md)
@@ -372,7 +372,7 @@ Example
 <html>
   <head>
       <title>Hello World</title>
-      <meta name="decorator" content="decorator.html" />
+      <meta name="decorator" content="decorator.html"/>
   </head>
   <body>
     <h1>This page will be decorated :)</h1>
@@ -402,8 +402,8 @@ To use the Java based configuration, subclass org.sitemesh.config.ConfigurableSi
 public class MySiteMeshFilter extends ConfigurableSiteMeshFilter {
     @Override
     protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
-    builder.addDecoratorPath("/*", "decorator.html")
-    .addDecoratorPath("/admin/*", "admin/decorator.html");
+        builder.addDecoratorPath("/*", "decorator.html")
+                .addDecoratorPath("/admin/*", "admin/decorator.html");
     }
 }
 ```
@@ -427,7 +427,7 @@ Exclude a path from being decorated
 ```xml
 <sitemesh>
   <!-- Map default decorator. This shall be applied to all paths if no other paths match. -->
-  <mapping decorator="/default-decorator.html"/>
+  <mapping decorator="default-decorator.html"/>
 
   <!-- Map decorators to path patterns. -->
   <mapping path="/admin/*" decorator="another-decorator.html"/>
@@ -509,7 +509,7 @@ An advanced feature of SiteMesh is the ability to define custom rules that manip
 ```xml
 <sitemesh>
   <content-processor>
-    <tag-rule-bundle class="com.something.CssCompressingBundle" />
+    <tag-rule-bundle class="com.something.CssCompressingBundle"/>
     <tag-rule-bundle class="com.something.LinkRewritingBundle"/>
   </content-processor>
   ...
@@ -518,13 +518,11 @@ An advanced feature of SiteMesh is the ability to define custom rules that manip
 #### Java
 ```java
 public class MySiteMeshFilter extends ConfigurableSiteMeshFilter {
-
-
+    
   @Override
   protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
     builder.addTagRuleBundles(new CssCompressingBundle(), new LinkRewritingBundle());
   }
-
 
 }
 ```
