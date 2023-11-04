@@ -14,9 +14,6 @@ targetCompatibility = JavaVersion.VERSION_11
 compileGroovyPages {
 	source = project.file("${project.projectDir}/src/main/resources/templates")
 }
-tasks.withType(War).configureEach { War war ->
-	war.dependsOn compileGroovyPages
-}
 
 jar {
 	processResources.exclude('**/*.gsp')
