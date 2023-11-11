@@ -35,6 +35,7 @@ import java.io.IOException;
 public class SiteMeshWriteRule extends BasicBlockRule {
 
     private final SiteMeshContext siteMeshContext;
+    private ContentProperty property;
 
     public SiteMeshWriteRule(SiteMeshContext siteMeshContext) {
         this.siteMeshContext = siteMeshContext;
@@ -45,7 +46,7 @@ public class SiteMeshWriteRule extends BasicBlockRule {
         String propertyPath = tag.getAttributeValue("property", true);
         Content contentToMerge = siteMeshContext.getContentToMerge();
         if (contentToMerge != null) {
-            ContentProperty property = getProperty(contentToMerge, propertyPath);
+            property = getProperty(contentToMerge, propertyPath);
             property.writeValueTo(tagProcessorContext.currentBuffer());
         }
         tagProcessorContext.pushBuffer();
@@ -64,7 +65,7 @@ public class SiteMeshWriteRule extends BasicBlockRule {
     protected void processEnd(Tag tag, Object data) throws IOException {
         CharSequence defaultContents = tagProcessorContext.currentBufferContents();
         tagProcessorContext.popBuffer();
-        if (siteMeshContext.getContentToMerge() == null) {
+        if (siteMeshContext.getContentToMerge() == null || !property.hasValue()) {
             tagProcessorContext.currentBuffer().append(defaultContents);
         }
     }
