@@ -57,8 +57,8 @@ public class SiteMeshWriteRuleTest extends TestCase {
         SiteMeshContextStub context = new SiteMeshContextStub();
         context.setContentToMerge(content);
 
-        String in = "Hello <sitemesh:write property='notfound'>X</sitemesh:write>" +
-                " <sitemesh:write property='found.not'>X</sitemesh:write>!";
+        String in = "Hello <sitemesh:write property='notfound'></sitemesh:write>" +
+                " <sitemesh:write property='found.not'></sitemesh:write>!";
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
         tagProcessor.addRule("sitemesh:write", new SiteMeshWriteRule(context));
         tagProcessor.process();
@@ -81,20 +81,20 @@ public class SiteMeshWriteRuleTest extends TestCase {
         assertEquals("Hello X X!", out.toString());
     }
 
-    public void testSkipsMissingProperties() throws IOException {
+    public void testLeavesTagBodyForMissingProperties() throws IOException {
         Content content = new InMemoryContent();
         SiteMeshContextStub context = new SiteMeshContextStub();
         content.getExtractedProperties().getChild("found").setValue("FOUND");
         context.setContentToMerge(content);
 
         String in = "Hello <sitemesh:write property='found'>BAD</sitemesh:write>" +
-                " <sitemesh:write property='notfound'>BAD</sitemesh:write>!";
+                " <sitemesh:write property='notfound'>GOOD</sitemesh:write>!";
         TagProcessor tagProcessor = new TagProcessor(CharBuffer.wrap(in));
         tagProcessor.addRule("sitemesh:write", new SiteMeshWriteRule(context));
         tagProcessor.process();
         CharSequence out = tagProcessor.getDefaultBufferContents();
 
-        assertEquals("Hello FOUND !", out.toString());
+        assertEquals("Hello FOUND GOOD!", out.toString());
     }
 
     public void testWritesBodyAttributesSimple() throws IOException {
