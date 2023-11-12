@@ -179,7 +179,7 @@ public class ConfigurableSiteMeshFilter implements Filter {
         try (final InputStream infoStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("git.properties")) {
             appProps.load(infoStream);
         } catch (IOException e) { }
-        logger.info(String.format("SiteMesh %s initialized with filter name '%s'", appProps.getProperty("git.build.version", ""), filterConfig.getFilterName()));
+        logger.info(String.format("SiteMesh %s initialized with filter name '%s'", appProps.getProperty("sitemesh.version", ""), filterConfig.getFilterName()));
 
         for (FilterRegistration filterRegistration : filterConfig.getServletContext().getFilterRegistrations().values()) {
             if (!filterRegistration.getName().equals(filterConfig.getFilterName()) && filterRegistration.getClassName().equals("org.sitemesh.config.ConfigurableSiteMeshFilter")) {

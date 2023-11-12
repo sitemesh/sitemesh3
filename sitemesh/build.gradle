@@ -1,3 +1,9 @@
+apply plugin: 'com.gorylenko.gradle-git-properties'
+
+gitProperties {
+    customProperty 'sitemesh.version', { project.version }
+}
+
 configurations {
     lexer
 }
