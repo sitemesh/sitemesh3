@@ -14,7 +14,7 @@
 
     <sitemesh:write property="body">Body goes here. Blah blah blah.</sitemesh:write>
 
-    <div class="disclaimer">Site disclaimer. This is an example.</div>
+    <div class="disclaimer">Site disclaimer. Hey <sitemesh:write property="sitemesh.name">you</sitemesh:write>, this is just an example.</div>
     <div class="navigation">
       <b>Examples:</b>
       [<a href="/">Static example</a>]
@@ -25,5 +25,6 @@
       [<a href="/greetingError">500 example</a>]
     </div>
 
+    <sitemesh:write property="sitemesh.jsSpecialGreeter"/>
   </body>
 </html>
