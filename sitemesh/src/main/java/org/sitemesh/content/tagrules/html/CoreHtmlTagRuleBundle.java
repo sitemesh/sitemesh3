@@ -53,6 +53,8 @@ public class CoreHtmlTagRuleBundle implements TagRuleBundle {
         defaultState.addRule("title", new ExportTagToContentRule(siteMeshContext, contentProperty.getChild("title"), false));
         defaultState.addRule("body", new ExportTagToContentAndMergeBodyAttributesRule(siteMeshContext, contentProperty.getChild("body"), false));
         defaultState.addRule("meta", new MetaTagRule(contentProperty.getChild("meta")));
+        defaultState.addRule("sitemesh:copy", new SiteMeshCutCopyRule(true, contentProperty));
+        defaultState.addRule("sitemesh:cut", new SiteMeshCutCopyRule(false, contentProperty));
 
         // Ensure that while in <xml> tag, none of the other rules kick in.
         // For example <xml><book><title>hello</title></book></xml> should not affect the title of the page.
