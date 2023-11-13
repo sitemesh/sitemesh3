@@ -2,11 +2,8 @@ plugins {
     id 'java-library'
 }
 
+ext.title = 'SiteMesh Spring Boot Starter'
 description = 'SiteMesh Spring Boot Starter'
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     api project(':sitemesh')

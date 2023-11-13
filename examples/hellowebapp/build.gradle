@@ -16,6 +16,7 @@ gretty {
 
 defaultTasks 'jettyRun'
 
+ext.title = 'SiteMesh Example Web-app'
 description = 'SiteMesh Example: Hello World Web-app'
 
 dependencies {
