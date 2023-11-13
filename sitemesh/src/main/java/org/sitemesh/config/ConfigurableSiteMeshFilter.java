@@ -39,7 +39,6 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 import jakarta.servlet.annotation.WebFilter;
@@ -175,11 +174,9 @@ public class ConfigurableSiteMeshFilter implements Filter {
             deployNewFilter(setup());
         }
 
-        Properties appProps = new Properties();
-        try (final InputStream infoStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("git.properties")) {
-            appProps.load(infoStream);
-        } catch (IOException e) { }
-        logger.info(String.format("SiteMesh %s initialized with filter name '%s'", appProps.getProperty("sitemesh.version", ""), filterConfig.getFilterName()));
+        logger.info(String.format("SiteMesh %s initialized with filter name '%s'",
+                ConfigurableSiteMeshFilter.class.getPackage().getSpecificationVersion(),
+                filterConfig.getFilterName()));
 
         for (FilterRegistration filterRegistration : filterConfig.getServletContext().getFilterRegistrations().values()) {
             if (!filterRegistration.getName().equals(filterConfig.getFilterName()) && filterRegistration.getClassName().equals("org.sitemesh.config.ConfigurableSiteMeshFilter")) {

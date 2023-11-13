@@ -1,15 +1,10 @@
-apply plugin: 'com.gorylenko.gradle-git-properties'
-
-gitProperties {
-    customProperty 'sitemesh.version', { project.version }
-}
-
 configurations {
     lexer
 }
 
 sourceSets.main.java.srcDirs += ['build/generated-sources/jflex']
 
+ext.title = 'SiteMesh Library'
 description = 'SiteMesh library'
 
 dependencies {

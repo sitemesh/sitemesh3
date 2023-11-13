@@ -6,11 +6,7 @@ plugins {
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
 }
 
-allprojects  {
-    apply plugin: 'maven-publish'
-    apply plugin: 'java-library'
-    apply plugin: 'signing'
-
+subprojects  {
     group = 'org.sitemesh'
     version = '3.2.0-SNAPSHOT'
 
@@ -28,6 +24,21 @@ allprojects  {
 }
 
 subprojects {
+    apply plugin: 'com.gorylenko.gradle-git-properties'
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+    apply plugin: 'java'
+
+    afterEvaluate {
+        jar {
+            manifest {
+                attributes(
+                        'Specification-Title' : project.ext.title,
+                        'Specification-Version': project.version
+                )
+            }
+        }
+    }
     publishing {
         publications {
             mavenJava(MavenPublication) {
