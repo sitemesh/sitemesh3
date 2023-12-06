@@ -285,7 +285,7 @@ public class PathMapper<T> {
     }
 
     /**
-     * Wheter the first pattern is more specific than the second one.
+     * Whether the first pattern is more specific than the second one.
      * Exact patterns are more specific than complex patterns and 
      * complex patterns are more specific than default patterns.
      * @param exclusionPattern pattern which must be more or equally specific to return <code>true</code>
