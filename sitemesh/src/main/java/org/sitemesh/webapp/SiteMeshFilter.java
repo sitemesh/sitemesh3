@@ -135,7 +135,7 @@ public class SiteMeshFilter extends ContentBufferingFilter {
         String exclusionPattern = getSelector().excludePatternInUse((HttpServletRequest) request);
         if (exclusionPattern != null) {
             // Ability to override exclusion by more specific pattern
-            if ((decoratorPattern == null) || // MetaTag should not be able to override exclusion rule.
+            if (decoratorPattern == null || // MetaTag should not be able to override exclusion rule.
                     PathMapper.isMoreSpecific(exclusionPattern, decoratorPattern)) {
                 filterChain.doFilter(request, response);
                 return;
