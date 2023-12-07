@@ -108,7 +108,7 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
 
     /**
      * Whether the underlying buffer was written to using {@link #getOutputStream()}
-     * (as opposed to {@link #getWriter()}. If buffering was not enabled, false will be returned.
+     * (as opposed to {@link #getWriter()}.) If buffering was not enabled, false will be returned.
      */
     public boolean isBufferStreamBased() {
         return buffer != null && buffer.isUsingStream();
@@ -212,10 +212,10 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     @Override
     public void addHeader(String name, String value) {
         // Prevent content-length being set if buffering.
-        if (name.toLowerCase().equals("content-type")) {
+        if (name.equalsIgnoreCase("content-type")) {
             // ensure ContentType is always set through setContentType()
             setContentType(value);
-        } else if (buffer == null || !name.toLowerCase().equals("content-length")) {
+        } else if (buffer == null || !name.equalsIgnoreCase("content-length")) {
             super.addHeader(name, value);
         }
     }
@@ -223,7 +223,7 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     @Override
     public void setIntHeader(String name, int value) {
         // Prevent content-length being set if buffering.
-        if (buffer == null || !name.toLowerCase().equals("content-length")) {
+        if (buffer == null || !name.equalsIgnoreCase("content-length")) {
             super.setIntHeader(name, value);
         }
     }
@@ -231,14 +231,14 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     @Override
     public void addIntHeader(String name, int value) {
         // Prevent content-length being set if buffering.
-        if (buffer == null || !name.toLowerCase().equals("content-length")) {
+        if (buffer == null || !name.equalsIgnoreCase("content-length")) {
             super.addIntHeader(name, value);
         }
     }
 
     @Override
     public void setDateHeader(String name, long value) {
-        if (name.toLowerCase().equals("last-modified")) {
+        if (name.equalsIgnoreCase("last-modified")) {
             metaData.updateLastModified(value);
         } else {
             super.setDateHeader(name, value);
@@ -247,7 +247,7 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
 
     @Override
     public void addDateHeader(String name, long value) {
-        if (name.toLowerCase().equals("last-modified")) {
+        if (name.equalsIgnoreCase("last-modified")) {
             metaData.updateLastModified(value);
         } else {
             super.addDateHeader(name, value);
