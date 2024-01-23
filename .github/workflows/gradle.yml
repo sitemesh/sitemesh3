@@ -28,4 +28,4 @@ jobs:
           echo "signing.secretKeyRingFile=${HOME}/.gradle/secring.gpg" >> ~/.gradle/gradle.properties
           echo ${GPG_SIGNING_KEY} | base64 -d > ~/.gradle/secring.gpg
       - name: Run build with Gradle Wrapper
-        run: ./gradlew test publishToSonatype
+        run: ./gradlew javadoc test publishToSonatype
