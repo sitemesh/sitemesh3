@@ -210,11 +210,10 @@ public class ConfigurableSiteMeshFilter implements Filter {
      * To read from another place, override this.</p>
      */
     protected Map<String, String> getConfigProperties(FilterConfig filterConfig) {
-        Map<String, String> initParams = new HashMap<String, String>();
-        for (Enumeration initParameterNames = filterConfig.getInitParameterNames(); initParameterNames.hasMoreElements();) {
-            String key = (String) initParameterNames.nextElement();
-            String value = filterConfig.getInitParameter(key).trim();
-            initParams.put(key, value);
+        Map<String, String> initParams = new HashMap<>();
+        for (Enumeration<String> initParameterNames = filterConfig.getInitParameterNames(); initParameterNames.hasMoreElements();) {
+            String key = initParameterNames.nextElement();
+            initParams.put(key, filterConfig.getInitParameter(key).trim());
         }
         return initParams;
     }
@@ -279,6 +278,30 @@ public class ConfigurableSiteMeshFilter implements Filter {
         return new ObjectFactory.Default();
     }
 
+    private File loadFile(ServletContext servletContext, String fileName) {
+        if (fileName.startsWith("classpath:")) {
+            return null;
+        }
+        String filePath = servletContext.getRealPath(fileName);
+        return filePath != null? new File(filePath) : null;
+    }
+
+    private InputStream loadStream(ServletContext servletContext, String fileName) throws IOException {
+        if (fileName.startsWith("classpath:")) {
+            return loadClasspathStream(fileName.substring("classpath:".length()));
+        }
+        return servletContext.getResourceAsStream(fileName);
+    }
+
+    private InputStream loadClasspathStream(String classPathResource) {
+        // load the configuration
+        InputStream is = getClass().getClassLoader().getResourceAsStream(classPathResource);
+        if (is == null){ // load the configuration using another classloader
+            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(classPathResource);
+        }
+        return is;
+    }
+
     /**
      * Load the XML config file. Will try a number of locations until it finds the file.
      * <pre>
@@ -292,12 +315,10 @@ public class ConfigurableSiteMeshFilter implements Filter {
         try {
             DocumentBuilder documentBuilder = Xml.getSecureDocumentBuilder();
 
-            xmlConfigFile = new File(configFilePath);
-
             ServletContext servletContext = filterConfig.getServletContext();
-
-            if (servletContext.getRealPath(configFilePath) != null) {
-                xmlConfigFile = new File(servletContext.getRealPath(configFilePath));
+            xmlConfigFile = loadFile(servletContext, configFilePath);
+            if (xmlConfigFile == null) {
+                xmlConfigFile = new File(configFilePath);
             }
 
             if (xmlConfigFile.canRead()) {
@@ -310,7 +331,7 @@ public class ConfigurableSiteMeshFilter implements Filter {
                     throw new ServletException("Could not parse " + xmlConfigFile.getAbsolutePath(), e);
                 }
             } else {
-                InputStream stream = servletContext.getResourceAsStream(configFilePath);
+                InputStream stream = loadStream(servletContext, configFilePath);
                 if (stream == null) {
                     logger.config("No config file present - using defaults and init-params. Tried: "
                             + xmlConfigFile.getAbsolutePath() + " and ServletContext:" + configFilePath);
@@ -366,6 +387,19 @@ public class ConfigurableSiteMeshFilter implements Filter {
 
     public DecoratorSelector<WebAppContext> getDecoratorSelector() {
         return ((SiteMeshFilter) filter).getDecoratorSelector();
+    }
+
+    public interface CustomConfiguration {
+        void applyCustomConfiguration(SiteMeshFilterBuilder builder);
+    }
+
+    public static ConfigurableSiteMeshFilter create(CustomConfiguration config) {
+        return new ConfigurableSiteMeshFilter() {
+            @Override
+            protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
+                config.applyCustomConfiguration(builder);
+            }
+        };
     }
 
 }
