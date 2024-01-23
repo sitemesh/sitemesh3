@@ -143,7 +143,7 @@ public abstract class ContentBufferingFilter implements Filter {
 
         } catch (IllegalStateException e) {
             // Some containers (such as WebLogic) throw an IllegalStateException when an error page is served.
-            // It may be ok to ignore this. However, for safety it is propegated if possible.
+            // It may be ok to ignore this. However, for safety it is propagated if possible.
             if (!containerTweaks.shouldIgnoreIllegalStateExceptionOnErrorPage()) {
                 throw e;
             }
@@ -195,7 +195,7 @@ public abstract class ContentBufferingFilter implements Filter {
             responseBuffer.preCommit();
         }
 
-        // If no decoratoes applied, and we have some buffered content, write the original.
+        // If no decorators applied, and we have some buffered content, write the original.
         if (buffer != null && !processed) {
             writeOriginal(response, buffer, responseBuffer);
         }
