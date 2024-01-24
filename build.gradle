@@ -16,11 +16,6 @@ allprojects  {
     repositories {
         mavenCentral() // Use Maven Central Repo to search for Dependencies
     }
-
-    java {
-        withSourcesJar()
-        withJavadocJar()
-    }
 }
 
 subprojects {
@@ -91,6 +86,11 @@ subprojects {
     
     signing {
         sign publishing.publications.mavenJava
+    }
+
+    java {
+        withSourcesJar()
+        withJavadocJar()
     }
 }
 
