@@ -1,0 +1,33 @@
+plugins {
+    id "application"
+}
+
+defaultTasks 'run'
+ext {
+    javaMainClass = "HelloWorld"
+}
+
+ext.title = 'SiteMesh Example Javalin'
+description = 'SiteMesh Example: Javalin'
+
+application {
+    mainClassName = javaMainClass
+}
+
+tasks.jar {
+    manifest.attributes["Main-Class"] = "HelloWorld"
+}
+
+sourceSets {
+    main {
+        output.resourcesDir = "build/classes/java/main"
+    }
+}
+
+dependencies {
+    implementation 'org.slf4j:slf4j-simple:2.0.7'
+    implementation 'io.javalin:javalin:5.6.4'
+    implementation 'io.javalin:javalin-rendering:5.6.4'
+    implementation 'org.freemarker:freemarker:2.3.32'
+    implementation project(':sitemesh')
+}
