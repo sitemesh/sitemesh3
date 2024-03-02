@@ -41,8 +41,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.servlet.annotation.WebFilter;
-
 /**
  * A SiteMesh filter that can be dropped in to web.xml, that does not require having to write any Java code.
  *
@@ -134,8 +132,6 @@ import javax.servlet.annotation.WebFilter;
  * @see PropertiesFilterConfigurator
  */
 
-@WebFilter(filterName="configurableSiteMeshFilter", urlPatterns="/*",
-        dispatcherTypes = { DispatcherType.REQUEST, DispatcherType.ERROR } )
 public class ConfigurableSiteMeshFilter implements Filter {
 
     // TODO: This class could needs thorough unit-tests.

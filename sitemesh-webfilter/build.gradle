@@ -1,0 +1,11 @@
+plugins {
+    id 'java-library'
+}
+
+ext.title = 'SiteMesh WebFilter'
+description = 'SiteMesh WebFilter'
+
+dependencies {
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    api project(':sitemesh')
+}
