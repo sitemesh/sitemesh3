@@ -71,13 +71,13 @@ repositories {
 ```
 ```gradle
 dependencies {
-    runtimeOnly 'org.sitemesh:sitemesh:3.2.0-SNAPSHOT'
+    runtimeOnly 'org.sitemesh:sitemesh:3.2.1-SNAPSHOT'
 }
 ```
 or
 ```gradle
 dependencies {
-    runtimeOnly 'org.sitemesh:sitemesh:3.1.0-SNAPSHOT'
+    runtimeOnly 'org.sitemesh:sitemesh:3.1.1-SNAPSHOT'
 }
 ```
 
