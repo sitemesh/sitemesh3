@@ -55,9 +55,9 @@ public class SiteMeshAutoConfiguration {
     private String metaTagName;
     @Value("${sitemesh.decorator.tagRuleBundles:}")
     private List<String> bundles;
-    @Value("${sitemesh.decorator.attribute:}")
+    @Value("${sitemesh.decorator.attribute:#{null}}")
     private String attribute;
-    @Value("${sitemesh.decorator.default:}")
+    @Value("${sitemesh.decorator.default:#{null}}")
     private String defaultPath;
 
     @Bean
