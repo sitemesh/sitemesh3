@@ -15,7 +15,7 @@ Currently maintained versions:
 | Spring Boot 2.x Support| Spring Boot 3.x Support |
 |[3.1.x](https://github.com/sitemesh/sitemesh3/tree/3.1.x)| [Master Branch](https://github.com/sitemesh/sitemesh3)|
 |[Java Docs](https://sitemesh.github.io/sitemesh3/javadoc/3.1.x/)||
-| [Download 3.1.0](https://github.com/sitemesh/sitemesh3/releases/tag/3.1.0) | [Download 3.2.0](https://github.com/sitemesh/sitemesh3/releases/tag/3.2.0)|
+| [Download 3.1.1](https://github.com/sitemesh/sitemesh3/releases/tag/3.1.1) | [Download 3.2.1](https://github.com/sitemesh/sitemesh3/releases/tag/3.2.1)|
 
 [Website / Documentation (Built with Offline Generator)](https://sitemesh.github.io/sitemesh-website/)
 
@@ -26,7 +26,7 @@ You can either download the release build and simply add the sitemesh jar to you
 ```gradle
 dependencies {
     // ... other dependencies
-    runtimeOnly 'org.sitemesh:sitemesh:3.2.0'
+    runtimeOnly 'org.sitemesh:sitemesh:3.2.1'
 }
 ```
 
@@ -36,7 +36,7 @@ dependencies {
     <dependency>
         <groupId>org.sitemesh</groupId>
         <artifactId>sitemesh</artifactId>
-        <version>3.2.0</version>
+        <version>3.2.1</version>
     </dependency>
 </dependencies>
 ```
@@ -46,7 +46,7 @@ or if you are using Spring Boot, use the config free starter (see example applic
 ```gradle
 dependencies {
     // ... other dependencies
-    runtimeOnly 'org.sitemesh:spring-boot-starter-sitemesh:3.2.0'
+    runtimeOnly 'org.sitemesh:spring-boot-starter-sitemesh:3.2.1'
 }
 ```
 
@@ -56,7 +56,7 @@ dependencies {
     <dependency>
         <groupId>org.sitemesh</groupId>
         <artifactId>spring-boot-starter-sitemesh</artifactId>
-        <version>3.2.0</version>
+        <version>3.2.1</version>
     </dependency>
 </dependencies>
 ```
