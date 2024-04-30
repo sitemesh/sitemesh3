@@ -7,5 +7,5 @@ description = 'SiteMesh Spring Boot Starter'
 
 dependencies {
     api project(':sitemesh')
-    api 'org.springframework.boot:spring-boot-starter-web:3.1.4'
+    api 'org.springframework.boot:spring-boot-starter-web:3.2.5'
 }
