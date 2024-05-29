@@ -59,6 +59,8 @@ public class SiteMeshAutoConfiguration {
     private String attribute;
     @Value("${sitemesh.decorator.default:#{null}}")
     private String defaultPath;
+    @Value("${sitemesh.filter.order:" + (OrderedFilter.REQUEST_WRAPPER_FILTER_MAX_ORDER + 29) + "}")
+    private int filterOrder;
 
     @Bean
     @ConditionalOnMissingBean(name = "siteMeshFilter")
@@ -105,7 +107,7 @@ public class SiteMeshAutoConfiguration {
         if (includeErrorPages) {
             registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR));
         }
-        registrationBean.setOrder(OrderedFilter.REQUEST_WRAPPER_FILTER_MAX_ORDER + 29);
+        registrationBean.setOrder(filterOrder);
         return registrationBean;
     }
 }
