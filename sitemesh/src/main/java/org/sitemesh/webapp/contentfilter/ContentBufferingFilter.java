@@ -65,6 +65,10 @@ import java.nio.CharBuffer;
  */
 public abstract class ContentBufferingFilter implements Filter {
 
+    public static final String SITEMESH_BUFFER_ATTRIBUTE = "sitemesh.buffer" ;
+    public static final String SITEMESH_RESPONSE_ATTRIBUTE = "sitemesh.response" ;
+    public static final String SITEMESH_DECORATED_ATTRIBUTE = "sitemesh.decorated" ;
+
     private final Selector selector;
 
     protected ContentBufferingFilter(Selector selector) {
@@ -165,7 +169,8 @@ public abstract class ContentBufferingFilter implements Filter {
 
         // Apply next filter/servlet, writing response to buffer.
         final ResponseMetaData metaData = new ResponseMetaData();
-        final HttpServletResponseBuffer responseBuffer = new HttpServletResponseBuffer(response, metaData, selector) {
+        boolean bufferingEnabled = request.getAttribute(SITEMESH_BUFFER_ATTRIBUTE) != null;
+        final HttpServletResponseBuffer responseBuffer = bufferingEnabled? (HttpServletResponseBuffer) request.getAttribute("sitemesh.buffer") : new HttpServletResponseBuffer(response, metaData, selector) {
             @Override
             public void preCommit() {
                 // Ensure both content and decorators are used to generate HTTP caching headers.
@@ -181,15 +186,25 @@ public abstract class ContentBufferingFilter implements Filter {
                 }
             }
         };
+        if (!bufferingEnabled) {
+            request.setAttribute(SITEMESH_BUFFER_ATTRIBUTE, responseBuffer);
+            request.setAttribute(SITEMESH_RESPONSE_ATTRIBUTE, response);
+        }
 
         filterChain.doFilter(wrapRequest(request), responseBuffer);
+
+        if (request.getAttribute(SITEMESH_DECORATED_ATTRIBUTE) != null) {
+            return;
+        }
+        request.setAttribute(SITEMESH_DECORATED_ATTRIBUTE, true);
+        HttpServletResponse originalResponse = (HttpServletResponse) request.getAttribute(SITEMESH_RESPONSE_ATTRIBUTE);
 
         if (request.isAsyncSupported() && request.isAsyncStarted()) {
             request.getAsyncContext().addListener(new AsyncListener() {
                 @Override
                 public void onComplete(AsyncEvent asyncEvent) throws IOException {
                     try {
-                        processInternally(responseBuffer, request, response, metaData);
+                        processInternally(responseBuffer, request, originalResponse, metaData);
 
                     } catch (ServletException e) {
                         throw new RuntimeException("Could not execute request.", e);
@@ -211,14 +226,16 @@ public abstract class ContentBufferingFilter implements Filter {
                     // ignore
                 }
             });
-        }
-        else {
-            processInternally(responseBuffer, request, response, metaData);
+        } else {
+            processInternally(responseBuffer, request, originalResponse, metaData);
         }
     }
 
     protected void processInternally(HttpServletResponseBuffer responseBuffer, final HttpServletRequest request,
                                final HttpServletResponse response, ResponseMetaData metaData) throws IOException, ServletException {
+        if (response.isCommitted()) {
+            return;
+        }
         CharBuffer buffer = responseBuffer.getBuffer();
 
         // If content was buffered, post-process it.
