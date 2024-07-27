@@ -62,9 +62,8 @@ public class SiteMeshAutoConfiguration {
     @Value("${sitemesh.filter.order:" + (OrderedFilter.REQUEST_WRAPPER_FILTER_MAX_ORDER + 29) + "}")
     private int filterOrder;
 
-    @Bean
-    @ConditionalOnMissingBean(name = "siteMeshFilter")
-    ConfigurableSiteMeshFilter siteMeshFilter() {
+    public static ConfigurableSiteMeshFilter makeFilter(String attribute, String defaultPath, String metaTagName, String prefix,
+        List<HashMap<String, String>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages) {
         return new ConfigurableSiteMeshFilter() {
             @Override
             protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
@@ -95,6 +94,12 @@ public class SiteMeshAutoConfiguration {
                 builder.setIncludeErrorPages(includeErrorPages);
             }
         };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "siteMeshFilter")
+    ConfigurableSiteMeshFilter siteMeshFilter() {
+        return makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, includeErrorPages);
     }
 
     @Bean
