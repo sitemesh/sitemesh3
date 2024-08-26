@@ -16,14 +16,16 @@
 
 package org.sitemesh.autoconfigure;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.ConfigurableSiteMeshFilter;
 import org.sitemesh.config.MetaTagBasedDecoratorSelector;
 import org.sitemesh.config.RequestAttributeDecoratorSelector;
 import org.sitemesh.content.tagrules.TagRuleBundle;
-import org.sitemesh.content.tagrules.html.Sm2TagRuleBundle;
 import org.sitemesh.webapp.WebAppContext;
+import org.sitemesh.webapp.contentfilter.BasicSelector;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -63,7 +65,7 @@ public class SiteMeshAutoConfiguration {
     private int filterOrder;
 
     public static ConfigurableSiteMeshFilter makeFilter(String attribute, String defaultPath, String metaTagName, String prefix,
-        List<HashMap<String, String>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages) {
+        List<HashMap<String, String>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages, boolean alwaysApply) {
         return new ConfigurableSiteMeshFilter() {
             @Override
             protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
@@ -91,6 +93,14 @@ public class SiteMeshAutoConfiguration {
                 for (String bundle : bundles) {
                     builder.addTagRuleBundle((TagRuleBundle) getObjectFactory().create(bundle));
                 }
+                if (alwaysApply) {
+                    builder.setCustomSelector(new BasicSelector() {
+                        @Override
+                        public boolean shouldBufferForRequest(HttpServletRequest request) {
+                            return true;
+                        }
+                    });
+                }
                 builder.setIncludeErrorPages(includeErrorPages);
             }
         };
@@ -99,7 +109,7 @@ public class SiteMeshAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "siteMeshFilter")
     ConfigurableSiteMeshFilter siteMeshFilter() {
-        return makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, includeErrorPages);
+        return makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, includeErrorPages, false);
     }
 
     @Bean
@@ -113,6 +123,21 @@ public class SiteMeshAutoConfiguration {
             registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR));
         }
         registrationBean.setOrder(filterOrder);
+        return registrationBean;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "sitemesh3Secured")
+    @ConditionalOnClass(name = "org.springframework.security.config.annotation.web.configuration.EnableWebSecurity")
+    public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3Secured(ConfigurableSiteMeshFilter siteMeshFilter){
+        FilterRegistrationBean<ConfigurableSiteMeshFilter> registrationBean
+                = new FilterRegistrationBean<>();
+        registrationBean.setFilter(makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, includeErrorPages, true));
+        registrationBean.addUrlPatterns("/*");
+        if (includeErrorPages) {
+            registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR));
+        }
+        registrationBean.setOrder(org.springframework.boot.autoconfigure.security.SecurityProperties.BASIC_AUTH_ORDER - 9);
         return registrationBean;
     }
 }
