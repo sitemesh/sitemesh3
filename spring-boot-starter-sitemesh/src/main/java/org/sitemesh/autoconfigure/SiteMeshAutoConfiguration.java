@@ -114,7 +114,7 @@ public class SiteMeshAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "sitemesh3")
-    public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3(ConfigurableSiteMeshFilter siteMeshFilter){
+    public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3(ConfigurableSiteMeshFilter siteMeshFilter) {
         FilterRegistrationBean<ConfigurableSiteMeshFilter> registrationBean
                 = new FilterRegistrationBean<>();
         registrationBean.setFilter(siteMeshFilter);
@@ -129,15 +129,11 @@ public class SiteMeshAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "sitemesh3Secured")
     @ConditionalOnClass(name = "org.springframework.security.config.annotation.web.configuration.EnableWebSecurity")
-    public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3Secured(ConfigurableSiteMeshFilter siteMeshFilter){
+    public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3Secured() {
         FilterRegistrationBean<ConfigurableSiteMeshFilter> registrationBean
                 = new FilterRegistrationBean<>();
         registrationBean.setFilter(makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, includeErrorPages, true));
-        registrationBean.addUrlPatterns("/*");
-        if (includeErrorPages) {
-            registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR));
-        }
-        registrationBean.setOrder(org.springframework.boot.autoconfigure.security.SecurityProperties.BASIC_AUTH_ORDER - 9);
+        registrationBean.setEnabled(false);
         return registrationBean;
     }
 }
