@@ -192,6 +192,7 @@ public abstract class ContentBufferingFilter implements Filter {
         }
 
         filterChain.doFilter(wrapRequest(request), responseBuffer);
+        request.setAttribute(SITEMESH_BUFFER_ATTRIBUTE, null);
 
         if (request.getAttribute(SITEMESH_DECORATED_ATTRIBUTE) != null) {
             return;
