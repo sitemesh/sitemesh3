@@ -16,6 +16,7 @@
 
 package org.sitemesh.autoconfigure;
 
+import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.ConfigurableSiteMeshFilter;
@@ -33,11 +34,7 @@ import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import jakarta.servlet.DispatcherType;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Configuration
 @ConfigurationProperties(prefix = "sitemesh.decorator")
@@ -107,17 +104,11 @@ public class SiteMeshAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "siteMeshFilter")
-    ConfigurableSiteMeshFilter siteMeshFilter() {
-        return makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, includeErrorPages, false);
-    }
-
-    @Bean
     @ConditionalOnMissingBean(name = "sitemesh3")
-    public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3(ConfigurableSiteMeshFilter siteMeshFilter) {
+    public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3() {
         FilterRegistrationBean<ConfigurableSiteMeshFilter> registrationBean
                 = new FilterRegistrationBean<>();
-        registrationBean.setFilter(siteMeshFilter);
+        registrationBean.setFilter(makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, includeErrorPages, false));
         registrationBean.addUrlPatterns("/*");
         if (includeErrorPages) {
             registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR));
@@ -129,10 +120,18 @@ public class SiteMeshAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "sitemesh3Secured")
     @ConditionalOnClass(name = "org.springframework.security.config.annotation.web.configuration.EnableWebSecurity")
-    public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3Secured() {
+    public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3Secured(ServletContext servletContext) throws ServletException {
         FilterRegistrationBean<ConfigurableSiteMeshFilter> registrationBean
                 = new FilterRegistrationBean<>();
-        registrationBean.setFilter(makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, includeErrorPages, true));
+        ConfigurableSiteMeshFilter filter = makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, false, true);
+        Map<String, String> initParams = new HashMap<>();
+        filter.init(new FilterConfig() {
+            @Override public String getFilterName() { return "sitemesh3Secured"; }
+            @Override public ServletContext getServletContext() { return servletContext; }
+            @Override public String getInitParameter(String name) { return initParams.get(name); }
+            @Override public Enumeration<String> getInitParameterNames() { return Collections.enumeration(initParams.keySet()); }
+        });
+        registrationBean.setFilter(filter);
         registrationBean.setEnabled(false);
         return registrationBean;
     }
