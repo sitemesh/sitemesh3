@@ -24,7 +24,7 @@ import org.sitemesh.config.MetaTagBasedDecoratorSelector;
 import org.sitemesh.config.RequestAttributeDecoratorSelector;
 import org.sitemesh.content.tagrules.TagRuleBundle;
 import org.sitemesh.webapp.WebAppContext;
-import org.sitemesh.webapp.contentfilter.BasicSelector;
+import org.sitemesh.webapp.contentfilter.Selector;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -90,15 +90,31 @@ public class SiteMeshAutoConfiguration {
                 for (String bundle : bundles) {
                     builder.addTagRuleBundle((TagRuleBundle) getObjectFactory().create(bundle));
                 }
+                builder.setIncludeErrorPages(includeErrorPages);
                 if (alwaysApply) {
-                    builder.setCustomSelector(new BasicSelector() {
+                    Selector basicSelector = builder.getSelector();
+                    builder.setCustomSelector(new Selector() {
+                        @Override
+                        public boolean shouldBufferForContentType(String contentType, String mimeType, String encoding) {
+                            return basicSelector.shouldBufferForContentType(contentType, mimeType, encoding);
+                        }
+
+                        @Override
+                        public boolean shouldAbortBufferingForHttpStatusCode(int statusCode) {
+                            return basicSelector.shouldAbortBufferingForHttpStatusCode(statusCode);
+                        }
+
                         @Override
                         public boolean shouldBufferForRequest(HttpServletRequest request) {
                             return true;
                         }
+
+                        @Override
+                        public String excludePatternInUse(HttpServletRequest request) {
+                            return basicSelector.excludePatternInUse(request);
+                        }
                     });
                 }
-                builder.setIncludeErrorPages(includeErrorPages);
             }
         };
     }
@@ -123,7 +139,7 @@ public class SiteMeshAutoConfiguration {
     public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3Secured(ServletContext servletContext) throws ServletException {
         FilterRegistrationBean<ConfigurableSiteMeshFilter> registrationBean
                 = new FilterRegistrationBean<>();
-        ConfigurableSiteMeshFilter filter = makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, false, true);
+        ConfigurableSiteMeshFilter filter = makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, true, true);
         Map<String, String> initParams = new HashMap<>();
         filter.init(new FilterConfig() {
             @Override public String getFilterName() { return "sitemesh3Secured"; }
