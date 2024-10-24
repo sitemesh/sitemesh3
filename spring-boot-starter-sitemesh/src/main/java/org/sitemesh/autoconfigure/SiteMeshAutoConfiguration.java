@@ -19,14 +19,13 @@ package org.sitemesh.autoconfigure;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
-import org.sitemesh.config.ConfigurableSiteMeshFilter;
 import org.sitemesh.config.MetaTagBasedDecoratorSelector;
+import org.sitemesh.config.ObjectFactory;
 import org.sitemesh.config.RequestAttributeDecoratorSelector;
 import org.sitemesh.content.tagrules.TagRuleBundle;
 import org.sitemesh.webapp.WebAppContext;
 import org.sitemesh.webapp.contentfilter.Selector;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -61,94 +60,68 @@ public class SiteMeshAutoConfiguration {
     @Value("${sitemesh.filter.order:" + (OrderedFilter.REQUEST_WRAPPER_FILTER_MAX_ORDER + 29) + "}")
     private int filterOrder;
 
-    public static ConfigurableSiteMeshFilter makeFilter(String attribute, String defaultPath, String metaTagName, String prefix,
-        List<HashMap<String, String>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages, boolean alwaysApply) {
-        return new ConfigurableSiteMeshFilter() {
-            @Override
-            protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
-                MetaTagBasedDecoratorSelector decoratorSelector;
-                if (attribute != null) {
-                    decoratorSelector = new RequestAttributeDecoratorSelector()
-                            .setDecoratorAttribute(attribute);
-                } else {
-                    decoratorSelector = new MetaTagBasedDecoratorSelector<WebAppContext>();
-                }
-                if (defaultPath != null) {
-                    decoratorSelector.put("/*", defaultPath);
-                }
-                builder.setCustomDecoratorSelector(decoratorSelector.setMetaTagName(metaTagName).setPrefix(prefix));
-                if (mappings != null) {
-                    for (Map<String, String> decorator : mappings) {
-                        builder.addDecoratorPath(decorator.get("path"), decorator.get("decorator"));
-                    }
-                }
-                if (exclusions != null) {
-                    for (String exclusion : exclusions) {
-                        builder.addExcludedPath(exclusion);
-                    }
-                }
-                for (String bundle : bundles) {
-                    builder.addTagRuleBundle((TagRuleBundle) getObjectFactory().create(bundle));
-                }
-                builder.setIncludeErrorPages(includeErrorPages);
-                if (alwaysApply) {
-                    Selector basicSelector = builder.getSelector();
-                    builder.setCustomSelector(new Selector() {
-                        @Override
-                        public boolean shouldBufferForContentType(String contentType, String mimeType, String encoding) {
-                            return basicSelector.shouldBufferForContentType(contentType, mimeType, encoding);
-                        }
-
-                        @Override
-                        public boolean shouldAbortBufferingForHttpStatusCode(int statusCode) {
-                            return basicSelector.shouldAbortBufferingForHttpStatusCode(statusCode);
-                        }
-
-                        @Override
-                        public boolean shouldBufferForRequest(HttpServletRequest request) {
-                            return true;
-                        }
-
-                        @Override
-                        public String excludePatternInUse(HttpServletRequest request) {
-                            return basicSelector.excludePatternInUse(request);
-                        }
-                    });
-                }
+    public static Filter makeFilter(String attribute, String defaultPath, String metaTagName, String prefix,
+                                            List<HashMap<String, String>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages, boolean alwaysApply) {
+        SiteMeshFilterBuilder builder = new SiteMeshFilterBuilder();
+        MetaTagBasedDecoratorSelector decoratorSelector = attribute != null?
+            new RequestAttributeDecoratorSelector().setDecoratorAttribute(attribute) :
+            new MetaTagBasedDecoratorSelector<WebAppContext>();
+        if (defaultPath != null) {
+            decoratorSelector.put("/*", defaultPath);
+        }
+        builder.setCustomDecoratorSelector(decoratorSelector.setMetaTagName(metaTagName).setPrefix(prefix));
+        if (mappings != null) {
+            for (Map<String, String> decorator : mappings) {
+                builder.addDecoratorPath(decorator.get("path"), decorator.get("decorator"));
             }
-        };
+        }
+        if (exclusions != null) {
+            for (String exclusion : exclusions) {
+                builder.addExcludedPath(exclusion);
+            }
+        }
+        ObjectFactory objectFactory = new ObjectFactory.Default();
+        for (String bundle : bundles) {
+            builder.addTagRuleBundle((TagRuleBundle) objectFactory.create(bundle));
+        }
+        builder.setIncludeErrorPages(includeErrorPages);
+        if (alwaysApply) {
+            Selector basicSelector = builder.getSelector();
+            builder.setCustomSelector(new Selector() {
+                @Override
+                public boolean shouldBufferForContentType(String contentType, String mimeType, String encoding) {
+                    return basicSelector.shouldBufferForContentType(contentType, mimeType, encoding);
+                }
+
+                @Override
+                public boolean shouldAbortBufferingForHttpStatusCode(int statusCode) {
+                    return basicSelector.shouldAbortBufferingForHttpStatusCode(statusCode);
+                }
+
+                @Override
+                public boolean shouldBufferForRequest(HttpServletRequest request) {
+                    return true;
+                }
+
+                @Override
+                public String excludePatternInUse(HttpServletRequest request) {
+                    return basicSelector.excludePatternInUse(request);
+                }
+            });
+        }
+        return builder.create();
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "sitemesh3")
-    public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3() {
-        FilterRegistrationBean<ConfigurableSiteMeshFilter> registrationBean
-                = new FilterRegistrationBean<>();
+    @ConditionalOnMissingBean(name = "sitemesh")
+    public FilterRegistrationBean<Filter> sitemesh() {
+        FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, includeErrorPages, false));
         registrationBean.addUrlPatterns("/*");
         if (includeErrorPages) {
             registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR));
         }
         registrationBean.setOrder(filterOrder);
-        return registrationBean;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "sitemesh3Secured")
-    @ConditionalOnClass(name = "org.springframework.security.config.annotation.web.configuration.EnableWebSecurity")
-    public FilterRegistrationBean<ConfigurableSiteMeshFilter> sitemesh3Secured(ServletContext servletContext) throws ServletException {
-        FilterRegistrationBean<ConfigurableSiteMeshFilter> registrationBean
-                = new FilterRegistrationBean<>();
-        ConfigurableSiteMeshFilter filter = makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, true, true);
-        Map<String, String> initParams = new HashMap<>();
-        filter.init(new FilterConfig() {
-            @Override public String getFilterName() { return "sitemesh3Secured"; }
-            @Override public ServletContext getServletContext() { return servletContext; }
-            @Override public String getInitParameter(String name) { return initParams.get(name); }
-            @Override public Enumeration<String> getInitParameterNames() { return Collections.enumeration(initParams.keySet()); }
-        });
-        registrationBean.setFilter(filter);
-        registrationBean.setEnabled(false);
         return registrationBean;
     }
 }
