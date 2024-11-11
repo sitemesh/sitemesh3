@@ -19,9 +19,11 @@ package org.sitemesh.webapp.contentfilter;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.CharBuffer;
+import java.util.logging.Logger;
 
 /**
  * Abstract {@link Filter} implementation that writes the main content
@@ -69,6 +71,8 @@ public abstract class ContentBufferingFilter implements Filter {
 
     private final Selector selector;
 
+    private final static Logger logger = Logger.getLogger(ContentBufferingFilter.class.getName());
+
     protected ContentBufferingFilter(Selector selector) {
         if (selector == null) {
             throw new IllegalArgumentException("selector cannot be null");
@@ -91,6 +95,16 @@ public abstract class ContentBufferingFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
         this.containerTweaks = initContainerTweaks();
+
+        logger.info(String.format("SiteMesh %s initialized with filter name '%s'",
+                ContentBufferingFilter.class.getPackage().getSpecificationVersion(),
+                filterConfig.getFilterName()));
+
+        for (FilterRegistration filterRegistration : filterConfig.getServletContext().getFilterRegistrations().values()) {
+            if (!filterRegistration.getName().equals(filterConfig.getFilterName()) && filterRegistration.getClassName().equals("org.sitemesh.webapp.SiteMeshFilter")) {
+                logger.warning(String.format("SiteMesh has already been registered as '%s'. Initializing multiple SiteMesh filters not recommended (%s).", filterRegistration.getName(), filterConfig.getFilterName()));
+            }
+        }
     }
 
     public void destroy() {

@@ -170,16 +170,6 @@ public class ConfigurableSiteMeshFilter implements Filter {
             deployNewFilter(setup());
         }
 
-        logger.info(String.format("SiteMesh %s initialized with filter name '%s'",
-                ConfigurableSiteMeshFilter.class.getPackage().getSpecificationVersion(),
-                filterConfig.getFilterName()));
-
-        for (FilterRegistration filterRegistration : filterConfig.getServletContext().getFilterRegistrations().values()) {
-            if (!filterRegistration.getName().equals(filterConfig.getFilterName()) && filterRegistration.getClassName().equals("org.sitemesh.config.ConfigurableSiteMeshFilter")) {
-                logger.warning(String.format("SiteMesh has already been registered as '%s'. Initializing multiple SiteMesh filters not recommended (%s).", filterRegistration.getName(), filterConfig.getFilterName()));
-            }
-        }
-
         initialized = true;
     }
 
