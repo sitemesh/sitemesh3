@@ -26,16 +26,16 @@ import org.sitemesh.content.tagrules.TagRuleBundle;
 import org.sitemesh.webapp.WebAppContext;
 import org.sitemesh.webapp.contentfilter.Selector;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.*;
 
-@Configuration
+@AutoConfiguration
 @ConfigurationProperties(prefix = "sitemesh.decorator")
 public class SiteMeshAutoConfiguration {
     private List<HashMap<String, String>> mappings;
