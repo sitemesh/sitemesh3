@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: daily
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+    target-branch: 3.1.x
+    ignore:
+      - dependency-name: *
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
