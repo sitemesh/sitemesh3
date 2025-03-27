@@ -40,8 +40,8 @@ import java.util.Map;
 @Configuration
 @ConfigurationProperties(prefix = "sitemesh.decorator")
 public class SiteMeshAutoConfiguration {
-    private List<HashMap<String, String>> mappings;
-    public void setMappings(List<HashMap<String, String>> mappings) {
+    private List<HashMap<String, List<String>>> mappings;
+    public void setMappings(List<HashMap<String, List<String>>> mappings) {
         this.mappings = mappings;
     }
 
@@ -78,8 +78,10 @@ public class SiteMeshAutoConfiguration {
                 }
                 builder.setCustomDecoratorSelector(decoratorSelector.setMetaTagName(metaTagName).setPrefix(prefix));
                 if (mappings != null) {
-                    for (Map<String, String> decorator : mappings) {
-                        builder.addDecoratorPath(decorator.get("path"), decorator.get("decorator"));
+                    for (Map<String, List<String>> decorator : mappings) {
+                        for (String path : decorator.get("path")) {
+                            builder.addDecoratorPaths(path, decorator.get("decorator"));
+                        }
                     }
                 }
                 if (exclusions != null) {
