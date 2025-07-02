@@ -94,7 +94,7 @@ And see your `index.html` transformed:
 
 ## Step 6 (Optional) - Clean up
 
-Since you are using Gradle, you don't even need the jar.  Go ahead and delete the `example/src/main/webapp/WEB-INF/lib` folder and add the folloing block to the end of your `build.gradle`
+Since you are using Gradle, you don't even need the jar.  Go ahead and delete the `example/src/main/webapp/WEB-INF/lib` folder and add the following block to the end of your `build.gradle`
 
 ```gradle
 dependencies {
@@ -105,7 +105,7 @@ dependencies {
 and gradle will handle downloading SiteMesh and placing it in the right folder.
 
 ## Summary
-You have just witneesed the power of decorators in how they eliminate boilerplate code, but SiteMesh is capable of so much more.
+You have just witnessed the power of decorators in how they eliminate boilerplate code, but SiteMesh is capable of so much more.
 Decorators can transform anything and you can configure SiteMesh to apply decorators outside of the web page using path mappings, request attribures, or even based on specific content type.
 Read the documentation for more information.
 
