@@ -74,7 +74,17 @@ public class BasicSelector implements Selector {
     }
 
     public boolean shouldBufferForRequest(HttpServletRequest request) {
-        return !filterAlreadyAppliedForRequest(request);
+        boolean alreadyApplied = filterAlreadyAppliedForRequest(request);
+        // CRITICAL FIX: For FORWARD dispatches to JSPs in Tomcat 11, we MUST buffer
+        // to prevent JSP from committing response before SiteMesh can process it
+        if (request.getDispatcherType() == DispatcherType.FORWARD) {
+            String uri = request.getRequestURI();
+            if (uri != null && (uri.endsWith(".jsp") || uri.contains("/WEB-INF/"))) {
+                return true;
+            }
+        }
+        boolean result = !alreadyApplied;
+        return result;
     }
 
     protected boolean filterAlreadyAppliedForRequest(HttpServletRequest request) {

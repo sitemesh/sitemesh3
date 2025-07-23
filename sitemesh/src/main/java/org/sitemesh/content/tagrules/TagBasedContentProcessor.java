@@ -52,8 +52,9 @@ public class TagBasedContentProcessor implements ContentProcessor {
 
         // Run the processor.
         processor.process();
-
-        content.getExtractedProperties().setValue(processor.getDefaultBufferContents());
+        CharSequence processedContent = processor.getDefaultBufferContents();
+        content.getExtractedProperties().setValue(processedContent);
+        content.getData().setValue(processedContent);
 
         for (TagRuleBundle tagRuleBundle : tagRuleBundles) {
             tagRuleBundle.cleanUp(processor.defaultState(), content.getExtractedProperties(), siteMeshContext);

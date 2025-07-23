@@ -37,6 +37,20 @@ public class ContainerTweaks {
     }
 
     /**
+     * Should avoid flushing streams to prevent premature response commit
+     */
+    public boolean shouldAvoidStreamFlushing() {
+        return false;
+    }
+    
+    /**
+     * Should use safe header modification techniques
+     */
+    public boolean shouldUseSafeHeaderModification() {
+        return false;
+    }
+
+    /**
      * Container tweaks specific to Tomcat.
      */
     public static class TomcatTweaks extends ContainerTweaks {
@@ -47,6 +61,26 @@ public class ContainerTweaks {
         @Override
         public boolean shouldLogUnhandledExceptions() {
             return true;
+        }
+    }
+    
+    /**
+     * Container tweaks specific to Tomcat 11 with stricter response handling.
+     */
+    public static class Tomcat11Tweaks extends TomcatTweaks {
+        @Override
+        public boolean shouldAvoidStreamFlushing() {
+            return true;
+        }
+        
+        @Override
+        public boolean shouldUseSafeHeaderModification() {
+            return true;
+        }
+        
+        @Override
+        public boolean shouldIgnoreIllegalStateExceptionOnErrorPage() {
+            return true; // Tomcat 11 may throw more IllegalStateExceptions
         }
     }
 

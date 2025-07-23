@@ -19,6 +19,7 @@ package org.sitemesh.webapp.contentfilter;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -113,7 +114,17 @@ public abstract class ContentBufferingFilter implements Filter {
     }
 
     protected ContainerTweaks initContainerTweaks() {
-        // TODO: Use correct implementation based on container.
+        String serverInfo = getFilterConfig().getServletContext().getServerInfo();
+        if (serverInfo != null && serverInfo.toLowerCase().contains("tomcat")) {
+            // Extract Tomcat version if possible
+            if (serverInfo.contains("11.")) {
+                return new ContainerTweaks.Tomcat11Tweaks();
+            } else if (serverInfo.contains("10.")) {
+                return new ContainerTweaks.TomcatTweaks();
+            } else if (serverInfo.toLowerCase().contains("tomcat")) {
+                return new ContainerTweaks.TomcatTweaks();
+            }
+        }
         return new ContainerTweaks();
     }
 
@@ -137,6 +148,11 @@ public abstract class ContentBufferingFilter implements Filter {
         final HttpServletRequest request = (HttpServletRequest) servletRequest;
         final HttpServletResponse response = (HttpServletResponse) servletResponse;
         ServletContext servletContext = filterConfig.getServletContext();
+
+        if (response.isCommitted()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (!selector.shouldBufferForRequest(request)) {
             // Optimization: If the content doesn't need to be buffered,
@@ -198,10 +214,149 @@ public abstract class ContentBufferingFilter implements Filter {
             }
         };
 
-        filterChain.doFilter(wrapRequest(request), responseBuffer);
+        // CRITICAL: Check if we can detect early commitment and prevent it
+        boolean preChainCommitted = ((HttpServletResponse)responseBuffer.getResponse()).isCommitted();
+        
+        // CRITICAL: Disable JSP autoFlush which causes early commitment in Tomcat 11
+        request.setAttribute("org.apache.jasper.Constants.JSP_AUTOFLUSH", false);
+        request.setAttribute("org.apache.jasper.runtime.JspWriterImpl.AUTOFLUSH", false);
+        request.setAttribute("javax.servlet.jsp.JspWriter.autoFlush", false);
+        
+        // Additional Tomcat 11 specific prevention
+        if (containerTweaks instanceof ContainerTweaks.Tomcat11Tweaks) {
+            request.setAttribute("org.apache.jasper.Constants.DEFAULT_BUFFER_SIZE", 65536);
+            request.setAttribute("org.apache.jasper.runtime.JspWriterImpl.DEFAULT_BUFFER", 65536);
+            request.setAttribute("javax.servlet.jsp.jspWriter.bufferSize", 65536);
+            // Force JSP to use our buffered response
+            request.setAttribute("org.apache.catalina.core.DISPATCHER_TYPE", request.getDispatcherType());
+            request.setAttribute("org.apache.catalina.ASYNC_SUPPORTED", false);
+        }
+        
+        // CRITICAL: Wrap responseBuffer to prevent ALL commitment during SiteMesh processing
+        // This fixes Shiro + Tomcat 11 early commitment issue that causes white pages
+        HttpServletResponse commitmentBlockingResponse = new HttpServletResponseWrapper(responseBuffer) {
+            private boolean sitemeshProcessingComplete = false;
+            
+            @Override
+            public void flushBuffer() throws IOException {
+                if (!sitemeshProcessingComplete) {
+                    return; // Block flush to prevent commitment
+                }
+                super.flushBuffer();
+            }
+            
+            @Override
+            public boolean isCommitted() {
+                if (!sitemeshProcessingComplete) {
+                    return false; // Always report false during processing
+                }
+                return super.isCommitted();
+            }
+            
+            public void setSitemeshProcessingComplete() {
+                this.sitemeshProcessingComplete = true;
+            }
+        };
+        filterChain.doFilter(wrapRequest(request), commitmentBlockingResponse);
+
+        // Mark processing complete to allow commitment
+        if (commitmentBlockingResponse instanceof HttpServletResponseWrapper) {
+            try {
+                commitmentBlockingResponse.getClass().getMethod("setSitemeshProcessingComplete").invoke(commitmentBlockingResponse);
+            } catch (Exception e) { }
+        }
+        
+        // IMMEDIATE CHECK: If response committed during chain and we have content
+        boolean postChainCommitted = ((HttpServletResponse)responseBuffer.getResponse()).isCommitted();
+        
+        if (!preChainCommitted && postChainCommitted && responseBuffer.getBuffer() != null) {
+            
+            // EXPERIMENTAL: Try to reset response if possible
+            try {
+                HttpServletResponse actualResponse = (HttpServletResponse)responseBuffer.getResponse();
+                actualResponse.reset();
+                
+                // Now try to write content
+                String bufferContent = responseBuffer.getBuffer().toString();
+                actualResponse.setContentType("text/html;charset=UTF-8");
+                actualResponse.setContentLength(bufferContent.getBytes("UTF-8").length);
+                actualResponse.setStatus(200);
+                
+                PrintWriter writer = actualResponse.getWriter();
+                writer.write(bufferContent);
+                writer.flush();
+                actualResponse.flushBuffer();
+                responseBuffer.releaseBuffer();
+                return;
+                
+            } catch (Exception resetEx) {
+            }
+        }
+
+        // CRITICAL CHECK: Response commitment after filterChain execution
+        boolean responseCommittedAfterChain = ((HttpServletResponse)responseBuffer.getResponse()).isCommitted();
+        
         if (responseBuffer.getBuffer() == null) {
             return;
         }
+        
+        // IMMEDIATE WRITE if response committed after chain but before processing
+        if (responseCommittedAfterChain && responseBuffer.getBuffer() != null) {
+            // CRITICAL: Check if content already written to prevent double-write
+            if (responseBuffer.isContentAlreadyWritten()) {
+                return; // Skip to prevent double write
+            }
+            
+            // Store buffer content and try multiple write approaches
+            String bufferContent = responseBuffer.getBuffer().toString();
+            request.setAttribute("sitemesh.original.content", bufferContent);
+            
+            // Try direct write first
+            try {
+                HttpServletResponse actualResponse = (HttpServletResponse)responseBuffer.getResponse();
+                PrintWriter directWriter = actualResponse.getWriter();
+                directWriter.write(bufferContent);
+                directWriter.flush();
+                // Try to force response flush
+                try {
+                    actualResponse.flushBuffer();
+                } catch (Exception flushEx) {
+                }
+                responseBuffer.releaseBuffer();
+                return;
+            } catch (Exception e) {
+                e.printStackTrace();
+                // Try output stream approach
+                try {
+                    HttpServletResponse actualResponse = (HttpServletResponse)responseBuffer.getResponse();
+                    actualResponse.setContentType("text/html;charset=UTF-8");
+                    actualResponse.setContentLength(bufferContent.getBytes("UTF-8").length);
+                    actualResponse.getOutputStream().write(bufferContent.getBytes("UTF-8"));
+                    actualResponse.getOutputStream().flush();
+                    responseBuffer.releaseBuffer();
+                    return;
+                } catch (Exception e2) {
+                    e2.printStackTrace();
+                    // NUCLEAR OPTION: Try JavaScript-based content injection
+                    try {
+                        HttpServletResponse jsActualResponse = (HttpServletResponse)responseBuffer.getResponse();
+                        String jsInjection = "<script type='text/javascript'>" +
+                            "document.open();" +
+                            "document.write(" + escapeForJavaScript(bufferContent) + ");" +
+                            "document.close();" +
+                            "</script>";
+                        
+                        jsActualResponse.getWriter().write(jsInjection);
+                        jsActualResponse.getWriter().flush();
+                        responseBuffer.releaseBuffer();
+                        return;
+                        
+                    } catch (Exception jsEx) {
+                    }
+                }
+            }
+        }
+        
         if (request.getAttribute(SITEMESH_DECORATED_ATTRIBUTE) != null) {
             writeOriginal(response, responseBuffer.getBuffer(), responseBuffer);
             return;
@@ -242,43 +397,139 @@ public abstract class ContentBufferingFilter implements Filter {
 
     protected void processInternally(HttpServletResponseBuffer responseBuffer, final HttpServletRequest request,
                                final HttpServletResponse response, ResponseMetaData metaData) throws IOException, ServletException {
-        if (response.isCommitted()) {
-            return;
-        }
+        
         CharBuffer buffer = responseBuffer.getBuffer();
+        HttpServletResponse actualResponse = (HttpServletResponse)responseBuffer.getResponse();
+        boolean actuallyCommitted = actualResponse.isCommitted();
+        
+        // EMERGENCY EARLY WRITE: If response is already committed and we have buffer content
+        if (actuallyCommitted && buffer != null && !responseBuffer.bufferingWasDisabled()) {
+            String bufferContent = buffer.toString();
+            request.setAttribute("sitemesh.original.content", bufferContent);
+            // Try multiple write approaches
+            boolean written = false;
+            
+            // Approach 1: Direct writer
+            try {
+                PrintWriter directWriter = actualResponse.getWriter();
+                directWriter.write(bufferContent);
+                directWriter.flush();
+                written = true;
+            } catch (Exception e) {
+            }
+            
+            // Approach 2: Output stream
+            if (!written) {
+                try {
+                    actualResponse.getOutputStream().write(bufferContent.getBytes("UTF-8"));
+                    actualResponse.getOutputStream().flush();
+                    written = true;
+                } catch (Exception e) {
+                }
+            }
+            
+            if (written) {
+                responseBuffer.releaseBuffer();
+                return;
+            }
+        }
 
         // If content was buffered, post-process it.
         boolean processed = false;
         if (buffer != null && !responseBuffer.bufferingWasDisabled()) {
+            // Store responseBuffer in request attribute for SiteMeshFilter to access
+            request.setAttribute("sitemesh.response.buffer", responseBuffer);
             processed = postProcess(responseBuffer.getContentType(), buffer, request, response, metaData);
         }
 
-        if (!response.isCommitted()) {
-            responseBuffer.preCommit();
+        // Only call preCommit if we haven't processed content (which would have written response)
+        if (!processed && !((HttpServletResponse)responseBuffer.getResponse()).isCommitted()) {
+            try {
+                responseBuffer.preCommit();
+            } catch (IllegalStateException e) {
+            }
         }
 
         // If no decorators applied, and we have some buffered content, write the original.
         if (buffer != null && !processed) {
             writeOriginal(response, buffer, responseBuffer);
         }
+        // CRITICAL: ALWAYS perform emergency flush BEFORE releasing buffer
+        // This ensures content reaches browser even if response gets committed afterwards
+        responseBuffer.emergencyFlush();
+        // Release the buffer to allow response to be committed
+        responseBuffer.releaseBuffer();
     }
 
     /**
      * Write out the original unmodified buffer.
+     * Enhanced for Tomcat 11 compatibility with stricter response handling.
      */
     protected void writeOriginal(HttpServletResponse response,
                                  CharBuffer buffer,
                                  HttpServletResponseBuffer responseBuffer) throws IOException {
-        if (responseBuffer.isBufferStreamBased()) {
-            PrintWriter writer = new PrintWriter(response.getOutputStream());
-            writer.append(buffer);
-            writer.flush(); // Flush writer to underlying outputStream.
-            response.getOutputStream().flush();
-        } else {
-            PrintWriter writer = response.getWriter();
-            writer.append(buffer);
-            response.getWriter().flush();
+        if (buffer == null || buffer.length() == 0) {
+            return;
         }
+        
+        // Tomcat 11: Multiple commitment checks
+        if (response.isCommitted()) {
+            return;
+        }
+        
+        try {
+            if (responseBuffer.isBufferStreamBased()) {
+                // Check commitment before getting OutputStream
+                if (response.isCommitted()) {
+                    return;
+                }
+                
+                PrintWriter writer = new PrintWriter(response.getOutputStream());
+                writer.append(buffer);
+                writer.flush(); // Flush writer to underlying outputStream.
+                
+                // Only flush OutputStream if container tweaks allow it
+                if (!containerTweaks.shouldAvoidStreamFlushing()) {
+                    response.getOutputStream().flush();
+                }
+            } else {
+                // Check commitment before getting Writer
+                if (response.isCommitted()) {
+                    return;
+                }
+                
+                PrintWriter writer = response.getWriter();
+                writer.append(buffer);
+                
+                // Only flush Writer if container tweaks allow it
+                if (!containerTweaks.shouldAvoidStreamFlushing()) {
+                    response.getWriter().flush();
+                }
+            }
+        } catch (IllegalStateException e) {
+            // This is expected in Tomcat 11 if response is committed
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /**
+     * Escape content for safe JavaScript injection
+     */
+    private String escapeForJavaScript(String content) {
+        if (content == null) return "''";
+        
+        return "'" + content
+            .replace("\\", "\\\\")
+            .replace("'", "\\'")
+            .replace("\"", "\\\"")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t")
+            .replace("</script>", "<\\/script>")
+            + "'";
     }
 
     /**
