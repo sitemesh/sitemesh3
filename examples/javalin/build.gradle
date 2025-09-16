@@ -11,7 +11,7 @@ ext.title = 'SiteMesh Example Javalin'
 description = 'SiteMesh Example: Javalin'
 
 application {
-    mainClassName = javaMainClass
+    mainClass = javaMainClass
 }
 
 tasks.jar {

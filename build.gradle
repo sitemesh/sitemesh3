@@ -8,10 +8,14 @@ plugins {
 }
 
 allprojects  {
+    apply plugin: 'java'
+
     group = 'org.sitemesh'
 
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 
     repositories {
         mavenCentral() // Use Maven Central Repo to search for Dependencies
@@ -22,7 +26,6 @@ subprojects {
     apply plugin: 'com.gorylenko.gradle-git-properties'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
-    apply plugin: 'java'
 
     afterEvaluate {
         jar {
