@@ -17,12 +17,7 @@
 <div class="disclaimer">Site disclaimer. This is an example.</div>
 <div class="navigation">
     <b>Examples:</b>
-    [<a href="./">Static</a>]
-    [<a href="demo.jsp">Dynamic</a>]
-    [<a href="demo.jsp?bootstrap=1">Dynamic Decorator</a>]
-    [<a href="demo.jsp?bootstrap=1&doubled=1">Dynamic Chaining</a>]
-    [<a href="demo.jsp?ex=1">500 Error</a>]
-    [<a href="demo.gsp">404 Error</a>]
+    [<a href="./">FreeMarker</a>]
 </div>
 
 </body>
