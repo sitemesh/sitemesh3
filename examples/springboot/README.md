@@ -2,7 +2,7 @@ SiteMesh 3 Spring Boot 3.1.1 Demo
 =======================================
 
 ```
-../gradlew bootRun
+../../gradlew bootRun
 ```
 
 
