@@ -9,7 +9,7 @@ All you need is Java installed on your computer.
 To run the SiteMesh demo in Jetty:
 
 ```
-../gradlew jettyRun
+../../gradlew jettyRun
 ```
     
 
@@ -18,7 +18,7 @@ or use `../gradlew.bat jettyRun` on Windows
 If you prefer Tomcat, you can use:
 
 ```
-../gradlew tomcatRun
+../../gradlew tomcatRun
 ```
 
 
