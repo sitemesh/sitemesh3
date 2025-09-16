@@ -13,15 +13,14 @@ import java.util.EnumSet;
 
 public class HelloWorld {
     public static void main(String[] args) {
-        JavalinFreemarker.init(configureFreemarker("/templates"));
-
         var app = Javalin.create(config -> {
+            config.fileRenderer(new JavalinFreemarker(configureFreemarker("/templates")));
             config.staticFiles.add(staticFiles -> {
                 staticFiles.hostedPath = "/static";
                 staticFiles.directory = "/";
                 staticFiles.location = Location.CLASSPATH;
             });
-            config.jetty.contextHandlerConfig(sch -> {
+            config.jetty.modifyServletContextHandler(sch -> {
                 sch.addFilter(new FilterHolder(ConfigurableSiteMeshFilter.create(b ->
                     b.setMimeTypes("text/html", "text/plain")
                         .setDecoratorPrefix("")
