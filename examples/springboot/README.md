@@ -1,4 +1,4 @@
-SiteMesh 3 Spring Boot 3.1.1 Demo
+SiteMesh 3 Spring Boot Demo
 =======================================
 
 ```
