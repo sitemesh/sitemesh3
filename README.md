@@ -702,3 +702,8 @@ In our final example, a decorator will be used on each sitemeshfileset.
 
 </project>
 ```
+
+Repo version check:
+```
+./gradlew dependencyUpdates
+```

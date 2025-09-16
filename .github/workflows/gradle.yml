@@ -2,30 +2,45 @@ name: Build and Publish SiteMesh
 
 on:
   push:
+    tags:
+      - '*'    # tag pushes will run the "release" flow
+    branches:
+      - '**'   # branch pushes will run the snapshot flow
 
 jobs:
   build-gradle-project:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v3
+
       - name: Set up JDK 17 with cache
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
-      #      - name: Setup Gradle
-      #        uses: gradle/gradle-build-action@v2
+
       - name: Restore gradle.properties
         env:
           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+
+      - name: Configure Gradle credentials (Central + signing)
         shell: bash
         run: |
           mkdir -p ~/.gradle/
           echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
-          echo "signing.secretKeyRingFile=${HOME}/.gradle/secring.gpg" >> ~/.gradle/gradle.properties
-          echo ${GPG_SIGNING_KEY} | base64 -d > ~/.gradle/secring.gpg
-      - name: Run build with Gradle Wrapper
-        run: ./gradlew test publishToSonatype
+
+      - name: Run tests
+        run: ./gradlew --no-daemon clean test
+
+      # Snapshot flow (any non-tag push)
+      - name: Publish SNAPSHOT to Central
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        run: ./gradlew --no-daemon publishToSonatype
+
+      # Release flow (tag push)
+      - name: Close and Release to Central
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        run: ./gradlew --no-daemon publishToSonatype closeAndReleaseSonatypeStagingRepository

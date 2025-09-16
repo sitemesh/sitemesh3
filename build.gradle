@@ -1,104 +1,79 @@
 plugins {
-    id "java-library"
-    id "maven-publish"
-    id "signing"
-    id "io.github.gradle-nexus.publish-plugin" version "2.0.0-rc-1"
-    id "com.gorylenko.gradle-git-properties" version "2.5.2"
-    id "com.github.ben-manes.versions" version "0.52.0"
+  id 'base'
+
+  id 'io.github.gradle-nexus.publish-plugin' version '2.0.0'
+
+  id "com.github.ben-manes.versions" version "0.52.0"
+  id "com.gorylenko.gradle-git-properties" version "2.5.2" apply false
 }
 
-allprojects  {
-    apply plugin: 'java'
-
-    group = 'org.sitemesh'
-
-    java {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    repositories {
-        mavenCentral() // Use Maven Central Repo to search for Dependencies
-    }
+allprojects {
+  group = 'org.sitemesh'
+  repositories { mavenCentral() }
 }
 
 subprojects {
-    apply plugin: 'com.gorylenko.gradle-git-properties'
-    apply plugin: 'maven-publish'
-    apply plugin: 'signing'
+  apply plugin: 'java-library'
+  apply plugin: 'maven-publish'
+  apply plugin: 'signing'
+  apply plugin: 'com.gorylenko.gradle-git-properties'
 
-    afterEvaluate {
-        jar {
-            manifest {
-                attributes(
-                        'Specification-Title' : project.ext.title,
-                        'Specification-Version': project.version
-                )
-            }
-        }
-    }
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                from(project.components.java)
-                versionMapping {
-                    usage('java-api') {
-                        fromResolutionOf('runtimeClasspath')
-                    }
-                }
-                pom {
-                    name = "${project.name}"
-                    description = 'SiteMesh is a web-page layout and decoration framework and web- application integration framework to aid in creating sites consisting of many pages for which a consistent look/feel, navigation and layout scheme is required.'
-                    url = 'https://github.com/sitemesh/sitemesh3'
-                    licenses {
-                        license {
-                            name =  'The Apache Software License, Version 2.0'
-                            url =  'https://www.apache.org/licenses/LICENSE-2.0.txt'
-                            distribution =  'repo'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id = 'joewalnes'
-                            name = 'Joe Walnes'
-                            email = 'joe dot walnes at gmail'
-                        }
-                        developer {
-                            id = 'rburton'
-                            name = 'Richard L. Burton III'
-                            email = 'rburton@codehaus.org'
-                        }
-                        developer {
-                            id = 'codeconsole'
-                            name = 'Scott Murphy'
-                        }
-                    }
-                    scm {
-                        connection = 'scm:git:git://github.com/sitemesh/sitemesh3.git'
-                        developerConnection = 'scm:git:git@github.com:sitemesh/sitemesh3.git'
-                        url = 'https://github.com/sitemesh/sitemesh3/'
-                    }
-                    issueManagement {
-                        system = 'GitHub'
-                        url = 'https://github.com/sitemesh/sitemesh3/issues'
-                    }
-                }
-            }
-        }
-    }
-    
-    signing {
-        sign publishing.publications.mavenJava
-    }
+  java {
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
+    withSourcesJar()
+    withJavadocJar()
+  }
 
-    java {
-        withSourcesJar()
-        withJavadocJar()
+  publishing {
+    publications {
+      mavenJava(MavenPublication) {
+        from components.java
+        pom {
+          name = project.name
+          description = 'SiteMesh 3 – HTML decoration and layout framework'
+          url = 'https://github.com/sitemesh/sitemesh3'
+          licenses {
+            license {
+              name = 'Apache License, Version 2.0'
+              url = 'https://www.apache.org/licenses/LICENSE-2.0'
+              distribution = 'repo'
+            }
+          }
+          scm {
+            url = 'https://github.com/sitemesh/sitemesh3'
+            connection = 'scm:git:https://github.com/sitemesh/sitemesh3.git'
+            developerConnection = 'scm:git:ssh://git@github.com/sitemesh/sitemesh3.git'
+          }
+          developers {
+            developer {
+              id = 'sitemesh'
+              name = 'SiteMesh Contributors'
+              url = 'https://github.com/sitemesh'
+            }
+          }
+        }
+      }
     }
+  }
+
+  signing {
+    def key = findProperty('signing.key') as String
+    def pass = findProperty('signing.password') as String
+    if (key && pass) {
+      useInMemoryPgpKeys(key, pass)
+      sign publishing.publications
+    }
+  }
 }
 
 nexusPublishing {
-    repositories {
-        sonatype()
+  packageGroup.set('org.sitemesh')
+  repositories {
+    sonatype {
+      nexusUrl.set(uri('https://ossrh-staging-api.central.sonatype.com/service/local/'))
+      snapshotRepositoryUrl.set(uri('https://central.sonatype.com/repository/maven-snapshots/'))
+      username.set(providers.gradleProperty('sonatypeUsername'))
+      password.set(providers.gradleProperty('sonatypePassword'))
     }
+  }
 }
