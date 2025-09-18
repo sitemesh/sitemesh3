@@ -6,6 +6,6 @@ ext.title = 'SiteMesh WebFilter'
 description = 'SiteMesh WebFilter'
 
 dependencies {
-    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
     api project(':sitemesh')
 }

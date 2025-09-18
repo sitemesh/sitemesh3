@@ -13,7 +13,7 @@ dependencies {
     testImplementation 'org.eclipse.jetty:jetty-util:11.0.20'
     testImplementation 'org.apache.ant:ant-testutil:1.10.14'
 
-    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
     compileOnly 'org.apache.ant:ant:1.10.14'
     lexer 'de.jflex:jflex:1.4.3'
 }
