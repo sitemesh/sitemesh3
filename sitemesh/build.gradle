@@ -8,13 +8,13 @@ ext.title = 'SiteMesh Library'
 description = 'SiteMesh library'
 
 dependencies {
-    testImplementation 'junit:junit:4.5'
-    testImplementation 'org.eclipse.jetty:jetty-servlet:11.0.20'
-    testImplementation 'org.eclipse.jetty:jetty-util:11.0.20'
-    testImplementation 'org.apache.ant:ant-testutil:1.10.14'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.eclipse.jetty:jetty-servlet:11.0.26'
+    testImplementation 'org.eclipse.jetty:jetty-util:11.0.26'
+    testImplementation 'org.apache.ant:ant-testutil:1.10.15'
 
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
-    compileOnly 'org.apache.ant:ant:1.10.14'
+    compileOnly 'org.apache.ant:ant:1.10.15'
     lexer 'de.jflex:jflex:1.4.3'
 }
 
