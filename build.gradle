@@ -7,6 +7,18 @@ plugins {
   id "com.gorylenko.gradle-git-properties" version "2.5.3" apply false
 }
 
+def isNonStable = { String version ->
+  def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
+  def regex = /^[0-9,.v-]+(-r)?$/
+  return !stableKeyword && !(version ==~ regex)
+}
+tasks.named("dependencyUpdates").configure {
+  rejectVersionIf {
+    isNonStable(it.candidate.version)
+  }
+}
+// ./gradlew dependencyUpdates
+
 allprojects {
   group = 'org.sitemesh'
   repositories { mavenCentral() }
