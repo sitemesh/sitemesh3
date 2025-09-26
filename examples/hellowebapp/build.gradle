@@ -7,7 +7,7 @@
 
 plugins {
     id 'war'
-    id "org.gretty" version "4.1.7"
+    id "org.gretty" version "4.1.10"
 }
 gretty {
     contextPath = '/'
