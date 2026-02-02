@@ -4,7 +4,7 @@ plugins {
   id 'io.github.gradle-nexus.publish-plugin' version '2.0.0'
 
   id "com.github.ben-manes.versions" version "0.53.0"
-  id "com.gorylenko.gradle-git-properties" version "2.5.3" apply false
+  id "com.gorylenko.gradle-git-properties" version "2.5.4" apply false
 }
 
 def isNonStable = { String version ->
