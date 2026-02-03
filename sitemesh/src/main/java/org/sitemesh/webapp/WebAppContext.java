@@ -202,7 +202,9 @@ public class WebAppContext extends BaseSiteMeshContext {
         if (dispatcher == null) {
             throw new ServletException("Not found: " + path);
         }
-        dispatcher.forward(request, response);
+        // Use include instead of forward to avoid committing the response.
+        // Forward commits the response which prevents further writing.
+        dispatcher.include(request, response);
     }
 
 }

@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'war'
 	id 'org.springframework.boot' version '4.0.1'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -7,20 +8,34 @@ plugins {
 ext.title = 'SiteMesh Example Spring Boot Application'
 description = 'SiteMesh Example: Spring Boot'
 
+// Default: Tomcat. Use -Pcontainer=jetty to run with Jetty
+// Example: ./gradlew :sitemesh-examples-springboot:bootRun -Pcontainer=jetty
+def useJetty = project.findProperty('container') == 'jetty'
+
 dependencies {
 	implementation project(':spring-boot-starter-sitemesh')
 	implementation project(':sitemesh')
 	implementation 'org.springframework.boot:spring-boot-starter-freemarker'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-jetty'
 
-	// JSP support for Jetty 12 EE11
-	implementation 'org.eclipse.jetty.ee11:jetty-ee11-apache-jsp'
-	implementation 'org.eclipse.jetty.ee11:jetty-ee11-glassfish-jstl'
+	if (useJetty) {
+		implementation 'org.springframework.boot:spring-boot-starter-jetty'
+		// JSP support for Jetty 12 EE11
+		implementation 'org.eclipse.jetty.ee11:jetty-ee11-apache-jsp'
+		implementation 'org.eclipse.jetty.ee11:jetty-ee11-glassfish-jstl'
+	} else {
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		// JSP support for Tomcat
+		implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+		implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0'
+		implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1'
+	}
 }
 
 configurations {
 	implementation {
-		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+		if (useJetty) {
+			exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+		}
 	}
 }

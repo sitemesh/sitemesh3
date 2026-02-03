@@ -9,12 +9,20 @@ plugins {
     id 'war'
     id "org.gretty" version "5.0.1"
 }
+
 gretty {
     contextPath = '/'
-    servletContainer = 'jetty12'
+    servletContainer = 'tomcat11'
 }
 
-defaultTasks 'jettyRun'
+// Override jettyRun to use Jetty 12 instead of default Jetty 11
+tasks.matching { it.name == 'jettyRun' }.configureEach {
+    doFirst {
+        gretty.servletContainer = 'jetty12'
+    }
+}
+
+defaultTasks 'tomcatRun'
 
 ext.title = 'SiteMesh Example Web-app'
 description = 'SiteMesh Example: Hello World Web-app'

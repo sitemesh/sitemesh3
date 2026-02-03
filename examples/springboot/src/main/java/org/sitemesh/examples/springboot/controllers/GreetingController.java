@@ -35,6 +35,15 @@ public class GreetingController {
 
     @Autowired InternalResourceViewResolver internalResourceViewResolver;
 
+    /**
+     * Redirect root to index.html to avoid Spring Boot's WelcomePageHandlerMapping
+     * which uses forward and causes empty responses on Tomcat 11.
+     */
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/index.html";
+    }
+
     @GetMapping("/greeting/{type}")
     public String greeting(@PathVariable String type, @RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
         model.addAttribute("name", name);

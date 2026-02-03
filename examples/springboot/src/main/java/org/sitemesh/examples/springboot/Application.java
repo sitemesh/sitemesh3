@@ -21,6 +21,7 @@ import org.sitemesh.config.ConfigurableSiteMeshFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import jakarta.servlet.Filter;
 
@@ -29,6 +30,20 @@ public class Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
+	}
+
+	/**
+	 * Configure JSP view resolver to use include instead of forward.
+	 * This is required for Tomcat 11 compatibility where forward commits
+	 * the response, preventing SiteMesh from decorating the content.
+	 */
+	@Bean
+	public InternalResourceViewResolver jspViewResolver() {
+		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+		resolver.setPrefix("/WEB-INF/jsp/");
+		resolver.setSuffix(".jsp");
+		resolver.setAlwaysInclude(true);  // Use include instead of forward
+		return resolver;
 	}
 
 	// Alternatively, you could not use spring-boot-starter-sitemesh and configure sitemesh manually:
