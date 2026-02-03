@@ -8,14 +8,16 @@ SiteMesh 3: Official repository
 
 Currently maintained versions:
 
-| 3.1.x | 3.2.x | 
-| --------------- | --------------- |
-| Java 8+ | Java 17+ |
-| Servlet API 3.0-4.0.1 | Jakarta EE 10 |
-| Spring Boot 2.x Support| Spring Boot 3.x Support |
-|[3.1.x](https://github.com/sitemesh/sitemesh3/tree/3.1.x)| [Master Branch](https://github.com/sitemesh/sitemesh3)|
-|[Java Docs](https://sitemesh.github.io/sitemesh3/javadoc/3.1.x/)||
-| [Download 3.1.1](https://github.com/sitemesh/sitemesh3/releases/tag/3.1.1) | [Download 3.2.1](https://github.com/sitemesh/sitemesh3/releases/tag/3.2.1)|
+| 3.1.x | 3.2.x | 3.3.x |
+| --------------- | --------------- | --------------- |
+| Java 8+ | Java 17+ | Java 17+ |
+| Servlet API 3.0-4.0.1 | Jakarta EE 9/10 | Jakarta EE 11 |
+| Spring Boot 2.x | Spring Boot 3.x | Spring Boot 4.x |
+| Jetty 9.x, 10.x | Jetty 11.x, 12.x | Jetty 12.x |
+| Tomcat 8.x, 9.x | Tomcat 10.x, 11.x | Tomcat 11.x |
+|[3.1.x](https://github.com/sitemesh/sitemesh3/tree/3.1.x)|[3.2.x](https://github.com/sitemesh/sitemesh3/tree/3.2.x)| [Master Branch](https://github.com/sitemesh/sitemesh3)|
+|[Java Docs](https://sitemesh.github.io/sitemesh3/javadoc/3.1.x/)|||
+| [Download 3.1.1](https://github.com/sitemesh/sitemesh3/releases/tag/3.1.1) | [Download 3.2.1](https://github.com/sitemesh/sitemesh3/releases/tag/3.2.1)||
 
 [Website / Documentation (Built with Offline Generator)](https://sitemesh.github.io/sitemesh-website/)
 
