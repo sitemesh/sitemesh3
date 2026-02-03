@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.10'
+	id 'org.springframework.boot' version '4.0.1'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -12,5 +12,15 @@ dependencies {
 	implementation project(':sitemesh')
 	implementation 'org.springframework.boot:spring-boot-starter-freemarker'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper' // jsp
+	implementation 'org.springframework.boot:spring-boot-starter-jetty'
+
+	// JSP support for Jetty 12 EE11
+	implementation 'org.eclipse.jetty.ee11:jetty-ee11-apache-jsp'
+	implementation 'org.eclipse.jetty.ee11:jetty-ee11-glassfish-jstl'
+}
+
+configurations {
+	implementation {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+	}
 }

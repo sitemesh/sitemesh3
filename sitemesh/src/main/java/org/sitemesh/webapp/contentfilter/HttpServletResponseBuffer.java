@@ -190,6 +190,14 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     }
 
     @Override
+    public void setContentLengthLong(long contentLength) {
+        // Prevent content-length being set if buffering.
+        if (buffer == null) {
+            super.setContentLengthLong(contentLength);
+        }
+    }
+
+    @Override
     public void flushBuffer() throws IOException {
         // Prevent buffer from being flushed if buffering.
         if (buffer == null) {
@@ -203,7 +211,10 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
         String lowerName = name.toLowerCase();
         if (lowerName.equals("content-type")) {
             // ensure ContentType is always set through setContentType()
-            setContentType(value);
+            // Only process non-null values to avoid disabling buffering when headers are removed
+            if (value != null) {
+                setContentType(value);
+            }
         } else if (buffer == null || !lowerName.equals("content-length")) {
             super.setHeader(name, value);
         }
@@ -214,7 +225,10 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
         // Prevent content-length being set if buffering.
         if (name.equalsIgnoreCase("content-type")) {
             // ensure ContentType is always set through setContentType()
-            setContentType(value);
+            // Only process non-null values to avoid disabling buffering when headers are removed
+            if (value != null) {
+                setContentType(value);
+            }
         } else if (buffer == null || !name.equalsIgnoreCase("content-length")) {
             super.addHeader(name, value);
         }

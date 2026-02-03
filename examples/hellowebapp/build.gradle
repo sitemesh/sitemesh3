@@ -11,6 +11,7 @@ plugins {
 }
 gretty {
     contextPath = '/'
+    servletContainer = 'jetty12'
 }
 
 defaultTasks 'jettyRun'
@@ -19,7 +20,7 @@ ext.title = 'SiteMesh Example Web-app'
 description = 'SiteMesh Example: Hello World Web-app'
 
 dependencies {
-    // https://docs.oracle.com/javaee/6/javaserverfaces/2.0/docs/pdldocs/facelets/c/tld-summary.html
-    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:2.0.0'
+    implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0'
+    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1'
     implementation project(':sitemesh-webfilter')
 }

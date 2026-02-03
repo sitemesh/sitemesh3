@@ -20,6 +20,7 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * Provides a ServletOutputStream that routes through to another ServletOutputStream, however the destination
@@ -172,6 +173,11 @@ public class RoutableServletOutputStream extends ServletOutputStream {
     @Override
     public void flush() throws IOException {
         getDestination().flush();
+    }
+
+    @Override
+    public void write(ByteBuffer buffer) throws IOException {
+        getDestination().write(buffer);
     }
 
 }

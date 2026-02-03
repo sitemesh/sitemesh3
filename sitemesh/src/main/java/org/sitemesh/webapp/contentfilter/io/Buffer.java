@@ -22,6 +22,7 @@ import jakarta.servlet.WriteListener;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
 /**
@@ -80,6 +81,18 @@ public class Buffer {
                 @Override
                 public void write(byte[] b, int off, int len) throws IOException {
                     byteBufferBuilder.write(b, off, len);
+                }
+
+                @Override
+                public void write(ByteBuffer buffer) throws IOException {
+                    if (buffer.hasArray()) {
+                        byteBufferBuilder.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.remaining());
+                        buffer.position(buffer.limit());
+                    } else {
+                        byte[] bytes = new byte[buffer.remaining()];
+                        buffer.get(bytes);
+                        byteBufferBuilder.write(bytes, 0, bytes.length);
+                    }
                 }
             };
         }
