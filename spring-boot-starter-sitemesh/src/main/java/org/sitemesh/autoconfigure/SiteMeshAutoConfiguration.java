@@ -38,8 +38,8 @@ import java.util.*;
 @AutoConfiguration
 @ConfigurationProperties(prefix = "sitemesh.decorator")
 public class SiteMeshAutoConfiguration {
-    private List<HashMap<String, String>> mappings;
-    public void setMappings(List<HashMap<String, String>> mappings) {
+    private List<HashMap<String, List<String>>> mappings;
+    public void setMappings(List<HashMap<String, List<String>>> mappings) {
         this.mappings = mappings;
     }
 
@@ -61,7 +61,7 @@ public class SiteMeshAutoConfiguration {
     private int filterOrder;
 
     public static Filter makeFilter(String attribute, String defaultPath, String metaTagName, String prefix,
-                                            List<HashMap<String, String>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages, boolean alwaysApply) {
+                                            List<HashMap<String, List<String>>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages, boolean alwaysApply) {
         SiteMeshFilterBuilder builder = new SiteMeshFilterBuilder();
         MetaTagBasedDecoratorSelector decoratorSelector = attribute != null?
             new RequestAttributeDecoratorSelector().setDecoratorAttribute(attribute) :
@@ -71,8 +71,10 @@ public class SiteMeshAutoConfiguration {
         }
         builder.setCustomDecoratorSelector(decoratorSelector.setMetaTagName(metaTagName).setPrefix(prefix));
         if (mappings != null) {
-            for (Map<String, String> decorator : mappings) {
-                builder.addDecoratorPath(decorator.get("path"), decorator.get("decorator"));
+            for (Map<String, List<String>> decorator : mappings) {
+                for(String path: decorator.get("path")) {
+                    builder.addDecoratorPaths(path, decorator.get("decorator"));
+                }
             }
         }
         if (exclusions != null) {
