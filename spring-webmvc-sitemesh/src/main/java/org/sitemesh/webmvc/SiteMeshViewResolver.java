@@ -45,7 +45,7 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
     private final ServletContext servletContext;
 
     private String layoutPathPrefix = DEFAULT_LAYOUT_PATH_PREFIX;
-    private int order = Ordered.LOWEST_PRECEDENCE - 10;
+    private int order;
 
     public SiteMeshViewResolver(ViewResolver innerViewResolver,
                                 ContentProcessor contentProcessor,
@@ -55,6 +55,13 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
         this.contentProcessor = contentProcessor;
         this.decoratorSelector = decoratorSelector;
         this.servletContext = servletContext;
+        // Inherit the inner resolver's order so wrapping does not change
+        // the ordering DispatcherServlet and ContentNegotiatingViewResolver
+        // use to pick among resolvers. An inner without Ordered semantics
+        // falls back to LOWEST_PRECEDENCE, matching the framework default.
+        this.order = innerViewResolver instanceof Ordered o
+                ? o.getOrder()
+                : Ordered.LOWEST_PRECEDENCE;
     }
 
     @Override

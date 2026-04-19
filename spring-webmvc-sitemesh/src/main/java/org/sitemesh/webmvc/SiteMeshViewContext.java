@@ -72,23 +72,42 @@ public class SiteMeshViewContext extends WebAppContext {
     @Override
     public void dispatch(HttpServletRequest request, HttpServletResponse response, String path)
             throws ServletException, IOException {
-        View view;
-        try {
-            view = viewResolver.resolveViewName(path, locale);
-        } catch (IOException | ServletException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ServletException("Failed to resolve decorator view: " + path, e);
+        // Decorator paths that look like servlet paths — i.e. start with
+        // "/" — are resolved through the servlet container's
+        // RequestDispatcher, exactly as in the filter-based integration.
+        // This keeps filter-mode and view-resolver mode interchangeable
+        // for the common case of a decorator served as a static resource
+        // (e.g. "/decorators/default.html" under src/main/resources/static)
+        // and avoids the pathological case where a permissive template
+        // engine's ViewResolver (Thymeleaf, FreeMarker's default, …)
+        // speculatively claims the decorator path and then fails to load
+        // it as a template. Only names that do not start with "/" are
+        // treated as Spring MVC logical view names and routed through
+        // the {@link ViewResolver} chain, so callers that explicitly want
+        // a decorator rendered by a template engine can opt in by
+        // configuring a decorator path without a leading slash.
+        if (path != null && !path.startsWith("/")) {
+            View view;
+            try {
+                view = viewResolver.resolveViewName(path, locale);
+            } catch (IOException | ServletException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new ServletException("Failed to resolve decorator view: " + path, e);
+            }
+            if (view != null) {
+                try {
+                    view.render(Collections.emptyMap(), request, response);
+                    return;
+                } catch (IOException | ServletException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new ServletException("Failed to render decorator view: " + path, e);
+                }
+            }
         }
-        if (view == null) {
-            throw new ServletException("View not found: " + path);
-        }
-        try {
-            view.render(Collections.emptyMap(), request, response);
-        } catch (IOException | ServletException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ServletException("Failed to render decorator view: " + path, e);
-        }
+        // Fall back to the servlet container's RequestDispatcher (inherited
+        // from {@link org.sitemesh.webapp.WebAppContext#dispatch}).
+        super.dispatch(request, response, path);
     }
 }

@@ -6,6 +6,8 @@ spring:
   freemarker:
     suffix: .ftl
 sitemesh:
+  # Switch to `view-resolver` to demo the Spring MVC ViewResolver integration.
+  integration: filter
   decorator:
     metaTag: decorator
 #    tagRuleBundles: org.sitemesh.content.tagrules.html.Sm2TagRuleBundle

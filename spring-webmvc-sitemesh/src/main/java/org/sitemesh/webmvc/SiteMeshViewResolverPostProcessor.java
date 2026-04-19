@@ -98,7 +98,11 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
     }
 
     public void setTargetViewResolverBeanName(String targetViewResolverBeanName) {
-        this.targetViewResolverBeanName = targetViewResolverBeanName;
+        // Preserve the field default if a caller passes null (e.g. an auto-config
+        // whose @Value placeholder didn't resolve during early PP instantiation).
+        if (targetViewResolverBeanName != null) {
+            this.targetViewResolverBeanName = targetViewResolverBeanName;
+        }
     }
 
     public String getSiteMeshViewResolverBeanName() {

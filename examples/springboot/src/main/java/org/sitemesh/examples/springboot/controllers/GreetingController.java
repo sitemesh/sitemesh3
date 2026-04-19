@@ -18,6 +18,7 @@ package org.sitemesh.examples.springboot.controllers;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.ViewResolver;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -33,7 +34,16 @@ import java.util.Date;
 @Controller
 public class GreetingController {
 
-    @Autowired InternalResourceViewResolver internalResourceViewResolver;
+    /**
+     * Injected as a {@link ViewResolver} so the example works under both
+     * SiteMesh integrations. The {@code @Qualifier("defaultViewResolver")}
+     * targets Spring Boot's auto-configured JSP resolver. In filter-mode
+     * this is a plain {@code InternalResourceViewResolver}; in
+     * view-resolver mode the SiteMesh starter wraps it with a
+     * {@link org.sitemesh.webmvc.SiteMeshViewResolver} under the same
+     * bean name.
+     */
+    @Autowired @Qualifier("defaultViewResolver") ViewResolver internalResourceViewResolver;
 
     @GetMapping("/greeting/{type}")
     public String greeting(@PathVariable String type, @RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {

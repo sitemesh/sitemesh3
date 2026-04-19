@@ -69,18 +69,45 @@ public class SiteMeshViewContextTest extends TestCase {
         assertTrue("Inner view was not rendered", rendered.get());
     }
 
-    public void testDispatchThrowsServletExceptionWhenViewMissing() {
-        ViewResolver resolver = (name, loc) -> null;
+    public void testDispatchUsesServletContextForAbsolutePath() throws Exception {
+        // Absolute servlet paths (starting with "/") go through the
+        // servlet container's RequestDispatcher so a decorator served as
+        // a static resource works the same way in filter-mode and
+        // view-resolver mode, and so a permissive template engine cannot
+        // speculatively claim the decorator path and then fail to load
+        // it as a template.
+        ViewResolver resolver = (name, loc) -> { throw new AssertionError("ViewResolver must not be consulted for absolute path"); };
         SiteMeshViewContext ctx = new SiteMeshViewContext("text/html", request, response, servletContext,
                 contentProcessor, metaData, false, resolver, Locale.ENGLISH);
-        try {
-            ctx.dispatch(request, response, "missing");
-            fail("Expected ServletException for missing view");
-        } catch (ServletException e) {
-            assertTrue(e.getMessage(), e.getMessage().contains("missing"));
-        } catch (Exception e) {
-            fail("Expected ServletException, got " + e);
-        }
+
+        ctx.dispatch(request, response, "/decorators/default.html");
+
+        // On 3.2.x WebAppContext.dispatch uses forward(); on master it uses
+        // include(). Accept either — both prove the servlet container's
+        // RequestDispatcher was consulted and the ViewResolver was not.
+        assertNotNull("expected MockRequestDispatcher to have been forwarded or included",
+                response.getForwardedUrl() != null ? response.getForwardedUrl() : response.getIncludedUrl());
+    }
+
+    public void testDispatchResolvesLogicalNameThroughViewResolver() throws Exception {
+        // Logical view names (no leading slash) are resolved through the
+        // ViewResolver chain first. If the chain finds a view, it renders;
+        // otherwise the servlet-context fallback runs (covered by
+        // {@link #testDispatchUsesServletContextForAbsolutePath}).
+        final java.util.concurrent.atomic.AtomicBoolean rendered = new java.util.concurrent.atomic.AtomicBoolean();
+        View view = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(java.util.Map<String, ?> m, HttpServletRequest r, HttpServletResponse s) {
+                rendered.set(true);
+            }
+        };
+        ViewResolver resolver = (name, loc) -> "decorator".equals(name) ? view : null;
+        SiteMeshViewContext ctx = new SiteMeshViewContext("text/html", request, response, servletContext,
+                contentProcessor, metaData, false, resolver, Locale.ENGLISH);
+
+        ctx.dispatch(request, response, "decorator");
+
+        assertTrue("ViewResolver-resolved logical view was not rendered", rendered.get());
     }
 
     public void testDispatchWrapsResolverExceptionInServletException() {

@@ -86,10 +86,15 @@ public class SiteMeshViewResolverAutoConfiguration {
         this.mappings = mappings;
     }
 
+    // Field defaults mirror the @Value defaults below. Both are needed:
+    // when this class produces a BeanDefinitionRegistryPostProcessor bean,
+    // the enclosing auto-config is instantiated before property placeholder
+    // resolution is fully online, so @Value defaults may not fire. The field
+    // initializers ensure sensible values regardless of injection timing.
     @Value("${sitemesh.decorator.prefix:/decorators/}")
-    private String prefix;
+    private String prefix = "/decorators/";
     @Value("${sitemesh.decorator.metaTag:decorator}")
-    private String metaTagName;
+    private String metaTagName = "decorator";
     @Value("${sitemesh.decorator.tagRuleBundles:}")
     private List<String> bundles;
     @Value("${sitemesh.decorator.attribute:#{null}}")
@@ -103,7 +108,7 @@ public class SiteMeshViewResolverAutoConfiguration {
      * A Grails or Thymeleaf app will want to override this.
      */
     @Value("${sitemesh.viewResolver.targetBeanName:jspViewResolver}")
-    private String targetViewResolverBeanName;
+    private String targetViewResolverBeanName = "jspViewResolver";
 
     @Bean
     @ConditionalOnMissingBean(name = "contentProcessor")
@@ -148,15 +153,42 @@ public class SiteMeshViewResolverAutoConfiguration {
     }
 
     /**
-     * Registers the bean-definition-rewriting post processor. Chosen when
-     * {@code sitemesh.viewResolver.wrapMode=bean-definition} (the default
-     * for backward compatibility). See {@link SiteMeshViewResolverPostProcessor}
-     * for the lifecycle semantics of this variant.
+     * Registers a {@link SiteMeshViewResolverBeanPostProcessor} that
+     * wraps every leaf {@link ViewResolver} bean (skipping delegating
+     * front-ends such as {@code ContentNegotiatingViewResolver} and
+     * {@code ViewResolverComposite}) with a
+     * {@link org.sitemesh.webmvc.SiteMeshViewResolver}. This is the
+     * default mode and is required on modern Spring Boot installs where
+     * multiple template-engine resolvers (JSP + Freemarker + Thymeleaf,
+     * etc.) co-exist: any one of them may win view resolution, so each
+     * must return a {@link SiteMeshView}. Controllers that inject a
+     * wrapped resolver by its concrete leaf type must switch to the
+     * {@link ViewResolver} interface — see {@code SiteMeshViewResolverBeanPostProcessor#setWrapAll}.
+     * Opt in to the older single-resolver modes via
+     * {@code sitemesh.viewResolver.wrapMode = bean-definition} or
+     * {@code = bean-instance}.
+     */
+    @Bean
+    @ConditionalOnMissingBean(SiteMeshViewResolverBeanPostProcessor.class)
+    @ConditionalOnProperty(name = "sitemesh.viewResolver.wrapMode",
+            havingValue = "all", matchIfMissing = true)
+    public SiteMeshViewResolverBeanPostProcessor siteMeshViewResolverWrapAllBeanPostProcessor() {
+        SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
+        pp.setWrapAll(true);
+        return pp;
+    }
+
+    /**
+     * Registers the bean-definition-rewriting post processor. Opt-in via
+     * {@code sitemesh.viewResolver.wrapMode=bean-definition}. See
+     * {@link SiteMeshViewResolverPostProcessor} for the lifecycle semantics
+     * of this variant. Suitable for single-resolver apps (e.g. pure JSP)
+     * or frameworks that specifically need bean-definition rewriting.
      */
     @Bean
     @ConditionalOnMissingBean(SiteMeshViewResolverPostProcessor.class)
     @ConditionalOnProperty(name = "sitemesh.viewResolver.wrapMode",
-            havingValue = "bean-definition", matchIfMissing = true)
+            havingValue = "bean-definition")
     public SiteMeshViewResolverPostProcessor siteMeshViewResolverPostProcessor() {
         SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
         pp.setTargetViewResolverBeanName(targetViewResolverBeanName);
@@ -164,7 +196,8 @@ public class SiteMeshViewResolverAutoConfiguration {
     }
 
     /**
-     * Registers the live-bean-wrapping post processor. Chosen when
+     * Registers the live-bean-wrapping post processor in single-target
+     * mode. Chosen when
      * {@code sitemesh.viewResolver.wrapMode=bean-instance}. Use this for
      * frameworks (for example Grails) where the target view resolver's
      * bean definition is not present in the registry at the time
