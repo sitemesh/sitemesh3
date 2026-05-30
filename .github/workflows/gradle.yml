@@ -6,6 +6,7 @@ on:
       - '*'    # tag pushes will run the "release" flow
     branches:
       - '**'   # branch pushes will run the snapshot flow
+  workflow_dispatch: # allow the Release workflow to dispatch this on a new tag
 
 jobs:
   build-gradle-project:
