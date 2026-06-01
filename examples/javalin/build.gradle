@@ -25,9 +25,9 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'org.slf4j:slf4j-simple:2.0.17'
-    implementation 'io.javalin:javalin:7.1.0'
-    implementation 'io.javalin:javalin-rendering-freemarker:7.1.0'
+    implementation 'org.slf4j:slf4j-simple:2.0.18'
+    implementation 'io.javalin:javalin:7.2.2'
+    implementation 'io.javalin:javalin-rendering-freemarker:7.2.2'
     implementation 'org.freemarker:freemarker:2.3.34'
     implementation project(':sitemesh')
 }
