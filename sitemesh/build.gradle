@@ -9,8 +9,8 @@ description = 'SiteMesh library'
 
 dependencies {
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.eclipse.jetty.ee10:jetty-ee10-servlet:12.1.8'
-    testImplementation 'org.eclipse.jetty:jetty-util:12.1.8'
+    testImplementation 'org.eclipse.jetty.ee10:jetty-ee10-servlet:12.1.9'
+    testImplementation 'org.eclipse.jetty:jetty-util:12.1.9'
     testImplementation 'org.apache.ant:ant-testutil:1.10.17'
 
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
