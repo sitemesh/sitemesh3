@@ -28,6 +28,7 @@ import org.sitemesh.SiteMeshContext;
 import org.sitemesh.config.PathMapper;
 import org.sitemesh.content.Content;
 import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.webapp.DispatchMode;
 import org.sitemesh.webapp.contentfilter.BasicSelector;
 import org.sitemesh.webapp.contentfilter.HttpServletResponseBuffer;
 import org.sitemesh.webapp.contentfilter.ResponseMetaData;
@@ -69,17 +70,32 @@ public class SiteMeshView implements View {
     private final DecoratorSelector<SiteMeshContext> decoratorSelector;
     private final ServletContext servletContext;
     private final ViewResolver viewResolver;
+    private final DispatchMode dispatchMode;
 
+    /**
+     * Equivalent to the {@link DispatchMode}-taking constructor with
+     * {@link DispatchMode#DETECT}.
+     */
     public SiteMeshView(View innerView,
                         ContentProcessor contentProcessor,
                         DecoratorSelector<SiteMeshContext> decoratorSelector,
                         ServletContext servletContext,
                         ViewResolver viewResolver) {
+        this(innerView, contentProcessor, decoratorSelector, servletContext, viewResolver, DispatchMode.DETECT);
+    }
+
+    public SiteMeshView(View innerView,
+                        ContentProcessor contentProcessor,
+                        DecoratorSelector<SiteMeshContext> decoratorSelector,
+                        ServletContext servletContext,
+                        ViewResolver viewResolver,
+                        DispatchMode dispatchMode) {
         this.innerView = innerView;
         this.contentProcessor = contentProcessor;
         this.decoratorSelector = decoratorSelector;
         this.servletContext = servletContext;
         this.viewResolver = viewResolver;
+        this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
     }
 
     @Override
@@ -126,6 +142,15 @@ public class SiteMeshView implements View {
      */
     protected ViewResolver getViewResolver() {
         return viewResolver;
+    }
+
+    /**
+     * Returns the {@link DispatchMode} this view's context dispatches
+     * decorators with. Exposed for the same reason as
+     * {@link #getContentProcessor()}.
+     */
+    protected DispatchMode getDispatchMode() {
+        return dispatchMode;
     }
 
     @Override
@@ -180,7 +205,7 @@ public class SiteMeshView implements View {
         return new SiteMeshViewContext(
                 contentType, request, response, servletContext,
                 contentProcessor, metaData, false,
-                viewResolver, request.getLocale());
+                viewResolver, request.getLocale(), dispatchMode);
     }
 
     private void doRender(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)

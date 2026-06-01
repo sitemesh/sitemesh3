@@ -11,10 +11,17 @@ package org.sitemesh.webmvc;
 
 import junit.framework.TestCase;
 
+import org.sitemesh.DecoratorSelector;
+import org.sitemesh.SiteMeshContext;
+import org.sitemesh.content.tagrules.TagBasedContentProcessor;
+import org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle;
+import org.sitemesh.webapp.DispatchMode;
+
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 /**
@@ -73,6 +80,38 @@ public class SiteMeshViewResolverPostProcessorTest extends TestCase {
 
         BeanDefinition wrapper = registry.getBeanDefinition("jspViewResolver");
         assertEquals(CustomSiteMeshViewResolver.class.getName(), wrapper.getBeanClassName());
+    }
+
+    public void testDispatchModeDefaultsToDetectOnWrapperDefinition() {
+        registerTarget("jspViewResolver");
+
+        SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
+        pp.postProcessBeanDefinitionRegistry(registry);
+
+        BeanDefinition wrapper = registry.getBeanDefinition("jspViewResolver");
+        assertEquals(DispatchMode.DETECT, wrapper.getPropertyValues().get("dispatchMode"));
+    }
+
+    /**
+     * Instantiates the rewritten wrapper bean to prove Spring actually applies
+     * the {@code dispatchMode} property value onto the {@link SiteMeshViewResolver}
+     * after construction (a silent fallback to DETECT would otherwise go
+     * unnoticed in the bean-definition wrapMode).
+     */
+    public void testConfiguredDispatchModeAppliedWhenWrapperInstantiated() {
+        registerTarget("jspViewResolver");
+        registry.registerSingleton("contentProcessor", new TagBasedContentProcessor(new CoreHtmlTagRuleBundle()));
+        registry.registerSingleton("decoratorSelector",
+                (DecoratorSelector<SiteMeshContext>) (content, context) -> new String[0]);
+        registry.registerSingleton("servletContext", new MockServletContext());
+
+        SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
+        pp.setDispatchMode(DispatchMode.INCLUDE);
+        pp.postProcessBeanDefinitionRegistry(registry);
+
+        SiteMeshViewResolver wrapper = registry.getBean("jspViewResolver", SiteMeshViewResolver.class);
+        assertEquals("configured dispatch mode must survive the bean-definition rewrite and be applied on instantiation",
+                DispatchMode.INCLUDE, wrapper.getDispatchMode());
     }
 
     public static class CustomSiteMeshViewResolver extends SiteMeshViewResolver {

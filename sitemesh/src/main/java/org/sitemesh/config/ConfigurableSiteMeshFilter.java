@@ -125,6 +125,11 @@ import java.util.logging.Logger;
  * <p><b><code>exclude</code></b> (optional): A list of path patterns to exclude from
  * decoration, separated by whitespace or commas. e.g. <code>/javadoc/*, somepage.html, *.jsp</code></p>
  *
+ * <p><b><code>dispatchMode</code></b> (optional): How the decorator is dispatched -
+ * <code>include</code>, <code>forward</code>, or <code>detect</code>. Defaults to
+ * <code>detect</code> (use <code>include</code> on Tomcat 11+, <code>forward</code>
+ * elsewhere). See {@link org.sitemesh.webapp.DispatchMode}.</p>
+ *
  * <p>Where a <i>name</i> is used, this means the fully qualified class name, which must
  * have a default constructor.</p>
  *

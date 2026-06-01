@@ -23,6 +23,7 @@ import org.sitemesh.config.MetaTagBasedDecoratorSelector;
 import org.sitemesh.config.ObjectFactory;
 import org.sitemesh.config.RequestAttributeDecoratorSelector;
 import org.sitemesh.content.tagrules.TagRuleBundle;
+import org.sitemesh.webapp.DispatchMode;
 import org.sitemesh.webapp.WebAppContext;
 import org.sitemesh.webapp.contentfilter.Selector;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +50,8 @@ public class SiteMeshAutoConfiguration {
     private List<String> exclusions;
     @Value("${sitemesh.includeErrorPages:true}")
     boolean includeErrorPages;
+    @Value("${sitemesh.dispatchMode:detect}")
+    String dispatchMode;
     @Value("${sitemesh.decorator.prefix:/decorators/}")
     private String prefix;
     @Value("${sitemesh.decorator.metaTag:decorator}")
@@ -64,6 +67,12 @@ public class SiteMeshAutoConfiguration {
 
     public static Filter makeFilter(String attribute, String defaultPath, String metaTagName, String prefix,
                                             List<HashMap<String, String>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages, boolean alwaysApply) {
+        return makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles,
+                includeErrorPages, alwaysApply, DispatchMode.DETECT);
+    }
+
+    public static Filter makeFilter(String attribute, String defaultPath, String metaTagName, String prefix,
+                                            List<HashMap<String, String>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages, boolean alwaysApply, DispatchMode dispatchMode) {
         SiteMeshFilterBuilder builder = new SiteMeshFilterBuilder();
         MetaTagBasedDecoratorSelector decoratorSelector = attribute != null?
             new RequestAttributeDecoratorSelector().setDecoratorAttribute(attribute) :
@@ -87,6 +96,7 @@ public class SiteMeshAutoConfiguration {
             builder.addTagRuleBundle((TagRuleBundle) objectFactory.create(bundle));
         }
         builder.setIncludeErrorPages(includeErrorPages);
+        builder.setDispatchMode(dispatchMode);
         if (alwaysApply) {
             Selector basicSelector = builder.getSelector();
             builder.setCustomSelector(new Selector() {
@@ -118,7 +128,7 @@ public class SiteMeshAutoConfiguration {
     @ConditionalOnMissingBean(name = "sitemesh")
     public FilterRegistrationBean<Filter> sitemesh() {
         FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, includeErrorPages, false));
+        registrationBean.setFilter(makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, includeErrorPages, false, DispatchMode.fromString(dispatchMode, DispatchMode.DETECT)));
         registrationBean.addUrlPatterns("/*");
         if (includeErrorPages) {
             registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR));

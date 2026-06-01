@@ -37,6 +37,7 @@ import org.sitemesh.content.tagrules.TagRuleBundle;
 import org.sitemesh.content.tagrules.decorate.DecoratorTagRuleBundle;
 import org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle;
 import org.sitemesh.content.tagrules.html.Sm2TagRuleBundle;
+import org.sitemesh.webapp.DispatchMode;
 import org.sitemesh.webmvc.SiteMeshView;
 import org.sitemesh.webmvc.SiteMeshViewResolverBeanPostProcessor;
 import org.sitemesh.webmvc.SiteMeshViewResolverPostProcessor;
@@ -110,6 +111,14 @@ public class SiteMeshViewResolverAutoConfiguration {
     @Value("${sitemesh.viewResolver.targetBeanName:jspViewResolver}")
     private String targetViewResolverBeanName = "jspViewResolver";
 
+    /**
+     * How decorators are dispatched (include vs forward) in view-resolver
+     * mode. Mirrors the filter integration's {@code sitemesh.dispatchMode}.
+     * Defaults to {@code detect}. See {@link DispatchMode}.
+     */
+    @Value("${sitemesh.dispatchMode:detect}")
+    private String dispatchMode = "detect";
+
     @Bean
     @ConditionalOnMissingBean(name = "contentProcessor")
     public ContentProcessor contentProcessor() {
@@ -175,6 +184,7 @@ public class SiteMeshViewResolverAutoConfiguration {
     public SiteMeshViewResolverBeanPostProcessor siteMeshViewResolverWrapAllBeanPostProcessor() {
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
         pp.setWrapAll(true);
+        pp.setDispatchMode(DispatchMode.fromString(dispatchMode, DispatchMode.DETECT));
         return pp;
     }
 
@@ -192,6 +202,7 @@ public class SiteMeshViewResolverAutoConfiguration {
     public SiteMeshViewResolverPostProcessor siteMeshViewResolverPostProcessor() {
         SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
         pp.setTargetViewResolverBeanName(targetViewResolverBeanName);
+        pp.setDispatchMode(DispatchMode.fromString(dispatchMode, DispatchMode.DETECT));
         return pp;
     }
 
@@ -211,6 +222,7 @@ public class SiteMeshViewResolverAutoConfiguration {
     public SiteMeshViewResolverBeanPostProcessor siteMeshViewResolverBeanPostProcessor() {
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
         pp.setTargetViewResolverBeanName(targetViewResolverBeanName);
+        pp.setDispatchMode(DispatchMode.fromString(dispatchMode, DispatchMode.DETECT));
         return pp;
     }
 

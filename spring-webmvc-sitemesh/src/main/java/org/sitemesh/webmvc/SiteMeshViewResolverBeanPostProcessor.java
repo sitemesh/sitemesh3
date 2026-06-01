@@ -23,6 +23,7 @@ import jakarta.servlet.ServletContext;
 import org.sitemesh.DecoratorSelector;
 import org.sitemesh.SiteMeshContext;
 import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.webapp.DispatchMode;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -59,6 +60,7 @@ public class SiteMeshViewResolverBeanPostProcessor implements BeanPostProcessor,
 
     private String targetViewResolverBeanName = "jspViewResolver";
     private boolean wrapAll;
+    private DispatchMode dispatchMode = DispatchMode.DETECT;
     private String contentProcessorBeanName = "contentProcessor";
     private String decoratorSelectorBeanName = "decoratorSelector";
     private String servletContextBeanName = "servletContext";
@@ -100,7 +102,9 @@ public class SiteMeshViewResolverBeanPostProcessor implements BeanPostProcessor,
         @SuppressWarnings("unchecked")
         DecoratorSelector<SiteMeshContext> ds = beanFactory.getBean(decoratorSelectorBeanName, DecoratorSelector.class);
         ServletContext sc = beanFactory.getBean(servletContextBeanName, ServletContext.class);
-        return createSiteMeshViewResolver((ViewResolver) bean, cp, ds, sc);
+        SiteMeshViewResolver wrapped = createSiteMeshViewResolver((ViewResolver) bean, cp, ds, sc);
+        wrapped.setDispatchMode(dispatchMode);
+        return wrapped;
     }
 
     /**
@@ -172,6 +176,19 @@ public class SiteMeshViewResolverBeanPostProcessor implements BeanPostProcessor,
      */
     public void setWrapAll(boolean wrapAll) {
         this.wrapAll = wrapAll;
+    }
+
+    public DispatchMode getDispatchMode() {
+        return dispatchMode;
+    }
+
+    /**
+     * Set how wrapped resolvers' {@link SiteMeshView}s dispatch decorators
+     * (include vs forward). See {@link DispatchMode}. Null resets to
+     * {@link DispatchMode#DETECT}.
+     */
+    public void setDispatchMode(DispatchMode dispatchMode) {
+        this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
     }
 
     public String getTargetViewResolverBeanName() {

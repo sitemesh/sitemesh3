@@ -17,6 +17,7 @@ package org.sitemesh.webmvc;
 
 import java.util.logging.Logger;
 
+import org.sitemesh.webapp.DispatchMode;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
@@ -57,6 +58,7 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
     private String decoratorSelectorBeanName = "decoratorSelector";
     private String servletContextBeanName = "servletContext";
     private Class<? extends SiteMeshViewResolver> siteMeshViewResolverClass = SiteMeshViewResolver.class;
+    private DispatchMode dispatchMode = DispatchMode.DETECT;
 
     private int order = Ordered.LOWEST_PRECEDENCE - 100;
 
@@ -86,11 +88,25 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
         args.addIndexedArgumentValue(1, new RuntimeBeanReference(contentProcessorBeanName));
         args.addIndexedArgumentValue(2, new RuntimeBeanReference(decoratorSelectorBeanName));
         args.addIndexedArgumentValue(3, new RuntimeBeanReference(servletContextBeanName));
+        wrapperDefinition.getPropertyValues().add("dispatchMode", dispatchMode);
 
         registry.registerBeanDefinition(wrapperName, wrapperDefinition);
         if (!wrapperName.equals(targetName)) {
             registry.registerAlias(wrapperName, targetName);
         }
+    }
+
+    public DispatchMode getDispatchMode() {
+        return dispatchMode;
+    }
+
+    /**
+     * Set how the wrapped {@link SiteMeshViewResolver}'s views dispatch
+     * decorators (include vs forward). See {@link DispatchMode}. Null resets
+     * to {@link DispatchMode#DETECT}.
+     */
+    public void setDispatchMode(DispatchMode dispatchMode) {
+        this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
     }
 
     public String getTargetViewResolverBeanName() {

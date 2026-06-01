@@ -71,13 +71,32 @@ public class WebAppContext extends BaseSiteMeshContext {
     private final ServletContext servletContext;
     private final ResponseMetaData metaData;
     private final boolean includeErrorPages;
+    private final DispatchMode dispatchMode;
+
+    /** Resolved once from {@link #dispatchMode} at construction (a context is
+     * per-request and single-threaded), so {@link DispatchMode#DETECT} inspects
+     * the servlet container only once. */
+    private final boolean useIncludeForDispatch;
 
     private final static Logger logger = Logger.getLogger(WebAppContext.class.getName());
 
+    /**
+     * Equivalent to {@link #WebAppContext(String, HttpServletRequest,
+     * HttpServletResponse, ServletContext, ContentProcessor, ResponseMetaData,
+     * boolean, DispatchMode)} with {@link DispatchMode#DETECT}.
+     */
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
                          ContentProcessor contentProcessor, ResponseMetaData metaData,
                          boolean includeErrorPages) {
+        this(contentType, request, response, servletContext, contentProcessor, metaData,
+                includeErrorPages, DispatchMode.DETECT);
+    }
+
+    public WebAppContext(String contentType, HttpServletRequest request,
+                         HttpServletResponse response, ServletContext servletContext,
+                         ContentProcessor contentProcessor, ResponseMetaData metaData,
+                         boolean includeErrorPages, DispatchMode dispatchMode) {
         super(contentProcessor);
         this.contentType = contentType;
         this.request = request;
@@ -85,6 +104,8 @@ public class WebAppContext extends BaseSiteMeshContext {
         this.servletContext = servletContext;
         this.metaData = metaData;
         this.includeErrorPages = includeErrorPages;
+        this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
+        this.useIncludeForDispatch = this.dispatchMode.useInclude(servletContext);
     }
 
     public HttpServletRequest getRequest() {
@@ -195,6 +216,14 @@ public class WebAppContext extends BaseSiteMeshContext {
     /**
      * Dispatch to the actual path. This method can be overriden to provide different ways of dispatching
      * (such as cross web-app).
+     *
+     * <p>Whether this uses {@code forward()} or {@code include()} is governed
+     * by the configured {@link DispatchMode} (default {@link DispatchMode#DETECT}).
+     * {@code forward()} lets the decorator's {@code setDateHeader}/{@code Last-Modified}
+     * reach {@link HttpServletResponseBuffer} for conditional-GET, but is unsafe
+     * on Tomcat 11+ (it unwraps SiteMesh's response wrapper and commits a blank
+     * response); {@code include()} is safe everywhere but drops the decorator's
+     * {@code Last-Modified}. See {@link DispatchMode} for the full trade-off.</p>
      */
     protected void dispatch(HttpServletRequest request, HttpServletResponse response, String path)
             throws ServletException, IOException {
@@ -202,9 +231,18 @@ public class WebAppContext extends BaseSiteMeshContext {
         if (dispatcher == null) {
             throw new ServletException("Not found: " + path);
         }
-        // Use include instead of forward to avoid committing the response.
-        // Forward commits the response which prevents further writing.
-        dispatcher.include(request, response);
+        if (useIncludeForDispatch) {
+            dispatcher.include(request, response);
+        } else {
+            dispatcher.forward(request, response);
+        }
+    }
+
+    /**
+     * The {@link DispatchMode} this context dispatches decorators with.
+     */
+    public DispatchMode getDispatchMode() {
+        return dispatchMode;
     }
 
 }

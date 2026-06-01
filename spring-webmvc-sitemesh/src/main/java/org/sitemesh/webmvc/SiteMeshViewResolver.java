@@ -22,6 +22,7 @@ import jakarta.servlet.ServletContext;
 import org.sitemesh.DecoratorSelector;
 import org.sitemesh.SiteMeshContext;
 import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.webapp.DispatchMode;
 
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.SmartView;
@@ -46,6 +47,7 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
 
     private String layoutPathPrefix = DEFAULT_LAYOUT_PATH_PREFIX;
     private int order;
+    private DispatchMode dispatchMode = DispatchMode.DETECT;
 
     public SiteMeshViewResolver(ViewResolver innerViewResolver,
                                 ContentProcessor contentProcessor,
@@ -88,9 +90,31 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
      * subtype (for example to override {@link SiteMeshView#preRender
      * preRender}/{@link SiteMeshView#postRender postRender} hooks or the
      * context factory) without reimplementing {@link #resolveViewName}.
+     *
+     * <p>Overrides that construct the {@link SiteMeshView} themselves should
+     * pass {@link #getDispatchMode()} to its constructor; the
+     * {@code DispatchMode}-less {@link SiteMeshView} constructor defaults to
+     * {@link DispatchMode#DETECT} and would silently drop a configured mode.</p>
      */
     protected SiteMeshView createSiteMeshView(View innerView) {
-        return new SiteMeshView(innerView, contentProcessor, decoratorSelector, servletContext, innerViewResolver);
+        return new SiteMeshView(innerView, contentProcessor, decoratorSelector, servletContext, innerViewResolver, dispatchMode);
+    }
+
+    /**
+     * The {@link DispatchMode} the wrapped {@link SiteMeshView}s dispatch
+     * decorators with. Defaults to {@link DispatchMode#DETECT}.
+     */
+    public DispatchMode getDispatchMode() {
+        return dispatchMode;
+    }
+
+    /**
+     * Set how the decorator is dispatched (include vs forward) for views this
+     * resolver wraps. See {@link DispatchMode}. Null resets to
+     * {@link DispatchMode#DETECT}.
+     */
+    public void setDispatchMode(DispatchMode dispatchMode) {
+        this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
     }
 
     public ViewResolver getInnerViewResolver() {

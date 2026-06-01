@@ -19,6 +19,7 @@ package org.sitemesh.config.xml;
 import org.sitemesh.DecoratorSelector;
 import org.sitemesh.builder.BaseSiteMeshFilterBuilder;
 import org.sitemesh.config.ObjectFactory;
+import org.sitemesh.webapp.DispatchMode;
 import org.w3c.dom.Element;
 
 import java.util.List;
@@ -57,7 +58,13 @@ public class XmlFilterConfigurator extends XmlConfigurator {
         if (includeErrorPagesString != null) {
             builder.setIncludeErrorPages(isTrue(includeErrorPagesString));
         }
-        
+
+        // Decorator dispatch mode: include | forward | detect
+        String dispatchModeString = xml.child("dispatch-mode").text();
+        if (dispatchModeString != null) {
+            builder.setDispatchMode(DispatchMode.fromString(dispatchModeString, DispatchMode.DETECT));
+        }
+
         // Excludes
         for (Xml mapping : xml.children("mapping")) {
             String path = mapping.child("path").text(mapping.attribute("path", "/*"));

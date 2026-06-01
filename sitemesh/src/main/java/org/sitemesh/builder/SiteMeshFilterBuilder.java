@@ -74,7 +74,8 @@ public class SiteMeshFilterBuilder
                 getSelector(),
                 getContentProcessor(),
                 getDecoratorSelector(),
-                isIncludeErrorPages());
+                isIncludeErrorPages(),
+                getDispatchMode());
     }
 
 }

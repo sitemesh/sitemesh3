@@ -82,8 +82,35 @@ public class SiteMeshViewContextTest extends TestCase {
 
         ctx.dispatch(request, response, "/decorators/default.html");
 
-        assertNotNull("expected MockRequestDispatcher to have been included",
-                response.getIncludedUrl());
+        assertNotNull("expected MockRequestDispatcher to have been forwarded",
+                response.getForwardedUrl());
+    }
+
+    public void testDispatchHonorsExplicitIncludeMode() throws Exception {
+        // An explicit DispatchMode.INCLUDE must override the DETECT default
+        // (which would forward() on the non-Tomcat MockServletContext),
+        // proving the setting is threaded through the view-resolver path.
+        ViewResolver resolver = (name, loc) -> { throw new AssertionError("ViewResolver must not be consulted for absolute path"); };
+        SiteMeshViewContext ctx = new SiteMeshViewContext("text/html", request, response, servletContext,
+                contentProcessor, metaData, false, resolver, Locale.ENGLISH,
+                org.sitemesh.webapp.DispatchMode.INCLUDE);
+
+        ctx.dispatch(request, response, "/decorators/default.html");
+
+        assertNotNull("INCLUDE mode should have included", response.getIncludedUrl());
+        assertNull("INCLUDE mode should not have forwarded", response.getForwardedUrl());
+    }
+
+    public void testDispatchHonorsExplicitForwardMode() throws Exception {
+        ViewResolver resolver = (name, loc) -> { throw new AssertionError("ViewResolver must not be consulted for absolute path"); };
+        SiteMeshViewContext ctx = new SiteMeshViewContext("text/html", request, response, servletContext,
+                contentProcessor, metaData, false, resolver, Locale.ENGLISH,
+                org.sitemesh.webapp.DispatchMode.FORWARD);
+
+        ctx.dispatch(request, response, "/decorators/default.html");
+
+        assertNotNull("FORWARD mode should have forwarded", response.getForwardedUrl());
+        assertNull("FORWARD mode should not have included", response.getIncludedUrl());
     }
 
     public void testDispatchResolvesLogicalNameThroughViewResolver() throws Exception {

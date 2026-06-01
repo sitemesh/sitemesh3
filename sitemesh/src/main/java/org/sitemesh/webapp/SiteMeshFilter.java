@@ -59,8 +59,12 @@ public class SiteMeshFilter extends ContentBufferingFilter {
     private final ContentProcessor contentProcessor;
     private final DecoratorSelector<WebAppContext> decoratorSelector;
     private final boolean includeErrorPages;
+    private final DispatchMode dispatchMode;
 
     /**
+     * Equivalent to {@link #SiteMeshFilter(Selector, ContentProcessor,
+     * DecoratorSelector, boolean, DispatchMode)} with {@link DispatchMode#DETECT}.
+     *
      * @param selector Provides the rules for whether SiteMesh should be
      *                 used for a specific request. For a basic implementation, use
      *                 {@link org.sitemesh.webapp.contentfilter.BasicSelector}.
@@ -68,6 +72,20 @@ public class SiteMeshFilter extends ContentBufferingFilter {
     public SiteMeshFilter(Selector selector,
                           ContentProcessor contentProcessor,
                           DecoratorSelector<WebAppContext> decoratorSelector, boolean includeErrorPages) {
+        this(selector, contentProcessor, decoratorSelector, includeErrorPages, DispatchMode.DETECT);
+    }
+
+    /**
+     * @param selector Provides the rules for whether SiteMesh should be
+     *                 used for a specific request. For a basic implementation, use
+     *                 {@link org.sitemesh.webapp.contentfilter.BasicSelector}.
+     * @param dispatchMode How decorators are dispatched (include vs forward).
+     *                 See {@link DispatchMode}.
+     */
+    public SiteMeshFilter(Selector selector,
+                          ContentProcessor contentProcessor,
+                          DecoratorSelector<WebAppContext> decoratorSelector, boolean includeErrorPages,
+                          DispatchMode dispatchMode) {
         super(selector);
         if (contentProcessor == null) {
             throw new IllegalArgumentException("contentProcessor cannot be null");
@@ -78,6 +96,7 @@ public class SiteMeshFilter extends ContentBufferingFilter {
         this.contentProcessor = contentProcessor;
         this.decoratorSelector = decoratorSelector;
         this.includeErrorPages = includeErrorPages;
+        this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
     }
 
     /**
@@ -152,7 +171,7 @@ public class SiteMeshFilter extends ContentBufferingFilter {
     protected WebAppContext createContext(String contentType, HttpServletRequest request,
                                           HttpServletResponse response, ResponseMetaData metaData) {
         return new WebAppContext(contentType, request, response,
-                getFilterConfig().getServletContext(), contentProcessor, metaData, includeErrorPages);
+                getFilterConfig().getServletContext(), contentProcessor, metaData, includeErrorPages, dispatchMode);
     }
 
     public ContentProcessor getContentProcessor() {

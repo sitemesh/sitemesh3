@@ -17,6 +17,7 @@
 package org.sitemesh.builder;
 
 import org.sitemesh.config.PathMapper;
+import org.sitemesh.webapp.DispatchMode;
 import org.sitemesh.webapp.WebAppContext;
 import org.sitemesh.webapp.contentfilter.BasicSelector;
 import org.sitemesh.webapp.contentfilter.Selector;
@@ -49,6 +50,7 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
     private PathMapper<Boolean> excludesMapper = new PathMapper<Boolean>();
     private Selector customSelector;
     private boolean includeErrorPages;
+    private DispatchMode dispatchMode;
 
     /**
      * Create the SiteMesh Filter.
@@ -66,6 +68,7 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
         super.setupDefaults();
         setMimeTypes("text/html");
         setIncludeErrorPages(false);
+        setDispatchMode(DispatchMode.DETECT);
         setDecoratorPrefix("/WEB-INF/decorators/");
     }
 
@@ -145,6 +148,24 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
      */
     public boolean isIncludeErrorPages() {
         return includeErrorPages;
+    }
+
+    /**
+     * Set how decorators are dispatched: {@link DispatchMode#INCLUDE},
+     * {@link DispatchMode#FORWARD}, or {@link DispatchMode#DETECT} (the
+     * default). See {@link DispatchMode} for the include-vs-forward
+     * trade-off (decorator {@code Last-Modified} vs Tomcat 11+ safety).
+     */
+    public BUILDER setDispatchMode(DispatchMode dispatchMode) {
+        this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
+        return self();
+    }
+
+    /**
+     * The configured {@link DispatchMode}. Defaults to {@link DispatchMode#DETECT}.
+     */
+    public DispatchMode getDispatchMode() {
+        return dispatchMode;
     }
 
 }

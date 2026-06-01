@@ -19,6 +19,7 @@ package org.sitemesh.config.properties;
 import org.sitemesh.DecoratorSelector;
 import org.sitemesh.builder.BaseSiteMeshFilterBuilder;
 import org.sitemesh.config.ObjectFactory;
+import org.sitemesh.webapp.DispatchMode;
 
 import java.util.Map;
 
@@ -50,6 +51,11 @@ import java.util.Map;
  * <p><b><code>exclude</code></b> (optional): A list of path patterns to exclude from
  * decoration, separated by whitespace or commas. e.g. <code>/javadoc/*, somepage.html, *.jsp</code></p>
  *
+ * <p><b><code>dispatchMode</code></b> (optional): How the decorator is dispatched -
+ * <code>include</code>, <code>forward</code>, or <code>detect</code>. Defaults to
+ * <code>detect</code> (use <code>include</code> on Tomcat 11+, <code>forward</code>
+ * elsewhere). See {@link org.sitemesh.webapp.DispatchMode}.</p>
+ *
  * <p>Where a <i>name</i> is used, this typically means the fully qualified class name, which must
  * have a default constructor. However, a custom {@link org.sitemesh.config.ObjectFactory} implementation (passed into
  * the {@link #PropertiesFilterConfigurator(ObjectFactory, Map)} constructor may change the behavior of this
@@ -67,6 +73,7 @@ public class PropertiesFilterConfigurator extends PropertiesConfigurator {
     public static final String EXCLUDE_PARAM = "exclude";
     public static final String MIME_TYPES_PARAM = "mimeTypes";
     public static final String INCLUDE_ERROR_PAGES_PARAM = "includeErrorPages";
+    public static final String DISPATCH_MODE_PARAM = "dispatchMode";
     public static final String DECORATOR_SELECTOR = "decoratorSelector";
 
     private final PropertiesParser properties;
@@ -88,7 +95,13 @@ public class PropertiesFilterConfigurator extends PropertiesConfigurator {
         if ("true".equals(includeErrorPagesString) || "1".equals(includeErrorPagesString)) {
             builder.setIncludeErrorPages(true);
         }
-        
+
+        // Decorator dispatch mode: include | forward | detect
+        String dispatchModeString = properties.getString(DISPATCH_MODE_PARAM);
+        if (dispatchModeString != null) {
+            builder.setDispatchMode(DispatchMode.fromString(dispatchModeString, DispatchMode.DETECT));
+        }
+
         // decorator selector
         String decoratorSelector = properties.getString(DECORATOR_SELECTOR);
         if (decoratorSelector != null) {

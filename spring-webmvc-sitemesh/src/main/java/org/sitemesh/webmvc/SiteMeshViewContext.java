@@ -25,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.webapp.DispatchMode;
 import org.sitemesh.webapp.WebAppContext;
 import org.sitemesh.webapp.contentfilter.ResponseMetaData;
 
@@ -47,6 +48,10 @@ public class SiteMeshViewContext extends WebAppContext {
     private final ViewResolver viewResolver;
     private final Locale locale;
 
+    /**
+     * Equivalent to the {@link DispatchMode}-taking constructor with
+     * {@link DispatchMode#DETECT}.
+     */
     public SiteMeshViewContext(String contentType,
                                HttpServletRequest request,
                                HttpServletResponse response,
@@ -56,7 +61,21 @@ public class SiteMeshViewContext extends WebAppContext {
                                boolean includeErrorPages,
                                ViewResolver viewResolver,
                                Locale locale) {
-        super(contentType, request, response, servletContext, contentProcessor, metaData, includeErrorPages);
+        this(contentType, request, response, servletContext, contentProcessor, metaData,
+                includeErrorPages, viewResolver, locale, DispatchMode.DETECT);
+    }
+
+    public SiteMeshViewContext(String contentType,
+                               HttpServletRequest request,
+                               HttpServletResponse response,
+                               ServletContext servletContext,
+                               ContentProcessor contentProcessor,
+                               ResponseMetaData metaData,
+                               boolean includeErrorPages,
+                               ViewResolver viewResolver,
+                               Locale locale,
+                               DispatchMode dispatchMode) {
+        super(contentType, request, response, servletContext, contentProcessor, metaData, includeErrorPages, dispatchMode);
         this.viewResolver = viewResolver;
         this.locale = locale;
     }
