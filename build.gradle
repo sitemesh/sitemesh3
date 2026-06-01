@@ -56,6 +56,19 @@ subprojects {
     withJavadocJar()
   }
 
+  // Stamp the version into the jar manifest so Package.getImplementationVersion()
+  // resolves at runtime (used by the "SiteMesh <version> initialized" startup log).
+  tasks.named('jar') {
+    manifest {
+      attributes(
+        'Implementation-Title': project.name,
+        'Implementation-Version': project.version,
+        'Specification-Title': project.name,
+        'Specification-Version': project.version
+      )
+    }
+  }
+
   publishing {
     publications {
       mavenJava(MavenPublication) {
