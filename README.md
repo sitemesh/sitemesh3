@@ -28,7 +28,7 @@ You can either download the release build and simply add the sitemesh jar to you
 ```gradle
 dependencies {
     // ... other dependencies
-    runtimeOnly 'org.sitemesh:sitemesh:3.2.1'
+    runtimeOnly 'org.sitemesh:sitemesh:3.3.0'
 }
 ```
 
@@ -38,7 +38,7 @@ dependencies {
     <dependency>
         <groupId>org.sitemesh</groupId>
         <artifactId>sitemesh</artifactId>
-        <version>3.2.1</version>
+        <version>3.3.0</version>
     </dependency>
 </dependencies>
 ```
@@ -48,7 +48,7 @@ or if you are using Spring Boot, use the config free starter (see example applic
 ```gradle
 dependencies {
     // ... other dependencies
-    runtimeOnly 'org.sitemesh:spring-boot-starter-sitemesh:3.2.1'
+    runtimeOnly 'org.sitemesh:spring-boot-starter-sitemesh:3.3.0'
 }
 ```
 
@@ -58,7 +58,7 @@ dependencies {
     <dependency>
         <groupId>org.sitemesh</groupId>
         <artifactId>spring-boot-starter-sitemesh</artifactId>
-        <version>3.2.1</version>
+        <version>3.3.0</version>
     </dependency>
 </dependencies>
 ```
@@ -73,7 +73,7 @@ repositories {
 ```
 ```gradle
 dependencies {
-    runtimeOnly 'org.sitemesh:sitemesh:3.2.1-SNAPSHOT'
+    runtimeOnly 'org.sitemesh:sitemesh:3.3.0-SNAPSHOT'
 }
 ```
 or
