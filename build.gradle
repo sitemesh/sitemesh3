@@ -4,7 +4,7 @@ plugins {
   id 'io.github.gradle-nexus.publish-plugin' version '2.0.0'
 
   id "com.github.ben-manes.versions" version "0.54.0"
-  id "com.gorylenko.gradle-git-properties" version "2.5.7" apply false
+  id "com.gorylenko.gradle-git-properties" version "4.0.1" apply false
 }
 
 def isNonStable = { String version ->
@@ -34,6 +34,15 @@ subprojects {
     toolchain { languageVersion = JavaLanguageVersion.of(17) }
     withSourcesJar()
     withJavadocJar()
+  }
+
+  // gradle-git-properties 4.x emits git.properties into a generated resources
+  // source dir that sourcesJar also reads. Declare the dependency Gradle 9
+  // requires, and keep the generated file out of the published -sources.jar
+  // (it still ships in the runtime jar via processResources, as before).
+  tasks.named('sourcesJar') {
+    dependsOn 'generateGitProperties'
+    exclude 'git.properties'
   }
 
   publishing {
