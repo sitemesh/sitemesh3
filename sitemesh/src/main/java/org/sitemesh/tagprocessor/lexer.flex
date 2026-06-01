@@ -24,16 +24,14 @@ package org.sitemesh.tagprocessor;
 //%line
 //%column
 
-// Profiling showed that this mode was slightly faster than %pack or %table.
-%switch
-// Profiling showed this as an optimal size buffer that was often filled but rarely exceeded.
-%buffer 2048
+// %switch and %buffer were removed in JFlex 1.5+; the DFA is always packed
+// and the scan buffer is sized automatically.
 
 %{
     // Additional methods to add to generated Lexer to aid in error reporting.
     private TagTokenizer.TokenHandler handler;
     public void setHandler(TagTokenizer.TokenHandler handler) { this.handler = handler; }
-    public int position() { return yychar; }
+    public int position() { return (int) yychar; } // yychar is a long in JFlex 1.5+; buffered responses are well under 2GB chars
     public int length()   { return yylength(); }
     public int line()     { return -1; /*yyline;*/ }   // useful for debugging, but adds overhead
     public int column()   { return -1; /*yycolumn;*/ } // useful for debugging, but adds overhead
@@ -73,8 +71,9 @@ package org.sitemesh.tagprocessor;
     "]-->"              { yybegin(YYINITIAL); return TagTokenizer.Token.GT; }
 }
 
-/* Fallback rule - if nothing else matches. */
-.|\n                    { handler.warning("Illegal character <"+ yytext() +">",
+/* Fallback rule - if nothing else matches. [^] matches any single character
+   including Unicode newlines (".|\n" misses them under %unicode in JFlex 1.5+). */
+[^]                     { handler.warning("Illegal character <"+ yytext() +">",
                               line(), column()); return TagTokenizer.Token.TEXT; }
 
 /* End of file. */

@@ -15,11 +15,11 @@ dependencies {
 
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
     compileOnly 'org.apache.ant:ant:1.10.17'
-    lexer 'de.jflex:jflex:1.4.3'
+    lexer 'de.jflex:jflex:1.9.1'
 }
 
 
 compileJava.doFirst {
-    ant.taskdef classname: 'JFlex.anttask.JFlexTask', name: 'jflex', classpath: configurations.lexer.asPath
+    ant.taskdef classname: 'jflex.anttask.JFlexTask', name: 'jflex', classpath: configurations.lexer.asPath
     ant.jflex(file: "src/main/java/org/sitemesh/tagprocessor/lexer.flex", destdir: "build/generated-sources/jflex")// "src/main/java/")
 }

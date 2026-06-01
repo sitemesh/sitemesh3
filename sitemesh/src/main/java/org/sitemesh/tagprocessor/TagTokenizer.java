@@ -466,6 +466,12 @@ public class TagTokenizer {
 
         @Override
         public int read(char[] chars, int offset, int length) throws IOException {
+            if (length == 0) {
+                return 0;
+            }
+            if (!input.hasRemaining()) {
+                return -1; // EOF: the Reader contract requires -1, not 0 (JFlex 1.5+ rejects a 0 return).
+            }
             int read = Math.min(input.remaining(), length);
             input.get(chars, offset, read);
             return read;
