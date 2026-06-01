@@ -97,14 +97,30 @@ public abstract class ContentBufferingFilter implements Filter {
         this.containerTweaks = initContainerTweaks();
 
         logger.info("SiteMesh %s initialized with filter name '%s'".formatted(
-                ContentBufferingFilter.class.getPackage().getSpecificationVersion(),
-                filterConfig.getFilterName()));
+                siteMeshVersion(), filterConfig.getFilterName()));
 
         for (FilterRegistration filterRegistration : filterConfig.getServletContext().getFilterRegistrations().values()) {
             if (!filterRegistration.getName().equals(filterConfig.getFilterName()) && filterRegistration.getClassName().equals("org.sitemesh.webapp.SiteMeshFilter")) {
                 logger.warning("SiteMesh has already been registered as '%s'. Initializing multiple SiteMesh filters not recommended (%s).".formatted(filterRegistration.getName(), filterConfig.getFilterName()));
             }
         }
+    }
+
+    /**
+     * Resolve the SiteMesh version for the startup log. Reads it from the jar
+     * manifest ({@code Implementation-Version}, falling back to
+     * {@code Specification-Version}); when SiteMesh runs from unpackaged
+     * classes (e.g. an exploded/in-place dev build) no manifest is present, so
+     * this returns {@code "(development)"} rather than letting the line log a
+     * bare {@code null}.
+     */
+    private static String siteMeshVersion() {
+        Package pkg = ContentBufferingFilter.class.getPackage();
+        String version = pkg == null ? null : pkg.getImplementationVersion();
+        if (version == null && pkg != null) {
+            version = pkg.getSpecificationVersion();
+        }
+        return version != null ? version : "(development)";
     }
 
     public void destroy() {

@@ -36,6 +36,19 @@ subprojects {
     withJavadocJar()
   }
 
+  // Stamp the version into the jar manifest so Package.getImplementationVersion()
+  // resolves at runtime (used by the "SiteMesh <version> initialized" startup log).
+  tasks.named('jar') {
+    manifest {
+      attributes(
+        'Implementation-Title': project.name,
+        'Implementation-Version': project.version,
+        'Specification-Title': project.name,
+        'Specification-Version': project.version
+      )
+    }
+  }
+
   // gradle-git-properties 4.x emits git.properties into a generated resources
   // source dir that sourcesJar also reads. Declare the dependency Gradle 9
   // requires, and keep the generated file out of the published -sources.jar
