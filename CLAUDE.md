@@ -48,7 +48,7 @@ SiteMesh's job is to intercept an HTML response, parse it into named properties 
 1. **Filter / integration layer** (`org.sitemesh.webapp`, `org.sitemesh.config`)
    - `SiteMeshFilter` is the servlet filter entry point. It wraps the response in a buffering wrapper and delegates to the next filter.
    - `ConfigurableSiteMeshFilter` is the user-facing subclass; it reads `/WEB-INF/sitemesh3.xml`, then calls `applyCustomConfiguration(SiteMeshFilterBuilder)` for programmatic overrides. XML + Java can be combined.
-   - `WebAppContext` performs the dispatch to the decorator template. **It uses `RequestDispatcher.include()` — not `forward()` — on purpose.** See "Dispatch gotcha" below.
+   - `WebAppContext` performs the dispatch to the decorator template via a configurable `DispatchMode` (`include` / `forward` / `detect`, default `detect`). See "Dispatch gotcha" below.
    - Decorator selection is pluggable via `DecoratorSelector` implementations: `MetaTagBasedDecoratorSelector` (default), `PathBasedDecoratorSelector`, `RequestAttributeDecoratorSelector`.
 
 2. **Response buffering layer** (`org.sitemesh.webapp.contentfilter`)
@@ -68,7 +68,7 @@ SiteMesh's job is to intercept an HTML response, parse it into named properties 
 
 Tomcat 11 aggressively unwraps response wrappers during `RequestDispatcher.forward()` and writes directly to its Coyote connector, bypassing SiteMesh's buffer and committing the response. Jetty 12 respects the wrapper chain. Two consequences:
 
-- **In `WebAppContext.dispatch()`, always use `dispatcher.include(...)` for decorator dispatch.** The spec guarantees `include()` does not commit the response; `forward()` does. Switching to `forward()` "because it's faster" will break Tomcat silently.
+- **`WebAppContext.dispatch()` is governed by `DispatchMode` (`include` / `forward` / `detect`, default `detect`)** — not a hard-coded `include()`. It's a genuine trade-off: `forward()` lets the decorator's `Last-Modified` reach SiteMesh's buffer (so conditional-GET works) but Tomcat 11+ unwraps the wrapper on `forward()` and commits a blank response; `include()` is safe on every container but drops the decorator's `Last-Modified`. `detect` picks `include()` on Tomcat 11+ (server-info major ≥ 11, so Tomcat 12+ is covered) and `forward()` elsewhere. Configurable via `SiteMeshFilterBuilder.setDispatchMode(...)`, `<dispatch-mode>` (XML), `dispatchMode` (properties), `sitemesh.dispatchMode` (Spring). Change the *default* only with both-container tests.
 - **Spring Boot + JSP on Tomcat 11** additionally needs `InternalResourceViewResolver.setAlwaysInclude(true)` — Spring's JSP view uses `forward()` internally. Thymeleaf / FreeMarker write straight to the response and don't need this.
 
 `JAKARTA_UPGRADE.md` documents these incidents in depth; consult it before changing buffering, header handling, or dispatch.

@@ -130,6 +130,8 @@ protected void dispatch(HttpServletRequest request, HttpServletResponse response
 
 This is a one-line fix that resolves all Tomcat 11 compatibility issues for non-Spring Boot applications.
 
+**Update (3.3.x):** `WebAppContext.dispatch()` is no longer hard-wired to `include()`. It is governed by a configurable `DispatchMode` (`include` / `forward` / `detect`, default `detect`). The `include()` shown above is the Tomcat-11 branch of `detect`; on other containers `detect` uses `forward()` so the decorator's `Last-Modified` propagates for conditional-GET (otherwise Servlet include semantics drop it). Override via `SiteMeshFilterBuilder.setDispatchMode(...)`, `<dispatch-mode>` (XML), `dispatchMode` (properties), or `sitemesh.dispatchMode` (Spring) — see `CONFIGURATION.md`.
+
 ## Why Forward Works on Jetty but Not Tomcat
 
 The Servlet specification states that after `forward()` completes, the response should be committed. However, the spec doesn't specify *how* to commit or what "committed" means internally. This leads to different implementations:
