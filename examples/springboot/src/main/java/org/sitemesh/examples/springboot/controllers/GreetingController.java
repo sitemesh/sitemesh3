@@ -38,11 +38,13 @@ public class GreetingController {
      * Injected as a {@link ViewResolver} so the example works under both
      * SiteMesh integrations. The {@code @Qualifier("jspViewResolver")}
      * targets the JSP resolver specifically (so {@link #greetingJsp} keeps
-     * rendering the JSP, not a Thymeleaf template named "greeting"). In
-     * filter-mode this is the raw {@code InternalResourceViewResolver};
-     * in view-resolver mode the Spring Boot starter registers a
-     * SiteMesh-wrapped alias alongside it ({@code jspViewResolverWithSiteMesh}
-     * — see {@code Application}) to decorate the JSP response.
+     * rendering the JSP, not a Thymeleaf template named "greeting").
+     * Under the default view-resolver integration the starter's wrap-all
+     * post-processor returns a SiteMesh-wrapped resolver under this bean
+     * name (which is why the field is typed as the {@code ViewResolver}
+     * interface, not the concrete class); under filter mode it is the raw
+     * {@code InternalResourceViewResolver} and the filter decorates the
+     * response instead.
      */
     @Autowired @Qualifier("jspViewResolver") ViewResolver internalResourceViewResolver;
 

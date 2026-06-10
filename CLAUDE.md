@@ -36,7 +36,8 @@ Whenever a change touches response buffering, dispatch, or content-type handling
 
 - `sitemesh` — the core library. Content-free of servlet runtime deps (`jakarta.servlet-api` is `compileOnly`) so it can also be used offline from the command line / Ant task / Java API.
 - `sitemesh-webfilter` — thin module that exposes the servlet filter integration. Depends on `:sitemesh` via `api`.
-- `spring-boot-starter-sitemesh` — auto-configuration starter for Spring Boot 4.x.
+- `spring-webmvc-sitemesh` — plain Spring Web MVC integration (no Boot dependency): `SiteMeshViewResolver` wraps a `ViewResolver` and decorates resolved views with `SiteMeshView` inside MVC rendering, avoiding servlet-response buffering entirely.
+- `spring-boot-starter-sitemesh` — auto-configuration starter for Spring Boot 4.x. **Default integration is `view-resolver`** (wraps every leaf `ViewResolver` via `wrapMode=all`); the classic servlet filter is opt-in via `sitemesh.integration=filter`. Spring Boot properties documented in `CONFIGURATION.md`.
 - `examples/hellowebapp` — WAR built with the `gretty` plugin; exercises both Tomcat and Jetty against plain servlets + JSP + JSTL.
 - `examples/springboot` — Spring Boot app with Thymeleaf + FreeMarker + JSP views; container swap via `-Pcontainer=jetty`.
 - `examples/javalin` — Javalin + FreeMarker example.
@@ -69,7 +70,8 @@ SiteMesh's job is to intercept an HTML response, parse it into named properties 
 Tomcat 11 aggressively unwraps response wrappers during `RequestDispatcher.forward()` and writes directly to its Coyote connector, bypassing SiteMesh's buffer and committing the response. Jetty 12 respects the wrapper chain. Two consequences:
 
 - **`WebAppContext.dispatch()` is governed by `DispatchMode` (`include` / `forward` / `detect`, default `detect`)** — not a hard-coded `include()`. It's a genuine trade-off: `forward()` lets the decorator's `Last-Modified` reach SiteMesh's buffer (so conditional-GET works) but Tomcat 11+ unwraps the wrapper on `forward()` and commits a blank response; `include()` is safe on every container but drops the decorator's `Last-Modified`. `detect` picks `include()` on Tomcat 11+ (server-info major ≥ 11, so Tomcat 12+ is covered) and `forward()` elsewhere. Configurable via `SiteMeshFilterBuilder.setDispatchMode(...)`, `<dispatch-mode>` (XML), `dispatchMode` (properties), `sitemesh.dispatchMode` (Spring). Change the *default* only with both-container tests.
-- **Spring Boot + JSP on Tomcat 11** additionally needs `InternalResourceViewResolver.setAlwaysInclude(true)` — Spring's JSP view uses `forward()` internally. Thymeleaf / FreeMarker write straight to the response and don't need this.
+- **Spring Boot + JSP on Tomcat 11** additionally needs `InternalResourceViewResolver.setAlwaysInclude(true)` — Spring's JSP view uses `forward()` internally; this applies in *both* starter integrations, since `SiteMeshView` also renders the inner JSP view into a buffer wrapper. Thymeleaf / FreeMarker write straight to the response and don't need this.
+- **The Spring Boot starter defaults to the view-resolver integration** precisely because it sidesteps response buffering: decorators named without a leading `/` render through the `ViewResolver` chain (no `RequestDispatcher` at all), and only `/`-prefixed decorator paths fall back to container dispatch. Frameworks whose view rendering forwards internally and can't be switched to include (Grails GSP) must use view-resolver mode on Tomcat 11+.
 
 `JAKARTA_UPGRADE.md` documents these incidents in depth; consult it before changing buffering, header handling, or dispatch.
 

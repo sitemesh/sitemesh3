@@ -53,24 +53,14 @@ import org.springframework.web.servlet.ViewResolver;
  */
 public class SiteMeshView implements View {
 
-    /**
-     * Always-buffer selector: this View only runs when SiteMesh decoration
-     * is wanted for the current request, so the content-type guard is
-     * unnecessary. Shared across all renders since it is stateless.
-     */
-    private static final BasicSelector ALWAYS_BUFFER = new BasicSelector(new PathMapper<Boolean>(), false) {
-        @Override
-        public boolean shouldBufferForContentType(String ct, String mimeType, String encoding) {
-            return true;
-        }
-    };
-
     private final View innerView;
     private final ContentProcessor contentProcessor;
     private final DecoratorSelector<SiteMeshContext> decoratorSelector;
     private final ServletContext servletContext;
     private final ViewResolver viewResolver;
     private final DispatchMode dispatchMode;
+    private final boolean includeErrorPages;
+    private final BasicSelector selector;
 
     /**
      * Equivalent to the {@link DispatchMode}-taking constructor with
@@ -84,18 +74,48 @@ public class SiteMeshView implements View {
         this(innerView, contentProcessor, decoratorSelector, servletContext, viewResolver, DispatchMode.DETECT);
     }
 
+    /**
+     * Equivalent to the full constructor with
+     * {@code includeErrorPages = true}: renders that set an error status
+     * (&gt;= 400) — e.g. Spring Boot's {@code error} view — are still
+     * buffered and decorated, matching the filter integration's
+     * {@code include-error-pages} default.
+     */
     public SiteMeshView(View innerView,
                         ContentProcessor contentProcessor,
                         DecoratorSelector<SiteMeshContext> decoratorSelector,
                         ServletContext servletContext,
                         ViewResolver viewResolver,
                         DispatchMode dispatchMode) {
+        this(innerView, contentProcessor, decoratorSelector, servletContext, viewResolver, dispatchMode, true);
+    }
+
+    public SiteMeshView(View innerView,
+                        ContentProcessor contentProcessor,
+                        DecoratorSelector<SiteMeshContext> decoratorSelector,
+                        ServletContext servletContext,
+                        ViewResolver viewResolver,
+                        DispatchMode dispatchMode,
+                        boolean includeErrorPages) {
         this.innerView = innerView;
         this.contentProcessor = contentProcessor;
         this.decoratorSelector = decoratorSelector;
         this.servletContext = servletContext;
         this.viewResolver = viewResolver;
         this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
+        this.includeErrorPages = includeErrorPages;
+        // Always-buffer selector: this View only runs when SiteMesh
+        // decoration is wanted for the current request, so the
+        // content-type guard is unnecessary. The includeErrorPages flag
+        // still applies: without it, a render that sets an error status
+        // (e.g. Spring Boot's "error" view setting 500) aborts buffering
+        // and goes out undecorated.
+        this.selector = new BasicSelector(new PathMapper<Boolean>(), includeErrorPages) {
+            @Override
+            public boolean shouldBufferForContentType(String ct, String mimeType, String encoding) {
+                return true;
+            }
+        };
     }
 
     @Override
@@ -153,6 +173,14 @@ public class SiteMeshView implements View {
         return dispatchMode;
     }
 
+    /**
+     * Whether renders that set an error status (&gt;= 400) are still
+     * buffered and decorated (e.g. Spring Boot's {@code error} view).
+     */
+    public boolean isIncludeErrorPages() {
+        return includeErrorPages;
+    }
+
     @Override
     public final void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -204,7 +232,7 @@ public class SiteMeshView implements View {
                                                 ResponseMetaData metaData) {
         return new SiteMeshViewContext(
                 contentType, request, response, servletContext,
-                contentProcessor, metaData, false,
+                contentProcessor, metaData, includeErrorPages,
                 viewResolver, request.getLocale(), dispatchMode);
     }
 
@@ -214,7 +242,7 @@ public class SiteMeshView implements View {
         String contentType = response.getContentType() != null ? response.getContentType() : "text/html";
         SiteMeshViewContext context = createContext(request, response, contentType, metaData);
 
-        HttpServletResponseBuffer buffer = new HttpServletResponseBuffer(response, metaData, ALWAYS_BUFFER);
+        HttpServletResponseBuffer buffer = new HttpServletResponseBuffer(response, metaData, selector);
         buffer.setContentType(contentType);
 
         innerView.render(model, request, buffer);

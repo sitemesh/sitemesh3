@@ -48,6 +48,7 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
     private String layoutPathPrefix = DEFAULT_LAYOUT_PATH_PREFIX;
     private int order;
     private DispatchMode dispatchMode = DispatchMode.DETECT;
+    private boolean includeErrorPages = true;
 
     public SiteMeshViewResolver(ViewResolver innerViewResolver,
                                 ContentProcessor contentProcessor,
@@ -97,7 +98,8 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
      * {@link DispatchMode#DETECT} and would silently drop a configured mode.</p>
      */
     protected SiteMeshView createSiteMeshView(View innerView) {
-        return new SiteMeshView(innerView, contentProcessor, decoratorSelector, servletContext, innerViewResolver, dispatchMode);
+        return new SiteMeshView(innerView, contentProcessor, decoratorSelector, servletContext, innerViewResolver,
+                dispatchMode, includeErrorPages);
     }
 
     /**
@@ -119,6 +121,22 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
 
     public ViewResolver getInnerViewResolver() {
         return innerViewResolver;
+    }
+
+    public boolean isIncludeErrorPages() {
+        return includeErrorPages;
+    }
+
+    /**
+     * Whether views this resolver wraps still buffer and decorate renders
+     * that set an error status (&gt;= 400) — e.g. Spring Boot's
+     * {@code error} view. Default {@code true}, matching the filter
+     * integration's {@code include-error-pages} default; the Spring Boot
+     * starter sets it from {@code sitemesh.includeErrorPages}. Set
+     * {@code false} to send error responses out undecorated.
+     */
+    public void setIncludeErrorPages(boolean includeErrorPages) {
+        this.includeErrorPages = includeErrorPages;
     }
 
     public String getLayoutPathPrefix() {

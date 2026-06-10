@@ -52,10 +52,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.ViewResolver;
 
 /**
- * Opt-in auto-configuration that enables SiteMesh's Spring MVC
- * {@link ViewResolver} integration instead of the default servlet-filter
- * integration. Activated by setting
- * {@code sitemesh.integration=view-resolver}.
+ * Default auto-configuration that enables SiteMesh's Spring MVC
+ * {@link ViewResolver} integration. Active unless
+ * {@code sitemesh.integration=filter} selects the servlet-filter
+ * integration instead.
+ *
+ * <p>The view-resolver integration decorates everything rendered through
+ * Spring MVC's {@code ViewResolver} / {@code View} pipeline (including
+ * Spring Boot's {@code error} view) without buffering the servlet
+ * response, so it is immune to the container-specific
+ * {@code RequestDispatcher} wrapper-unwrapping problems that affect the
+ * filter integration (see {@code DispatchMode}). Content that does not
+ * flow through Spring MVC views — static {@code .html} resources,
+ * {@code @ResponseBody} output, non-MVC frameworks in the same app — is
+ * <em>not</em> decorated in this mode; opt into the filter integration
+ * ({@code sitemesh.integration=filter}) for that.</p>
  *
  * <p>When enabled this configuration:</p>
  * <ul>
@@ -70,13 +81,13 @@ import org.springframework.web.servlet.ViewResolver;
  *     name {@code "sitemesh"} so the companion
  *     {@link SiteMeshAutoConfiguration}'s {@code @ConditionalOnMissingBean}
  *     is satisfied (the upstream auto-config is itself gated off by
- *     {@code sitemesh.integration=filter} being the default, but this
+ *     requiring {@code sitemesh.integration=filter}, but this
  *     registration is retained as a belt-and-braces guard in case a user
  *     explicitly enables both configurations).</li>
  * </ul>
  */
 @AutoConfiguration
-@ConditionalOnProperty(name = "sitemesh.integration", havingValue = "view-resolver")
+@ConditionalOnProperty(name = "sitemesh.integration", havingValue = "view-resolver", matchIfMissing = true)
 @ConditionalOnClass({ ViewResolver.class, SiteMeshView.class })
 @ConfigurationProperties(prefix = "sitemesh.decorator")
 public class SiteMeshViewResolverAutoConfiguration {
@@ -118,6 +129,15 @@ public class SiteMeshViewResolverAutoConfiguration {
      */
     @Value("${sitemesh.dispatchMode:detect}")
     private String dispatchMode = "detect";
+
+    /**
+     * Whether views that set an error status (&gt;= 400) — e.g. Spring
+     * Boot's {@code error} view — are still buffered and decorated.
+     * Mirrors the filter integration's {@code sitemesh.includeErrorPages}
+     * and shares its default ({@code true}).
+     */
+    @Value("${sitemesh.includeErrorPages:true}")
+    private boolean includeErrorPages = true;
 
     @Bean
     @ConditionalOnMissingBean(name = "contentProcessor")
@@ -185,6 +205,7 @@ public class SiteMeshViewResolverAutoConfiguration {
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
         pp.setWrapAll(true);
         pp.setDispatchMode(DispatchMode.fromString(dispatchMode, DispatchMode.DETECT));
+        pp.setIncludeErrorPages(includeErrorPages);
         return pp;
     }
 
@@ -203,6 +224,7 @@ public class SiteMeshViewResolverAutoConfiguration {
         SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
         pp.setTargetViewResolverBeanName(targetViewResolverBeanName);
         pp.setDispatchMode(DispatchMode.fromString(dispatchMode, DispatchMode.DETECT));
+        pp.setIncludeErrorPages(includeErrorPages);
         return pp;
     }
 
@@ -223,6 +245,7 @@ public class SiteMeshViewResolverAutoConfiguration {
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
         pp.setTargetViewResolverBeanName(targetViewResolverBeanName);
         pp.setDispatchMode(DispatchMode.fromString(dispatchMode, DispatchMode.DETECT));
+        pp.setIncludeErrorPages(includeErrorPages);
         return pp;
     }
 

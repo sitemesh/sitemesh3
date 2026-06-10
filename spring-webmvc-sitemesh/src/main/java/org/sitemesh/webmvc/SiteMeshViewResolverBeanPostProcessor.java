@@ -17,6 +17,8 @@ package org.sitemesh.webmvc;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 import jakarta.servlet.ServletContext;
 
@@ -29,6 +31,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.BeanInstantiationException;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.ViewResolver;
@@ -56,11 +59,16 @@ import org.springframework.web.servlet.ViewResolver;
  * {@link #setTargetViewResolverBeanName targetViewResolverBeanName} is
  * passed through.</p>
  */
-public class SiteMeshViewResolverBeanPostProcessor implements BeanPostProcessor, BeanFactoryAware, Ordered {
+public class SiteMeshViewResolverBeanPostProcessor
+        implements BeanPostProcessor, BeanFactoryAware, SmartInitializingSingleton, Ordered {
+
+    private static final Logger logger = Logger.getLogger(SiteMeshViewResolverBeanPostProcessor.class.getName());
 
     private String targetViewResolverBeanName = "jspViewResolver";
+    private final AtomicInteger wrappedCount = new AtomicInteger();
     private boolean wrapAll;
     private DispatchMode dispatchMode = DispatchMode.DETECT;
+    private boolean includeErrorPages = true;
     private String contentProcessorBeanName = "contentProcessor";
     private String decoratorSelectorBeanName = "decoratorSelector";
     private String servletContextBeanName = "servletContext";
@@ -104,7 +112,44 @@ public class SiteMeshViewResolverBeanPostProcessor implements BeanPostProcessor,
         ServletContext sc = beanFactory.getBean(servletContextBeanName, ServletContext.class);
         SiteMeshViewResolver wrapped = createSiteMeshViewResolver((ViewResolver) bean, cp, ds, sc);
         wrapped.setDispatchMode(dispatchMode);
+        wrapped.setIncludeErrorPages(includeErrorPages);
+        wrappedCount.incrementAndGet();
         return wrapped;
+    }
+
+    /**
+     * Invoked by the container once all non-lazy singletons exist. If no
+     * {@link ViewResolver} was wrapped by then, SiteMesh will silently
+     * decorate nothing — surface that loudly instead of leaving the user
+     * to diagnose undecorated pages. (A lazily-initialized resolver
+     * created after startup can still be wrapped; this warning only
+     * reflects startup state.)
+     */
+    @Override
+    public void afterSingletonsInstantiated() {
+        if (wrappedCount.get() > 0) {
+            return;
+        }
+        if (wrapAll) {
+            logger.warning("SiteMesh did not wrap any ViewResolver bean during startup - "
+                    + "no Spring MVC views will be decorated. Check that a template engine "
+                    + "(Thymeleaf, FreeMarker, JSP, ...) is configured, or switch to the "
+                    + "servlet-filter integration (sitemesh.integration=filter).");
+        } else {
+            logger.warning("SiteMesh did not wrap the target ViewResolver bean '"
+                    + targetViewResolverBeanName + "' during startup - no Spring MVC views "
+                    + "will be decorated. Check sitemesh.viewResolver.targetBeanName against "
+                    + "your application's ViewResolver bean names, or use the default wrap-all "
+                    + "mode (sitemesh.viewResolver.wrapMode=all).");
+        }
+    }
+
+    /**
+     * Number of {@link ViewResolver} beans this post-processor has wrapped
+     * so far. Exposed for diagnostics and tests.
+     */
+    public int getWrappedCount() {
+        return wrappedCount.get();
     }
 
     /**
@@ -189,6 +234,19 @@ public class SiteMeshViewResolverBeanPostProcessor implements BeanPostProcessor,
      */
     public void setDispatchMode(DispatchMode dispatchMode) {
         this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
+    }
+
+    public boolean isIncludeErrorPages() {
+        return includeErrorPages;
+    }
+
+    /**
+     * Whether wrapped resolvers' views still buffer and decorate renders
+     * that set an error status (&gt;= 400). Default {@code true}. See
+     * {@link SiteMeshViewResolver#setIncludeErrorPages(boolean)}.
+     */
+    public void setIncludeErrorPages(boolean includeErrorPages) {
+        this.includeErrorPages = includeErrorPages;
     }
 
     public String getTargetViewResolverBeanName() {

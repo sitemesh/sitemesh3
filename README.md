@@ -139,7 +139,7 @@ Want to configure purely through Java code, through XML, through Spring, or even
 
 ### Spring Boot AutoConfiguration Starter
 
-Use the Spring Boot Starter and be up and running in seconds.
+Use the Spring Boot Starter and be up and running in seconds. As of 3.3.0 the starter integrates with Spring MVC at the `ViewResolver` level by default — decoration happens inside view rendering, avoiding the response-buffering pitfalls of servlet-filter decoration on Tomcat 11+ (and making it work with frameworks like Grails). The classic servlet-filter integration — which also decorates static `.html` files and non-MVC content — remains available via `sitemesh.integration=filter`. See `CONFIGURATION.md`.
 
 ### Offline Site Generation
 

@@ -133,6 +133,52 @@ public class SiteMeshViewResolverBeanPostProcessorTest extends TestCase {
         assertSame(inner, passthrough);
     }
 
+    public void testWrapAllWrapsAnyLeafResolverAndCounts() {
+        SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
+        pp.setWrapAll(true);
+        pp.setBeanFactory(beanFactory);
+
+        Object first = pp.postProcessAfterInitialization(new InternalResourceViewResolver(), "thymeleafViewResolver");
+        Object second = pp.postProcessAfterInitialization(new InternalResourceViewResolver(), "freeMarkerViewResolver");
+
+        assertTrue(first instanceof SiteMeshViewResolver);
+        assertTrue(second instanceof SiteMeshViewResolver);
+        assertEquals(2, pp.getWrappedCount());
+        // should not throw or reset the count
+        pp.afterSingletonsInstantiated();
+        assertEquals(2, pp.getWrappedCount());
+    }
+
+    public void testIncludeErrorPagesDefaultsToTrueOnWrappedResolver() {
+        SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
+        pp.setBeanFactory(beanFactory);
+
+        Object result = pp.postProcessAfterInitialization(new InternalResourceViewResolver(), "jspViewResolver");
+
+        assertTrue("error pages should decorate by default, matching the filter integration",
+                ((SiteMeshViewResolver) result).isIncludeErrorPages());
+    }
+
+    public void testIncludeErrorPagesOptOutPropagatesToWrappedResolver() {
+        SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
+        pp.setIncludeErrorPages(false);
+        pp.setBeanFactory(beanFactory);
+
+        Object result = pp.postProcessAfterInitialization(new InternalResourceViewResolver(), "jspViewResolver");
+
+        assertFalse(((SiteMeshViewResolver) result).isIncludeErrorPages());
+    }
+
+    public void testAfterSingletonsInstantiatedWithNothingWrappedDoesNotFail() {
+        SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
+        pp.setWrapAll(true);
+        pp.setBeanFactory(beanFactory);
+
+        assertEquals(0, pp.getWrappedCount());
+        // warns (does not throw) so a views-less app can still start
+        pp.afterSingletonsInstantiated();
+    }
+
     public static class CustomResolver extends SiteMeshViewResolver {
         public CustomResolver(ViewResolver inner,
                               ContentProcessor cp,

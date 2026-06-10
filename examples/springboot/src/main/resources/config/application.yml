@@ -6,7 +6,10 @@ spring:
   freemarker:
     suffix: .ftl
 sitemesh:
-  integration: view-resolver
+  # view-resolver integration is the default; uncomment to switch to the
+  # classic servlet filter (decorates static .html and non-MVC content too,
+  # but is subject to Tomcat 11 forward/unwrap issues - see DispatchMode).
+  # integration: filter
   decorator:
     metaTag: decorator
 #    tagRuleBundles: org.sitemesh.content.tagrules.html.Sm2TagRuleBundle

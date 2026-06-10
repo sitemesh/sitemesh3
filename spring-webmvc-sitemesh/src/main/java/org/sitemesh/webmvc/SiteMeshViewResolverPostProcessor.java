@@ -59,6 +59,7 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
     private String servletContextBeanName = "servletContext";
     private Class<? extends SiteMeshViewResolver> siteMeshViewResolverClass = SiteMeshViewResolver.class;
     private DispatchMode dispatchMode = DispatchMode.DETECT;
+    private boolean includeErrorPages = true;
 
     private int order = Ordered.LOWEST_PRECEDENCE - 100;
 
@@ -66,8 +67,11 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         String targetName = targetViewResolverBeanName;
         if (!registry.containsBeanDefinition(targetName)) {
-            logger.info("SiteMeshViewResolverPostProcessor: target view resolver bean '"
-                    + targetName + "' not present in registry; skipping.");
+            logger.warning("SiteMeshViewResolverPostProcessor: target view resolver bean '"
+                    + targetName + "' not present in registry; skipping - no Spring MVC views "
+                    + "will be decorated. Check sitemesh.viewResolver.targetBeanName, or use "
+                    + "wrap mode 'bean-instance' if the resolver is registered later in the "
+                    + "lifecycle (e.g. Grails).");
             return;
         }
 
@@ -89,6 +93,7 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
         args.addIndexedArgumentValue(2, new RuntimeBeanReference(decoratorSelectorBeanName));
         args.addIndexedArgumentValue(3, new RuntimeBeanReference(servletContextBeanName));
         wrapperDefinition.getPropertyValues().add("dispatchMode", dispatchMode);
+        wrapperDefinition.getPropertyValues().add("includeErrorPages", includeErrorPages);
 
         registry.registerBeanDefinition(wrapperName, wrapperDefinition);
         if (!wrapperName.equals(targetName)) {
@@ -107,6 +112,19 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
      */
     public void setDispatchMode(DispatchMode dispatchMode) {
         this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
+    }
+
+    public boolean isIncludeErrorPages() {
+        return includeErrorPages;
+    }
+
+    /**
+     * Whether the registered resolver's views still buffer and decorate
+     * renders that set an error status (&gt;= 400). Default {@code true}. See
+     * {@link SiteMeshViewResolver#setIncludeErrorPages(boolean)}.
+     */
+    public void setIncludeErrorPages(boolean includeErrorPages) {
+        this.includeErrorPages = includeErrorPages;
     }
 
     public String getTargetViewResolverBeanName() {

@@ -37,8 +37,24 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.*;
 
+/**
+ * Opt-in auto-configuration that installs SiteMesh as a classic servlet
+ * filter ({@code sitemesh.integration=filter}). The default integration
+ * is the Spring MVC view-resolver one — see
+ * {@link SiteMeshViewResolverAutoConfiguration}.
+ *
+ * <p>Choose filter mode when content outside Spring MVC view rendering
+ * needs decorating: static {@code .html} resources, servlet-generated
+ * output, or container error pages. Note the filter buffers the servlet
+ * response, which on Tomcat 11+ is sensitive to {@code forward()}
+ * dispatches that unwrap response wrappers — see {@link DispatchMode}
+ * and the project's {@code JAKARTA_UPGRADE.md}. Frameworks whose view
+ * rendering forwards internally (Spring MVC + JSP without
+ * {@code alwaysInclude}, Grails GSP) should prefer the view-resolver
+ * integration on Tomcat.</p>
+ */
 @AutoConfiguration
-@ConditionalOnProperty(name = "sitemesh.integration", havingValue = "filter", matchIfMissing = true)
+@ConditionalOnProperty(name = "sitemesh.integration", havingValue = "filter")
 @ConfigurationProperties(prefix = "sitemesh.decorator")
 public class SiteMeshAutoConfiguration {
     private List<HashMap<String, String>> mappings;
