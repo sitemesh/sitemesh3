@@ -63,8 +63,12 @@ dependencies {
 </dependencies>
 ```
 
+> ⚠️ If you are using the starter from a **3.3.0-SNAPSHOT** build, note the default integration changed — see the snapshot note below.
+
 ### Snapshots:
 If you would like to use the latest features, you can use the latest build from our [snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/org/sitemesh/):
+
+> ⚠️ **Snapshot behavior change (3.3.0-SNAPSHOT):** the Spring Boot starter's default integration changed from the servlet filter to the Spring MVC view-resolver. If your app relied on the filter (e.g. decorating static `.html` files or non-MVC content), set `sitemesh.integration=filter` to restore the old behavior. See `CONFIGURATION.md`. *(This note will be removed when 3.3.0 ships.)*
 ```gradle
 repositories {
     mavenCentral() 
