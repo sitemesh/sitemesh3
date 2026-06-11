@@ -102,11 +102,26 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
      * inner view to {@code include()} avoids the suspension and loses
      * almost nothing here: the include-vs-forward {@code Last-Modified}
      * trade-off (see {@link DispatchMode}) does not apply to a render that
-     * is buffered and post-processed anyway. The one observable change is
-     * standard servlet include semantics — status and header writes made
-     * by the JSP itself are swallowed by the include wrapper, so a JSP
-     * that sets an error status mid-render no longer triggers the
-     * {@code includeErrorPages=false} buffering abort.</p>
+     * is buffered and post-processed anyway. Status and header writes made
+     * by the JSP itself still behave like forward dispatch: Tomcat inserts
+     * its include wrapper ({@code ApplicationHttpResponse}, which no-ops
+     * {@code setStatus}/{@code sendError} for included resources)
+     * <em>below</em> application-provided wrappers, so the JSP's writes hit
+     * SiteMesh's buffering wrapper first — a JSP that sets an error status
+     * mid-render still triggers the {@code includeErrorPages=false}
+     * buffering abort (the response goes out undecorated) — and although
+     * the include wrapper underneath swallows the status on its way down,
+     * {@link SiteMeshView} re-applies the status recorded by the buffering
+     * wrapper to the real response after the inner render returns, when the
+     * include wrapper is no longer in the chain. Net result on both include
+     * and forward (e.g. Jetty under {@link DispatchMode#DETECT}) dispatch:
+     * raw, undecorated output with the JSP's status (or decorated output
+     * with that status when {@code includeErrorPages=true}). Best-effort
+     * only: an already-committed response cannot have its status changed —
+     * the standard servlet constraint. Pinned by
+     * {@code JspErrorStatusMidRenderIT} and
+     * {@code JspErrorStatusDecoratedMidRenderIT} in the Spring Boot
+     * example.</p>
      *
      * <p>The decision is keyed on the same container detection that
      * governs decorator dispatch: the inner view is mutated when {@link

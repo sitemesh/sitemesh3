@@ -52,6 +52,7 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     private Buffer buffer;
     private boolean bufferingWasDisabled = false;
     private Integer statusCode = null;
+    private Integer explicitStatusCode = null;
     // Cache the last parsed content-type to avoid re-scanning on repeat calls
     // (frameworks commonly call setContentType more than once per response).
     private String lastContentTypeRaw;
@@ -287,18 +288,21 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
 
     @Override
     public void setStatus(int statusCode) {
+        explicitStatusCode = statusCode;
         onStatusCodeChange(statusCode);
         super.setStatus(statusCode);
     }
 
     @Override
     public void sendError(int statusCode) throws IOException {
+        explicitStatusCode = statusCode;
         onStatusCodeChange(statusCode);
         super.sendError(statusCode);
     }
 
     @Override
     public void sendError(int statusCode, String reason) throws IOException {
+        explicitStatusCode = statusCode;
         onStatusCodeChange(statusCode);
         super.sendError(statusCode, reason);
     }
@@ -328,6 +332,26 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
      */
     public int getBufferedStatus() {
         return statusCode != null? statusCode : 200;
+    }
+
+    /**
+     * The status code most recently set on this wrapper through
+     * {@link #setStatus(int)} or {@link #sendError}, or {@code null} if none
+     * was. Unlike {@link #getBufferedStatus()}, this distinguishes "never
+     * set" from an explicit 200, and does not report the synthetic
+     * {@link HttpServletResponse#SC_TEMPORARY_REDIRECT} that
+     * {@link #sendRedirect(String)} records for buffering-abort purposes
+     * (a redirect's status only makes sense together with its
+     * {@code Location} header, so callers must not re-apply it in
+     * isolation).
+     *
+     * <p>Useful to callers that need to re-apply a status to the underlying
+     * response after the wrapped render returns — e.g. when a container's
+     * {@code RequestDispatcher.include()} wrapper sat below this one and
+     * silently dropped the status on its way down.</p>
+     */
+    public Integer getExplicitStatusCode() {
+        return explicitStatusCode;
     }
 
 }

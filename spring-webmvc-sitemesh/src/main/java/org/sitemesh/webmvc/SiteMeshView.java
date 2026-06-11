@@ -247,11 +247,14 @@ public class SiteMeshView implements View {
 
         innerView.render(model, request, buffer);
 
+        restoreExplicitStatus(buffer, response);
+
         java.nio.CharBuffer rawBuffer = buffer.getBuffer();
         if (rawBuffer == null) {
             // Buffering was disabled (e.g. inner view short-circuited via
-            // non-HTML content type or bad status). Nothing to do — the
-            // inner view already wrote straight to the real response.
+            // non-HTML content type or bad status). Nothing more to do —
+            // the inner view already wrote straight to the real response,
+            // and any status it set was restored above.
             return;
         }
         Content content = contentProcessor.build(rawBuffer, context);
@@ -292,6 +295,42 @@ public class SiteMeshView implements View {
         content.getData().writeValueTo(writer);
         if (!response.isCommitted()) {
             writer.flush();
+        }
+    }
+
+    /**
+     * Re-apply a status code the inner render set through the buffering
+     * wrapper ({@code setStatus}/{@code sendError}) to the underlying
+     * response.
+     *
+     * <p>Under include dispatch (e.g. Tomcat 11+, see
+     * {@code SiteMeshViewResolver#prepareForBufferedRender}) the container
+     * inserts its include wrapper — whose {@code setStatus}/{@code
+     * sendError} are no-ops for included resources — <em>below</em> the
+     * buffering wrapper, so the status delegated downward by the buffer is
+     * swallowed mid-chain and never reaches the client. Once the inner
+     * render returns, that include wrapper is no longer between SiteMesh
+     * and the real response, so the status the buffer recorded can be
+     * applied directly. This affects both the buffering-abort path
+     * ({@code includeErrorPages=false}: undecorated pass-through) and the
+     * normal decorated path ({@code includeErrorPages=true}: error pages
+     * buffered and decorated).</p>
+     *
+     * <p>Under forward dispatch the status already propagated during the
+     * render, so re-applying the same value is a no-op; no container
+     * detection is needed. Best-effort: a response that is already
+     * committed (e.g. {@code sendError} on a forward-dispatched render, or
+     * an aborted pass-through that outgrew the response buffer) can no
+     * longer have its status changed — the standard servlet constraint.
+     * The synthetic redirect status recorded by {@code sendRedirect} is
+     * deliberately not restored: a redirect status without its
+     * {@code Location} header would be meaningless (see
+     * {@link HttpServletResponseBuffer#getExplicitStatusCode()}).</p>
+     */
+    private void restoreExplicitStatus(HttpServletResponseBuffer buffer, HttpServletResponse response) {
+        Integer status = buffer.getExplicitStatusCode();
+        if (status != null && !response.isCommitted()) {
+            response.setStatus(status);
         }
     }
 

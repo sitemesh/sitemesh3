@@ -223,6 +223,197 @@ public class SiteMeshViewTest extends TestCase {
         assertEquals("createContext must be called once per non-INCLUDE render", 1, calls.get());
     }
 
+    /**
+     * Mimics the response Tomcat presents during a {@code
+     * RequestDispatcher.include()}: status calls are silently dropped while
+     * {@code swallow} is set ({@code ApplicationHttpResponse} no-ops them
+     * for included resources). The include wrapper only exists for the
+     * duration of the dispatch, so the simulated inner render clears the
+     * flag before returning.
+     */
+    private static class IncludeSwallowingResponse extends MockHttpServletResponse {
+        boolean swallow;
+
+        @Override
+        public void setStatus(int sc) {
+            if (!swallow) {
+                super.setStatus(sc);
+            }
+        }
+
+        @Override
+        public void sendError(int sc) throws IOException {
+            if (!swallow) {
+                super.sendError(sc);
+            }
+        }
+
+        @Override
+        public void sendError(int sc, String msg) throws IOException {
+            if (!swallow) {
+                super.sendError(sc, msg);
+            }
+        }
+
+        @Override
+        public void sendRedirect(String location) throws IOException {
+            if (!swallow) {
+                super.sendRedirect(location);
+            }
+        }
+    }
+
+    private SiteMeshView viewWith(View inner, DecoratorSelector<SiteMeshContext> selector,
+                                  ViewResolver resolver, boolean includeErrorPages) {
+        return new SiteMeshView(inner, contentProcessor, selector, servletContext, resolver,
+                null, includeErrorPages);
+    }
+
+    public void testRestoresStatusSwallowedBelowBufferOnAbortPath() throws Exception {
+        final IncludeSwallowingResponse response = new IncludeSwallowingResponse();
+        View inner = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse resp) throws IOException {
+                response.swallow = true; // include dispatch begins
+                resp.setStatus(500); // hits the buffer: abort fires, downward delegation swallowed
+                resp.getWriter().write("<html><head></head><body>RAW-ERROR</body></html>");
+                response.swallow = false; // include dispatch ends
+            }
+        };
+        DecoratorSelector<SiteMeshContext> selector = (c, x) -> {
+            fail("decoration must not run once the error status aborts buffering");
+            return new String[0];
+        };
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setDispatcherType(DispatcherType.REQUEST);
+
+        viewWith(inner, selector, null, false).render(Collections.emptyMap(), request, response);
+
+        assertEquals("status recorded by the buffer must be re-applied after the inner render",
+                500, response.getStatus());
+        assertTrue(response.getContentAsString().contains("RAW-ERROR"));
+    }
+
+    public void testRestoresSwallowedSendErrorStatus() throws Exception {
+        final IncludeSwallowingResponse response = new IncludeSwallowingResponse();
+        View inner = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse resp) throws IOException {
+                response.swallow = true;
+                resp.sendError(503, "boom"); // suppressed for included resources, like setStatus
+                response.swallow = false;
+            }
+        };
+        DecoratorSelector<SiteMeshContext> selector = (c, x) -> new String[0];
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setDispatcherType(DispatcherType.REQUEST);
+
+        viewWith(inner, selector, null, false).render(Collections.emptyMap(), request, response);
+
+        assertEquals(503, response.getStatus());
+    }
+
+    public void testRestoresSwallowedStatusInDecoratedErrorPageFlow() throws Exception {
+        final IncludeSwallowingResponse response = new IncludeSwallowingResponse();
+        View inner = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse resp) throws IOException {
+                response.swallow = true;
+                resp.setStatus(500); // includeErrorPages=true: buffering continues
+                resp.getWriter().write("<html><head><title>T</title></head><body>ERROR-BODY</body></html>");
+                response.swallow = false;
+            }
+        };
+        View decoratorView = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse s) throws IOException {
+                s.setContentType("text/html");
+                s.getWriter().write("<html><head></head><body>DECORATED:<sitemesh:write property='body'/></body></html>");
+            }
+        };
+        ViewResolver resolver = (name, locale) -> "layout".equals(name) ? decoratorView : null;
+        DecoratorSelector<SiteMeshContext> selector = (c, x) -> new String[] { "layout" };
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setDispatcherType(DispatcherType.REQUEST);
+
+        viewWith(inner, selector, resolver, true).render(Collections.emptyMap(), request, response);
+
+        String output = response.getContentAsString();
+        assertEquals("error status must survive decoration with includeErrorPages=true",
+                500, response.getStatus());
+        assertTrue("output should be decorated: " + output, output.contains("DECORATED:"));
+        assertTrue("output should contain inner body: " + output, output.contains("ERROR-BODY"));
+    }
+
+    public void testCommittedResponseIsLeftAlone() throws Exception {
+        final IncludeSwallowingResponse response = new IncludeSwallowingResponse();
+        View inner = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse resp) throws IOException {
+                response.swallow = true;
+                resp.setStatus(500); // aborts buffering; status swallowed below
+                resp.getWriter().write("<html><head></head><body>RAW</body></html>");
+                resp.flushBuffer(); // pass-through after the abort: commits the real response
+                response.swallow = false;
+            }
+        };
+        DecoratorSelector<SiteMeshContext> selector = (c, x) -> new String[0];
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setDispatcherType(DispatcherType.REQUEST);
+
+        viewWith(inner, selector, null, false).render(Collections.emptyMap(), request, response);
+
+        assertTrue(response.isCommitted());
+        assertEquals("a committed response can no longer have its status changed (best-effort limit)",
+                200, response.getStatus());
+    }
+
+    public void testStatusAlreadyPropagatedUnderForwardDispatchIsUnchanged() throws Exception {
+        // No swallowing wrapper: forward-dispatch semantics, where the
+        // buffer's downward delegation reaches the real response during the
+        // render. The post-render restore re-applies the same value: no-op.
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        View inner = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse resp) throws IOException {
+                resp.setStatus(500);
+                resp.getWriter().write("<html><head></head><body>RAW</body></html>");
+            }
+        };
+        DecoratorSelector<SiteMeshContext> selector = (c, x) -> new String[0];
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setDispatcherType(DispatcherType.REQUEST);
+
+        viewWith(inner, selector, null, false).render(Collections.emptyMap(), request, response);
+
+        assertEquals(500, response.getStatus());
+        assertTrue(response.getContentAsString().contains("RAW"));
+    }
+
+    public void testSendRedirectStatusIsNotRestored() throws Exception {
+        // sendRedirect records a synthetic 307 on the buffer purely for
+        // abort purposes; re-applying it without the Location header would
+        // be meaningless, so the restore must skip it.
+        final IncludeSwallowingResponse response = new IncludeSwallowingResponse();
+        View inner = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse resp) throws IOException {
+                response.swallow = true;
+                resp.sendRedirect("/elsewhere"); // swallowed for included resources
+                response.swallow = false;
+            }
+        };
+        DecoratorSelector<SiteMeshContext> selector = (c, x) -> new String[0];
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setDispatcherType(DispatcherType.REQUEST);
+
+        viewWith(inner, selector, null, false).render(Collections.emptyMap(), request, response);
+
+        assertEquals("a bare redirect status must not be re-applied without its Location header",
+                200, response.getStatus());
+        assertNull(response.getHeader("Location"));
+    }
+
     public void testPostRenderCalledEvenWhenInnerThrows() {
         final boolean[] postCalled = { false };
         View inner = new View() {
