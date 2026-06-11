@@ -24,10 +24,13 @@ import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.content.tagrules.TagBasedContentProcessor;
 import org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle;
 
+import org.sitemesh.webapp.DispatchMode;
+
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.servlet.SmartView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.InternalResourceView;
 
 /**
  * Tests for {@link SiteMeshViewResolver}.
@@ -144,5 +147,98 @@ public class SiteMeshViewResolverTest extends TestCase {
 
         assertSame(raw, resolver.resolveViewName("/decorators/main", Locale.ENGLISH));
         assertTrue(resolver.resolveViewName("/layouts/main", Locale.ENGLISH) instanceof SiteMeshView);
+    }
+
+    /**
+     * {@link InternalResourceView} that records whether (and with what
+     * value) {@code setAlwaysInclude} was called, since the field has no
+     * getter on the Spring side.
+     */
+    private static class RecordingInternalResourceView extends InternalResourceView {
+        Boolean alwaysInclude;
+
+        @Override
+        public void setAlwaysInclude(boolean alwaysInclude) {
+            this.alwaysInclude = alwaysInclude;
+            super.setAlwaysInclude(alwaysInclude);
+        }
+    }
+
+    private static MockServletContext tomcat11ServletContext() {
+        return new MockServletContext() {
+            @Override
+            public String getServerInfo() {
+                return "Apache Tomcat/11.0.5";
+            }
+        };
+    }
+
+    private SiteMeshViewResolver newResolver(ViewResolver inner, MockServletContext context, DispatchMode mode) {
+        SiteMeshViewResolver resolver = new SiteMeshViewResolver(inner, contentProcessor, decoratorSelector, context);
+        resolver.setDispatchMode(mode);
+        return resolver;
+    }
+
+    public void testInternalResourceViewGetsAlwaysIncludeUnderExplicitInclude() throws Exception {
+        RecordingInternalResourceView jsp = new RecordingInternalResourceView();
+        ViewResolver inner = (name, locale) -> jsp;
+
+        View resolved = newResolver(inner, servletContext, DispatchMode.INCLUDE).resolveViewName("home", Locale.ENGLISH);
+
+        assertTrue(resolved instanceof SiteMeshView);
+        assertEquals("INCLUDE mode must switch the inner JSP view to include dispatch",
+                Boolean.TRUE, jsp.alwaysInclude);
+    }
+
+    public void testInternalResourceViewGetsAlwaysIncludeUnderDetectOnTomcat11() throws Exception {
+        RecordingInternalResourceView jsp = new RecordingInternalResourceView();
+        ViewResolver inner = (name, locale) -> jsp;
+
+        View resolved = newResolver(inner, tomcat11ServletContext(), DispatchMode.DETECT).resolveViewName("home", Locale.ENGLISH);
+
+        assertTrue(resolved instanceof SiteMeshView);
+        assertEquals("DETECT on Tomcat 11 must switch the inner JSP view to include dispatch",
+                Boolean.TRUE, jsp.alwaysInclude);
+    }
+
+    public void testInternalResourceViewUntouchedUnderDetectOnOtherContainers() throws Exception {
+        RecordingInternalResourceView jsp = new RecordingInternalResourceView();
+        ViewResolver inner = (name, locale) -> jsp;
+
+        View resolved = newResolver(inner, servletContext, DispatchMode.DETECT).resolveViewName("home", Locale.ENGLISH);
+
+        assertTrue(resolved instanceof SiteMeshView);
+        assertNull("DETECT on a non-Tomcat-11 container must leave the inner JSP view alone", jsp.alwaysInclude);
+    }
+
+    public void testInternalResourceViewUntouchedUnderExplicitForward() throws Exception {
+        RecordingInternalResourceView jsp = new RecordingInternalResourceView();
+        ViewResolver inner = (name, locale) -> jsp;
+
+        View resolved = newResolver(inner, tomcat11ServletContext(), DispatchMode.FORWARD).resolveViewName("home", Locale.ENGLISH);
+
+        assertTrue(resolved instanceof SiteMeshView);
+        assertNull("explicit FORWARD must never mutate the inner view, even on Tomcat 11", jsp.alwaysInclude);
+    }
+
+    public void testLayoutPathInternalResourceViewIsNotMutated() throws Exception {
+        RecordingInternalResourceView jsp = new RecordingInternalResourceView();
+        ViewResolver inner = (name, locale) -> jsp;
+
+        View resolved = newResolver(inner, tomcat11ServletContext(), DispatchMode.INCLUDE)
+                .resolveViewName("/layouts/main", Locale.ENGLISH);
+
+        assertSame("layout views pass through un-wrapped", jsp, resolved);
+        assertNull("layout views must pass through unmodified", jsp.alwaysInclude);
+    }
+
+    public void testNonInternalResourceViewIsWrappedWithoutMutation() throws Exception {
+        View raw = plainView();
+        ViewResolver inner = (name, locale) -> raw;
+
+        View resolved = newResolver(inner, tomcat11ServletContext(), DispatchMode.INCLUDE).resolveViewName("home", Locale.ENGLISH);
+
+        assertTrue(resolved instanceof SiteMeshView);
+        assertSame(raw, ((SiteMeshView) resolved).getInnerView());
     }
 }

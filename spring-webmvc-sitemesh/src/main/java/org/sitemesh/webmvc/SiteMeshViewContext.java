@@ -105,6 +105,13 @@ public class SiteMeshViewContext extends WebAppContext {
         // the {@link ViewResolver} chain, so callers that explicitly want
         // a decorator rendered by a template engine can opt in by
         // configuring a decorator path without a leading slash.
+        // Caveat: a logical name resolved here goes through the RAW inner
+        // resolver, without SiteMeshViewResolver's prepareForBufferedRender
+        // mutation — if it resolves to a forward-based JSP
+        // (InternalResourceView, alwaysInclude=false) it is subject to the
+        // same Tomcat 11+ post-forward response suspension. Decorator JSPs
+        // should use slash-prefixed paths (RequestDispatcher dispatch,
+        // which honors DispatchMode) or an include-configured resolver.
         if (path != null && !path.startsWith("/")) {
             View view;
             try {

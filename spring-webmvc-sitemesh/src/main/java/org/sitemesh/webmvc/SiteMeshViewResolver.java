@@ -28,6 +28,7 @@ import org.springframework.core.Ordered;
 import org.springframework.web.servlet.SmartView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.InternalResourceView;
 
 /**
  * {@link ViewResolver} that wraps an inner resolver and decorates every
@@ -82,7 +83,42 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
         if (innerView instanceof SiteMeshView) {
             return innerView;
         }
+        prepareForBufferedRender(innerView);
         return createSiteMeshView(innerView);
+    }
+
+    /**
+     * Make {@code innerView} safe to render into {@link SiteMeshView}'s
+     * buffered response on containers where {@code
+     * RequestDispatcher.forward()} is unsafe.
+     *
+     * <p>An {@link InternalResourceView} (JSP) with the default {@code
+     * alwaysInclude=false} dispatches its resource via {@code forward()}.
+     * On Tomcat 11+ ({@code Context.suspendWrappedResponseAfterForward}
+     * defaults to {@code true}) the forward unwraps SiteMesh's buffering
+     * response wrapper down to the container's own response and suspends
+     * it, so everything SiteMesh writes afterwards — the entire decorated
+     * page — is silently discarded, producing a blank 200. Switching the
+     * inner view to {@code include()} avoids the suspension and loses
+     * almost nothing here: the include-vs-forward {@code Last-Modified}
+     * trade-off (see {@link DispatchMode}) does not apply to a render that
+     * is buffered and post-processed anyway. The one observable change is
+     * standard servlet include semantics — status and header writes made
+     * by the JSP itself are swallowed by the include wrapper, so a JSP
+     * that sets an error status mid-render no longer triggers the
+     * {@code includeErrorPages=false} buffering abort.</p>
+     *
+     * <p>The decision is keyed on the same container detection that
+     * governs decorator dispatch: the inner view is mutated when {@link
+     * DispatchMode#useInclude} resolves to include — i.e. {@link
+     * DispatchMode#INCLUDE}, or {@link DispatchMode#DETECT} on Tomcat 11+.
+     * Under {@link DispatchMode#FORWARD} the user has explicitly opted
+     * into forward dispatch, so the view is left untouched.</p>
+     */
+    private void prepareForBufferedRender(View innerView) {
+        if (innerView instanceof InternalResourceView resourceView && dispatchMode.useInclude(servletContext)) {
+            resourceView.setAlwaysInclude(true);
+        }
     }
 
     /**
@@ -119,6 +155,13 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
         this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
     }
 
+    /**
+     * The wrapped resolver. Note that views it caches may have been mutated
+     * by this resolver ({@link InternalResourceView}s switched to
+     * {@code alwaysInclude} on containers where {@code forward()} is
+     * unsafe), so rendering them directly — outside a SiteMesh-buffered
+     * response — uses include dispatch and inherits its semantics.
+     */
     public ViewResolver getInnerViewResolver() {
         return innerViewResolver;
     }
