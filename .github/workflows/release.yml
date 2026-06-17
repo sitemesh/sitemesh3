@@ -2,6 +2,13 @@ name: Release
 
 on:
   workflow_dispatch: # Manual trigger for releases
+    inputs:
+      release_version:
+        description: "Release version, e.g. 3.3.0-M1. Blank = strip -SNAPSHOT from gradle.properties."
+        required: false
+      next_version:
+        description: "Next dev version, e.g. 3.3.0-SNAPSHOT. Blank = bump patch. Set to the milestone target for an M-release."
+        required: false
 
 permissions:
   contents: write   # push the release commit, tag, and snapshot bump
@@ -24,10 +31,22 @@ jobs:
         id: process_version
         run: |
           VERSION=$(grep "^version=" gradle.properties | sed 's/^version=//')
-          RELEASE_VERSION=$(echo "$VERSION" | sed 's/-SNAPSHOT//')
-          BASE_VERSION=$(echo "$RELEASE_VERSION" | awk -F '.' '{print $1"."$2}')
-          PATCH_VERSION=$(echo "$RELEASE_VERSION" | awk -F '.' '{print $3+1}')
-          NEXT_VERSION="$BASE_VERSION.$PATCH_VERSION-SNAPSHOT"
+
+          # Release version: explicit input wins; otherwise strip -SNAPSHOT.
+          RELEASE_VERSION="${{ github.event.inputs.release_version }}"
+          if [ -z "$RELEASE_VERSION" ]; then
+            RELEASE_VERSION=$(echo "$VERSION" | sed 's/-SNAPSHOT//')
+          fi
+
+          # Next dev version: explicit input wins; otherwise bump patch off the
+          # current SNAPSHOT base (so a milestone can stay on its target version).
+          NEXT_VERSION="${{ github.event.inputs.next_version }}"
+          if [ -z "$NEXT_VERSION" ]; then
+            DEV_VERSION=$(echo "$VERSION" | sed 's/-SNAPSHOT//')
+            BASE_VERSION=$(echo "$DEV_VERSION" | awk -F '.' '{print $1"."$2}')
+            PATCH_VERSION=$(echo "$DEV_VERSION" | awk -F '.' '{print $3+1}')
+            NEXT_VERSION="$BASE_VERSION.$PATCH_VERSION-SNAPSHOT"
+          fi
 
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
           echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
