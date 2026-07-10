@@ -53,7 +53,7 @@ public class PropertiesConfigurator {
      *
      * @param builder builder to configure
      */
-    public void configureCommon(BaseSiteMeshBuilder builder) {
+    public void configureCommon(BaseSiteMeshBuilder<?, ?, ?> builder) {
 
         // TagRuleBundles
         String[] ruleSetNames = properties.getStringArray(TAG_RULE_BUNDLES_PARAM);

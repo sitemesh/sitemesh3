@@ -52,7 +52,7 @@ public class XmlConfigurator {
      *
      * @param builder builder to configure
      */
-    public void configureCommon(BaseSiteMeshBuilder builder) {
+    public void configureCommon(BaseSiteMeshBuilder<?, ?, ?> builder) {
 
         // TagRuleBundles
         // TODO: Support clearTagRuleBundles()
@@ -83,7 +83,7 @@ public class XmlConfigurator {
         }
     }
 
-    private void addDecoratorPaths(BaseSiteMeshBuilder builder, Xml mapping, String path) {
+    private void addDecoratorPaths(BaseSiteMeshBuilder<?, ?, ?> builder, Xml mapping, String path) {
         List<String> decorators = new ArrayList<String>();
         if (mapping.attribute("decorator") != null) {
             decorators.add(mapping.attribute("decorator"));

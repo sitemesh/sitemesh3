@@ -45,13 +45,9 @@ public interface ObjectFactory {
     public static class Default implements ObjectFactory {
         public Object create(String name) {
             try {
-                Class cls = Class.forName(name);
-                return cls.newInstance();
-            } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("Could not instantiate " + name, e);
-            } catch (InstantiationException e) {
-                throw new IllegalArgumentException("Could not instantiate " + name, e);
-            } catch (IllegalAccessException e) {
+                Class<?> cls = Class.forName(name);
+                return cls.getDeclaredConstructor().newInstance();
+            } catch (ReflectiveOperationException e) {
                 throw new IllegalArgumentException("Could not instantiate " + name, e);
             }
         }
