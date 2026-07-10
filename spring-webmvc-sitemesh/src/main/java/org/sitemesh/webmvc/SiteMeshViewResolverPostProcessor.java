@@ -15,8 +15,8 @@
  */
 package org.sitemesh.webmvc;
 
-import java.util.logging.Logger;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sitemesh.webapp.DispatchMode;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -57,7 +57,7 @@ import org.springframework.core.Ordered;
  */
 public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistryPostProcessor, Ordered {
 
-    private static final Logger logger = Logger.getLogger(SiteMeshViewResolverPostProcessor.class.getName());
+    private static final Log log = LogFactory.getLog(SiteMeshViewResolverPostProcessor.class);
 
     private String targetViewResolverBeanName = "jspViewResolver";
     private String siteMeshViewResolverBeanName;
@@ -75,7 +75,7 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         String targetName = targetViewResolverBeanName;
         if (!registry.containsBeanDefinition(targetName)) {
-            logger.warning("SiteMeshViewResolverPostProcessor: target view resolver bean '"
+            log.warn("SiteMeshViewResolverPostProcessor: target view resolver bean '"
                     + targetName + "' not present in registry; skipping - no Spring MVC views "
                     + "will be decorated. Check sitemesh.viewResolver.targetBeanName, or use "
                     + "wrap mode 'bean-instance' if the resolver is registered later in the "

@@ -18,9 +18,11 @@ package org.sitemesh.webmvc;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 import jakarta.servlet.ServletContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.sitemesh.DecoratorSelector;
 import org.sitemesh.SiteMeshContext;
@@ -64,7 +66,7 @@ import org.springframework.web.servlet.ViewResolver;
 public class SiteMeshViewResolverBeanPostProcessor
         implements BeanPostProcessor, BeanFactoryAware, SmartInitializingSingleton, Ordered {
 
-    private static final Logger logger = Logger.getLogger(SiteMeshViewResolverBeanPostProcessor.class.getName());
+    private static final Log log = LogFactory.getLog(SiteMeshViewResolverBeanPostProcessor.class);
 
     private String targetViewResolverBeanName = "jspViewResolver";
     private final AtomicInteger wrappedCount = new AtomicInteger();
@@ -140,12 +142,12 @@ public class SiteMeshViewResolverBeanPostProcessor
             return;
         }
         if (wrapAll) {
-            logger.warning("SiteMesh did not wrap any ViewResolver bean during startup - "
+            log.warn("SiteMesh did not wrap any ViewResolver bean during startup - "
                     + "no Spring MVC views will be decorated. Check that a template engine "
                     + "(Thymeleaf, FreeMarker, JSP, ...) is configured, or switch to the "
                     + "servlet-filter integration (sitemesh.integration=filter).");
         } else {
-            logger.warning("SiteMesh did not wrap the target ViewResolver bean '"
+            log.warn("SiteMesh did not wrap the target ViewResolver bean '"
                     + targetViewResolverBeanName + "' during startup - no Spring MVC views "
                     + "will be decorated. Check sitemesh.viewResolver.targetBeanName against "
                     + "your application's ViewResolver bean names, or use the default wrap-all "

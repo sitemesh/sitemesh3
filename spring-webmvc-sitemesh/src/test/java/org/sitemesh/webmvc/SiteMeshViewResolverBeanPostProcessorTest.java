@@ -210,6 +210,12 @@ public class SiteMeshViewResolverBeanPostProcessorTest extends TestCase {
         assertFalse(warningLogged(pp::afterSingletonsInstantiated));
     }
 
+    /**
+     * Captures WARN output from the post-processor's Commons Logging logger.
+     * This module's test classpath carries neither SLF4J nor Log4j, so
+     * commons-logging falls back to its java.util.logging adapter and the
+     * records can be observed through a JUL handler on the class-named logger.
+     */
     private boolean warningLogged(Runnable action) {
         java.util.logging.Logger logger =
                 java.util.logging.Logger.getLogger(SiteMeshViewResolverBeanPostProcessor.class.getName());
