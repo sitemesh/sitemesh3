@@ -15,16 +15,10 @@
  */
 package org.sitemesh.autoconfigure;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 
 import org.sitemesh.DecoratorSelector;
 import org.sitemesh.SiteMeshContext;
@@ -47,7 +41,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.ViewResolver;
 
@@ -77,14 +70,12 @@ import org.springframework.web.servlet.ViewResolver;
  *     <li>Registers a {@link SiteMeshViewResolverPostProcessor} so the
  *     primary {@code ViewResolver} bean is wrapped in a
  *     {@code SiteMeshViewResolver}.</li>
- *     <li>Registers a disabled {@code FilterRegistrationBean} under the
- *     name {@code "sitemesh"} so the companion
- *     {@link SiteMeshAutoConfiguration}'s {@code @ConditionalOnMissingBean}
- *     is satisfied (the upstream auto-config is itself gated off by
- *     requiring {@code sitemesh.integration=filter}, but this
- *     registration is retained as a belt-and-braces guard in case a user
- *     explicitly enables both configurations).</li>
  * </ul>
+ *
+ * <p>The companion {@link SiteMeshAutoConfiguration} (the servlet-filter
+ * integration) requires {@code sitemesh.integration=filter} explicitly, so the
+ * two integrations are mutually exclusive by configuration and no filter is
+ * registered — or needs suppressing — in this mode.</p>
  */
 @AutoConfiguration
 @ConditionalOnProperty(name = "sitemesh.integration", havingValue = "view-resolver", matchIfMissing = true)
@@ -249,33 +240,4 @@ public class SiteMeshViewResolverAutoConfiguration {
         return pp;
     }
 
-    /**
-     * Registers a disabled {@link FilterRegistrationBean} under the name
-     * {@code "sitemesh"}. The filter itself is a no-op and
-     * {@link FilterRegistrationBean#setEnabled(boolean) setEnabled(false)}
-     * ensures Spring Boot will not install it. This also satisfies any
-     * {@code @ConditionalOnMissingBean(name = "sitemesh")} guards on the
-     * filter-mode auto-configuration if it ever gets evaluated in the
-     * same context.
-     */
-    @Bean(name = "sitemesh")
-    @ConditionalOnMissingBean(name = "sitemesh")
-    public FilterRegistrationBean<Filter> disableFilter() {
-        FilterRegistrationBean<Filter> reg = new FilterRegistrationBean<>(new NoopFilter());
-        reg.setEnabled(false);
-        return reg;
-    }
-
-    /**
-     * No-op {@link Filter} used as the payload of the disabled registration
-     * above. Kept as a nested static class so no additional top-level
-     * classes leak into the starter's public API.
-     */
-    static final class NoopFilter implements Filter {
-        @Override
-        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-                throws IOException, ServletException {
-            chain.doFilter(request, response);
-        }
-    }
 }
