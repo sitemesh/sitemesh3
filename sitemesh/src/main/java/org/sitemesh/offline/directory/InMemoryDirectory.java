@@ -40,10 +40,18 @@ public class InMemoryDirectory implements Directory {
     private final Charset encoding;
     private final Map<String, ByteBuffer> files = new ConcurrentHashMap<String, ByteBuffer>();
 
+    /**
+     * Create an in-memory directory using the platform default charset.
+     */
     public InMemoryDirectory() {
         this(Charset.defaultCharset());
     }
 
+    /**
+     * Create an in-memory directory.
+     *
+     * @param encoding charset used to encode and decode text files
+     */
     public InMemoryDirectory(Charset encoding) {
         this.encoding = encoding;
     }

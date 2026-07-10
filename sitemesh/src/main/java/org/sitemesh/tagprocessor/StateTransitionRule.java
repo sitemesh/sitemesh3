@@ -18,6 +18,11 @@ package org.sitemesh.tagprocessor;
 
 import java.io.IOException;
 
+/**
+ * {@link TagRule} that switches the {@link TagProcessor} to a new {@link State} when the opening
+ * tag is encountered, and restores the previous state when the corresponding closing tag is
+ * encountered.
+ */
 public class StateTransitionRule extends BasicRule {
 
     private final State newState;
@@ -25,10 +30,21 @@ public class StateTransitionRule extends BasicRule {
 
     private State lastState;
 
+    /**
+     * Creates a rule that transitions to the given state and writes the enclosing tag to the output.
+     *
+     * @param newState state to switch to when the opening tag is encountered
+     */
     public StateTransitionRule(State newState) {
         this(newState, true);
     }
 
+    /**
+     * Creates a rule that transitions to the given state.
+     *
+     * @param newState          state to switch to when the opening tag is encountered
+     * @param writeEnclosingTag whether the enclosing tag itself should be written to the output
+     */
     public StateTransitionRule(State newState, boolean writeEnclosingTag) {
         this.newState = newState;
         this.writeEnclosingTag = writeEnclosingTag;

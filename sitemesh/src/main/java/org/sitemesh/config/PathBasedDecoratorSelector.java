@@ -43,13 +43,27 @@ public class PathBasedDecoratorSelector<C extends SiteMeshContext> implements De
 
     private final PathMapper<String[]> pathMapper = new PathMapper<String[]>();
 
+    /** Prefix prepended to every decorator path returned by this selector. */
     protected String prefix = "";
 
+    /**
+     * Set the prefix to prepend to every decorator path returned by this selector.
+     *
+     * @param prefix prefix to prepend (null is treated as the empty string)
+     * @return this instance, to allow method chaining
+     */
     public PathBasedDecoratorSelector setPrefix(String prefix) {
         this.prefix = prefix == null? "" : prefix;
         return this;
     }
 
+    /**
+     * Map a content path pattern to one or more decorator paths.
+     *
+     * @param contentPath path pattern to match (see {@link PathMapper})
+     * @param decoratorPaths decorators to apply to content matching the pattern
+     * @return this instance, to allow method chaining
+     */
     public PathBasedDecoratorSelector put(String contentPath, String... decoratorPaths) {
         pathMapper.put(contentPath, decoratorPaths);
         return this;
@@ -60,6 +74,12 @@ public class PathBasedDecoratorSelector<C extends SiteMeshContext> implements De
         return convertPaths(result == null ? EMPTY : result);
     }
 
+    /**
+     * Trim the given paths, drop empty entries and prepend the configured prefix to each.
+     *
+     * @param paths decorator paths to convert
+     * @return converted paths
+     */
     protected String[] convertPaths(String[] paths) {
         return Stream.of(paths)
                 .filter(path -> !path.trim().isEmpty())

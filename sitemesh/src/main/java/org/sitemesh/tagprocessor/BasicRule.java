@@ -25,6 +25,7 @@ import java.io.IOException;
  */
 public abstract class BasicRule implements TagRule {
 
+    /** The {@link TagProcessorContext} injected by the {@link TagProcessor}. */
     protected TagProcessorContext tagProcessorContext;
 
     public abstract void process(Tag tag) throws IOException;

@@ -42,6 +42,11 @@ public class OfflineContext extends BaseSiteMeshContext {
     private final Directory baseDirectory;
     private final String path;
 
+    /**
+     * @param contentProcessor processor used to parse content and decorators
+     * @param baseDirectory directory the decorators are loaded from
+     * @param path path of the page being processed (a leading "/" is added if missing)
+     */
     public OfflineContext(ContentProcessor contentProcessor, Directory baseDirectory, String path) {
         super(contentProcessor);
         this.baseDirectory = baseDirectory;

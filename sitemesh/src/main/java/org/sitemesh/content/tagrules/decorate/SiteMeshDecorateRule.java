@@ -58,6 +58,9 @@ public class SiteMeshDecorateRule extends BasicBlockRule<SiteMeshDecorateRule.Ho
 
     private final SiteMeshContext siteMeshContext;
 
+    /**
+     * @param siteMeshContext context used to apply the decorator to the inline content
+     */
     public SiteMeshDecorateRule(SiteMeshContext siteMeshContext) {
         this.siteMeshContext = siteMeshContext;
     }

@@ -51,6 +51,19 @@ public class SiteMeshViewContext extends WebAppContext {
     /**
      * Equivalent to the {@link DispatchMode}-taking constructor with
      * {@link DispatchMode#DETECT}.
+     *
+     * @param contentType the content type of the response being decorated
+     * @param request the current request
+     * @param response the real (unbuffered) response
+     * @param servletContext the current servlet context
+     * @param contentProcessor parses decorator output for chained decoration
+     * @param metaData records response metadata (e.g. last-modified) across
+     *                 the decorator render
+     * @param includeErrorPages whether decorator renders that set an error
+     *                          status (&gt;= 400) are still buffered
+     * @param viewResolver resolves decorator names (without a leading
+     *                     {@code /}) to Spring MVC views
+     * @param locale the locale to resolve decorator views with
      */
     public SiteMeshViewContext(String contentType,
                                HttpServletRequest request,
@@ -65,6 +78,24 @@ public class SiteMeshViewContext extends WebAppContext {
                 includeErrorPages, viewResolver, locale, DispatchMode.DETECT);
     }
 
+    /**
+     * Full constructor.
+     *
+     * @param contentType the content type of the response being decorated
+     * @param request the current request
+     * @param response the real (unbuffered) response
+     * @param servletContext the current servlet context
+     * @param contentProcessor parses decorator output for chained decoration
+     * @param metaData records response metadata (e.g. last-modified) across
+     *                 the decorator render
+     * @param includeErrorPages whether decorator renders that set an error
+     *                          status (&gt;= 400) are still buffered
+     * @param viewResolver resolves decorator names (without a leading
+     *                     {@code /}) to Spring MVC views
+     * @param locale the locale to resolve decorator views with
+     * @param dispatchMode how {@code /}-prefixed decorator paths are
+     *                     dispatched (include vs forward)
+     */
     public SiteMeshViewContext(String contentType,
                                HttpServletRequest request,
                                HttpServletResponse response,
@@ -80,10 +111,21 @@ public class SiteMeshViewContext extends WebAppContext {
         this.locale = locale;
     }
 
+    /**
+     * Returns the resolver used to resolve decorator names (without a
+     * leading {@code /}) to Spring MVC views.
+     *
+     * @return the view resolver
+     */
     public ViewResolver getViewResolver() {
         return viewResolver;
     }
 
+    /**
+     * Returns the locale decorator views are resolved with.
+     *
+     * @return the locale
+     */
     public Locale getLocale() {
         return locale;
     }

@@ -24,14 +24,26 @@ package org.sitemesh.webapp.contentfilter;
  */
 public class ContainerTweaks {
 
+    /**
+     * @return Whether a session should be eagerly created before decorating, for
+     *         containers that cannot create one after the response is committed.
+     */
     public boolean shouldAutoCreateSession() {
         return false;
     }
 
+    /**
+     * @return Whether unhandled exceptions should be explicitly logged, for
+     *         containers that swallow RuntimeExceptions thrown from filters.
+     */
     public boolean shouldLogUnhandledExceptions() {
         return false;
     }
 
+    /**
+     * @return Whether an IllegalStateException thrown while serving an error page
+     *         should be ignored rather than propagated.
+     */
     public boolean shouldIgnoreIllegalStateExceptionOnErrorPage() {
         return false;
     }

@@ -32,6 +32,9 @@ public class HtmlAttributesRule extends BasicRule {
 
     private final ContentProperty propertyToExport;
 
+    /**
+     * @param propertyToExport ContentProperty under which the html attributes are exported
+     */
     public HtmlAttributesRule(ContentProperty propertyToExport) {
         this.propertyToExport = propertyToExport;
     }

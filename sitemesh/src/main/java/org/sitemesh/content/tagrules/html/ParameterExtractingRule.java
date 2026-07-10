@@ -33,6 +33,9 @@ public class ParameterExtractingRule extends BasicRule{
 
     private final ContentProperty propertyToExport;
 
+    /**
+     * @param propertyToExport ContentProperty under which the parameters are exported
+     */
     public ParameterExtractingRule(ContentProperty propertyToExport) {
         this.propertyToExport = propertyToExport;
     }

@@ -54,6 +54,8 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
 
     /**
      * Create the SiteMesh Filter.
+     *
+     * @return the built Filter.
      */
     @Override
     public abstract Filter create();
@@ -77,6 +79,9 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
 
     /**
      * Add a path to be excluded by SiteMesh.
+     *
+     * @param exclude the path pattern to exclude from decoration.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER addExcludedPath(String exclude) {
         excludesMapper.put(exclude, true);
@@ -91,6 +96,9 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
      * is <code>{"text/html"}</code>.
      *
      * <p>Note: The MIME types are ignored if {@link #setCustomSelector(Selector)} is called.</p>
+     *
+     * @param mimeTypes the MIME types to intercept.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setMimeTypes(String... mimeTypes) {
         this.mimeTypes = List.of(mimeTypes);
@@ -102,6 +110,9 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
      * is <code>{"text/html"}</code>.
      *
      * <p>Note: The MIME types are ignored if {@link #setCustomSelector(Selector)} is called.</p>
+     *
+     * @param mimeTypes the MIME types to intercept.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setMimeTypes(List<String> mimeTypes) {
         this.mimeTypes = mimeTypes;
@@ -113,6 +124,9 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
      * The default is <code>false</code>.
      *
      * <p>Note: The error pages inclusion is ignored if {@link #setCustomSelector(Selector)} is called.</p>
+     *
+     * @param includeErrorPages whether error pages should be decorated.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setIncludeErrorPages(boolean includeErrorPages) {
         this.includeErrorPages = includeErrorPages;
@@ -125,6 +139,9 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
      * <p>Note: If this is called, it will override any MIME types
      * passed to {@link #setMimeTypes(String[])} as these are specific
      * to the default Selector.</p>
+     *
+     * @param selector the custom Selector to use.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setCustomSelector(Selector selector) {
         this.customSelector = selector;
@@ -133,6 +150,10 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
 
     /**
      * Get configured {@link Selector}.
+     *
+     * @return the custom Selector if one was set, otherwise a
+     *         {@link BasicSelector} built from the excluded paths,
+     *         error page inclusion and MIME types.
      */
     public Selector getSelector() {
         if (customSelector != null) {
@@ -155,6 +176,10 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
      * {@link DispatchMode#FORWARD}, or {@link DispatchMode#DETECT} (the
      * default). See {@link DispatchMode} for the include-vs-forward
      * trade-off (decorator {@code Last-Modified} vs Tomcat 11+ safety).
+     *
+     * @param dispatchMode the DispatchMode to use; <code>null</code> resets to
+     *                     {@link DispatchMode#DETECT}.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setDispatchMode(DispatchMode dispatchMode) {
         this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
@@ -163,6 +188,8 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
 
     /**
      * The configured {@link DispatchMode}. Defaults to {@link DispatchMode#DETECT}.
+     *
+     * @return the configured DispatchMode.
      */
     public DispatchMode getDispatchMode() {
         return dispatchMode;

@@ -40,6 +40,11 @@ public class TagProcessor {
 
     private State currentState = defaultState;
 
+    /**
+     * Create a processor for the given source document.
+     *
+     * @param source the document to process
+     */
     public TagProcessor(CharBuffer source) {
         this.in = source;
         this.out = new CharSequenceList();
@@ -48,6 +53,8 @@ public class TagProcessor {
     /**
      * Return the contents of the default buffer used during TagProcessing. By default,
      * everything will be written to this, except when new buffers are pushed on to the stack.
+     *
+     * @return contents of the default buffer
      */
     public CharSequence getDefaultBufferContents() {
         return out;
@@ -55,6 +62,8 @@ public class TagProcessor {
 
     /**
      * The default state of the processor (that is, when it begins processing).
+     *
+     * @return the default state of the processor
      */
     public State defaultState() {
         return defaultState;
@@ -63,6 +72,8 @@ public class TagProcessor {
     /**
      * Equivalent of TagProcessor.defaultState().addRule()
      *
+     * @param name name of tag the rule applies to (case insensitive)
+     * @param rule rule to apply to matching tags
      * @see State#addRule(String,TagRule)
      */
     public void addRule(String name, TagRule rule) {
@@ -71,6 +82,8 @@ public class TagProcessor {
 
     /**
      * Process the document, applying {@link TagRule}s.
+     *
+     * @throws IOException if the output cannot be written to
      */
     public void process() throws IOException {
         final TagProcessorContext context = new Context(out);

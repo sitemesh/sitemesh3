@@ -34,6 +34,9 @@ public class MetaTagRule extends BasicRule {
 
     private final ContentProperty propertyToUpdate;
 
+    /**
+     * @param propertyToUpdate ContentProperty under which the meta tags are exported
+     */
     public MetaTagRule(ContentProperty propertyToUpdate) {
         this.propertyToUpdate = propertyToUpdate;
     }

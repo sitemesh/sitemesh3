@@ -38,6 +38,14 @@ public class TextEncoder {
 
     private static final String DEFAULT_ENCODING = System.getProperty("file.encoding");
 
+    /**
+     * Decode the given bytes to characters using the specified encoding.
+     *
+     * @param data The bytes to decode.
+     * @param encoding Character encoding to use. If null, the platform default is used.
+     * @return The decoded characters.
+     * @throws IOException If the encoding is unsupported or decoding fails.
+     */
     public static CharBuffer encode(ByteBuffer data, String encoding) throws IOException {
         CharsetDecoder decoder = createDecoder(encoding);
         int encodedLength = (int) (decoder.maxCharsPerByte() * data.limit());

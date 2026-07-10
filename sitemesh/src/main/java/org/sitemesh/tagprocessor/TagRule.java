@@ -30,12 +30,17 @@ public interface TagRule {
 
     /**
      * Injected by the {@link TagProcessor} before any of the other TagRule methods.
+     *
+     * @param context the context of the {@link TagProcessor} this rule is registered with.
      */
     void setTagProcessorContext(TagProcessorContext context);
 
     /**
      * Implementations can use this to do any necessary work on the {@link Tag} such as extracting
      * values or transforming it.
+     *
+     * @param tag the tag encountered by the {@link TagProcessor}.
+     * @throws IOException if writing to the output fails.
      */
     void process(Tag tag) throws IOException;
 }

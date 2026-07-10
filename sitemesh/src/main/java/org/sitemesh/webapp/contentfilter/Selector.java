@@ -35,6 +35,7 @@ public interface Selector {
      * @param contentType e.g. "text/html; charset=iso-8859-1"
      * @param mimeType    e.g "text/html"
      * @param encoding    e.g. "iso-8859-1" (may be null)
+     * @return true if the response should be buffered for this content-type.
      */
     boolean shouldBufferForContentType(String contentType, String mimeType, String encoding);
 
@@ -44,12 +45,16 @@ public interface Selector {
      *
      * @param statusCode e.g. 200, 302, 404, 500, etc. See constants in
      *                   {@link jakarta.servlet.http.HttpServletResponse}.
+     * @return true if buffering should be aborted for this status code.
      */
     boolean shouldAbortBufferingForHttpStatusCode(int statusCode);
 
     /**
      * Determine whether buffering should be used for a particular request. For example,
      * elements like path, attributes, cookies, etc may influence this.
+     *
+     * @param request the current request.
+     * @return true if the response for this request should be buffered.
      */
     boolean shouldBufferForRequest(HttpServletRequest request);
 

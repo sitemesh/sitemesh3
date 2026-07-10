@@ -70,19 +70,33 @@ public class PropertiesFilterConfigurator extends PropertiesConfigurator {
     //                 to make it easier for users to find.
 
     // Property names.
+    /** Property name for the list of path patterns excluded from decoration. */
     public static final String EXCLUDE_PARAM = "exclude";
+    /** Property name for the list of mime-types that should be decorated. */
     public static final String MIME_TYPES_PARAM = "mimeTypes";
+    /** Property name for whether error pages should be decorated. */
     public static final String INCLUDE_ERROR_PAGES_PARAM = "includeErrorPages";
+    /** Property name for the decorator dispatch mode (include, forward or detect). */
     public static final String DISPATCH_MODE_PARAM = "dispatchMode";
+    /** Property name for the custom {@link DecoratorSelector} class name. */
     public static final String DECORATOR_SELECTOR = "decoratorSelector";
 
     private final PropertiesParser properties;
 
+    /**
+     * @param objectFactory factory used to instantiate objects from their class names
+     * @param properties string key/value pairs (see class JavaDoc for the supported keys)
+     */
     public PropertiesFilterConfigurator(ObjectFactory objectFactory, Map<String, String> properties) {
         super(objectFactory, properties);
         this.properties = new PropertiesParser(properties);
     }
 
+    /**
+     * Apply the filter specific configuration properties to the builder.
+     *
+     * @param builder builder to configure
+     */
     @SuppressWarnings("unchecked") public void configureFilter(BaseSiteMeshFilterBuilder builder) {
 
         // Common configuration

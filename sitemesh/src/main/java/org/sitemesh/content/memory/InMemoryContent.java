@@ -34,6 +34,10 @@ public class InMemoryContent implements Content {
     private final ContentChunk data;
     private boolean inMain;
 
+    /**
+     * Creates an empty in-memory Content, whose main data delegates to the root
+     * extracted property while flagging that the main document is being written.
+     */
     public InMemoryContent() {
         data = new InMemoryContentChunk(this) {
             @Override

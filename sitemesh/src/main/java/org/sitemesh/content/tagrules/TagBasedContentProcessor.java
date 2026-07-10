@@ -35,6 +35,9 @@ public class TagBasedContentProcessor implements ContentProcessor {
 
     private final TagRuleBundle[] tagRuleBundles;
 
+    /**
+     * @param tagRuleBundles the TagRuleBundles that are installed for each processed document
+     */
     public TagBasedContentProcessor(TagRuleBundle... tagRuleBundles) {
         this.tagRuleBundles = tagRuleBundles.clone();
     }
@@ -61,6 +64,11 @@ public class TagBasedContentProcessor implements ContentProcessor {
         return content;
     }
 
+    /**
+     * Returns a copy of the TagRuleBundles used by this processor.
+     *
+     * @return the installed TagRuleBundles
+     */
     public TagRuleBundle[] getTagRuleBundles() {
         return tagRuleBundles.clone();
     }

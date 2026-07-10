@@ -38,9 +38,18 @@ public class RoutableServletOutputStream extends ServletOutputStream {
      * Factory to lazily instantiate the destination.
      */
     public static interface DestinationFactory {
+        /**
+         * Create the destination stream.
+         *
+         * @return The destination ServletOutputStream.
+         * @throws IOException If the destination cannot be created.
+         */
         ServletOutputStream create() throws IOException;
     }
 
+    /**
+     * @param factory Factory that will lazily create the initial destination.
+     */
     public RoutableServletOutputStream(DestinationFactory factory) {
         this.factory = factory;
     }
@@ -52,6 +61,12 @@ public class RoutableServletOutputStream extends ServletOutputStream {
         return destination;
     }
 
+    /**
+     * Change the destination. Subsequent writes will go to the stream lazily
+     * created by the new factory.
+     *
+     * @param factory Factory that will lazily create the new destination.
+     */
     public void updateDestination(DestinationFactory factory) {
         destination = null;
         this.factory = factory;

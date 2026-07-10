@@ -68,6 +68,9 @@ public class SiteMeshFilter extends ContentBufferingFilter {
      * @param selector Provides the rules for whether SiteMesh should be
      *                 used for a specific request. For a basic implementation, use
      *                 {@link org.sitemesh.webapp.contentfilter.BasicSelector}.
+     * @param contentProcessor Processor used to parse the content into properties.
+     * @param decoratorSelector Selects the decorator path(s) to apply to the content.
+     * @param includeErrorPages Whether error pages should be decorated too.
      */
     public SiteMeshFilter(Selector selector,
                           ContentProcessor contentProcessor,
@@ -79,6 +82,9 @@ public class SiteMeshFilter extends ContentBufferingFilter {
      * @param selector Provides the rules for whether SiteMesh should be
      *                 used for a specific request. For a basic implementation, use
      *                 {@link org.sitemesh.webapp.contentfilter.BasicSelector}.
+     * @param contentProcessor Processor used to parse the content into properties.
+     * @param decoratorSelector Selects the decorator path(s) to apply to the content.
+     * @param includeErrorPages Whether error pages should be decorated too.
      * @param dispatchMode How decorators are dispatched (include vs forward).
      *                 See {@link DispatchMode}.
      */
@@ -167,6 +173,12 @@ public class SiteMeshFilter extends ContentBufferingFilter {
     /**
      * Create a context for the current request. This method can be overridden to allow for other
      * types of context.
+     *
+     * @param contentType Content type of the response being decorated.
+     * @param request The current request.
+     * @param response The current response.
+     * @param metaData Additional response metadata gathered while buffering.
+     * @return A new {@link WebAppContext} for this request.
      */
     protected WebAppContext createContext(String contentType, HttpServletRequest request,
                                           HttpServletResponse response, ResponseMetaData metaData) {
@@ -174,10 +186,16 @@ public class SiteMeshFilter extends ContentBufferingFilter {
                 getFilterConfig().getServletContext(), contentProcessor, metaData, includeErrorPages, dispatchMode);
     }
 
+    /**
+     * @return The {@link ContentProcessor} passed to the constructor.
+     */
     public ContentProcessor getContentProcessor() {
         return contentProcessor;
     }
 
+    /**
+     * @return The {@link DecoratorSelector} passed to the constructor.
+     */
     public DecoratorSelector<WebAppContext> getDecoratorSelector() {
         return decoratorSelector;
     }

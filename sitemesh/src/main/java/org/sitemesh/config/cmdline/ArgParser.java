@@ -40,6 +40,14 @@ public class ArgParser {
     private final Map<String, String> properties = new HashMap<String, String>();
     private final List<String> remaining = new ArrayList<String>();
 
+    /**
+     * Parses the given command line arguments.
+     *
+     * @param args command line arguments, with named parameters (e.g. <code>-key value</code>
+     *             or <code>--key=value</code>) appearing before any remaining arguments.
+     * @throws IllegalArgumentException if a named parameter has no value, or appears after
+     *                                  the remaining arguments.
+     */
     public ArgParser(String... args) throws IllegalArgumentException {
         String currentKey = null;
         for (String arg : args) {
@@ -66,10 +74,16 @@ public class ArgParser {
         }
     }
 
+    /**
+     * @return copy of the named key/value parameters parsed from the arguments.
+     */
     public Map<String, String> getProperties() {
         return new HashMap<String, String>(properties);
     }
 
+    /**
+     * @return copy of the remaining (non key/value) arguments, in the order they appeared.
+     */
     public List<String> getRemaining() {
         return new ArrayList<String>(remaining);
     }

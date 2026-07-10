@@ -37,9 +37,18 @@ public class RoutablePrintWriter extends PrintWriter {
      * Factory to lazily instantiate the destination.
      */
     public static interface DestinationFactory {
+        /**
+         * Create the destination writer.
+         *
+         * @return The destination PrintWriter.
+         * @throws IOException If the destination cannot be created.
+         */
         PrintWriter activateDestination() throws IOException;
     }
 
+    /**
+     * @param factory Factory that will lazily create the initial destination.
+     */
     public RoutablePrintWriter(DestinationFactory factory) {
         super(new DummyWriter());
         this.factory = factory;
@@ -56,6 +65,12 @@ public class RoutablePrintWriter extends PrintWriter {
         return destination;
     }
 
+    /**
+     * Change the destination. Subsequent writes will go to the writer lazily
+     * created by the new factory.
+     *
+     * @param factory Factory that will lazily create the new destination.
+     */
     public void updateDestination(DestinationFactory factory) {
         destination = null;
         this.factory = factory;

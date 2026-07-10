@@ -116,6 +116,12 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
         }
     }
 
+    /**
+     * How the registered {@link SiteMeshViewResolver}'s views dispatch
+     * decorators. Defaults to {@link DispatchMode#DETECT}.
+     *
+     * @return the dispatch mode, never {@code null}
+     */
     public DispatchMode getDispatchMode() {
         return dispatchMode;
     }
@@ -124,11 +130,21 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
      * Set how the wrapped {@link SiteMeshViewResolver}'s views dispatch
      * decorators (include vs forward). See {@link DispatchMode}. Null resets
      * to {@link DispatchMode#DETECT}.
+     *
+     * @param dispatchMode the dispatch mode, or {@code null} for
+     *                     {@link DispatchMode#DETECT}
      */
     public void setDispatchMode(DispatchMode dispatchMode) {
         this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
     }
 
+    /**
+     * Whether the registered resolver's views still buffer and decorate
+     * renders that set an error status (&gt;= 400). See
+     * {@link #setIncludeErrorPages(boolean)}.
+     *
+     * @return {@code true} if error responses are decorated
+     */
     public boolean isIncludeErrorPages() {
         return includeErrorPages;
     }
@@ -137,15 +153,31 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
      * Whether the registered resolver's views still buffer and decorate
      * renders that set an error status (&gt;= 400). Default {@code true}. See
      * {@link SiteMeshViewResolver#setIncludeErrorPages(boolean)}.
+     *
+     * @param includeErrorPages {@code true} to decorate error responses
      */
     public void setIncludeErrorPages(boolean includeErrorPages) {
         this.includeErrorPages = includeErrorPages;
     }
 
+    /**
+     * The name of the {@link org.springframework.web.servlet.ViewResolver}
+     * bean definition to wrap. Default: {@code "jspViewResolver"}.
+     *
+     * @return the target view resolver bean name
+     */
     public String getTargetViewResolverBeanName() {
         return targetViewResolverBeanName;
     }
 
+    /**
+     * Set the name of the {@link org.springframework.web.servlet.ViewResolver}
+     * bean definition to wrap. A {@code null} value is ignored, preserving
+     * the default.
+     *
+     * @param targetViewResolverBeanName the target bean name, or {@code null}
+     *                                   to keep the current value
+     */
     public void setTargetViewResolverBeanName(String targetViewResolverBeanName) {
         // Preserve the field default if a caller passes null (e.g. an auto-config
         // whose @Value placeholder didn't resolve during early PP instantiation).
@@ -154,14 +186,36 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
         }
     }
 
+    /**
+     * The bean name the {@link SiteMeshViewResolver} is registered under, or
+     * {@code null} to register it under the target bean's own name.
+     *
+     * @return the wrapper bean name, or {@code null}
+     */
     public String getSiteMeshViewResolverBeanName() {
         return siteMeshViewResolverBeanName;
     }
 
+    /**
+     * Set the bean name to register the {@link SiteMeshViewResolver} under.
+     * Leaving it unset (the default) replaces the original bean under its own
+     * name; when set, the target name is registered as an alias of the
+     * wrapper.
+     *
+     * @param siteMeshViewResolverBeanName the wrapper bean name, or
+     *                                     {@code null} to reuse the target name
+     */
     public void setSiteMeshViewResolverBeanName(String siteMeshViewResolverBeanName) {
         this.siteMeshViewResolverBeanName = siteMeshViewResolverBeanName;
     }
 
+    /**
+     * The bean name the unwrapped resolver is exposed under, or {@code null}
+     * (the default) when it is embedded as an anonymous inner-bean
+     * definition. See {@link #setInnerBeanName(String)}.
+     *
+     * @return the inner bean name, or {@code null}
+     */
     public String getInnerBeanName() {
         return innerBeanName;
     }
@@ -172,35 +226,80 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
      * pre-3.3 behavior). Leaving this unset (the default) keeps the
      * undecorated resolver out of reach of {@code getBeansOfType} sweeps; see
      * the class javadoc.
+     *
+     * @param innerBeanName the bean name to expose the unwrapped resolver
+     *                      under, or {@code null} to embed it
      */
     public void setInnerBeanName(String innerBeanName) {
         this.innerBeanName = innerBeanName;
     }
 
+    /**
+     * The name of the {@link org.sitemesh.content.ContentProcessor} bean
+     * wired into the resolver. Default: {@code "contentProcessor"}.
+     *
+     * @return the content processor bean name
+     */
     public String getContentProcessorBeanName() {
         return contentProcessorBeanName;
     }
 
+    /**
+     * Set the name of the {@link org.sitemesh.content.ContentProcessor} bean
+     * wired into the resolver.
+     *
+     * @param contentProcessorBeanName the content processor bean name
+     */
     public void setContentProcessorBeanName(String contentProcessorBeanName) {
         this.contentProcessorBeanName = contentProcessorBeanName;
     }
 
+    /**
+     * The name of the {@link org.sitemesh.DecoratorSelector} bean wired into
+     * the resolver. Default: {@code "decoratorSelector"}.
+     *
+     * @return the decorator selector bean name
+     */
     public String getDecoratorSelectorBeanName() {
         return decoratorSelectorBeanName;
     }
 
+    /**
+     * Set the name of the {@link org.sitemesh.DecoratorSelector} bean wired
+     * into the resolver.
+     *
+     * @param decoratorSelectorBeanName the decorator selector bean name
+     */
     public void setDecoratorSelectorBeanName(String decoratorSelectorBeanName) {
         this.decoratorSelectorBeanName = decoratorSelectorBeanName;
     }
 
+    /**
+     * The name of the {@link jakarta.servlet.ServletContext} bean wired into
+     * the resolver. Default: {@code "servletContext"}.
+     *
+     * @return the servlet context bean name
+     */
     public String getServletContextBeanName() {
         return servletContextBeanName;
     }
 
+    /**
+     * Set the name of the {@link jakarta.servlet.ServletContext} bean wired
+     * into the resolver.
+     *
+     * @param servletContextBeanName the servlet context bean name
+     */
     public void setServletContextBeanName(String servletContextBeanName) {
         this.servletContextBeanName = servletContextBeanName;
     }
 
+    /**
+     * The resolver class registered in place of the original view resolver
+     * bean. Defaults to {@link SiteMeshViewResolver}.
+     *
+     * @return the resolver class, never {@code null}
+     */
     public Class<? extends SiteMeshViewResolver> getSiteMeshViewResolverClass() {
         return siteMeshViewResolverClass;
     }
@@ -212,6 +311,9 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
      * framework-specific {@link SiteMeshView} subtype from
      * {@link SiteMeshViewResolver#createSiteMeshView(org.springframework.web.servlet.View)}).
      * Defaults to {@link SiteMeshViewResolver} itself.
+     *
+     * @param siteMeshViewResolverClass the resolver class to register; must
+     *                                  not be {@code null}
      */
     public void setSiteMeshViewResolverClass(Class<? extends SiteMeshViewResolver> siteMeshViewResolverClass) {
         if (siteMeshViewResolverClass == null) {
@@ -225,6 +327,13 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
         return order;
     }
 
+    /**
+     * Set the order in which this post processor runs relative to other
+     * {@link BeanDefinitionRegistryPostProcessor}s. Default:
+     * {@code Ordered.LOWEST_PRECEDENCE - 100}.
+     *
+     * @param order the order value
+     */
     public void setOrder(int order) {
         this.order = order;
     }

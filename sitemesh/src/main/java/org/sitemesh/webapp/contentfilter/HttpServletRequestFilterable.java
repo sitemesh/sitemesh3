@@ -40,6 +40,7 @@ public class HttpServletRequestFilterable extends HttpServletRequestWrapper {
     protected Set<String> exclusionsHeaders = new HashSet<String>();
 
     /**
+     * @param httpServletRequest The request to wrap.
      * @see HttpServletRequestWrapper#HttpServletRequestWrapper(HttpServletRequest)
      */
     public HttpServletRequestFilterable(HttpServletRequest httpServletRequest) {
@@ -82,6 +83,12 @@ public class HttpServletRequestFilterable extends HttpServletRequestWrapper {
         return exclusionsHeaders.contains(normalize(header));
     }
 
+    /**
+     * Normalize a header name for case-insensitive comparison.
+     *
+     * @param header The header name to normalize.
+     * @return The lower-cased header name.
+     */
     protected String normalize(String header){
         return header.toLowerCase();
     }

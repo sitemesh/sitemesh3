@@ -36,6 +36,9 @@ public class CustomTag implements Tag {
 
     /**
      * Create new tag.
+     *
+     * @param name name of the tag (element name)
+     * @param type type of the tag (must be Tag.Type.OPEN, Tag.Type.CLOSE or Tag.Type.EMPTY)
      */
     public CustomTag(String name, Tag.Type type) {
         setName(name);
@@ -44,6 +47,8 @@ public class CustomTag implements Tag {
 
     /**
      * Create a CustomTag based on an existing Tag - this takes a copy of the Tag.
+     *
+     * @param tag the Tag to copy
      */
     public CustomTag(Tag tag) {
         setName(tag.getName());
@@ -193,6 +198,8 @@ public class CustomTag implements Tag {
 
     /**
      * Change the name of the attribute.
+     *
+     * @param name new name of the tag (may not be null or empty)
      */
     public void setName(String name) {
         if (name == null || name.length() == 0) {
@@ -204,6 +211,8 @@ public class CustomTag implements Tag {
 
     /**
      * Change the type of the tag.
+     *
+     * @param type new type of the tag (must be Tag.Type.OPEN, Tag.Type.CLOSE or Tag.Type.EMPTY)
      */
     public void setType(Tag.Type type) {
         if (type == Tag.Type.OPEN || type == Tag.Type.CLOSE || type == Tag.Type.EMPTY) {
@@ -255,6 +264,9 @@ public class CustomTag implements Tag {
 
     /**
      * Change the name of an existing attribute.
+     *
+     * @param attributeIndex index of the attribute to change
+     * @param name           new name of the attribute
      */
     public void setAttributeName(int attributeIndex, String name) {
         attributes[attributeIndex * 2] = name;
@@ -262,6 +274,9 @@ public class CustomTag implements Tag {
 
     /**
      * Change the value of an existing attribute. The value may be null for an HTML style empty attribute.
+     *
+     * @param attributeIndex index of the attribute to change
+     * @param value          new value of attribute or null for an HTML style empty attribute
      */
     public void setAttributeValue(int attributeIndex, String value) {
         attributes[(attributeIndex * 2) + 1] = value;
@@ -269,6 +284,8 @@ public class CustomTag implements Tag {
 
     /**
      * Remove an attribute.
+     *
+     * @param attributeIndex index of the attribute to remove
      */
     public void removeAttribute(int attributeIndex) {
         if (attributeIndex > attributeCount / 2) {

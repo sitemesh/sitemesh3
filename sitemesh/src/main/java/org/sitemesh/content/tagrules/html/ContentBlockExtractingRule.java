@@ -36,6 +36,9 @@ public class ContentBlockExtractingRule extends BasicBlockRule<String> {
 
     private final ContentProperty propertyToExport;
 
+    /**
+     * @param propertyToExport ContentProperty under which the content blocks are exported
+     */
     public ContentBlockExtractingRule(ContentProperty propertyToExport) {
         this.propertyToExport = propertyToExport;
     }

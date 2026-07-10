@@ -28,8 +28,8 @@ import java.nio.CharBuffer;
 /**
  * A shared buffer, that can provide an interface as either a {@link PrintWriter}
  * (through {@link #getWriter()}) or {@link ServletOutputStream} (through {@link #getOutputStream()}.
- * <p></p>
- * The buffered text can be accessed through {@link #toCharBuffer()}.
+ *
+ * <p>The buffered text can be accessed through {@link #toCharBuffer()}.</p>
  *
  * @author Joe Walnes
  */
@@ -43,10 +43,19 @@ public class Buffer {
     private PrintWriter exposedWriter;
     private ServletOutputStream exposedStream;
 
+    /**
+     * @param encoding character encoding used to decode bytes written to the
+     *                 {@link ServletOutputStream} into text.
+     */
     public Buffer(String encoding) {
         this.encoding = encoding;
     }
 
+    /**
+     * Expose the buffer as a {@link PrintWriter}. Must not be called after {@link #getOutputStream()}.
+     *
+     * @return writer that appends to this buffer.
+     */
     public PrintWriter getWriter() {
         if (bufferedWriter == null) {
             if (byteBufferBuilder != null) {
@@ -58,6 +67,11 @@ public class Buffer {
         return exposedWriter;
     }
 
+    /**
+     * Expose the buffer as a {@link ServletOutputStream}. Must not be called after {@link #getWriter()}.
+     *
+     * @return stream that appends to this buffer.
+     */
     public ServletOutputStream getOutputStream() {
         if (byteBufferBuilder == null) {
             if (bufferedWriter != null) {
@@ -99,10 +113,20 @@ public class Buffer {
         return exposedStream;
     }
 
+    /**
+     * @return true if content was written via {@link #getOutputStream()} rather than {@link #getWriter()}.
+     */
     public boolean isUsingStream() {
         return byteBufferBuilder != null;
     }
 
+    /**
+     * Return the buffered content as text, decoding bytes with the buffer's encoding if
+     * the {@link ServletOutputStream} was used.
+     *
+     * @return the buffered content (empty if nothing was written).
+     * @throws IOException if the byte content cannot be decoded.
+     */
     public CharBuffer toCharBuffer() throws IOException {
         if (bufferedWriter != null) {
             return CharBuffer.wrap(bufferedWriter.toCharArray());

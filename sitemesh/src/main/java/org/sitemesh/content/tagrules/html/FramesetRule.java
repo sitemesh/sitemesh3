@@ -33,6 +33,9 @@ public class FramesetRule extends BasicRule {
 
     private final ContentProperty propertyToExport;
 
+    /**
+     * @param propertyToExport ContentProperty that is set to {@code true} when frames are detected
+     */
     public FramesetRule(ContentProperty propertyToExport) {
         this.propertyToExport = propertyToExport;
     }

@@ -23,9 +23,22 @@ import org.sitemesh.webapp.WebAppContext;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+/**
+ * {@link org.sitemesh.DecoratorSelector} implementation that selects a decorator based on
+ * a request attribute (default: <code>decorator.name</code>), falling back to the
+ * {@link MetaTagBasedDecoratorSelector} behavior if the attribute is not set.
+ *
+ * <p>Multiple chained decorators can be specified using commas.</p>
+ */
 public class RequestAttributeDecoratorSelector<C extends SiteMeshContext> extends MetaTagBasedDecoratorSelector<C>{
     private String decoratorAttribute = "decorator.name";
 
+    /**
+     * Set the name of the request attribute holding the decorator path(s).
+     *
+     * @param decoratorAttribute request attribute name (default: <code>decorator.name</code>)
+     * @return this instance, to allow method chaining
+     */
     public RequestAttributeDecoratorSelector setDecoratorAttribute(String decoratorAttribute) {
         this.decoratorAttribute = decoratorAttribute;
         return this;

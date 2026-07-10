@@ -71,6 +71,10 @@ public enum DispatchMode {
      * {@code fallback} for {@code null}, blank, or unrecognised values. Shared
      * by every configuration entry point (XML, properties, Spring) so the
      * lenient-parsing behaviour stays consistent.
+     *
+     * @param value The configured value to parse (may be null).
+     * @param fallback The mode to return when the value cannot be parsed.
+     * @return The parsed mode, or {@code fallback}.
      */
     public static DispatchMode fromString(String value, DispatchMode fallback) {
         if (value == null) {
@@ -88,6 +92,7 @@ public enum DispatchMode {
      * container. {@link #DETECT} consults
      * {@link ServletContext#getServerInfo()}.
      *
+     * @param servletContext The servlet context of the running container (may be null).
      * @return {@code true} to dispatch with {@code include()}, {@code false}
      *         to dispatch with {@code forward()}.
      */

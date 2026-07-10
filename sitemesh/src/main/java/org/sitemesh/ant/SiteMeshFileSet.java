@@ -33,33 +33,57 @@ public class SiteMeshFileSet extends FileSet {
     /** An optional destination directory. */
     private File destdir;
 
+    /** Create an empty SiteMeshFileSet. */
     public SiteMeshFileSet() {
     }
 
+    /**
+     * Create a SiteMeshFileSet from an existing FileSet.
+     *
+     * @param fileSet FileSet to copy the configuration from
+     */
     public SiteMeshFileSet(FileSet fileSet) {
         super(fileSet);
     }
 
+    /**
+     * @return the decorator to use when decorating the set of files
+     */
     public String getDecorator() {
         return decorator;
     }
 
+    /**
+     * @param decorator the decorator to use when decorating the set of files
+     */
     public void setDecorator(String decorator) {
         this.decorator = decorator;
     }
 
+    /**
+     * @return the destination directory, or null if not set
+     */
     public File getDestdir() {
         return destdir;
     }
 
+    /**
+     * @param destdir optional destination directory for the decorated files
+     */
     public void setDestdir(File destdir) {
         this.destdir = destdir;
     }
 
+    /**
+     * @return true if a decorator was set on this FileSet
+     */
     public boolean hasDecorator() {
         return decorator != null;
     }
 
+    /**
+     * @return true if a destination directory was set on this FileSet
+     */
     public boolean hasDestdir(){
         return destdir != null;
     }

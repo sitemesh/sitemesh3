@@ -84,6 +84,14 @@ public class WebAppContext extends BaseSiteMeshContext {
      * Equivalent to {@link #WebAppContext(String, HttpServletRequest,
      * HttpServletResponse, ServletContext, ContentProcessor, ResponseMetaData,
      * boolean, DispatchMode)} with {@link DispatchMode#DETECT}.
+     *
+     * @param contentType Content type of the response being decorated.
+     * @param request The current request.
+     * @param response The current response.
+     * @param servletContext The servlet context, used to obtain the {@link RequestDispatcher}.
+     * @param contentProcessor Processor used to parse content (including the decorator output).
+     * @param metaData Additional response metadata (e.g. last-modified) gathered while buffering.
+     * @param includeErrorPages Whether error pages should be decorated too.
      */
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
@@ -93,6 +101,17 @@ public class WebAppContext extends BaseSiteMeshContext {
                 includeErrorPages, DispatchMode.DETECT);
     }
 
+    /**
+     * @param contentType Content type of the response being decorated.
+     * @param request The current request.
+     * @param response The current response.
+     * @param servletContext The servlet context, used to obtain the {@link RequestDispatcher}.
+     * @param contentProcessor Processor used to parse content (including the decorator output).
+     * @param metaData Additional response metadata (e.g. last-modified) gathered while buffering.
+     * @param includeErrorPages Whether error pages should be decorated too.
+     * @param dispatchMode How decorators are dispatched (include vs forward). Null is
+     *                     treated as {@link DispatchMode#DETECT}.
+     */
     public WebAppContext(String contentType, HttpServletRequest request,
                          HttpServletResponse response, ServletContext servletContext,
                          ContentProcessor contentProcessor, ResponseMetaData metaData,
@@ -108,26 +127,48 @@ public class WebAppContext extends BaseSiteMeshContext {
         this.useIncludeForDispatch = this.dispatchMode.useInclude(servletContext);
     }
 
+    /**
+     * @return The current request.
+     */
     public HttpServletRequest getRequest() {
         return request;
     }
 
+    /**
+     * @return The current response.
+     */
     public HttpServletResponse getResponse() {
         return response;
     }
 
+    /**
+     * @return The servlet context.
+     */
     public ServletContext getServletContext() {
         return servletContext;
     }
 
+    /**
+     * @return Content type of the response being decorated.
+     */
     public String getContentType() {
         return contentType;
     }
 
+    /**
+     * @return The request path, as determined by {@link #getRequestPath(HttpServletRequest)}.
+     */
     public String getPath() {
         return getRequestPath(request);
     }
 
+    /**
+     * Determine the path of a request (servlet path plus path info), taking
+     * forwarded requests into account.
+     *
+     * @param request The request to determine the path of.
+     * @return The request path.
+     */
     public static String getRequestPath(HttpServletRequest request) {
         String result   =  null;
         
@@ -224,6 +265,12 @@ public class WebAppContext extends BaseSiteMeshContext {
      * on Tomcat 11+ (it unwraps SiteMesh's response wrapper and commits a blank
      * response); {@code include()} is safe everywhere but drops the decorator's
      * {@code Last-Modified}. See {@link DispatchMode} for the full trade-off.</p>
+     *
+     * @param request The request to dispatch with.
+     * @param response The response the decorator output is written to (typically a buffer wrapper).
+     * @param path Path of the decorator to dispatch to.
+     * @throws ServletException If no dispatcher exists for the path, or the dispatch fails.
+     * @throws IOException If the dispatch fails with an I/O error.
      */
     protected void dispatch(HttpServletRequest request, HttpServletResponse response, String path)
             throws ServletException, IOException {
@@ -240,6 +287,8 @@ public class WebAppContext extends BaseSiteMeshContext {
 
     /**
      * The {@link DispatchMode} this context dispatches decorators with.
+     *
+     * @return The configured dispatch mode (never null).
      */
     public DispatchMode getDispatchMode() {
         return dispatchMode;

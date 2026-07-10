@@ -48,11 +48,14 @@ public class TagTokenizer {
         /**
          * Before attempting to parse a tag, the tokenizer will ask the handler whether the tag should be processed -
          * avoiding additional tag parsing makes the tokenizer quicker.
-         * <p></p>
-         * If true is returned, the tokenizer will fully parse the tag and pass it into the
+         *
+         * <p>If true is returned, the tokenizer will fully parse the tag and pass it into the
          * {@link #tag(Tag)} method.
          * Otherwise, the tokenizer will not try to parse the tag and pass it to the
-         * {@link #text(CharSequence)} method, untouched.
+         * {@link #text(CharSequence)} method, untouched.</p>
+         *
+         * @param name name of the tag encountered
+         * @return true if the tag should be fully parsed and passed to {@link #tag(Tag)}
          */
         boolean shouldProcessTag(String name);
 
@@ -60,11 +63,17 @@ public class TagTokenizer {
          * Called when tokenizer encounters an HTML tag (open, close or empty).
          * <p>The Tag instance passed in should not be kept beyond the scope of this method as the tokenizer will
          * attempt to reuse it.</p>
+         *
+         * @param tag the tag that was encountered
+         * @throws IOException if the handler fails to write output
          */
         void tag(Tag tag) throws IOException;
 
         /**
          * Called when tokenizer encounters anything other than a well-formed HTML tag.
+         *
+         * @param text the text that was encountered
+         * @throws IOException if the handler fails to write output
          */
         void text(CharSequence text) throws IOException;
 
@@ -86,9 +95,36 @@ public class TagTokenizer {
     private Token pushbackToken = Token.UNKNOWN;
     private String pushbackText;
 
+    /**
+     * Token types produced by the lexer.
+     */
     public static enum Token {
-        UNKNOWN, SLASH, WHITESPACE, EQUALS, QUOTE, WORD, TEXT, QUOTED, LT, GT,
-        LT_OPEN_MAGIC_COMMENT, LT_CLOSE_MAGIC_COMMENT, EOF
+        /** Token type not (yet) known. */
+        UNKNOWN,
+        /** A '/' character. */
+        SLASH,
+        /** A run of whitespace. */
+        WHITESPACE,
+        /** An '=' character. */
+        EQUALS,
+        /** A quote character. */
+        QUOTE,
+        /** A word (e.g. tag or attribute name, unquoted attribute value). */
+        WORD,
+        /** Plain text outside of a tag. */
+        TEXT,
+        /** A quoted literal. */
+        QUOTED,
+        /** A '&lt;' character - start of a tag. */
+        LT,
+        /** A '&gt;' character - end of a tag. */
+        GT,
+        /** Start of an open conditional comment: '&lt;!--['. */
+        LT_OPEN_MAGIC_COMMENT,
+        /** Start of a close conditional comment: '&lt;!['. */
+        LT_CLOSE_MAGIC_COMMENT,
+        /** End of input. */
+        EOF
     }
 
     private final CharSequence input;
@@ -104,6 +140,12 @@ public class TagTokenizer {
     private Tag.Type type;
     private final TokenHandler handler;
 
+    /**
+     * Create a tokenizer for the given input.
+     *
+     * @param input   the HTML to tokenize
+     * @param handler handler that will receive callbacks as tags and text are encountered
+     */
     public TagTokenizer(final CharBuffer input, TokenHandler handler) {
         this.handler = handler;
         lexer = new Lexer(new CharBufferReader(input));
@@ -111,6 +153,9 @@ public class TagTokenizer {
         this.input = input;
     }
 
+    /**
+     * Tokenize the input, notifying the {@link TokenHandler} as tags and text are encountered.
+     */
     public void start() {
         try {
             while (true) {
@@ -390,9 +435,20 @@ public class TagTokenizer {
         handler.warning(message, line, column);
     }
 
+    /**
+     * {@link Tag} implementation that is reused by the tokenizer for each parsed tag,
+     * to avoid allocating a new object per tag.
+     */
     public class ReusableToken implements Tag {
 
+        /**
+         * Number of used slots in the {@link #attributes} array (i.e. twice the number of attributes).
+         */
         public int attributeCount = 0;
+
+        /**
+         * Attribute names and values, interleaved: name1, value1, name2, value2...
+         */
         public String[] attributes = new String[10]; // name1, value1, name2, value2...
 
         public String getName() {

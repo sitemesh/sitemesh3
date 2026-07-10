@@ -48,6 +48,8 @@ public class Xml {
 
     /**
      * Wrap an existing Element.
+     *
+     * @param element element to wrap (may be null to represent a missing node)
      */
     public Xml(Element element) {
         this.element = element;
@@ -62,6 +64,8 @@ public class Xml {
 
     /**
      * Parse a chunk of XML and wrap the root node.
+     *
+     * @param xml XML document as a string
      */
     public Xml(String xml) {
         try {
@@ -77,6 +81,12 @@ public class Xml {
         }
     }
 
+    /**
+     * Create a DocumentBuilder hardened against XML External Entity (XXE) attacks.
+     *
+     * @return a namespace-unaware DocumentBuilder with doctype declarations disallowed
+     * @throws ParserConfigurationException if the underlying parser does not support the security features
+     */
     public static DocumentBuilder getSecureDocumentBuilder() throws ParserConfigurationException {
         // https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -89,6 +99,9 @@ public class Xml {
     /**
      * Return the value of the named attribute. Returns null if this node does not exist, or the
      * attribute does not exist.
+     *
+     * @param name attribute name
+     * @return attribute value, or null
      */
     public String attribute(String name) {
         return element == null || !element.hasAttribute(name) ? null : element.getAttribute(name);
@@ -97,6 +110,10 @@ public class Xml {
     /**
      * Return the value of the named attribute. Returns defaultValue if this node does not exist, or the
      * attribute does not exist.
+     *
+     * @param name attribute name
+     * @param defaultValue value to return if the attribute is not present
+     * @return attribute value, or defaultValue
      */
     public String attribute(String name, String defaultValue) {
         return valueIfNotNull(attribute(name), defaultValue);
@@ -105,6 +122,8 @@ public class Xml {
     /**
      * Return text content of this element. Returns null if this node does not exist, or it does
      * not contain text.
+     *
+     * @return text content, or null
      */
     public String text() {
         return element == null ? null : element.getTextContent();
@@ -113,6 +132,9 @@ public class Xml {
     /**
      * Return text content of this element. Returns defaultValue if this node does not exist, or it does
      * not contain text.
+     *
+     * @param defaultValue value to return if there is no text content
+     * @return text content, or defaultValue
      */
     public String text(String defaultValue) {
         return valueIfNotNull(text(), defaultValue);
@@ -124,6 +146,9 @@ public class Xml {
      *
      * <p>If no elements are found with the given name, an empty list is returned.
      * This method will NEVER return null.</p>
+     *
+     * @param tagName tag name of the child elements to find
+     * @return list of matching child elements (never null)
      */
     public List<Xml> children(String tagName) {
         if (element == null) {
@@ -148,6 +173,9 @@ public class Xml {
      *
      * <p>If no elements are found with the given name, an Xml instance is returned that represents
      * a missing node. This method will NEVER return null.</p>
+     *
+     * @param tagName tag name of the child element to find
+     * @return first matching child element, or an Xml representing a missing node (never null)
      */
     public Xml child(String tagName) {
         if (element == null) {
@@ -167,6 +195,8 @@ public class Xml {
 
     /**
      * Whether this node actually exists in the tree.
+     *
+     * @return true if this node exists, false if it represents a missing node
      */
     public boolean exists() {
         return element != null;

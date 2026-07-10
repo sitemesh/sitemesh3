@@ -35,6 +35,10 @@ public class DumpingContentProcessor implements ContentProcessor {
     private final ContentProcessor contentProcessor;
     private final Appendable debugOut;
 
+    /**
+     * @param contentProcessor the underlying ContentProcessor to delegate to
+     * @param debugOut         destination that each created Content is dumped to
+     */
     public DumpingContentProcessor(ContentProcessor contentProcessor, Appendable debugOut) {
         this.contentProcessor = contentProcessor;
         this.debugOut = debugOut;
@@ -46,6 +50,13 @@ public class DumpingContentProcessor implements ContentProcessor {
         return result;
     }
 
+    /**
+     * Dumps the main data and all extracted properties of the Content to {@code out}.
+     *
+     * @param content Content to dump
+     * @param out     destination to write the dump to
+     * @throws IOException if writing to {@code out} fails
+     */
     public static void dump(Content content, Appendable out) throws IOException {
         out.append("~~~~~~ MAIN ~~~~~~");
         content.getData().writeValueTo(out);
@@ -56,6 +67,12 @@ public class DumpingContentProcessor implements ContentProcessor {
         }
     }
 
+    /**
+     * Dumps the main data and all extracted properties of the Content to a String.
+     *
+     * @param content Content to dump
+     * @return the dump as a String
+     */
     public static String dump(Content content) {
         StringBuilder result = new StringBuilder();
         try {
@@ -66,6 +83,12 @@ public class DumpingContentProcessor implements ContentProcessor {
         return result.toString();
     }
 
+    /**
+     * Builds the dot-separated path of a ContentProperty, from the root node.
+     *
+     * @param contentProperty property to build the path for
+     * @return the full path, e.g. {@code body.myprop}
+     */
     public static String getFullPath(ContentProperty contentProperty) {
         StringBuilder result = new StringBuilder();
         for (ContentProperty item : contentProperty.getFullPath()) {

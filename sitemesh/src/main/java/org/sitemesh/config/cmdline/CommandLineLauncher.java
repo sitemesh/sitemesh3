@@ -43,12 +43,22 @@ import java.nio.CharBuffer;
  */
 public class CommandLineLauncher {
 
+    /** Name of the command line parameter used to specify an XML configuration file. */
     public static final String CONFIG_FILE_PARAM = "config";
+
+    /** Path (relative to the source directory) of the XML configuration file used if none is specified. */
     public static final String CONFIG_FILE_DEFAULT = "/WEB-INF/sitemesh3.xml";
 
     // TODO: File include/exclude patterns.
     // TODO: Straight copy of non-decoratable resources.
 
+    /**
+     * Entry point. Parses the command line arguments, configures a {@link SiteMeshOffline}
+     * instance (from properties and optional XML config file) and processes the given files.
+     *
+     * @param unparsedArgs command line arguments. Run with no arguments to see usage instructions.
+     * @throws Exception if processing fails.
+     */
     public static void main(String[] unparsedArgs) throws Exception {
         if (unparsedArgs.length == 0) {
             System.err.println(HELP_TEXT);

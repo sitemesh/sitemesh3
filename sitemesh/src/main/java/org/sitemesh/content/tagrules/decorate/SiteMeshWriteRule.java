@@ -40,6 +40,9 @@ public class SiteMeshWriteRule extends BasicBlockRule {
     private final SiteMeshContext siteMeshContext;
     private ContentProperty property;
 
+    /**
+     * @param siteMeshContext context providing the {@link Content} to merge
+     */
     public SiteMeshWriteRule(SiteMeshContext siteMeshContext) {
         this.siteMeshContext = siteMeshContext;
     }
@@ -56,6 +59,13 @@ public class SiteMeshWriteRule extends BasicBlockRule {
         return null;
     }
 
+    /**
+     * Resolves a dot-separated property path against the extracted properties of the content.
+     *
+     * @param content      Content whose extracted properties are navigated
+     * @param propertyPath dot-separated path, e.g. {@code foo.child.grandchild}
+     * @return the resolved ContentProperty (created if it did not exist)
+     */
     protected ContentProperty getProperty(Content content, String propertyPath) {
         ContentProperty currentProperty = content.getExtractedProperties();
         for (String childPropertyName : DOT.split(propertyPath)) {

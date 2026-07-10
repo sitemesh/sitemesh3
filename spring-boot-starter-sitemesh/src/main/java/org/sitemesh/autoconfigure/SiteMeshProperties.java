@@ -72,38 +72,83 @@ public class SiteMeshProperties {
      */
     private final Filter filter = new Filter();
 
+    /**
+     * The active SiteMesh integration.
+     *
+     * @return {@code "view-resolver"} (the default) or {@code "filter"}
+     */
     public String getIntegration() {
         return integration;
     }
 
+    /**
+     * Selects the SiteMesh integration to activate.
+     *
+     * @param integration {@code "view-resolver"} or {@code "filter"}
+     */
     public void setIntegration(String integration) {
         this.integration = integration;
     }
 
+    /**
+     * How decorators are dispatched to the container.
+     *
+     * @return the configured {@link DispatchMode}, {@link DispatchMode#DETECT} by default
+     */
     public DispatchMode getDispatchMode() {
         return dispatchMode;
     }
 
+    /**
+     * Sets how decorators are dispatched to the container.
+     *
+     * @param dispatchMode include, forward, or detect
+     */
     public void setDispatchMode(DispatchMode dispatchMode) {
         this.dispatchMode = dispatchMode;
     }
 
+    /**
+     * Whether error responses (status &gt;= 400) are still decorated.
+     *
+     * @return {@code true} (the default) if error pages are decorated
+     */
     public boolean isIncludeErrorPages() {
         return includeErrorPages;
     }
 
+    /**
+     * Sets whether error responses (status &gt;= 400) are still decorated.
+     *
+     * @param includeErrorPages {@code true} to decorate error pages
+     */
     public void setIncludeErrorPages(boolean includeErrorPages) {
         this.includeErrorPages = includeErrorPages;
     }
 
+    /**
+     * The {@code sitemesh.decorator.*} property group.
+     *
+     * @return the decorator selection properties (never null)
+     */
     public Decorator getDecorator() {
         return decorator;
     }
 
+    /**
+     * The {@code sitemesh.viewResolver.*} property group.
+     *
+     * @return the view-resolver integration properties (never null)
+     */
     public ViewResolver getViewResolver() {
         return viewResolver;
     }
 
+    /**
+     * The {@code sitemesh.filter.*} property group.
+     *
+     * @return the servlet-filter integration properties (never null)
+     */
     public Filter getFilter() {
         return filter;
     }
@@ -162,58 +207,128 @@ public class SiteMeshProperties {
          */
         private List<String> exclusions = new ArrayList<>();
 
+        /**
+         * The prefix prepended to decorator names/paths.
+         *
+         * @return the decorator prefix, {@code "/decorators/"} by default
+         */
         public String getPrefix() {
             return prefix;
         }
 
+        /**
+         * Sets the prefix prepended to decorator names/paths.
+         *
+         * @param prefix the decorator prefix
+         */
         public void setPrefix(String prefix) {
             this.prefix = prefix;
         }
 
+        /**
+         * The name of the meta tag pages use to pick their decorator.
+         *
+         * @return the meta tag name, {@code "decorator"} by default
+         */
         public String getMetaTag() {
             return metaTag;
         }
 
+        /**
+         * Sets the name of the meta tag pages use to pick their decorator.
+         *
+         * @param metaTag the meta tag name
+         */
         public void setMetaTag(String metaTag) {
             this.metaTag = metaTag;
         }
 
+        /**
+         * The request attribute used to select the decorator.
+         *
+         * @return the request attribute name, or null (the default) to select by meta tag
+         */
         public String getAttribute() {
             return attribute;
         }
 
+        /**
+         * Sets the request attribute used to select the decorator.
+         *
+         * @param attribute the request attribute name
+         */
         public void setAttribute(String attribute) {
             this.attribute = attribute;
         }
 
+        /**
+         * The decorator applied to every path ({@code "/*"}).
+         *
+         * @return the default decorator, or null (the default) for none
+         */
         public String getDefault() {
             return defaultDecorator;
         }
 
+        /**
+         * Sets the decorator applied to every path ({@code "/*"}).
+         *
+         * @param defaultDecorator the default decorator name/path
+         */
         public void setDefault(String defaultDecorator) {
             this.defaultDecorator = defaultDecorator;
         }
 
+        /**
+         * The path-to-decorator mappings.
+         *
+         * @return the mappings, each with a "path" and a "decorator" key, or null for none
+         */
         public List<Map<String, String>> getMappings() {
             return mappings;
         }
 
+        /**
+         * Sets the path-to-decorator mappings.
+         *
+         * @param mappings the mappings, each with a "path" and a "decorator" key
+         */
         public void setMappings(List<Map<String, String>> mappings) {
             this.mappings = mappings;
         }
 
+        /**
+         * Class names of extra TagRuleBundle implementations to add.
+         *
+         * @return the extra bundle class names, empty by default
+         */
         public List<String> getTagRuleBundles() {
             return tagRuleBundles;
         }
 
+        /**
+         * Sets the class names of extra TagRuleBundle implementations to add.
+         *
+         * @param tagRuleBundles the extra bundle class names
+         */
         public void setTagRuleBundles(List<String> tagRuleBundles) {
             this.tagRuleBundles = tagRuleBundles;
         }
 
+        /**
+         * The paths that are never decorated (filter integration only).
+         *
+         * @return the excluded paths, empty by default
+         */
         public List<String> getExclusions() {
             return exclusions;
         }
 
+        /**
+         * Sets the paths that are never decorated (filter integration only).
+         *
+         * @param exclusions the excluded paths
+         */
         public void setExclusions(List<String> exclusions) {
             this.exclusions = exclusions;
         }
@@ -242,18 +357,38 @@ public class SiteMeshProperties {
          */
         private WrapMode wrapMode = WrapMode.ALL;
 
+        /**
+         * The bean name of the ViewResolver to wrap in the single-target modes.
+         *
+         * @return the target bean name, {@code "jspViewResolver"} by default
+         */
         public String getTargetBeanName() {
             return targetBeanName;
         }
 
+        /**
+         * Sets the bean name of the ViewResolver to wrap in the single-target modes.
+         *
+         * @param targetBeanName the target bean name
+         */
         public void setTargetBeanName(String targetBeanName) {
             this.targetBeanName = targetBeanName;
         }
 
+        /**
+         * How the view-resolver integration installs SiteMesh.
+         *
+         * @return the configured {@link WrapMode}, {@link WrapMode#ALL} by default
+         */
         public WrapMode getWrapMode() {
             return wrapMode;
         }
 
+        /**
+         * Sets how the view-resolver integration installs SiteMesh.
+         *
+         * @param wrapMode all, bean-definition, or bean-instance
+         */
         public void setWrapMode(WrapMode wrapMode) {
             this.wrapMode = wrapMode;
         }
@@ -271,10 +406,20 @@ public class SiteMeshProperties {
          */
         private int order = OrderedFilter.REQUEST_WRAPPER_FILTER_MAX_ORDER + 29;
 
+        /**
+         * The order of the SiteMesh filter registration in the filter chain.
+         *
+         * @return the filter order
+         */
         public int getOrder() {
             return order;
         }
 
+        /**
+         * Sets the order of the SiteMesh filter registration in the filter chain.
+         *
+         * @param order the filter order
+         */
         public void setOrder(int order) {
             this.order = order;
         }

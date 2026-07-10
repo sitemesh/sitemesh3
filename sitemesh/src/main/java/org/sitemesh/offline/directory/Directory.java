@@ -36,26 +36,46 @@ public interface Directory {
 
     /**
      * Load the contents from a file.
+     *
+     * @param path path of file to load (relative to the Directory)
+     * @return contents of the file
+     * @throws IOException if the file cannot be read
      */
     CharBuffer load(String path) throws IOException;
 
     /**
      * Save the contents to a file, overwriting any existing content.
+     *
+     * @param path path of file to save (relative to the Directory)
+     * @param contents contents to write
+     * @throws IOException if the file cannot be written
      */
     void save(String path, CharBuffer contents) throws IOException;
 
     /**
      * Get a list of all file paths (relative to the Directory). Excludes directories.
+     *
+     * @return list of all file paths
+     * @throws IOException if the directory cannot be listed
      */
     List<String> listAllFilePaths() throws IOException;
 
     /**
      * Load binary data.
+     *
+     * @param path path of file to load (relative to the Directory)
+     * @param channelToWriteTo channel the file contents are written to
+     * @throws IOException if the file cannot be read
      */
     void load(String path, WritableByteChannel channelToWriteTo) throws IOException;
 
     /**
      * Save binary data.
+     *
+     * @param path path of file to save (relative to the Directory)
+     * @param channelToReadFrom channel the file contents are read from
+     * @param length number of bytes to read from the channel
+     * @throws IOException if the file cannot be written
      */
     void save(String path, ReadableByteChannel channelToReadFrom, int length) throws IOException;
 
@@ -66,6 +86,7 @@ public interface Directory {
      * @param path                 Path of file to copy (from this Directory)
      * @param destinationDirectory Target directory (may be this)
      * @param destinationPath     Path under target directory.
+     * @throws IOException if the file cannot be copied
      */
     void copy(String path, Directory destinationDirectory, String destinationPath) throws IOException;
 

@@ -65,6 +65,13 @@ public class SiteMeshView implements View {
     /**
      * Equivalent to the {@link DispatchMode}-taking constructor with
      * {@link DispatchMode#DETECT}.
+     *
+     * @param innerView the view whose output is buffered and decorated
+     * @param contentProcessor parses the buffered output into a {@link Content}
+     * @param decoratorSelector selects the decorator path(s) for the parsed content
+     * @param servletContext the current servlet context
+     * @param viewResolver resolves decorator names (without a leading {@code /})
+     *                     to Spring MVC views
      */
     public SiteMeshView(View innerView,
                         ContentProcessor contentProcessor,
@@ -80,6 +87,16 @@ public class SiteMeshView implements View {
      * (&gt;= 400) — e.g. Spring Boot's {@code error} view — are still
      * buffered and decorated, matching the filter integration's
      * {@code include-error-pages} default.
+     *
+     * @param innerView the view whose output is buffered and decorated
+     * @param contentProcessor parses the buffered output into a {@link Content}
+     * @param decoratorSelector selects the decorator path(s) for the parsed content
+     * @param servletContext the current servlet context
+     * @param viewResolver resolves decorator names (without a leading {@code /})
+     *                     to Spring MVC views
+     * @param dispatchMode how {@code /}-prefixed decorator paths are dispatched
+     *                     (include vs forward); {@code null} means
+     *                     {@link DispatchMode#DETECT}
      */
     public SiteMeshView(View innerView,
                         ContentProcessor contentProcessor,
@@ -90,6 +107,21 @@ public class SiteMeshView implements View {
         this(innerView, contentProcessor, decoratorSelector, servletContext, viewResolver, dispatchMode, true);
     }
 
+    /**
+     * Full constructor.
+     *
+     * @param innerView the view whose output is buffered and decorated
+     * @param contentProcessor parses the buffered output into a {@link Content}
+     * @param decoratorSelector selects the decorator path(s) for the parsed content
+     * @param servletContext the current servlet context
+     * @param viewResolver resolves decorator names (without a leading {@code /})
+     *                     to Spring MVC views
+     * @param dispatchMode how {@code /}-prefixed decorator paths are dispatched
+     *                     (include vs forward); {@code null} means
+     *                     {@link DispatchMode#DETECT}
+     * @param includeErrorPages whether renders that set an error status
+     *                          (&gt;= 400) are still buffered and decorated
+     */
     public SiteMeshView(View innerView,
                         ContentProcessor contentProcessor,
                         DecoratorSelector<SiteMeshContext> decoratorSelector,
@@ -127,6 +159,8 @@ public class SiteMeshView implements View {
      * Returns the wrapped inner view. Useful for callers that need to
      * unwrap (for example to apply further view-layer logic without
      * retriggering decoration).
+     *
+     * @return the wrapped inner view
      */
     public View getInnerView() {
         return innerView;
@@ -136,6 +170,8 @@ public class SiteMeshView implements View {
      * Returns the content processor this view uses. Exposed for subclasses
      * that override {@link #createContext} and need to construct a custom
      * {@link SiteMeshViewContext} with the same collaborators.
+     *
+     * @return the content processor
      */
     protected ContentProcessor getContentProcessor() {
         return contentProcessor;
@@ -143,6 +179,8 @@ public class SiteMeshView implements View {
 
     /**
      * Returns the decorator selector this view uses.
+     *
+     * @return the decorator selector
      */
     protected DecoratorSelector<SiteMeshContext> getDecoratorSelector() {
         return decoratorSelector;
@@ -150,6 +188,8 @@ public class SiteMeshView implements View {
 
     /**
      * Returns the servlet context this view uses.
+     *
+     * @return the servlet context
      */
     protected ServletContext getServletContext() {
         return servletContext;
@@ -159,6 +199,8 @@ public class SiteMeshView implements View {
      * Returns the view resolver this view dispatches decorator renders
      * through. Exposed for the same reason as
      * {@link #getContentProcessor()}.
+     *
+     * @return the view resolver decorator renders are resolved through
      */
     protected ViewResolver getViewResolver() {
         return viewResolver;
@@ -168,6 +210,8 @@ public class SiteMeshView implements View {
      * Returns the {@link DispatchMode} this view's context dispatches
      * decorators with. Exposed for the same reason as
      * {@link #getContentProcessor()}.
+     *
+     * @return the dispatch mode, never {@code null}
      */
     protected DispatchMode getDispatchMode() {
         return dispatchMode;
@@ -176,6 +220,8 @@ public class SiteMeshView implements View {
     /**
      * Whether renders that set an error status (&gt;= 400) are still
      * buffered and decorated (e.g. Spring Boot's {@code error} view).
+     *
+     * @return {@code true} if error responses are decorated
      */
     public boolean isIncludeErrorPages() {
         return includeErrorPages;
@@ -203,6 +249,10 @@ public class SiteMeshView implements View {
      * thread per-request state through without allocating additional
      * ThreadLocals. Default implementation is a no-op returning {@code
      * null}.
+     *
+     * @param request the current request
+     * @return an opaque token passed to
+     *         {@link #postRender(HttpServletRequest, Object)}, or {@code null}
      */
     protected Object preRender(HttpServletRequest request) {
         return null;
@@ -213,6 +263,9 @@ public class SiteMeshView implements View {
      * inner render threw. Use this to clean up any state pushed in
      * {@link #preRender(HttpServletRequest)}. Default implementation is a
      * no-op.
+     *
+     * @param request the current request
+     * @param token the value returned by {@link #preRender(HttpServletRequest)}
      */
     protected void postRender(HttpServletRequest request, Object token) {
         // no-op by default
@@ -225,6 +278,13 @@ public class SiteMeshView implements View {
      * {@link View#render} call dispatched by the context). The default
      * implementation returns a plain {@link SiteMeshViewContext} wired
      * with the collaborators supplied to this view.
+     *
+     * @param request the current request
+     * @param response the real (unbuffered) response
+     * @param contentType the content type of the response being decorated
+     * @param metaData records response metadata (e.g. last-modified) across
+     *                 the buffered render
+     * @return the context used to dispatch decorator renders
      */
     protected SiteMeshViewContext createContext(HttpServletRequest request,
                                                 HttpServletResponse response,

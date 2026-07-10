@@ -27,6 +27,12 @@ import org.sitemesh.content.ContentProperty;
 import org.sitemesh.tagprocessor.BasicBlockRule;
 import org.sitemesh.tagprocessor.CustomTag;
 import org.sitemesh.tagprocessor.Tag;
+
+/**
+ * Variant of {@link ExportTagToContentRule} that additionally merges the {@code id},
+ * {@code class} and {@code style} attributes of the decorated content's {@code body}
+ * into the corresponding attributes of the decorator's tag.
+ */
 public class ExportTagToContentAndMergeBodyAttributesRule extends BasicBlockRule {
 
     private static final Pattern DOT = Pattern.compile("\\.");
@@ -35,6 +41,12 @@ public class ExportTagToContentAndMergeBodyAttributesRule extends BasicBlockRule
     private final boolean includeInContent;
     private final SiteMeshContext context;
 
+    /**
+     * @param context          the current SiteMesh context, providing the content to merge
+     * @param targetProperty   ContentProperty to export tag contents to
+     * @param includeInContent whether the tag should be included in the content (if false, it will be stripped
+     *                         from the current ContentProperty that is being written to)
+     */
     public ExportTagToContentAndMergeBodyAttributesRule(SiteMeshContext context, ContentProperty targetProperty, boolean includeInContent) {
         this.targetProperty = targetProperty;
         this.includeInContent = includeInContent;
@@ -106,6 +118,13 @@ public class ExportTagToContentAndMergeBodyAttributesRule extends BasicBlockRule
         return null;
     }
 
+    /**
+     * Resolves a dot-separated property path against the extracted properties of the content.
+     *
+     * @param content      Content whose extracted properties are navigated
+     * @param propertyPath dot-separated path, e.g. {@code body.class}
+     * @return the resolved ContentProperty (created if it did not exist)
+     */
     protected ContentProperty getProperty(Content content, String propertyPath) {
         ContentProperty currentProperty = content.getExtractedProperties();
         for (String childPropertyName : DOT.split(propertyPath)) {

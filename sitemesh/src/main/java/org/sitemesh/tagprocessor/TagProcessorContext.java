@@ -26,22 +26,30 @@ public interface TagProcessorContext {
 
     /**
      * Return the current {@link State} the processor is in.
+     *
+     * @return the current state of the processor
      */
     State currentState();
 
     /**
      * Change the {@link State} of the processor, which will result in
      * different {@link TagRule}s being applied.
+     *
+     * @param newState state to switch the processor to
      */
     void changeState(State newState);
 
     /**
      * Get the current destination output buffer.
+     *
+     * @return the current destination output buffer
      */
     Appendable currentBuffer();
 
     /**
      * Get the contents of the current destination output buffer.
+     *
+     * @return contents of the current destination output buffer
      */
     CharSequence currentBufferContents();
 
@@ -57,6 +65,8 @@ public interface TagProcessorContext {
      * Push a new destination output buffer onto the stack. All content in the
      * document from this point forwards will be written to this buffer instead
      * of the default destination, until {@link #popBuffer()} is called.
+     *
+     * @param customBuffer buffer to push onto the stack
      */
     void pushBuffer(CharSequenceBuffer customBuffer);
 

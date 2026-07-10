@@ -50,6 +50,12 @@ public class SiteMeshOffline {
     private final Directory sourceDirectory;
     private final Directory destinationDirectory;
 
+    /**
+     * @param contentProcessor processor used to parse content and decorators
+     * @param decoratorSelector selector that determines which decorators to apply
+     * @param sourceDirectory directory the source (undecorated) files are read from
+     * @param destinationDirectory directory the destination (decorated) files are written to
+     */
     public SiteMeshOffline(ContentProcessor contentProcessor,
                                     DecoratorSelector<OfflineContext> decoratorSelector,
                                     Directory sourceDirectory,
@@ -62,6 +68,8 @@ public class SiteMeshOffline {
 
     /**
      * Directory the generator reads the source (undecorated) files from.
+     *
+     * @return the source directory
      */
     public Directory getSourceDirectory() {
         return sourceDirectory;
@@ -69,6 +77,8 @@ public class SiteMeshOffline {
 
     /**
      * Directory the generator writes the destination (decorated) files from.
+     *
+     * @return the destination directory
      */
     public Directory getDestinationDirectory() {
         return destinationDirectory;
@@ -77,6 +87,10 @@ public class SiteMeshOffline {
     /**
      * Process a file (loaded from source directory), applying decorators and returning
      * the result as a CharBuffer.
+     *
+     * @param path path of the file (in the source directory) to process; the decorated
+     *             result is saved under the same path in the destination directory
+     * @throws IOException if the file cannot be read, processed or written
      */
     public void process(String path) throws IOException {
         CharBuffer input = sourceDirectory.load(path);
@@ -90,6 +104,11 @@ public class SiteMeshOffline {
      *
      * The path is required as the DecoratorSelector may use this to determine which
      * decorators should be applied.
+     *
+     * @param path path associated with the content
+     * @param original content to process
+     * @return the decorated content, or the original content if it could not be processed
+     * @throws IOException if the content cannot be processed
      */
     public CharBuffer processContent(String path, CharBuffer original) throws IOException {
         OfflineContext context = new OfflineContext(contentProcessor, sourceDirectory, path);

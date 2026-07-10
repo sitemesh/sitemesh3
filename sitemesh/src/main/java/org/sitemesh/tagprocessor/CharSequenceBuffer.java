@@ -19,10 +19,18 @@ package org.sitemesh.tagprocessor;
 import java.io.IOException;
 
 /**
+ * A buffer of character data that can be appended to, and written out to an {@link Appendable}.
+ *
  * @author Joe Walnes
  */
 public interface CharSequenceBuffer extends Appendable, CharSequence, Iterable<CharSequence> {
 
+    /**
+     * Write the contents of this buffer to the given output.
+     *
+     * @param out destination to write to.
+     * @throws IOException if writing to the output fails.
+     */
     void writeTo(Appendable out) throws IOException;
 
 }

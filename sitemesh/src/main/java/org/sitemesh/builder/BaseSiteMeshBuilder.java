@@ -53,10 +53,19 @@ public abstract class BaseSiteMeshBuilder
             = new MetaTagBasedDecoratorSelector<CONTEXT>();
     private DecoratorSelector<CONTEXT> customDecoratorSelector;
 
+    /**
+     * Create the builder, applying the default settings from {@link #setupDefaults()}.
+     */
     protected BaseSiteMeshBuilder() {
         setupDefaults();
     }
 
+    /**
+     * Create the result from the current builder settings.
+     *
+     * @return the built result.
+     * @throws IllegalStateException if the builder is missing required settings.
+     */
     public abstract RESULT create() throws IllegalStateException;
 
     /**
@@ -72,6 +81,11 @@ public abstract class BaseSiteMeshBuilder
         addTagRuleBundles(new CoreHtmlTagRuleBundle(), new DecoratorTagRuleBundle());
     }
 
+    /**
+     * Returns this builder, cast to the concrete BUILDER type, for method chaining.
+     *
+     * @return this builder instance, for method chaining.
+     */
     @SuppressWarnings("unchecked")
     protected BUILDER self() {
         return (BUILDER)this;
@@ -91,6 +105,9 @@ public abstract class BaseSiteMeshBuilder
      * <p>Note: If {@link #setCustomContentProcessor(ContentProcessor)} is called,
      * any TagRuleBundles are ignored, as they are only used by the default ContentProcessor
      * implementation.</p>
+     *
+     * @param bundle the TagRuleBundle to add.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER addTagRuleBundle(TagRuleBundle bundle) {
         tagRuleBundles.add(bundle);
@@ -108,6 +125,9 @@ public abstract class BaseSiteMeshBuilder
      * <p>Note: If {@link #setCustomContentProcessor(ContentProcessor)} is called,
      * any TagRuleBundles are ignored, as they are only used by the default ContentProcessor
      * implementation.</p>
+     *
+     * @param bundles the TagRuleBundles to add.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER addTagRuleBundles(TagRuleBundle... bundles) {
         tagRuleBundles.addAll(List.of(bundles));
@@ -125,6 +145,9 @@ public abstract class BaseSiteMeshBuilder
      * <p>Note: If {@link #setCustomContentProcessor(ContentProcessor)} is called,
      * any TagRuleBundles are ignored, as they are only used by the default ContentProcessor
      * implementation.</p>
+     *
+     * @param bundles the TagRuleBundles to add.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER addTagRuleBundles(Iterable<TagRuleBundle> bundles) {
         for (TagRuleBundle bundle : bundles) {
@@ -135,6 +158,8 @@ public abstract class BaseSiteMeshBuilder
 
     /**
      * Clear any TagRuleBundles (including those added in {@link #setupDefaults()}.
+     *
+     * @return this builder instance, for method chaining.
      */
     public BUILDER clearTagRuleBundles() {
         tagRuleBundles.clear();
@@ -148,6 +173,9 @@ public abstract class BaseSiteMeshBuilder
      * <p>Note: If {@link #setCustomContentProcessor(ContentProcessor)} is called,
      * any TagRuleBundles are ignored, as they are only used by the default ContentProcessor
      * implementation.</p>
+     *
+     * @param bundles the TagRuleBundles to use.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setTagRuleBundles(TagRuleBundle... bundles) {
         addTagRuleBundles(bundles);
@@ -161,6 +189,9 @@ public abstract class BaseSiteMeshBuilder
      * <p>Note: If {@link #setCustomContentProcessor(ContentProcessor)} is called,
      * any TagRuleBundles are ignored, as they are only used by the default ContentProcessor
      * implementation.</p>
+     *
+     * @param bundles the TagRuleBundles to use.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setTagRuleBundles(Iterable<TagRuleBundle> bundles) {
         addTagRuleBundles(bundles);
@@ -170,6 +201,9 @@ public abstract class BaseSiteMeshBuilder
     /**
      * Set the {@link ContentProcessor}. If called, this will override
      * any calls to {@link #addTagRuleBundle(TagRuleBundle)}.
+     *
+     * @param contentProcessor the custom ContentProcessor to use.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setCustomContentProcessor(ContentProcessor contentProcessor) {
         this.customContentProcessor = contentProcessor;
@@ -178,6 +212,9 @@ public abstract class BaseSiteMeshBuilder
 
     /**
      * Get configured {@link ContentProcessor}.
+     *
+     * @return the custom ContentProcessor if one was set, otherwise a
+     *         {@link TagBasedContentProcessor} built from the TagRuleBundles.
      */
     public ContentProcessor getContentProcessor() {
         if (customContentProcessor == null) {
@@ -196,6 +233,9 @@ public abstract class BaseSiteMeshBuilder
      * is <code>/WEB-INF/decorators/"</code>.
      *
      * <p>Note: prefix is ignored if {@link #setCustomDecoratorSelector(DecoratorSelector)} is called</p>
+     *
+     * @param prefix the prefix to prepend to decorator paths.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setDecoratorPrefix(String prefix) {
         this.pathBasedDecoratorSelector.setPrefix(prefix);
@@ -209,6 +249,10 @@ public abstract class BaseSiteMeshBuilder
      * <p>Note: If {@link #setCustomDecoratorSelector(DecoratorSelector)} is called,
      * any decorator paths are ignored, as they are only used by the default
      * DecoratorSelector implementation.</p>
+     *
+     * @param contentPath    the content path the decorators apply to.
+     * @param decoratorPaths the decorator paths to apply to the content path.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER addDecoratorPaths(String contentPath, String... decoratorPaths) {
         pathBasedDecoratorSelector.put(contentPath, decoratorPaths);
@@ -222,6 +266,10 @@ public abstract class BaseSiteMeshBuilder
      * <p>Note: If {@link #setCustomDecoratorSelector(DecoratorSelector)} is called,
      * any decorator paths are ignored, as they are only used by the default
      * DecoratorSelector implementation.</p>
+     *
+     * @param contentPath    the content path the decorators apply to.
+     * @param decoratorPaths the decorator paths to apply to the content path.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER addDecoratorPaths(String contentPath, List<String> decoratorPaths) {
         pathBasedDecoratorSelector.put(contentPath, decoratorPaths.toArray(String[]::new));
@@ -234,6 +282,10 @@ public abstract class BaseSiteMeshBuilder
      * <p>Note: If {@link #setCustomDecoratorSelector(DecoratorSelector)} is called,
      * any decorator paths are ignored, as they are only used by the default
      * DecoratorSelector implementation.</p>
+     *
+     * @param contentPath   the content path the decorator applies to.
+     * @param decoratorPath the decorator path to apply to the content path.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER addDecoratorPath(String contentPath, String decoratorPath) {
         addDecoratorPaths(contentPath, decoratorPath);
@@ -245,6 +297,9 @@ public abstract class BaseSiteMeshBuilder
      * instance of {@link PathBasedDecoratorSelector}, this will override any paths
      * added with {@link #addDecoratorPath(String, String)} and instead delegate to
      * the custom DecoratorSelector.
+     *
+     * @param decoratorSelector the custom DecoratorSelector to use.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setCustomDecoratorSelector(DecoratorSelector<CONTEXT> decoratorSelector) {
         if(decoratorSelector instanceof PathBasedDecoratorSelector) {
@@ -257,6 +312,9 @@ public abstract class BaseSiteMeshBuilder
 
     /**
      * Get configured {@link DecoratorSelector}.
+     *
+     * @return the custom DecoratorSelector if one was set, otherwise the
+     *         path based DecoratorSelector.
      */
     public DecoratorSelector<CONTEXT> getDecoratorSelector() {
         if (customDecoratorSelector != null) {

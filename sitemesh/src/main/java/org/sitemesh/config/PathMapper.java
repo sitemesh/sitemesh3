@@ -48,6 +48,7 @@ import java.util.Set;
  */
 public class PathMapper<T> {
 
+    /** Patterns that match all paths (used as fallbacks when no other pattern matches). */
     public static final Set<String> DEFAULT_KEYS = Set.of("*", "**", "/*", "/**");
 
     private final Map<String, T> mappings = new HashMap<String, T>();
@@ -58,7 +59,11 @@ public class PathMapper<T> {
      */
     private final Map<String, char[]> complexPatternChars = new HashMap<String, char[]>();
 
-    /** Add a key and appropriate matching pattern. */
+    /**
+     * Add a key and appropriate matching pattern.
+     * @param pattern path pattern (exact, wildcard or default)
+     * @param value value to associate with the pattern (ignored if null)
+     */
     public void put(String pattern, T value) {
         if (value != null) {
             mappings.put(pattern, value);
@@ -68,7 +73,11 @@ public class PathMapper<T> {
         }
     }
 
-    /** Retrieve appropriate key by matching patterns with supplied path. */
+    /**
+     * Retrieve appropriate key by matching patterns with supplied path.
+     * @param path path to match (null is treated as "/")
+     * @return value associated with the best matching pattern, or null if none match
+     */
     public T get(String path) {
         if (path == null) path = "/";
         String result = findExactKey(path);
@@ -78,7 +87,11 @@ public class PathMapper<T> {
         return mappings.get(result);
     }
 
-    /** Retrieve appropriate pattern by matching patterns with supplied path. */
+    /**
+     * Retrieve appropriate pattern by matching patterns with supplied path.
+     * @param path path to match (null is treated as "/")
+     * @return the best matching pattern, or null if none match
+     */
     public String getPatternInUse(String path) {
         if (path == null) path = "/";
         String result = findExactKey(path);

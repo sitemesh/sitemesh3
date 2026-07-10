@@ -34,6 +34,9 @@ public class TitleExtractingRule extends BasicBlockRule {
 
     private boolean seenAtLeastOneTitle;
 
+    /**
+     * @param propertyToExport ContentProperty that the title is exported to
+     */
     public TitleExtractingRule(ContentProperty propertyToExport) {
         this.propertyToExport = propertyToExport;
     }

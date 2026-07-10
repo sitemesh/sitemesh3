@@ -25,16 +25,33 @@ import org.w3c.dom.Element;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Configures a SiteMesh builder from an XML config file (typically <code>/WEB-INF/sitemesh3.xml</code>),
+ * applying the settings common to all builder types (tag rule bundles, content processor
+ * and decorator mappings).
+ *
+ * @author Joe Walnes
+ */
 public class XmlConfigurator {
 
     private final Xml xml;
     private final ObjectFactory objectFactory;
 
+    /**
+     * @param objectFactory factory used to instantiate objects from their class names
+     * @param siteMeshElement root <code>&lt;sitemesh&gt;</code> element of the XML config
+     */
     public XmlConfigurator(ObjectFactory objectFactory, Element siteMeshElement) {
         this.objectFactory = objectFactory;
         this.xml = new Xml(siteMeshElement);
     }
 
+    /**
+     * Apply the XML configuration common to all builder types (tag rule bundles,
+     * content processor and decorator mappings) to the builder.
+     *
+     * @param builder builder to configure
+     */
     public void configureCommon(BaseSiteMeshBuilder builder) {
 
         // TagRuleBundles
@@ -80,6 +97,9 @@ public class XmlConfigurator {
         builder.addDecoratorPaths(path, decorators);
     }
     
+    /**
+     * @return factory used to instantiate objects from their class names
+     */
     protected ObjectFactory getObjectFactory() {
         return objectFactory;
     }

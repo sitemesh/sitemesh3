@@ -31,6 +31,10 @@ import org.springframework.web.servlet.ViewResolver;
 
 import java.util.Date;
 
+/**
+ * Example controller exercising SiteMesh decoration across Thymeleaf,
+ * FreeMarker, JSP, error, and JSON responses.
+ */
 @Controller
 public class GreetingController {
 
@@ -51,12 +55,22 @@ public class GreetingController {
     /**
      * Redirect root to index.html to avoid Spring Boot's WelcomePageHandlerMapping
      * which uses forward and causes empty responses on Tomcat 11.
+     *
+     * @return a redirect to /index.html
      */
     @GetMapping("/")
     public String home() {
         return "redirect:/index.html";
     }
 
+    /**
+     * Renders the greeting as a Thymeleaf or FreeMarker view.
+     *
+     * @param type "ftl" for the FreeMarker template, anything else for Thymeleaf
+     * @param name who to greet (defaults to "World")
+     * @param model the view model
+     * @return the greeting view name
+     */
     @GetMapping("/greeting/{type}")
     public String greeting(@PathVariable String type, @RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
         model.addAttribute("name", name);
@@ -64,6 +78,16 @@ public class GreetingController {
         return (type.equals("ftl")? "freemarker/":"") + "greeting";
     }
 
+    /**
+     * Renders the greeting as a JSP view, resolved through the injected
+     * (possibly SiteMesh-wrapped) resolver.
+     *
+     * @param name who to greet (defaults to "World")
+     * @param model the view model
+     * @param request the current request (for the locale)
+     * @return the resolved greeting JSP view
+     * @throws Exception if view resolution fails
+     */
     @GetMapping("/greeting")
     public View greetingJsp(@RequestParam(name="name", required=false, defaultValue="World") String name,
                             Model model, HttpServletRequest request) throws Exception {
@@ -71,12 +95,31 @@ public class GreetingController {
         return internalResourceViewResolver.resolveViewName("greeting", request.getLocale());
     }
 
+    /**
+     * Always throws, to demonstrate that the error page is decorated.
+     *
+     * @param name who to greet (unused)
+     * @param model the view model (unused)
+     * @param request the current request (unused)
+     * @return never returns normally
+     * @throws Exception always
+     */
     @GetMapping("/greetingError")
     public View greetingError(@RequestParam(name="name", required=false, defaultValue="World") String name,
                             Model model, HttpServletRequest request) throws Exception {
         throw new RuntimeException("Whoops");
     }
 
+    /**
+     * Returns a JSON body, demonstrating that SiteMesh does not decorate
+     * non-HTML content types; pass {@code pjax=false} to keep the default
+     * text/html content type and see it decorated.
+     *
+     * @param pjax when false, leaves the content type as text/html
+     * @param model the view model (unused)
+     * @param response the response, for setting the content type
+     * @return a small JSON string stating whether it was decorated
+     */
     @GetMapping("/greeting/json")
     public @ResponseBody String greetingJson(@RequestParam(name="pjax", required=false) Boolean pjax,
                                              Model model, HttpServletResponse response) {

@@ -29,6 +29,9 @@ public class DivExtractingRule extends BasicBlockRule<String> {
 
     private final ContentProperty propertyToExport;
 
+    /**
+     * @param propertyToExport ContentProperty under which each {@code <div>} with an id is exported
+     */
     public DivExtractingRule(ContentProperty propertyToExport) {
         this.propertyToExport = propertyToExport;
     }

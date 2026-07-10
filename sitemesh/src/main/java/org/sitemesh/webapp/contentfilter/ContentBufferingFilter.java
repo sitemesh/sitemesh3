@@ -67,12 +67,21 @@ import java.util.logging.Logger;
  */
 public abstract class ContentBufferingFilter implements Filter {
 
+    /**
+     * Request attribute set once a response has been decorated, used to guard
+     * against decorating the same request twice (e.g. when the filter is hit
+     * again on a nested dispatch).
+     */
     public static final String SITEMESH_DECORATED_ATTRIBUTE = "sitemesh.decorated" ;
 
     private final Selector selector;
 
     private final static Logger logger = Logger.getLogger(ContentBufferingFilter.class.getName());
 
+    /**
+     * @param selector Provides the rules for whether the response to a
+     *                 specific request should be buffered. May not be null.
+     */
     protected ContentBufferingFilter(Selector selector) {
         if (selector == null) {
             throw new IllegalArgumentException("selector cannot be null");
@@ -81,8 +90,17 @@ public abstract class ContentBufferingFilter implements Filter {
     }
 
     /**
+     * Post-process the buffered content, writing the result to the response.
+     *
+     * @param contentType Content type of the buffered response.
+     * @param buffer The buffered content.
+     * @param request The current request.
+     * @param response The real response to write the processed content to.
+     * @param responseMetaData Additional metadata (e.g. last-modified) gathered while buffering.
      * @return Whether the content was processed. If false, the original content shall
      * be written back out.
+     * @throws IOException If the response cannot be written to.
+     * @throws ServletException If post-processing fails.
      */
     protected abstract boolean postProcess(String contentType, CharBuffer buffer,
                                            HttpServletRequest request, HttpServletResponse response,
@@ -128,15 +146,28 @@ public abstract class ContentBufferingFilter implements Filter {
         containerTweaks = null;
     }
 
+    /**
+     * Determine the {@link ContainerTweaks} to use for the current Servlet container.
+     * Override to supply container-specific tweaks.
+     *
+     * @return The container tweaks (defaults to the no-op {@link ContainerTweaks}).
+     */
     protected ContainerTweaks initContainerTweaks() {
         // TODO: Use correct implementation based on container.
         return new ContainerTweaks();
     }
 
+    /**
+     * @return The {@link FilterConfig} passed to {@link #init(FilterConfig)},
+     *         or null if the filter has not been initialized.
+     */
     protected FilterConfig getFilterConfig() {
         return filterConfig;
     }
 
+    /**
+     * @return The container tweaks created by {@link #initContainerTweaks()}.
+     */
     protected ContainerTweaks getContainerTweaks() {
         return containerTweaks;
     }
@@ -191,6 +222,13 @@ public abstract class ContentBufferingFilter implements Filter {
     /**
      * Apply next filter/servlet to the buffer, post process the response and
      * send to the real response.
+     *
+     * @param filterChain The remaining filter chain to invoke with the buffering response wrapper.
+     * @param request The current request.
+     * @param response The real response.
+     * @param selector Rules for deciding whether the response content should be buffered.
+     * @throws IOException If the response cannot be written to.
+     * @throws ServletException If the filter chain or post-processing fails.
      */
     protected void bufferAndPostProcess(FilterChain filterChain, final HttpServletRequest request,
                                         final HttpServletResponse response, Selector selector) throws IOException, ServletException {
@@ -256,6 +294,19 @@ public abstract class ContentBufferingFilter implements Filter {
         }
     }
 
+    /**
+     * Post-process the buffered content (via
+     * {@link #postProcess(String, CharBuffer, HttpServletRequest, HttpServletResponse, ResponseMetaData)})
+     * and write the result — or the original buffer if nothing was processed — to the real response.
+     * Called either directly, or from an {@link AsyncListener} once an async request completes.
+     *
+     * @param responseBuffer The buffering response wrapper the content was captured in.
+     * @param request The current request.
+     * @param response The real response.
+     * @param metaData Additional metadata gathered while buffering.
+     * @throws IOException If the response cannot be written to.
+     * @throws ServletException If post-processing fails.
+     */
     protected void processInternally(HttpServletResponseBuffer responseBuffer, final HttpServletRequest request,
                                final HttpServletResponse response, ResponseMetaData metaData) throws IOException, ServletException {
         if (response.isCommitted()) {
@@ -281,6 +332,12 @@ public abstract class ContentBufferingFilter implements Filter {
 
     /**
      * Write out the original unmodified buffer.
+     *
+     * @param response The real response to write to.
+     * @param buffer The buffered content to write out.
+     * @param responseBuffer The buffering response wrapper, used to determine whether the
+     *                       content was written via the output stream or the writer.
+     * @throws IOException If the response cannot be written to.
      */
     protected void writeOriginal(HttpServletResponse response,
                                  CharBuffer buffer,
@@ -299,11 +356,17 @@ public abstract class ContentBufferingFilter implements Filter {
 
     /**
      * Override to wrap the HttpServletRequest sent to the end point to be buffered.
+     *
+     * @param request The original request.
+     * @return The (possibly wrapped) request passed down the filter chain.
      */
     protected HttpServletRequest wrapRequest(HttpServletRequest request) {
         return new HttpServletRequestFilterable(request);
     }
 
+    /**
+     * @return The {@link Selector} passed to the constructor.
+     */
     protected Selector getSelector() {
         return selector;
     }

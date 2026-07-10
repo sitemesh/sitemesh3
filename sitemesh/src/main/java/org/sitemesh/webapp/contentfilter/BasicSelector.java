@@ -39,18 +39,44 @@ public class BasicSelector implements Selector {
     private final boolean includeErrorPages;
     private final PathMapper<Boolean> excludesMapper;
 
+    /**
+     * Creates a selector that buffers the given MIME types, without error pages or exclusions.
+     *
+     * @param mimeTypesToBuffer MIME types of responses that should be buffered (e.g. "text/html").
+     */
     public BasicSelector(String... mimeTypesToBuffer) {
         this(new PathMapper<Boolean>(), false, mimeTypesToBuffer);
     }
 
+    /**
+     * Creates a selector that buffers the given MIME types, excluding paths matched by the
+     * given mapper, without error pages.
+     *
+     * @param excludesMapper maps request paths to be excluded from buffering.
+     * @param mimeTypesToBuffer MIME types of responses that should be buffered (e.g. "text/html").
+     */
     public BasicSelector(PathMapper<Boolean> excludesMapper, String... mimeTypesToBuffer) {
         this(excludesMapper, false, mimeTypesToBuffer);
     }
 
+    /**
+     * Creates a selector that buffers the given MIME types, without exclusions.
+     *
+     * @param includeErrorPages whether error pages (status code &gt;= 400) should also be buffered.
+     * @param mimeTypesToBuffer MIME types of responses that should be buffered (e.g. "text/html").
+     */
     public BasicSelector(boolean includeErrorPages, String... mimeTypesToBuffer) {
         this(new PathMapper<Boolean>(), includeErrorPages, mimeTypesToBuffer);
     }
 
+    /**
+     * Creates a selector that buffers the given MIME types, excluding paths matched by the
+     * given mapper.
+     *
+     * @param excludesMapper maps request paths to be excluded from buffering.
+     * @param includeErrorPages whether error pages (status code &gt;= 400) should also be buffered.
+     * @param mimeTypesToBuffer MIME types of responses that should be buffered (e.g. "text/html").
+     */
     public BasicSelector(PathMapper<Boolean> excludesMapper, boolean includeErrorPages, String... mimeTypesToBuffer) {
         this.mimeTypesToBuffer = mimeTypesToBuffer;
         this.includeErrorPages = includeErrorPages;
@@ -77,6 +103,13 @@ public class BasicSelector implements Selector {
         return !filterAlreadyAppliedForRequest(request);
     }
 
+    /**
+     * Checks (and records, via a request attribute) whether the filter has already been
+     * applied to this request, so that it only kicks in once per request.
+     *
+     * @param request the current request.
+     * @return true if the filter was already applied for this request.
+     */
     protected boolean filterAlreadyAppliedForRequest(HttpServletRequest request) {
         String appliedKey = ALREADY_APPLIED_KEY
                 + (request.getDispatcherType().equals(DispatcherType.ERROR)? ".ERROR" : "");

@@ -30,15 +30,28 @@ public class ResponseMetaData {
     private int responseCount = 0;
     private int lastModifiedCount = 0;
 
+    /**
+     * Record the last-modified value of a dispatched response. The most recent
+     * value across all dispatched responses is kept.
+     *
+     * @param lastModified Last-modified time in milliseconds since the epoch.
+     */
     public void updateLastModified(long lastModified) {
         lastModifiedCount++;
         this.lastModified = Math.max(this.lastModified, lastModified);
     }
 
+    /**
+     * @return The most recent last-modified time (in milliseconds since the epoch)
+     *         across all dispatched responses, or -1 if any of them did not report one.
+     */
     public long getLastModified() {
         return lastModifiedCount == responseCount ? lastModified : -1;
     }
 
+    /**
+     * Signal that another response is about to be dispatched (e.g. the decorator).
+     */
     public void beginNewResponse() {
         responseCount++;
     }

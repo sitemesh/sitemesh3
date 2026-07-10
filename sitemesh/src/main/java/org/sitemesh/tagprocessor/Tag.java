@@ -60,48 +60,74 @@ public interface Tag {
 
     /**
      * Write out the complete tag in its original form, preserving original formatting.
+     *
+     * @param out destination to write the tag to
+     * @throws IOException if the destination cannot be written to
      */
     void writeTo(Appendable out) throws IOException;
 
     /**
      * Name of tag (ie. element name).
+     *
+     * @return the element name of the tag
      */
     String getName();
 
     /**
      * Type of tag (e.g. open, close, etc).
      *
+     * @return the type of the tag
      * @see Tag.Type
      */
     Type getType();
 
     /**
      * Number of attributes in tag.
+     *
+     * @return number of attributes in the tag
      */
     int getAttributeCount();
 
     /**
      * Determine which attribute has the specified name.
+     *
+     * @param name          name of the attribute to look for
+     * @param caseSensitive whether the name should be treated as case sensitive
+     * @return index of the attribute, or -1 if not present
      */
     int getAttributeIndex(String name, boolean caseSensitive);
 
     /**
      * Get name of attribute.
+     *
+     * @param index index of the attribute
+     * @return name of the attribute at the given index
      */
     String getAttributeName(int index);
 
     /**
      * Get value of an attribute. If this is an empty attribute (i.e. just a name, without a value), null is returned.
+     *
+     * @param index index of the attribute
+     * @return value of the attribute, or null for an empty attribute
      */
     String getAttributeValue(int index);
 
     /**
      * Get value of an attribute. If this is an empty attribute (i.e. just a name, without a value), null is returned.
+     *
+     * @param name          name of the attribute to look for
+     * @param caseSensitive whether the name should be treated as case sensitive
+     * @return value of the attribute, or null if the attribute is empty or not present
      */
     String getAttributeValue(String name, boolean caseSensitive);
 
     /**
      * Determine if an attribute is present.
+     *
+     * @param name          name of the attribute to look for
+     * @param caseSensitive whether the name should be treated as case sensitive
+     * @return true if the tag has an attribute with the given name
      */
     boolean hasAttribute(String name, boolean caseSensitive);
 

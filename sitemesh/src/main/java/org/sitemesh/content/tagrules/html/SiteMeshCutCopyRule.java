@@ -22,11 +22,20 @@ import org.sitemesh.tagprocessor.Tag;
 
 import java.io.IOException;
 
+/**
+ * Rule that captures the contents of a tag body into the
+ * <code>sitemesh.<i>id</i></code> property. In copy mode the body is also kept
+ * in place; in cut mode it is removed from the document.
+ */
 public class SiteMeshCutCopyRule extends BasicBlockRule<String> {
 
     private final ContentProperty contentProperty;
     private final boolean copy;
 
+    /**
+     * @param copy            true to keep the tag body in the document (copy), false to remove it (cut)
+     * @param contentProperty ContentProperty whose {@code sitemesh} child holds the captured blocks
+     */
     public SiteMeshCutCopyRule(boolean copy, ContentProperty contentProperty) {
         this.copy = copy;
         this.contentProperty = contentProperty.getChild("sitemesh");

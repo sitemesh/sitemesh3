@@ -38,6 +38,12 @@ import java.io.IOException;
 public class MetaTagBasedDecoratorSelector<C extends SiteMeshContext> extends PathBasedDecoratorSelector<C>{
     private String metaTagName = "decorator";
 
+    /**
+     * Set the name of the meta tag holding the decorator path(s).
+     *
+     * @param metaTagName meta tag name (default: <code>decorator</code>)
+     * @return this instance, to allow method chaining
+     */
     public MetaTagBasedDecoratorSelector setMetaTagName(String metaTagName) {
         this.metaTagName = metaTagName;
         return this;

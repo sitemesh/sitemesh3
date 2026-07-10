@@ -26,6 +26,14 @@ import java.nio.CharBuffer;
  */
 public interface ContentProcessor {
 
+    /**
+     * Processes the source data into a {@link Content} instance.
+     *
+     * @param data    the source document to process
+     * @param context the current SiteMesh context
+     * @return the processed Content
+     * @throws IOException if the data cannot be processed
+     */
     Content build(CharBuffer data, SiteMeshContext context) throws IOException;
 
 }

@@ -40,19 +40,35 @@ public class ByteBufferBuilder {
     private int size;
     private int blockSize;
 
+    /**
+     * Creates a builder with the default block size (8192 bytes).
+     */
     public ByteBufferBuilder() {
         this(DEFAULT_BLOCK_SIZE);
     }
 
+    /**
+     * Creates a builder with the given block size.
+     *
+     * @param aSize size in bytes of each internal buffer block.
+     */
     public ByteBufferBuilder(int aSize) {
         blockSize = aSize;
         buffer = new byte[blockSize];
     }
 
+    /**
+     * @return total number of bytes written so far.
+     */
     public int size() {
         return size + index;
     }
 
+    /**
+     * Copy the written bytes into a single, freshly allocated {@link ByteBuffer}.
+     *
+     * @return buffer containing all bytes written so far, ready for reading.
+     */
     public ByteBuffer toByteBuffer() {
         ByteBuffer result = ByteBuffer.allocate(size());
 
@@ -70,6 +86,11 @@ public class ByteBufferBuilder {
         return result;
     }
 
+    /**
+     * Write a single byte to the buffer.
+     *
+     * @param datum the byte to write (lowest 8 bits are used).
+     */
     public void write(int datum) {
         if (index == blockSize) {
             // Create new buffer and store current in linked list
@@ -87,6 +108,13 @@ public class ByteBufferBuilder {
         buffer[index++] = (byte) datum;
     }
 
+    /**
+     * Write a range of bytes to the buffer.
+     *
+     * @param data source byte array. Must not be null.
+     * @param offset offset of the first byte to write.
+     * @param length number of bytes to write.
+     */
     public void write(byte[] data, int offset, int length) {
         if (data == null) {
             throw new NullPointerException();

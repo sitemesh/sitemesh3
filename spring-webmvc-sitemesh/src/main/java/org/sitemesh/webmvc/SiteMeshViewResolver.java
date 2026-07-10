@@ -51,6 +51,17 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
     private DispatchMode dispatchMode = DispatchMode.DETECT;
     private boolean includeErrorPages = true;
 
+    /**
+     * Creates a resolver that wraps {@code innerViewResolver} and decorates
+     * the views it resolves.
+     *
+     * @param innerViewResolver the resolver whose views are wrapped
+     * @param contentProcessor parses buffered view output into a
+     *                         {@link org.sitemesh.content.Content}
+     * @param decoratorSelector selects the decorator path(s) for the parsed
+     *                          content
+     * @param servletContext the current servlet context
+     */
     public SiteMeshViewResolver(ViewResolver innerViewResolver,
                                 ContentProcessor contentProcessor,
                                 DecoratorSelector<SiteMeshContext> decoratorSelector,
@@ -147,6 +158,9 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
      * pass {@link #getDispatchMode()} to its constructor; the
      * {@code DispatchMode}-less {@link SiteMeshView} constructor defaults to
      * {@link DispatchMode#DETECT} and would silently drop a configured mode.</p>
+     *
+     * @param innerView the resolved view to wrap
+     * @return the {@link SiteMeshView} wrapping {@code innerView}
      */
     protected SiteMeshView createSiteMeshView(View innerView) {
         return new SiteMeshView(innerView, contentProcessor, decoratorSelector, servletContext, innerViewResolver,
@@ -156,6 +170,8 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
     /**
      * The {@link DispatchMode} the wrapped {@link SiteMeshView}s dispatch
      * decorators with. Defaults to {@link DispatchMode#DETECT}.
+     *
+     * @return the dispatch mode, never {@code null}
      */
     public DispatchMode getDispatchMode() {
         return dispatchMode;
@@ -165,6 +181,9 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
      * Set how the decorator is dispatched (include vs forward) for views this
      * resolver wraps. See {@link DispatchMode}. Null resets to
      * {@link DispatchMode#DETECT}.
+     *
+     * @param dispatchMode the dispatch mode, or {@code null} for
+     *                     {@link DispatchMode#DETECT}
      */
     public void setDispatchMode(DispatchMode dispatchMode) {
         this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
@@ -176,11 +195,20 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
      * {@code alwaysInclude} on containers where {@code forward()} is
      * unsafe), so rendering them directly — outside a SiteMesh-buffered
      * response — uses include dispatch and inherits its semantics.
+     *
+     * @return the wrapped inner resolver
      */
     public ViewResolver getInnerViewResolver() {
         return innerViewResolver;
     }
 
+    /**
+     * Whether views this resolver wraps still buffer and decorate renders
+     * that set an error status (&gt;= 400). See
+     * {@link #setIncludeErrorPages(boolean)}.
+     *
+     * @return {@code true} if error responses are decorated
+     */
     public boolean isIncludeErrorPages() {
         return includeErrorPages;
     }
@@ -192,11 +220,19 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
      * integration's {@code include-error-pages} default; the Spring Boot
      * starter sets it from {@code sitemesh.includeErrorPages}. Set
      * {@code false} to send error responses out undecorated.
+     *
+     * @param includeErrorPages {@code true} to decorate error responses
      */
     public void setIncludeErrorPages(boolean includeErrorPages) {
         this.includeErrorPages = includeErrorPages;
     }
 
+    /**
+     * The prefix under which decorator/layout views live. See
+     * {@link #setLayoutPathPrefix(String)}.
+     *
+     * @return the layout path prefix
+     */
     public String getLayoutPathPrefix() {
         return layoutPathPrefix;
     }
@@ -206,6 +242,8 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
      * names equal to the prefix, or starting with {@code prefix + "/"},
      * are passed through un-wrapped so rendering a decorator does not
      * trigger nested decoration. Default: {@code "/layouts"}.
+     *
+     * @param layoutPathPrefix the layout path prefix
      */
     public void setLayoutPathPrefix(String layoutPathPrefix) {
         this.layoutPathPrefix = layoutPathPrefix;
@@ -216,6 +254,12 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
         return order;
     }
 
+    /**
+     * Override the resolver order. By default the inner resolver's
+     * {@link Ordered} order is inherited.
+     *
+     * @param order the order value
+     */
     public void setOrder(int order) {
         this.order = order;
     }

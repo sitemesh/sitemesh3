@@ -178,6 +178,8 @@ public class SiteMeshViewResolverBeanPostProcessor
     /**
      * Number of {@link ViewResolver} beans this post-processor has wrapped
      * so far. Exposed for diagnostics and tests.
+     *
+     * @return the number of wrapped resolvers
      */
     public int getWrappedCount() {
         return wrappedCount.get();
@@ -210,6 +212,12 @@ public class SiteMeshViewResolverBeanPostProcessor
      * {@code (ViewResolver, ContentProcessor, DecoratorSelector, ServletContext)}
      * constructor of {@link #getSiteMeshViewResolverClass()}.
      * Subclasses may override to use a custom construction strategy.
+     *
+     * @param inner the resolver being wrapped
+     * @param cp the content processor to wire into the wrapper
+     * @param ds the decorator selector to wire into the wrapper
+     * @param sc the servlet context to wire into the wrapper
+     * @return the {@link SiteMeshViewResolver} wrapping {@code inner}
      */
     protected SiteMeshViewResolver createSiteMeshViewResolver(ViewResolver inner,
                                                               ContentProcessor cp,
@@ -228,6 +236,12 @@ public class SiteMeshViewResolverBeanPostProcessor
         }
     }
 
+    /**
+     * Whether this post-processor wraps every leaf {@link ViewResolver} bean
+     * instead of the single named target. See {@link #setWrapAll(boolean)}.
+     *
+     * @return {@code true} if wrap-all mode is enabled
+     */
     public boolean isWrapAll() {
         return wrapAll;
     }
@@ -249,11 +263,20 @@ public class SiteMeshViewResolverBeanPostProcessor
      * {@code @Autowired InternalResourceViewResolver}) must switch to
      * the {@link ViewResolver} interface when enabling this mode, since
      * the wrapped bean is a {@link SiteMeshViewResolver}.</p>
+     *
+     * @param wrapAll {@code true} to wrap every leaf {@link ViewResolver}
+     *                bean, {@code false} to wrap only the named target
      */
     public void setWrapAll(boolean wrapAll) {
         this.wrapAll = wrapAll;
     }
 
+    /**
+     * How wrapped resolvers' views dispatch decorators. Defaults to
+     * {@link DispatchMode#DETECT}.
+     *
+     * @return the dispatch mode, never {@code null}
+     */
     public DispatchMode getDispatchMode() {
         return dispatchMode;
     }
@@ -262,11 +285,21 @@ public class SiteMeshViewResolverBeanPostProcessor
      * Set how wrapped resolvers' {@link SiteMeshView}s dispatch decorators
      * (include vs forward). See {@link DispatchMode}. Null resets to
      * {@link DispatchMode#DETECT}.
+     *
+     * @param dispatchMode the dispatch mode, or {@code null} for
+     *                     {@link DispatchMode#DETECT}
      */
     public void setDispatchMode(DispatchMode dispatchMode) {
         this.dispatchMode = dispatchMode != null ? dispatchMode : DispatchMode.DETECT;
     }
 
+    /**
+     * Whether wrapped resolvers' views still buffer and decorate renders
+     * that set an error status (&gt;= 400). See
+     * {@link #setIncludeErrorPages(boolean)}.
+     *
+     * @return {@code true} if error responses are decorated
+     */
     public boolean isIncludeErrorPages() {
         return includeErrorPages;
     }
@@ -275,15 +308,32 @@ public class SiteMeshViewResolverBeanPostProcessor
      * Whether wrapped resolvers' views still buffer and decorate renders
      * that set an error status (&gt;= 400). Default {@code true}. See
      * {@link SiteMeshViewResolver#setIncludeErrorPages(boolean)}.
+     *
+     * @param includeErrorPages {@code true} to decorate error responses
      */
     public void setIncludeErrorPages(boolean includeErrorPages) {
         this.includeErrorPages = includeErrorPages;
     }
 
+    /**
+     * The name of the {@link ViewResolver} bean to wrap when
+     * {@linkplain #isWrapAll() wrap-all} is disabled. Default:
+     * {@code "jspViewResolver"}.
+     *
+     * @return the target view resolver bean name
+     */
     public String getTargetViewResolverBeanName() {
         return targetViewResolverBeanName;
     }
 
+    /**
+     * Set the name of the {@link ViewResolver} bean to wrap when
+     * {@linkplain #isWrapAll() wrap-all} is disabled. A {@code null} value is
+     * ignored, preserving the default.
+     *
+     * @param targetViewResolverBeanName the target bean name, or {@code null}
+     *                                   to keep the current value
+     */
     public void setTargetViewResolverBeanName(String targetViewResolverBeanName) {
         // Preserve the field default if a caller passes null (e.g. an auto-config
         // whose @Value placeholder didn't resolve during early PP instantiation).
@@ -292,34 +342,86 @@ public class SiteMeshViewResolverBeanPostProcessor
         }
     }
 
+    /**
+     * The name of the {@link ContentProcessor} bean wired into wrapped
+     * resolvers. Default: {@code "contentProcessor"}.
+     *
+     * @return the content processor bean name
+     */
     public String getContentProcessorBeanName() {
         return contentProcessorBeanName;
     }
 
+    /**
+     * Set the name of the {@link ContentProcessor} bean wired into wrapped
+     * resolvers.
+     *
+     * @param contentProcessorBeanName the content processor bean name
+     */
     public void setContentProcessorBeanName(String contentProcessorBeanName) {
         this.contentProcessorBeanName = contentProcessorBeanName;
     }
 
+    /**
+     * The name of the {@link DecoratorSelector} bean wired into wrapped
+     * resolvers. Default: {@code "decoratorSelector"}.
+     *
+     * @return the decorator selector bean name
+     */
     public String getDecoratorSelectorBeanName() {
         return decoratorSelectorBeanName;
     }
 
+    /**
+     * Set the name of the {@link DecoratorSelector} bean wired into wrapped
+     * resolvers.
+     *
+     * @param decoratorSelectorBeanName the decorator selector bean name
+     */
     public void setDecoratorSelectorBeanName(String decoratorSelectorBeanName) {
         this.decoratorSelectorBeanName = decoratorSelectorBeanName;
     }
 
+    /**
+     * The name of the {@link ServletContext} bean wired into wrapped
+     * resolvers. Default: {@code "servletContext"}.
+     *
+     * @return the servlet context bean name
+     */
     public String getServletContextBeanName() {
         return servletContextBeanName;
     }
 
+    /**
+     * Set the name of the {@link ServletContext} bean wired into wrapped
+     * resolvers.
+     *
+     * @param servletContextBeanName the servlet context bean name
+     */
     public void setServletContextBeanName(String servletContextBeanName) {
         this.servletContextBeanName = servletContextBeanName;
     }
 
+    /**
+     * The resolver class instantiated by
+     * {@link #createSiteMeshViewResolver}. Defaults to
+     * {@link SiteMeshViewResolver}.
+     *
+     * @return the resolver class, never {@code null}
+     */
     public Class<? extends SiteMeshViewResolver> getSiteMeshViewResolverClass() {
         return siteMeshViewResolverClass;
     }
 
+    /**
+     * Override the resolver class instantiated by
+     * {@link #createSiteMeshViewResolver}. Useful for frameworks that need
+     * to plug in a {@link SiteMeshViewResolver} subclass. Defaults to
+     * {@link SiteMeshViewResolver} itself.
+     *
+     * @param siteMeshViewResolverClass the resolver class to instantiate;
+     *                                  must not be {@code null}
+     */
     public void setSiteMeshViewResolverClass(Class<? extends SiteMeshViewResolver> siteMeshViewResolverClass) {
         if (siteMeshViewResolverClass == null) {
             throw new IllegalArgumentException("siteMeshViewResolverClass must not be null");
@@ -332,10 +434,23 @@ public class SiteMeshViewResolverBeanPostProcessor
         return order;
     }
 
+    /**
+     * Set the order in which this post processor runs relative to other
+     * {@link BeanPostProcessor}s. Default:
+     * {@code Ordered.LOWEST_PRECEDENCE - 100}.
+     *
+     * @param order the order value
+     */
     public void setOrder(int order) {
         this.order = order;
     }
 
+    /**
+     * The owning {@link BeanFactory}, as supplied via
+     * {@link #setBeanFactory(BeanFactory)}. Exposed for subclasses.
+     *
+     * @return the bean factory, or {@code null} before injection
+     */
     protected BeanFactory getBeanFactory() {
         return beanFactory;
     }

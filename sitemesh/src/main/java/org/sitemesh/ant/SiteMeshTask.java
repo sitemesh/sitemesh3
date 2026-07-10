@@ -182,10 +182,23 @@ public class SiteMeshTask extends MatchingTask {
         return isSiteMeshFileSet(fileset) && ((SiteMeshFileSet) fileset).hasDestdir();
     }
 
+    /**
+     * Checks if the given FileSet is a {@link SiteMeshFileSet}.
+     *
+     * @param fileset The FileSet to check.
+     * @return true if the FileSet is an instance of SiteMeshFileSet, false otherwise.
+     */
     protected boolean isSiteMeshFileSet(FileSet fileset) {
         return fileset instanceof SiteMeshFileSet;
     }
 
+    /**
+     * Parses a SiteMesh XML config file and returns its root element.
+     *
+     * @param config The SiteMesh XML config file to parse.
+     * @return The root element of the parsed document.
+     * @throws BuildException if the file cannot be parsed.
+     */
     protected Element parseSiteMeshXmlConfig(File config) throws BuildException {
         try {
             return Xml.getSecureDocumentBuilder().parse(config).getDocumentElement();
@@ -205,6 +218,8 @@ public class SiteMeshTask extends MatchingTask {
 
     /**
      * Destination directory where decorated content will be output to.
+     *
+     * @param destDir The destination directory.
      */
     public void setDestdir(File destDir) {
         this.destDir = destDir;
@@ -213,6 +228,8 @@ public class SiteMeshTask extends MatchingTask {
 
     /**
      * Source directory containing undecorated content and decorators.
+     *
+     * @param srcDir The source directory.
      */
     public void setSrcdir(File srcDir) {
         this.srcdir = srcDir;
@@ -220,11 +237,18 @@ public class SiteMeshTask extends MatchingTask {
 
     /**
      * Optional path to SiteMesh XML config file.
+     *
+     * @param config The SiteMesh XML config file.
      */
     public void setConfig(File config) {
         this.config = config;
     }
 
+    /**
+     * Adds a set of resource files to decorate.
+     *
+     * @param fileset The SiteMeshFileSet describing the files and their decorator.
+     */
     public void addSiteMeshfileset(SiteMeshFileSet fileset) {
         resources.add(fileset);
     }

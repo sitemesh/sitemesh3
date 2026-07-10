@@ -25,15 +25,32 @@ import org.w3c.dom.Element;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Configures a SiteMeshFilterBuilder from an XML config file, adding the filter
+ * specific settings (decorator selector, decorator prefix, error page inclusion,
+ * dispatch mode, excludes and mime-types) to the common configuration applied
+ * by {@link XmlConfigurator}.
+ *
+ * @author Joe Walnes
+ */
 public class XmlFilterConfigurator extends XmlConfigurator {
 
     private final Xml xml;
 
+    /**
+     * @param objectFactory factory used to instantiate objects from their class names
+     * @param siteMeshElement root <code>&lt;sitemesh&gt;</code> element of the XML config
+     */
     public XmlFilterConfigurator(ObjectFactory objectFactory, Element siteMeshElement) {
         super(objectFactory, siteMeshElement);
         this.xml = new Xml(siteMeshElement);
     }
 
+    /**
+     * Apply the filter specific XML configuration to the builder.
+     *
+     * @param builder builder to configure
+     */
     @SuppressWarnings({
             "rawtypes", "unchecked"
     }) public void configureFilter(BaseSiteMeshFilterBuilder builder) {

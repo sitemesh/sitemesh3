@@ -34,6 +34,9 @@ public class TagReplaceRule extends BasicRule {
 
     private final String newTagName;
 
+    /**
+     * @param newTagName name that matched tags are renamed to
+     */
     public TagReplaceRule(String newTagName) {
         this.newTagName = newTagName;
     }

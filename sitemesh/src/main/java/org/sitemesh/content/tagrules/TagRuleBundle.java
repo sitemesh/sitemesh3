@@ -27,8 +27,23 @@ import org.sitemesh.SiteMeshContext;
  */
 public interface TagRuleBundle {
 
+    /**
+     * Installs the rules of this bundle, before the document is processed.
+     *
+     * @param defaultState    tag processor State to register the rules with
+     * @param contentProperty root ContentProperty that rules export values to
+     * @param siteMeshContext the current SiteMesh context
+     */
     void install(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext);
 
+    /**
+     * Called after the document has been processed, allowing the bundle to post-process
+     * the extracted properties.
+     *
+     * @param defaultState    tag processor State the rules were registered with
+     * @param contentProperty root ContentProperty that rules exported values to
+     * @param siteMeshContext the current SiteMesh context
+     */
     void cleanUp(State defaultState, ContentProperty contentProperty, SiteMeshContext siteMeshContext);
 
 }

@@ -32,13 +32,14 @@ import java.nio.CharBuffer;
  * Wraps an {@link HttpServletResponse}, allowing the output to be buffered. The passed
  * in {@link Selector}, will be used to determine whether to actually do the buffering
  * for the request.
- * <p></p>
+ *
  * <p>If the response is not buffered, all operations will be delegated
- * back to the original response, unmodified.
- * </p>If the response is buffered, the content written to {@link #getOutputStream()}
+ * back to the original response, unmodified.</p>
+ *
+ * <p>If the response is buffered, the content written to {@link #getOutputStream()}
  * and {@link #getWriter()} to an underlying buffer instead, available through
  * {@link #getBuffer()}. Additionally, the 'Content-Length' header will not be passed
- * through to the original response.
+ * through to the original response.</p>
  *
  * @author Joe Walnes
  */
@@ -59,6 +60,11 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     private HttpContentType lastContentTypeParsed;
 
 
+    /**
+     * @param originalResponse The response to wrap.
+     * @param metaData Records additional response metadata (e.g. last-modified) while buffering.
+     * @param selector Rules for whether the response content should be buffered.
+     */
     public HttpServletResponseBuffer(final HttpServletResponse originalResponse, ResponseMetaData metaData, Selector selector) {
         super(originalResponse);
         this.metaData = metaData;
@@ -102,6 +108,9 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
 
     /**
      * Returns the underlying buffered content. If buffering was not enabled, null is returned.
+     *
+     * @return The buffered content, or null.
+     * @throws IOException If the buffered bytes cannot be decoded to characters.
      */
     public CharBuffer getBuffer() throws IOException {
         if (buffer == null) {
@@ -114,6 +123,8 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     /**
      * Whether the underlying buffer was written to using {@link #getOutputStream()}
      * (as opposed to {@link #getWriter()}.) If buffering was not enabled, false will be returned.
+     *
+     * @return True if the buffer was written to via the output stream.
      */
     public boolean isBufferStreamBased() {
         return buffer != null && buffer.isUsingStream();
@@ -122,6 +133,8 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     /**
      * Enable buffering for this request. Subsequent content will be written to the buffer
      * instead of the original response.
+     *
+     * @param encoding Character encoding used to decode the buffered bytes.
      */
     protected void enableBuffering(String encoding) {
         if (buffer != null) {
@@ -161,6 +174,10 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
         });
     }
     
+    /**
+     * @return Whether buffering was disabled at some point during the response
+     *         (e.g. because of the content type or an aborting status code).
+     */
     public boolean bufferingWasDisabled() {
     	return bufferingWasDisabled;
     }
@@ -313,11 +330,23 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
         super.sendRedirect(location);
     }
 
+    /**
+     * Called whenever the status code changes (via {@code setStatus}, {@code sendError}
+     * or {@code sendRedirect}). Records it and aborts buffering if necessary.
+     *
+     * @param statusCode The new status code.
+     */
     protected void onStatusCodeChange(int statusCode) {
         this.statusCode = statusCode;
         abortBufferingIfBadStatusCode(statusCode);
     }
 
+    /**
+     * Disable buffering if {@link Selector#shouldAbortBufferingForHttpStatusCode(int)}
+     * says the status code should not be decorated.
+     *
+     * @param statusCode The status code to check.
+     */
     protected void abortBufferingIfBadStatusCode(int statusCode) {
         if (selector.shouldAbortBufferingForHttpStatusCode(statusCode)) {
             disableBuffering();
@@ -349,6 +378,8 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
      * response after the wrapped render returns — e.g. when a container's
      * {@code RequestDispatcher.include()} wrapper sat below this one and
      * silently dropped the status on its way down.</p>
+     *
+     * @return The explicitly set status code, or {@code null} if none was set.
      */
     public Integer getExplicitStatusCode() {
         return explicitStatusCode;

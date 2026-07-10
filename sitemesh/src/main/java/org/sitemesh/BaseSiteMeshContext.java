@@ -35,10 +35,22 @@ public abstract class BaseSiteMeshContext implements SiteMeshContext {
 
     private Content currentContent;
 
+    /**
+     * @param contentProcessor the {@link ContentProcessor} used to process decorated output.
+     */
     protected BaseSiteMeshContext(ContentProcessor contentProcessor) {
         this.contentProcessor = contentProcessor;
     }
 
+    /**
+     * Write the given {@link Content}, merged into the named decorator, to the output.
+     * Implementations define how the decorator is located and rendered.
+     *
+     * @param decoratorPath path of the decorator to apply.
+     * @param content content to merge into the decorator.
+     * @param out destination to write the decorated output to.
+     * @throws IOException if the decorator cannot be applied.
+     */
     protected abstract void decorate(String decoratorPath, Content content, Writer out) throws IOException;
 
     public Content decorate(String decoratorName, Content content) throws IOException {

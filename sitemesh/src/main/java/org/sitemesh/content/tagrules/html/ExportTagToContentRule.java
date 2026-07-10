@@ -54,6 +54,7 @@ public class ExportTagToContentRule extends BasicBlockRule {
     private final SiteMeshContext context;
 ;
     /**
+     * @param context          the current SiteMesh context, used to process nested tags in attribute values.
      * @param targetProperty   ContentProperty to export tag contents to.
      * @param includeInContent Whether the tag should be included in the content (if false, it will be stripped
      *                         from the current ContentProperty that is being written to.

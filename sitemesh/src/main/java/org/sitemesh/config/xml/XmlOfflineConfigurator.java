@@ -20,17 +20,34 @@ import org.sitemesh.builder.BaseSiteMeshOfflineBuilder;
 import org.sitemesh.config.ObjectFactory;
 import org.w3c.dom.Element;
 
+/**
+ * Configures a SiteMeshOfflineBuilder from an XML config file, adding the offline
+ * specific settings (source and destination directories) to the common configuration
+ * applied by {@link XmlConfigurator}.
+ *
+ * @author Joe Walnes
+ */
 public class XmlOfflineConfigurator extends XmlConfigurator {
 
     // TODO: Tests
 
     private final Xml xml;
 
+    /**
+     * @param objectFactory factory used to instantiate objects from their class names
+     * @param siteMeshElement root <code>&lt;sitemesh&gt;</code> element of the XML config
+     */
     public XmlOfflineConfigurator(ObjectFactory objectFactory, Element siteMeshElement) {
         super(objectFactory, siteMeshElement);
         this.xml = new Xml(siteMeshElement);
     }
 
+    /**
+     * Apply the offline specific XML configuration (source and destination
+     * directories) to the builder.
+     *
+     * @param builder builder to configure
+     */
     public void configureOffline(BaseSiteMeshOfflineBuilder builder) {
 
         // Common configuration

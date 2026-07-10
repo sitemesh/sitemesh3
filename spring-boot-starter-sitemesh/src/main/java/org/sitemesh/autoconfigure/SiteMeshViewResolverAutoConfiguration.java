@@ -78,16 +78,35 @@ public class SiteMeshViewResolverAutoConfiguration {
     // during early post-processor instantiation.
     private final SiteMeshProperties properties;
 
+    /**
+     * Creates the auto-configuration around the bound {@code sitemesh.*} properties.
+     *
+     * @param properties the bound {@code sitemesh.*} configuration properties
+     */
     public SiteMeshViewResolverAutoConfiguration(SiteMeshProperties properties) {
         this.properties = properties;
     }
 
+    /**
+     * Provides the default {@link ContentProcessor}, built with the default
+     * HTML tag rule bundles plus any {@code sitemesh.decorator.tagRuleBundles}
+     * additions.
+     *
+     * @return the content processor the wrapped views parse pages with
+     */
     @Bean
     @ConditionalOnMissingBean(name = "contentProcessor")
     public ContentProcessor contentProcessor() {
         return new DecoratorComponentsFactory(properties.getDecorator()).buildContentProcessor();
     }
 
+    /**
+     * Provides the default {@link DecoratorSelector}, built from the
+     * {@code sitemesh.decorator.*} properties (meta tag, request attribute,
+     * default decorator, and path mappings).
+     *
+     * @return the decorator selector the wrapped views pick decorators with
+     */
     @Bean
     @ConditionalOnMissingBean(name = "decoratorSelector")
     public DecoratorSelector<SiteMeshContext> decoratorSelector() {
@@ -110,6 +129,8 @@ public class SiteMeshViewResolverAutoConfiguration {
      * Opt in to the older single-resolver modes via
      * {@code sitemesh.viewResolver.wrapMode = bean-definition} or
      * {@code = bean-instance}.
+     *
+     * @return the wrap-all bean post processor
      */
     @Bean
     @ConditionalOnMissingBean(SiteMeshViewResolverBeanPostProcessor.class)
@@ -129,6 +150,8 @@ public class SiteMeshViewResolverAutoConfiguration {
      * {@link SiteMeshViewResolverPostProcessor} for the lifecycle semantics
      * of this variant. Suitable for single-resolver apps (e.g. pure JSP)
      * or frameworks that specifically need bean-definition rewriting.
+     *
+     * @return the bean-definition-rewriting post processor
      */
     @Bean
     @ConditionalOnMissingBean(SiteMeshViewResolverPostProcessor.class)
@@ -151,6 +174,8 @@ public class SiteMeshViewResolverAutoConfiguration {
      * {@link org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor
      * BeanDefinitionRegistryPostProcessors} fire, but an instance is later
      * created under the configured bean name.
+     *
+     * @return the single-target bean post processor
      */
     @Bean
     @ConditionalOnMissingBean(SiteMeshViewResolverBeanPostProcessor.class)

@@ -159,10 +159,16 @@ public class ConfigurableSiteMeshFilter implements Filter {
     // See above.
     private final Object configLock = new Object();
 
+    /** Name of the init-param used to specify the XML config file location. */
     public static final String CONFIG_FILE_PARAM = "configFile";
+
+    /** Path of the XML config file used if the {@link #CONFIG_FILE_PARAM} init-param is not set. */
     public static final String CONFIG_FILE_DEFAULT = "/WEB-INF/sitemesh3.xml";
 
+    /** Name of the init-param used to enable/disable automatic reloading of the config file. */
     public static final String AUTO_RELOAD_PARAM = "autoReload";
+
+    /** Whether auto reloading is enabled if the {@link #AUTO_RELOAD_PARAM} init-param is not set. */
     public static final boolean AUTO_RELOAD_DEFAULT = true;
 
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -199,6 +205,9 @@ public class ConfigurableSiteMeshFilter implements Filter {
      *
      * <p>This implementation simply reads them from the Filter's {@code <init-param>}s in {@code web.xml}.
      * To read from another place, override this.</p>
+     *
+     * @param filterConfig the Filter's configuration, used to read the {@code <init-param>}s.
+     * @return the configuration properties.
      */
     protected Map<String, String> getConfigProperties(FilterConfig filterConfig) {
         Map<String, String> initParams = new HashMap<>();
@@ -209,6 +218,13 @@ public class ConfigurableSiteMeshFilter implements Filter {
         return initParams;
     }
 
+    /**
+     * Build the underlying SiteMesh filter, applying the properties, XML and custom
+     * configuration mechanisms (in that order).
+     *
+     * @return the configured filter to delegate to.
+     * @throws ServletException if the configuration cannot be loaded.
+     */
     protected Filter setup() throws ServletException {
         ObjectFactory objectFactory = getObjectFactory();
         SiteMeshFilterBuilder builder = new SiteMeshFilterBuilder();
@@ -227,6 +243,8 @@ public class ConfigurableSiteMeshFilter implements Filter {
 
     /**
      * Override this to apply custom configuration after after the default configuration mechanisms.
+     *
+     * @param builder builder used to configure the filter.
      */
     @SuppressWarnings("UnusedDeclaration")
     protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
@@ -234,6 +252,8 @@ public class ConfigurableSiteMeshFilter implements Filter {
 
     /**
      * Determine if a reload is required. Override this to change the behavior.
+     *
+     * @return true if the config file has changed since it was last loaded.
      */
     protected boolean reloadRequired() {
         return timestampOfXmlFileAtLastLoad != xmlConfigFile.lastModified();
@@ -241,6 +261,8 @@ public class ConfigurableSiteMeshFilter implements Filter {
 
     /**
      * Whether the config file should be monitored for changes and automatically reloaded.
+     *
+     * @return true if auto reloading is enabled.
      */
     protected boolean getAutoReload() {
         String autoReload = configProperties.get(AUTO_RELOAD_PARAM);
@@ -254,8 +276,10 @@ public class ConfigurableSiteMeshFilter implements Filter {
 
     /**
      * Gets the SiteMesh XML config file name.
-     * Looks for a 'config' property in the Filter init-params. 
+     * Looks for a 'config' property in the Filter init-params.
      * If not found, defaults to '/WEB-INF/sitemesh3.xml'.
+     *
+     * @return the config file name.
      */
     protected String getConfigFileName() {
         String config = configProperties.get(CONFIG_FILE_PARAM);
@@ -265,6 +289,12 @@ public class ConfigurableSiteMeshFilter implements Filter {
         return config;
     }
 
+    /**
+     * Return the {@link ObjectFactory} used to instantiate classes named in the configuration.
+     * Override this to change how objects are created.
+     *
+     * @return the object factory (defaults to {@link ObjectFactory.Default}).
+     */
     protected ObjectFactory getObjectFactory() {
         return new ObjectFactory.Default();
     }
@@ -301,6 +331,11 @@ public class ConfigurableSiteMeshFilter implements Filter {
      * - Then a file as a resource in the ServletContext (allowing for files embedded in a .war file).
      * - If none of those find the file, null will be returned.
      * </pre>
+     *
+     * @param filterConfig the Filter's configuration, used to access the {@link ServletContext}.
+     * @param configFilePath path of the config file to load.
+     * @return the root element of the config file, or null if the file was not found.
+     * @throws ServletException if the config file cannot be parsed.
      */
     protected Element loadConfigXml(FilterConfig filterConfig, String configFilePath) throws ServletException {
         try {
@@ -346,6 +381,12 @@ public class ConfigurableSiteMeshFilter implements Filter {
         }
     }
 
+    /**
+     * Rebuild and redeploy the underlying filter if auto reloading is enabled and the
+     * config file has changed.
+     *
+     * @throws ServletException if the new configuration cannot be loaded.
+     */
     protected void reloadIfNecessary() throws ServletException {
         // TODO: Allow finer grained control of reload strategies:
         // - don't check file timestamp on every single request (once per N seconds).
@@ -360,6 +401,12 @@ public class ConfigurableSiteMeshFilter implements Filter {
         }
     }
 
+    /**
+     * Initialize and switch to a new underlying filter, destroying the old one (if any).
+     *
+     * @param newFilter the filter to deploy. Must not be null.
+     * @throws ServletException if newFilter is null or fails to initialize.
+     */
     protected void deployNewFilter(Filter newFilter) throws ServletException {
         Filter oldFilter = filter;
         if (newFilter == null) {
@@ -372,18 +419,40 @@ public class ConfigurableSiteMeshFilter implements Filter {
         }
     }
 
+    /**
+     * @return the {@link ContentProcessor} used by the deployed filter.
+     */
     public ContentProcessor getContentProcessor() {
         return ((SiteMeshFilter) filter).getContentProcessor();
     }
 
+    /**
+     * @return the {@link DecoratorSelector} used by the deployed filter.
+     */
     public DecoratorSelector<WebAppContext> getDecoratorSelector() {
         return ((SiteMeshFilter) filter).getDecoratorSelector();
     }
 
+    /**
+     * Callback interface allowing custom configuration to be supplied as a lambda
+     * to {@link #create(CustomConfiguration)}.
+     */
     public interface CustomConfiguration {
+        /**
+         * Apply custom configuration after the default configuration mechanisms.
+         *
+         * @param builder builder used to configure the filter.
+         */
         void applyCustomConfiguration(SiteMeshFilterBuilder builder);
     }
 
+    /**
+     * Create a filter that applies the given custom configuration after the default
+     * configuration mechanisms.
+     *
+     * @param config the custom configuration to apply.
+     * @return a new filter instance.
+     */
     public static ConfigurableSiteMeshFilter create(CustomConfiguration config) {
         return new ConfigurableSiteMeshFilter() {
             @Override

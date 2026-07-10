@@ -39,6 +39,7 @@ public abstract class BasicBlockRule<T> extends BasicRule {
      *
      * @param tag Opening tag.
      * @return Any data that needs to be passed to {@link #processEnd(Tag, Object)}. May be null.
+     * @throws IOException if writing to the output fails.
      */
     protected abstract T processStart(Tag tag) throws IOException;
 
@@ -49,6 +50,7 @@ public abstract class BasicBlockRule<T> extends BasicRule {
      *            with an opening tag. To get access to the attributes, the {@link #processStart(Tag)} method
      *            should access them and return them as data.
      * @param data Data returned from {@link #processStart(Tag)}. May be null.
+     * @throws IOException if writing to the output fails.
      */
     protected abstract void processEnd(Tag tag, T data) throws IOException;
 

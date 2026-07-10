@@ -25,26 +25,37 @@ public interface TreeNode<T extends TreeNode> {
 
     /**
      * Get the name of this node, in relation to the parent.
+     *
+     * @return the name of this node
      */
     String getName();
 
     /**
      * Get the full path of this node, from the root node.
+     *
+     * @return the nodes on the path from the root node to this node
      */
     T[] getFullPath();
 
     /**
      * Returns the parent node. If this is the root node, null will be returned.
+     *
+     * @return the parent node, or null if this is the root node
      */
     T getParent();
 
     /**
      * Returns whether this node has any child nodes.
+     *
+     * @return true if this node has at least one child node
      */
     boolean hasChildren();
 
     /**
      * Returns whether the child node exists.
+     *
+     * @param name name of the child node
+     * @return true if a child node with the given name exists
      */
     boolean hasChild(String name);
 
@@ -53,6 +64,9 @@ public interface TreeNode<T extends TreeNode> {
      *
      * <p>If the child does not already exist, a new one shall be automatically created.
      * If this is not the preferred behavior, you should use {@link #hasChild(String)} first.</p>
+     *
+     * @param name name of the child node
+     * @return the child node with the given name, created if it did not already exist
      */
     T getChild(String name);
 
@@ -60,6 +74,8 @@ public interface TreeNode<T extends TreeNode> {
      * Get immediate children of this node.
      *
      * <p>This does not include grandchildren (use {@link #getDescendants()} instead).</p>
+     *
+     * @return the immediate children of this node
      */
     Iterable<T> getChildren();
 
@@ -68,6 +84,8 @@ public interface TreeNode<T extends TreeNode> {
      *
      * <p>This includes grandchildren, great-grandchildren, etc (use {@link #getChildren()} if you just
      * want the immediate children).</p>
+     *
+     * @return all descendants of this node
      */
     Iterable<T> getDescendants();
 

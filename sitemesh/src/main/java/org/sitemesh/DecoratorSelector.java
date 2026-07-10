@@ -29,6 +29,11 @@ public interface DecoratorSelector<C extends SiteMeshContext> {
 
     /**
      * Implementations should never return null.
+     *
+     * @param content content being decorated
+     * @param context context of the current request
+     * @return paths of the decorators to apply, in order (may be empty, never null)
+     * @throws IOException if the selection fails
      */
     String[] selectDecoratorPaths(Content content, C context) throws IOException;
 

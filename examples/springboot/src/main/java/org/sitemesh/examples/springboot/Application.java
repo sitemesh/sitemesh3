@@ -25,9 +25,18 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import jakarta.servlet.Filter;
 
+/**
+ * Spring Boot example application demonstrating SiteMesh decoration of
+ * Thymeleaf, FreeMarker and JSP views.
+ */
 @SpringBootApplication
 public class Application {
 
+	/**
+	 * Starts the Spring Boot application.
+	 *
+	 * @param args command line arguments
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
@@ -36,6 +45,8 @@ public class Application {
 	 * Configure JSP view resolver to use include instead of forward.
 	 * This is required for Tomcat 11 compatibility where forward commits
 	 * the response, preventing SiteMesh from decorating the content.
+	 *
+	 * @return the JSP view resolver
 	 */
 	@Bean
 	public InternalResourceViewResolver jspViewResolver() {

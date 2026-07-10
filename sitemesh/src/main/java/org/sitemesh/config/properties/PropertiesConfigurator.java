@@ -28,18 +28,31 @@ import java.util.Map;
  */
 public class PropertiesConfigurator {
 
+    /** Property name for the additional {@link TagRuleBundle} class names to install. */
     public static final String TAG_RULE_BUNDLES_PARAM = "tagRuleBundles";
+    /** Property name for the custom {@link ContentProcessor} class name. */
     public static final String CONTENT_PROCESSOR_PARAM = "contentProcessor";
+    /** Property name for the mappings of path patterns to decorators. */
     public static final String DECORATOR_MAPPINGS_PARAM = "decoratorMappings";
 
     private final ObjectFactory objectFactory;
     private final PropertiesParser properties;
 
+    /**
+     * @param objectFactory factory used to instantiate objects from their class names
+     * @param properties string key/value pairs to configure from
+     */
     public PropertiesConfigurator(ObjectFactory objectFactory, Map<String, String> properties) {
         this.objectFactory = objectFactory;
         this.properties = new PropertiesParser(properties);
     }
 
+    /**
+     * Apply the configuration properties common to all builder types (tag rule bundles,
+     * content processor and decorator mappings) to the builder.
+     *
+     * @param builder builder to configure
+     */
     public void configureCommon(BaseSiteMeshBuilder builder) {
 
         // TagRuleBundles
@@ -66,6 +79,9 @@ public class PropertiesConfigurator {
 
     }
     
+    /**
+     * @return factory used to instantiate objects from their class names
+     */
     protected ObjectFactory getObjectFactory() {
         return objectFactory;
     }

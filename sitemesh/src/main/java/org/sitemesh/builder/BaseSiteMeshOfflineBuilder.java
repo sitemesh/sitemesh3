@@ -44,6 +44,8 @@ public abstract class BaseSiteMeshOfflineBuilder<BUILDER extends BaseSiteMeshOff
 
     /**
      * Create the SiteMeshOfflineGenerator.
+     *
+     * @return the built SiteMeshOffline.
      */
     @Override
     public abstract SiteMeshOffline create();
@@ -56,6 +58,9 @@ public abstract class BaseSiteMeshOfflineBuilder<BUILDER extends BaseSiteMeshOff
      *
      * <p>The {@link Directory} abstraction allows for plugging into other storage
      * mechanisms than a standard file system (e.g. in memory, database, etc).</p>
+     *
+     * @param sourceDirectory the source Directory to read the unprocessed files from.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setSourceDirectory(Directory sourceDirectory) {
         this.sourceDirectory = sourceDirectory;
@@ -65,6 +70,9 @@ public abstract class BaseSiteMeshOfflineBuilder<BUILDER extends BaseSiteMeshOff
     /**
      * Set source directory, were the processed files will be read from.
      * This should be a readable directory.
+     *
+     * @param sourceDirectory the source directory to read the unprocessed files from.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setSourceDirectory(File sourceDirectory) {
         setSourceDirectory(new FileSystemDirectory(sourceDirectory));
@@ -75,6 +83,10 @@ public abstract class BaseSiteMeshOfflineBuilder<BUILDER extends BaseSiteMeshOff
      * Set source directory, were the processed files will be read from.
      * This should be a readable directory path, relative to the directory
      * the process is running in.
+     *
+     * @param sourceDirectoryPath the path of the source directory to read the
+     *                            unprocessed files from.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setSourceDirectory(String sourceDirectoryPath) {
         setSourceDirectory(new File(sourceDirectoryPath));
@@ -84,6 +96,7 @@ public abstract class BaseSiteMeshOfflineBuilder<BUILDER extends BaseSiteMeshOff
     /**
      * Get the source directory.
      *
+     * @return the configured source directory.
      * @throws IllegalStateException if directory has not been set.
      */
     public Directory getSourceDirectory() throws IllegalStateException {
@@ -102,6 +115,9 @@ public abstract class BaseSiteMeshOfflineBuilder<BUILDER extends BaseSiteMeshOff
      *
      * <p>The {@link Directory} abstraction allows for plugging into other storage
      * mechanisms than a standard file system (e.g. in memory, database, etc).</p>
+     *
+     * @param destinationDirectory the destination Directory to write the processed files to.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setDestinationDirectory(Directory destinationDirectory) {
         this.destinationDirectory = destinationDirectory;
@@ -111,6 +127,9 @@ public abstract class BaseSiteMeshOfflineBuilder<BUILDER extends BaseSiteMeshOff
     /**
      * Set destination directory, were the processed files will be written to.
      * This should be a writable directory.
+     *
+     * @param destinationDirectory the destination directory to write the processed files to.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setDestinationDirectory(File destinationDirectory) {
         setDestinationDirectory(new FileSystemDirectory(destinationDirectory));
@@ -121,6 +140,10 @@ public abstract class BaseSiteMeshOfflineBuilder<BUILDER extends BaseSiteMeshOff
      * Set destination directory, were the processed files will be written to.
      * This should be a writable directory path, relative to the directory
      * the process is running in.
+     *
+     * @param destinationDirectoryPath the path of the destination directory to
+     *                                 write the processed files to.
+     * @return this builder instance, for method chaining.
      */
     public BUILDER setDestinationDirectory(String destinationDirectoryPath) {
         setDestinationDirectory(new File(destinationDirectoryPath));
@@ -130,6 +153,7 @@ public abstract class BaseSiteMeshOfflineBuilder<BUILDER extends BaseSiteMeshOff
     /**
      * Get the destination directory.
      *
+     * @return the configured destination directory.
      * @throws IllegalStateException if directory has not been set.
      */
     public Directory getDestinationDirectory() throws IllegalStateException {

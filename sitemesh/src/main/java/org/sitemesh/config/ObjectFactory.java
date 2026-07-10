@@ -28,6 +28,13 @@ package org.sitemesh.config;
  */
 public interface ObjectFactory {
 
+    /**
+     * Create an object instance for the given name.
+     *
+     * @param name name of the object to create (typically a fully qualified class name)
+     * @return the instantiated object
+     * @throws IllegalArgumentException if the object could not be created
+     */
     Object create(String name) throws IllegalArgumentException;
 
     /**

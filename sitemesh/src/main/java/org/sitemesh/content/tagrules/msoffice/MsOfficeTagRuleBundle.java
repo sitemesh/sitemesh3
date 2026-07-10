@@ -57,6 +57,11 @@ public class MsOfficeTagRuleBundle implements TagRuleBundle {
         // No op.
     }
     
+    /**
+     * The MS Office document property names that are captured. Override to customize.
+     *
+     * @return the property names to capture
+     */
     protected String[] getOfficePropertyNames() {
         return new String[]{
             "Author", "Characters", "CharactersWithSpaces", "Company", "Created", "LastAuthor", "LastSaved",

@@ -26,6 +26,10 @@ public class HttpContentType {
     private final String type;
     private final String encoding;
 
+    /**
+     * @param fullValue The full Content-Type header value
+     *                  (e.g. {@code text/html;charset=UTF-8}). May be null.
+     */
     public HttpContentType(String fullValue) {
         if (fullValue != null) {
             // this is the content type + charset. eg: text/html;charset=UTF-8
@@ -70,10 +74,16 @@ public class HttpContentType {
         return type.substring(startIndex, endIndex);
     }
 
+    /**
+     * @return The MIME type (e.g. {@code text/html}), or null if none was present.
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * @return The charset (e.g. {@code UTF-8}), or null if none was present.
+     */
     public String getEncoding() {
         return encoding;
     }

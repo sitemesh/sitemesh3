@@ -47,10 +47,21 @@ public class FileSystemDirectory implements Directory {
     private final File rootDir;
     private final Charset encoding;
 
+    /**
+     * Create a directory rooted at rootDir, using the platform default charset.
+     *
+     * @param rootDir root directory on disk
+     */
     public FileSystemDirectory(File rootDir) {
         this(rootDir, Charset.defaultCharset());
     }
 
+    /**
+     * Create a directory rooted at rootDir.
+     *
+     * @param rootDir root directory on disk
+     * @param encoding charset used to read and write text files
+     */
     public FileSystemDirectory(File rootDir, Charset encoding) {
         this.rootDir = rootDir;
         this.encoding = encoding;
@@ -183,6 +194,12 @@ public class FileSystemDirectory implements Directory {
         }
      */
 
+    /**
+     * Resolve a path (relative to this Directory) to a File on disk.
+     *
+     * @param path path relative to the root directory
+     * @return the corresponding File
+     */
     public File getFileByPath(String path) {
         return new File(rootDir, path);
     }

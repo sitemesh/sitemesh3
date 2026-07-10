@@ -56,16 +56,52 @@ public class SiteMeshAutoConfiguration {
 
     private final SiteMeshProperties properties;
 
+    /**
+     * Creates the auto-configuration around the bound {@code sitemesh.*} properties.
+     *
+     * @param properties the bound {@code sitemesh.*} configuration properties
+     */
     public SiteMeshAutoConfiguration(SiteMeshProperties properties) {
         this.properties = properties;
     }
 
+    /**
+     * Builds a SiteMesh servlet filter from individual decorator settings,
+     * dispatching decorators with {@link DispatchMode#DETECT}.
+     *
+     * @param attribute         request attribute used to select the decorator, or null
+     * @param defaultPath       decorator applied to every path ({@code "/*"}), or null
+     * @param metaTagName       name of the meta tag pages use to pick their decorator
+     * @param prefix            prefix prepended to decorator names/paths
+     * @param mappings          path-to-decorator mappings ("path"/"decorator" keys), or null
+     * @param exclusions        paths that are never decorated, or null
+     * @param bundles           class names of extra TagRuleBundle implementations to add
+     * @param includeErrorPages whether error responses (status &gt;= 400) are still decorated
+     * @param alwaysApply       whether to buffer every request regardless of path
+     * @return the configured SiteMesh filter
+     */
     public static Filter makeFilter(String attribute, String defaultPath, String metaTagName, String prefix,
                                             List<HashMap<String, String>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages, boolean alwaysApply) {
         return makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles,
                 includeErrorPages, alwaysApply, DispatchMode.DETECT);
     }
 
+    /**
+     * Builds a SiteMesh servlet filter from individual decorator settings and
+     * an explicit {@link DispatchMode}.
+     *
+     * @param attribute         request attribute used to select the decorator, or null
+     * @param defaultPath       decorator applied to every path ({@code "/*"}), or null
+     * @param metaTagName       name of the meta tag pages use to pick their decorator
+     * @param prefix            prefix prepended to decorator names/paths
+     * @param mappings          path-to-decorator mappings ("path"/"decorator" keys), or null
+     * @param exclusions        paths that are never decorated, or null
+     * @param bundles           class names of extra TagRuleBundle implementations to add
+     * @param includeErrorPages whether error responses (status &gt;= 400) are still decorated
+     * @param alwaysApply       whether to buffer every request regardless of path
+     * @param dispatchMode      how decorators are dispatched to the container
+     * @return the configured SiteMesh filter
+     */
     public static Filter makeFilter(String attribute, String defaultPath, String metaTagName, String prefix,
                                             List<HashMap<String, String>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages, boolean alwaysApply, DispatchMode dispatchMode) {
         SiteMeshProperties.Decorator decorator = new SiteMeshProperties.Decorator();
@@ -122,6 +158,14 @@ public class SiteMeshAutoConfiguration {
         return builder.create();
     }
 
+    /**
+     * Registers the SiteMesh filter on {@code /*}, built from the bound
+     * {@code sitemesh.*} properties. When error pages are included, the
+     * registration also covers {@code ERROR} dispatches so container error
+     * pages are decorated.
+     *
+     * @return the SiteMesh filter registration
+     */
     @Bean
     @ConditionalOnMissingBean(name = "sitemesh")
     public FilterRegistrationBean<Filter> sitemesh() {
