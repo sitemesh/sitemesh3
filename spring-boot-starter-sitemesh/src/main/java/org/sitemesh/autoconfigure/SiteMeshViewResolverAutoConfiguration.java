@@ -15,22 +15,9 @@
  */
 package org.sitemesh.autoconfigure;
 
-import java.util.List;
-import java.util.Map;
-
-
 import org.sitemesh.DecoratorSelector;
 import org.sitemesh.SiteMeshContext;
-import org.sitemesh.config.MetaTagBasedDecoratorSelector;
-import org.sitemesh.config.ObjectFactory;
-import org.sitemesh.config.RequestAttributeDecoratorSelector;
 import org.sitemesh.content.ContentProcessor;
-import org.sitemesh.content.tagrules.TagBasedContentProcessor;
-import org.sitemesh.content.tagrules.TagRuleBundle;
-import org.sitemesh.content.tagrules.decorate.DecoratorTagRuleBundle;
-import org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle;
-import org.sitemesh.content.tagrules.html.Sm2TagRuleBundle;
-import org.sitemesh.webapp.DispatchMode;
 import org.sitemesh.webmvc.SiteMeshView;
 import org.sitemesh.webmvc.SiteMeshViewResolverBeanPostProcessor;
 import org.sitemesh.webmvc.SiteMeshViewResolverPostProcessor;
@@ -98,45 +85,14 @@ public class SiteMeshViewResolverAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "contentProcessor")
     public ContentProcessor contentProcessor() {
-        TagRuleBundle[] defaultBundles = {
-                new CoreHtmlTagRuleBundle(),
-                new DecoratorTagRuleBundle(),
-                new Sm2TagRuleBundle()
-        };
-        List<String> bundles = properties.getDecorator().getTagRuleBundles();
-        if (bundles == null || bundles.isEmpty()) {
-            return new TagBasedContentProcessor(defaultBundles);
-        }
-        ObjectFactory objectFactory = new ObjectFactory.Default();
-        TagRuleBundle[] combined = new TagRuleBundle[defaultBundles.length + bundles.size()];
-        System.arraycopy(defaultBundles, 0, combined, 0, defaultBundles.length);
-        for (int i = 0; i < bundles.size(); i++) {
-            combined[defaultBundles.length + i] = (TagRuleBundle) objectFactory.create(bundles.get(i));
-        }
-        return new TagBasedContentProcessor(combined);
+        return new DecoratorComponentsFactory(properties.getDecorator()).buildContentProcessor();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "decoratorSelector")
     public DecoratorSelector<SiteMeshContext> decoratorSelector() {
-        SiteMeshProperties.Decorator decorator = properties.getDecorator();
-        MetaTagBasedDecoratorSelector<SiteMeshContext> selector = decorator.getAttribute() != null
-                ? new RequestAttributeDecoratorSelector<SiteMeshContext>().setDecoratorAttribute(decorator.getAttribute())
-                : new MetaTagBasedDecoratorSelector<SiteMeshContext>();
-        selector.setMetaTagName(decorator.getMetaTag()).setPrefix(decorator.getPrefix());
-        if (decorator.getDefault() != null) {
-            selector.put("/*", decorator.getDefault());
-        }
-        if (decorator.getMappings() != null) {
-            for (Map<String, String> mapping : decorator.getMappings()) {
-                String path = mapping.get("path");
-                String dec = mapping.get("decorator");
-                if (path != null && dec != null) {
-                    selector.put(path, dec);
-                }
-            }
-        }
-        return selector;
+        return new DecoratorComponentsFactory(properties.getDecorator())
+                .<SiteMeshContext>buildDecoratorSelector(true);
     }
 
     /**

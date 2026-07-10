@@ -20,8 +20,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.MetaTagBasedDecoratorSelector;
-import org.sitemesh.config.ObjectFactory;
-import org.sitemesh.config.RequestAttributeDecoratorSelector;
 import org.sitemesh.content.tagrules.TagRuleBundle;
 import org.sitemesh.webapp.DispatchMode;
 import org.sitemesh.webapp.WebAppContext;
@@ -70,27 +68,30 @@ public class SiteMeshAutoConfiguration {
 
     public static Filter makeFilter(String attribute, String defaultPath, String metaTagName, String prefix,
                                             List<HashMap<String, String>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages, boolean alwaysApply, DispatchMode dispatchMode) {
+        SiteMeshProperties.Decorator decorator = new SiteMeshProperties.Decorator();
+        decorator.setAttribute(attribute);
+        decorator.setDefault(defaultPath);
+        decorator.setMetaTag(metaTagName);
+        decorator.setPrefix(prefix);
+        decorator.setMappings(mappings == null ? null : new ArrayList<Map<String, String>>(mappings));
+        decorator.setTagRuleBundles(bundles);
+        decorator.setExclusions(exclusions);
+        return makeFilter(decorator, includeErrorPages, alwaysApply, dispatchMode);
+    }
+
+    static Filter makeFilter(SiteMeshProperties.Decorator decorator, boolean includeErrorPages,
+                             boolean alwaysApply, DispatchMode dispatchMode) {
+        DecoratorComponentsFactory factory = new DecoratorComponentsFactory(decorator);
         SiteMeshFilterBuilder builder = new SiteMeshFilterBuilder();
-        MetaTagBasedDecoratorSelector decoratorSelector = attribute != null?
-            new RequestAttributeDecoratorSelector().setDecoratorAttribute(attribute) :
-            new MetaTagBasedDecoratorSelector<WebAppContext>();
-        if (defaultPath != null) {
-            decoratorSelector.put("/*", defaultPath);
-        }
-        builder.setCustomDecoratorSelector(decoratorSelector.setMetaTagName(metaTagName).setPrefix(prefix));
-        if (mappings != null) {
-            for (Map<String, String> decorator : mappings) {
-                builder.addDecoratorPath(decorator.get("path"), decorator.get("decorator"));
-            }
-        }
-        if (exclusions != null) {
-            for (String exclusion : exclusions) {
+        MetaTagBasedDecoratorSelector<WebAppContext> decoratorSelector = factory.buildDecoratorSelector(false);
+        builder.setCustomDecoratorSelector(decoratorSelector);
+        if (decorator.getExclusions() != null) {
+            for (String exclusion : decorator.getExclusions()) {
                 builder.addExcludedPath(exclusion);
             }
         }
-        ObjectFactory objectFactory = new ObjectFactory.Default();
-        for (String bundle : bundles) {
-            builder.addTagRuleBundle((TagRuleBundle) objectFactory.create(bundle));
+        for (TagRuleBundle bundle : factory.createCustomTagRuleBundles()) {
+            builder.addTagRuleBundle(bundle);
         }
         builder.setIncludeErrorPages(includeErrorPages);
         builder.setDispatchMode(dispatchMode);
@@ -124,19 +125,9 @@ public class SiteMeshAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "sitemesh")
     public FilterRegistrationBean<Filter> sitemesh() {
-        SiteMeshProperties.Decorator decorator = properties.getDecorator();
-        List<HashMap<String, String>> mappings = null;
-        if (decorator.getMappings() != null) {
-            mappings = new ArrayList<>();
-            for (Map<String, String> mapping : decorator.getMappings()) {
-                mappings.add(new HashMap<>(mapping));
-            }
-        }
         FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(makeFilter(decorator.getAttribute(), decorator.getDefault(),
-                decorator.getMetaTag(), decorator.getPrefix(), mappings, decorator.getExclusions(),
-                decorator.getTagRuleBundles(), properties.isIncludeErrorPages(), false,
-                properties.getDispatchMode()));
+        registrationBean.setFilter(makeFilter(properties.getDecorator(), properties.isIncludeErrorPages(),
+                false, properties.getDispatchMode()));
         registrationBean.addUrlPatterns("/*");
         if (properties.isIncludeErrorPages()) {
             registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR));
