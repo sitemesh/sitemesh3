@@ -7,12 +7,12 @@ description = 'SiteMesh Spring Web MVC ViewResolver-level integration'
 
 dependencies {
     api project(':sitemesh')
-    api 'org.springframework:spring-webmvc:7.0.7'
+    api 'org.springframework:spring-webmvc:7.0.8'
 
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.springframework:spring-test:7.0.7'
+    testImplementation 'org.springframework:spring-test:7.0.8'
     testImplementation 'org.mockito:mockito-core:5.23.0'
     testImplementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
 }
