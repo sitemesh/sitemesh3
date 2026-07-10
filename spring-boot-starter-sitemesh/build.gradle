@@ -9,4 +9,12 @@ dependencies {
     api project(':sitemesh')
     api 'org.springframework.boot:spring-boot-starter-web:4.0.6'
     implementation project(':spring-webmvc-sitemesh')
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:4.0.6'
+}
+
+// Make the manually maintained META-INF/additional-spring-configuration-metadata.json
+// visible to the configuration processor (see Spring Boot's configuration metadata docs).
+tasks.named('compileJava') {
+    inputs.files(tasks.named('processResources'))
 }

@@ -54,7 +54,11 @@ sitemesh:
   dispatchMode: detect            # include | forward | detect — how decorators are dispatched
 ```
 
-`sitemesh.includeErrorPages` (default `true`) is also shared: in both integrations it controls whether responses with an error status (>= 400) — e.g. Spring Boot's `error` view — are still decorated. `sitemesh.filter.order` applies to the filter integration only.
+`sitemesh.includeErrorPages` (default `true`) is also shared: in both integrations it controls whether responses with an error status (>= 400) — e.g. Spring Boot's `error` view — are still decorated. `sitemesh.filter.order` (default `29`) applies to the filter integration only.
+
+Note: `sitemesh.decorator.exclusions` applies to the **filter integration only**. The view-resolver integration decides decoration per resolved view and has no path-exclusion concept — a view either resolves through a wrapped `ViewResolver` (and is decorated according to the meta tag / attribute / mappings) or it doesn't.
+
+All `sitemesh.*` properties are bound through a typed `SiteMeshProperties` class, so the starter ships `spring-configuration-metadata.json` and IDEs auto-complete and document the keys. `sitemesh.dispatchMode` and `sitemesh.viewResolver.wrapMode` are typed as enums: an unrecognized value now fails application startup instead of silently falling back to the default.
 
 View-resolver-integration-only properties:
 

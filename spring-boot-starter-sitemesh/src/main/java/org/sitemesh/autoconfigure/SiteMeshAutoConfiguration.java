@@ -26,12 +26,10 @@ import org.sitemesh.content.tagrules.TagRuleBundle;
 import org.sitemesh.webapp.DispatchMode;
 import org.sitemesh.webapp.WebAppContext;
 import org.sitemesh.webapp.contentfilter.Selector;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.servlet.filter.OrderedFilter;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
@@ -55,31 +53,14 @@ import java.util.*;
  */
 @AutoConfiguration
 @ConditionalOnProperty(name = "sitemesh.integration", havingValue = "filter")
-@ConfigurationProperties(prefix = "sitemesh.decorator")
+@EnableConfigurationProperties(SiteMeshProperties.class)
 public class SiteMeshAutoConfiguration {
-    private List<HashMap<String, String>> mappings;
-    public void setMappings(List<HashMap<String, String>> mappings) {
-        this.mappings = mappings;
-    }
 
-    @Value("${sitemesh.decorator.exclusions:}")
-    private List<String> exclusions;
-    @Value("${sitemesh.includeErrorPages:true}")
-    boolean includeErrorPages;
-    @Value("${sitemesh.dispatchMode:detect}")
-    String dispatchMode;
-    @Value("${sitemesh.decorator.prefix:/decorators/}")
-    private String prefix;
-    @Value("${sitemesh.decorator.metaTag:decorator}")
-    private String metaTagName;
-    @Value("${sitemesh.decorator.tagRuleBundles:}")
-    private List<String> bundles;
-    @Value("${sitemesh.decorator.attribute:#{null}}")
-    private String attribute;
-    @Value("${sitemesh.decorator.default:#{null}}")
-    private String defaultPath;
-    @Value("${sitemesh.filter.order:" + (OrderedFilter.REQUEST_WRAPPER_FILTER_MAX_ORDER + 29) + "}")
-    private int filterOrder;
+    private final SiteMeshProperties properties;
+
+    public SiteMeshAutoConfiguration(SiteMeshProperties properties) {
+        this.properties = properties;
+    }
 
     public static Filter makeFilter(String attribute, String defaultPath, String metaTagName, String prefix,
                                             List<HashMap<String, String>> mappings, List<String> exclusions, List<String> bundles, boolean includeErrorPages, boolean alwaysApply) {
@@ -143,13 +124,24 @@ public class SiteMeshAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "sitemesh")
     public FilterRegistrationBean<Filter> sitemesh() {
+        SiteMeshProperties.Decorator decorator = properties.getDecorator();
+        List<HashMap<String, String>> mappings = null;
+        if (decorator.getMappings() != null) {
+            mappings = new ArrayList<>();
+            for (Map<String, String> mapping : decorator.getMappings()) {
+                mappings.add(new HashMap<>(mapping));
+            }
+        }
         FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(makeFilter(attribute, defaultPath, metaTagName, prefix, mappings, exclusions, bundles, includeErrorPages, false, DispatchMode.fromString(dispatchMode, DispatchMode.DETECT)));
+        registrationBean.setFilter(makeFilter(decorator.getAttribute(), decorator.getDefault(),
+                decorator.getMetaTag(), decorator.getPrefix(), mappings, decorator.getExclusions(),
+                decorator.getTagRuleBundles(), properties.isIncludeErrorPages(), false,
+                properties.getDispatchMode()));
         registrationBean.addUrlPatterns("/*");
-        if (includeErrorPages) {
+        if (properties.isIncludeErrorPages()) {
             registrationBean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR));
         }
-        registrationBean.setOrder(filterOrder);
+        registrationBean.setOrder(properties.getFilter().getOrder());
         return registrationBean;
     }
 }

@@ -15,7 +15,6 @@
  */
 package org.sitemesh.autoconfigure;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,12 +34,11 @@ import org.sitemesh.webapp.DispatchMode;
 import org.sitemesh.webmvc.SiteMeshView;
 import org.sitemesh.webmvc.SiteMeshViewResolverBeanPostProcessor;
 import org.sitemesh.webmvc.SiteMeshViewResolverPostProcessor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.ViewResolver;
 
@@ -80,55 +78,22 @@ import org.springframework.web.servlet.ViewResolver;
 @AutoConfiguration
 @ConditionalOnProperty(name = "sitemesh.integration", havingValue = "view-resolver", matchIfMissing = true)
 @ConditionalOnClass({ ViewResolver.class, SiteMeshView.class })
-@ConfigurationProperties(prefix = "sitemesh.decorator")
+@EnableConfigurationProperties(SiteMeshProperties.class)
 public class SiteMeshViewResolverAutoConfiguration {
 
-    private List<HashMap<String, String>> mappings;
+    // Note on lifecycle: when this class produces a
+    // BeanDefinitionRegistryPostProcessor bean (wrapMode=bean-definition), the
+    // enclosing auto-config — and therefore the SiteMeshProperties bean it
+    // injects — is instantiated before the ConfigurationProperties binding
+    // post-processor is registered, so the properties may hold their coded
+    // defaults rather than user-supplied values. This mirrors the previous
+    // @Value-based implementation, whose placeholders equally did not resolve
+    // during early post-processor instantiation.
+    private final SiteMeshProperties properties;
 
-    public void setMappings(List<HashMap<String, String>> mappings) {
-        this.mappings = mappings;
+    public SiteMeshViewResolverAutoConfiguration(SiteMeshProperties properties) {
+        this.properties = properties;
     }
-
-    // Field defaults mirror the @Value defaults below. Both are needed:
-    // when this class produces a BeanDefinitionRegistryPostProcessor bean,
-    // the enclosing auto-config is instantiated before property placeholder
-    // resolution is fully online, so @Value defaults may not fire. The field
-    // initializers ensure sensible values regardless of injection timing.
-    @Value("${sitemesh.decorator.prefix:/decorators/}")
-    private String prefix = "/decorators/";
-    @Value("${sitemesh.decorator.metaTag:decorator}")
-    private String metaTagName = "decorator";
-    @Value("${sitemesh.decorator.tagRuleBundles:}")
-    private List<String> bundles;
-    @Value("${sitemesh.decorator.attribute:#{null}}")
-    private String attribute;
-    @Value("${sitemesh.decorator.default:#{null}}")
-    private String defaultPath;
-
-    /**
-     * Optional override of the bean name of the primary view resolver to
-     * wrap. Defaults to {@code jspViewResolver} (Spring Boot's standard).
-     * A Grails or Thymeleaf app will want to override this.
-     */
-    @Value("${sitemesh.viewResolver.targetBeanName:jspViewResolver}")
-    private String targetViewResolverBeanName = "jspViewResolver";
-
-    /**
-     * How decorators are dispatched (include vs forward) in view-resolver
-     * mode. Mirrors the filter integration's {@code sitemesh.dispatchMode}.
-     * Defaults to {@code detect}. See {@link DispatchMode}.
-     */
-    @Value("${sitemesh.dispatchMode:detect}")
-    private String dispatchMode = "detect";
-
-    /**
-     * Whether views that set an error status (&gt;= 400) — e.g. Spring
-     * Boot's {@code error} view — are still buffered and decorated.
-     * Mirrors the filter integration's {@code sitemesh.includeErrorPages}
-     * and shares its default ({@code true}).
-     */
-    @Value("${sitemesh.includeErrorPages:true}")
-    private boolean includeErrorPages = true;
 
     @Bean
     @ConditionalOnMissingBean(name = "contentProcessor")
@@ -138,6 +103,7 @@ public class SiteMeshViewResolverAutoConfiguration {
                 new DecoratorTagRuleBundle(),
                 new Sm2TagRuleBundle()
         };
+        List<String> bundles = properties.getDecorator().getTagRuleBundles();
         if (bundles == null || bundles.isEmpty()) {
             return new TagBasedContentProcessor(defaultBundles);
         }
@@ -153,17 +119,18 @@ public class SiteMeshViewResolverAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "decoratorSelector")
     public DecoratorSelector<SiteMeshContext> decoratorSelector() {
-        MetaTagBasedDecoratorSelector<SiteMeshContext> selector = attribute != null
-                ? new RequestAttributeDecoratorSelector<SiteMeshContext>().setDecoratorAttribute(attribute)
+        SiteMeshProperties.Decorator decorator = properties.getDecorator();
+        MetaTagBasedDecoratorSelector<SiteMeshContext> selector = decorator.getAttribute() != null
+                ? new RequestAttributeDecoratorSelector<SiteMeshContext>().setDecoratorAttribute(decorator.getAttribute())
                 : new MetaTagBasedDecoratorSelector<SiteMeshContext>();
-        selector.setMetaTagName(metaTagName).setPrefix(prefix);
-        if (defaultPath != null) {
-            selector.put("/*", defaultPath);
+        selector.setMetaTagName(decorator.getMetaTag()).setPrefix(decorator.getPrefix());
+        if (decorator.getDefault() != null) {
+            selector.put("/*", decorator.getDefault());
         }
-        if (mappings != null) {
-            for (Map<String, String> decorator : mappings) {
-                String path = decorator.get("path");
-                String dec = decorator.get("decorator");
+        if (decorator.getMappings() != null) {
+            for (Map<String, String> mapping : decorator.getMappings()) {
+                String path = mapping.get("path");
+                String dec = mapping.get("decorator");
                 if (path != null && dec != null) {
                     selector.put(path, dec);
                 }
@@ -195,8 +162,8 @@ public class SiteMeshViewResolverAutoConfiguration {
     public SiteMeshViewResolverBeanPostProcessor siteMeshViewResolverWrapAllBeanPostProcessor() {
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
         pp.setWrapAll(true);
-        pp.setDispatchMode(DispatchMode.fromString(dispatchMode, DispatchMode.DETECT));
-        pp.setIncludeErrorPages(includeErrorPages);
+        pp.setDispatchMode(properties.getDispatchMode());
+        pp.setIncludeErrorPages(properties.isIncludeErrorPages());
         return pp;
     }
 
@@ -213,9 +180,9 @@ public class SiteMeshViewResolverAutoConfiguration {
             havingValue = "bean-definition")
     public SiteMeshViewResolverPostProcessor siteMeshViewResolverPostProcessor() {
         SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
-        pp.setTargetViewResolverBeanName(targetViewResolverBeanName);
-        pp.setDispatchMode(DispatchMode.fromString(dispatchMode, DispatchMode.DETECT));
-        pp.setIncludeErrorPages(includeErrorPages);
+        pp.setTargetViewResolverBeanName(properties.getViewResolver().getTargetBeanName());
+        pp.setDispatchMode(properties.getDispatchMode());
+        pp.setIncludeErrorPages(properties.isIncludeErrorPages());
         return pp;
     }
 
@@ -234,9 +201,9 @@ public class SiteMeshViewResolverAutoConfiguration {
     @ConditionalOnProperty(name = "sitemesh.viewResolver.wrapMode", havingValue = "bean-instance")
     public SiteMeshViewResolverBeanPostProcessor siteMeshViewResolverBeanPostProcessor() {
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
-        pp.setTargetViewResolverBeanName(targetViewResolverBeanName);
-        pp.setDispatchMode(DispatchMode.fromString(dispatchMode, DispatchMode.DETECT));
-        pp.setIncludeErrorPages(includeErrorPages);
+        pp.setTargetViewResolverBeanName(properties.getViewResolver().getTargetBeanName());
+        pp.setDispatchMode(properties.getDispatchMode());
+        pp.setIncludeErrorPages(properties.isIncludeErrorPages());
         return pp;
     }
 

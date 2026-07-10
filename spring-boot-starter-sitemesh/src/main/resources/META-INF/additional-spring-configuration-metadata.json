@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "sitemesh.decorator.default",
+      "type": "java.lang.String",
+      "sourceType": "org.sitemesh.autoconfigure.SiteMeshProperties$Decorator",
+      "description": "Decorator applied to every path (\"/*\") unless a more specific mapping, meta tag or request attribute overrides it."
+    },
+    {
+      "name": "sitemesh.filter.order",
+      "defaultValue": 29
+    }
+  ],
+  "hints": [
+    {
+      "name": "sitemesh.integration",
+      "values": [
+        {
+          "value": "view-resolver",
+          "description": "Decorate through Spring MVC's ViewResolver/View pipeline (the default)."
+        },
+        {
+          "value": "filter",
+          "description": "Decorate any text/html servlet response through the classic SiteMesh servlet filter."
+        }
+      ]
+    }
+  ]
+}
