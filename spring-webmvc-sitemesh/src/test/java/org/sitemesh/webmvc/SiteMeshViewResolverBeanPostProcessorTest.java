@@ -179,6 +179,55 @@ public class SiteMeshViewResolverBeanPostProcessorTest extends TestCase {
         pp.afterSingletonsInstantiated();
     }
 
+    public void testZeroWrapWarningFiresWhenTargetGenuinelyUnwrapped() {
+        SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
+        pp.setBeanFactory(beanFactory);
+        when(beanFactory.isTypeMatch("jspViewResolver", SiteMeshViewResolver.class)).thenReturn(false);
+
+        assertTrue("an unwrapped target must still be surfaced",
+                warningLogged(pp::afterSingletonsInstantiated));
+    }
+
+    public void testZeroWrapWarningSuppressedWhenTargetDecoratedAtDefinitionLevel() {
+        SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
+        pp.setBeanFactory(beanFactory);
+        when(beanFactory.isTypeMatch("jspViewResolver", SiteMeshViewResolver.class)).thenReturn(true);
+
+        assertFalse("decoration via SiteMeshViewResolverPostProcessor is not a misconfiguration",
+                warningLogged(pp::afterSingletonsInstantiated));
+    }
+
+    public void testZeroWrapWarningSuppressedInWrapAllModeWhenAnyDecoratingResolverExists() {
+        org.springframework.beans.factory.ListableBeanFactory listable =
+                mock(org.springframework.beans.factory.ListableBeanFactory.class);
+        when(listable.getBeanNamesForType(SiteMeshViewResolver.class, true, false))
+                .thenReturn(new String[] { "someWrappedResolver" });
+
+        SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
+        pp.setWrapAll(true);
+        pp.setBeanFactory(listable);
+
+        assertFalse(warningLogged(pp::afterSingletonsInstantiated));
+    }
+
+    private boolean warningLogged(Runnable action) {
+        java.util.logging.Logger logger =
+                java.util.logging.Logger.getLogger(SiteMeshViewResolverBeanPostProcessor.class.getName());
+        java.util.List<java.util.logging.LogRecord> records = new java.util.ArrayList<>();
+        java.util.logging.Handler handler = new java.util.logging.Handler() {
+            @Override public void publish(java.util.logging.LogRecord record) { records.add(record); }
+            @Override public void flush() { }
+            @Override public void close() { }
+        };
+        logger.addHandler(handler);
+        try {
+            action.run();
+        } finally {
+            logger.removeHandler(handler);
+        }
+        return records.stream().anyMatch(r -> r.getLevel() == java.util.logging.Level.WARNING);
+    }
+
     public static class CustomResolver extends SiteMeshViewResolver {
         public CustomResolver(ViewResolver inner,
                               ContentProcessor cp,

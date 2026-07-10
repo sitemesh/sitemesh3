@@ -31,6 +31,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.BeanInstantiationException;
+import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.Ordered;
@@ -124,10 +126,17 @@ public class SiteMeshViewResolverBeanPostProcessor
      * to diagnose undecorated pages. (A lazily-initialized resolver
      * created after startup can still be wrapped; this warning only
      * reflects startup state.)
+     *
+     * <p>No warning is issued when decoration is already in place through
+     * another mechanism — a {@link SiteMeshViewResolver} registered at the
+     * bean-definition level (by {@link SiteMeshViewResolverPostProcessor} or a
+     * framework integration), which this post-processor deliberately never
+     * re-wraps. The check is answered from bean-definition types, so it does
+     * not force lazy resolvers into existence.</p>
      */
     @Override
     public void afterSingletonsInstantiated() {
-        if (wrappedCount.get() > 0) {
+        if (wrappedCount.get() > 0 || isDecoratedElsewhere()) {
             return;
         }
         if (wrapAll) {
@@ -141,6 +150,26 @@ public class SiteMeshViewResolverBeanPostProcessor
                     + "will be decorated. Check sitemesh.viewResolver.targetBeanName against "
                     + "your application's ViewResolver bean names, or use the default wrap-all "
                     + "mode (sitemesh.viewResolver.wrapMode=all).");
+        }
+    }
+
+    /**
+     * Whether a {@link SiteMeshViewResolver} is already registered by some
+     * other mechanism, making a zero-wrap startup the expected state rather
+     * than a misconfiguration. Lazy beans are not initialized by this check.
+     */
+    private boolean isDecoratedElsewhere() {
+        if (beanFactory == null) {
+            return false;
+        }
+        if (wrapAll) {
+            return beanFactory instanceof ListableBeanFactory listable &&
+                    listable.getBeanNamesForType(SiteMeshViewResolver.class, true, false).length > 0;
+        }
+        try {
+            return beanFactory.isTypeMatch(targetViewResolverBeanName, SiteMeshViewResolver.class);
+        } catch (NoSuchBeanDefinitionException ignored) {
+            return false;
         }
     }
 
