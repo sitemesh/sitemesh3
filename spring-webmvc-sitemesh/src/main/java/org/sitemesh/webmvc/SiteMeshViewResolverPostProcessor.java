@@ -35,14 +35,22 @@ import org.springframework.core.Ordered;
  *
  * <p>Behavior: if a bean definition with
  * {@link #setTargetViewResolverBeanName(String) targetViewResolverBeanName}
- * is registered, it is removed and re-registered under
- * {@link #setInnerBeanName(String) innerBeanName}. A new primary
- * {@link SiteMeshViewResolver} bean is then registered under
- * {@link #setSiteMeshViewResolverBeanName(String) siteMeshViewResolverBeanName}
- * (which by default replaces the original bean under its own name), with
- * constructor arguments wired as {@link RuntimeBeanReference references}
- * to the inner resolver, content processor, decorator selector and
- * servlet context beans.</p>
+ * is registered, it is removed and embedded as an anonymous inner-bean
+ * definition of a new primary {@link SiteMeshViewResolver} bean registered
+ * under {@link #setSiteMeshViewResolverBeanName(String) siteMeshViewResolverBeanName}
+ * (which by default replaces the original bean under its own name), with the
+ * remaining constructor arguments wired as {@link RuntimeBeanReference
+ * references} to the content processor, decorator selector and servlet
+ * context beans.</p>
+ *
+ * <p>Embedding the original definition keeps the undecorated resolver out of
+ * reach of {@code getBeansOfType(ViewResolver)} sweeps: a delegating resolver
+ * that collects every {@code ViewResolver} bean while it initializes — Spring
+ * Boot's {@code ContentNegotiatingViewResolver}, for example — would otherwise
+ * discover the raw inner resolver and resolve views through it, bypassing
+ * decoration. Set {@link #setInnerBeanName(String) innerBeanName} to instead
+ * expose the unwrapped resolver as a separate named bean (the pre-3.3
+ * behavior), accepting that exposure.</p>
  *
  * <p>If the target bean does not exist the post processor logs a message
  * and returns — it does not fail application startup.</p>
@@ -75,12 +83,10 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
             return;
         }
 
-        String inner = innerBeanName != null ? innerBeanName : (targetName + "Inner");
         String wrapperName = siteMeshViewResolverBeanName != null ? siteMeshViewResolverBeanName : targetName;
 
         BeanDefinition innerDefinition = registry.getBeanDefinition(targetName);
         registry.removeBeanDefinition(targetName);
-        registry.registerBeanDefinition(inner, innerDefinition);
 
         GenericBeanDefinition wrapperDefinition = new GenericBeanDefinition();
         wrapperDefinition.setBeanClass(siteMeshViewResolverClass);
@@ -88,7 +94,16 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
         wrapperDefinition.setLazyInit(true);
 
         ConstructorArgumentValues args = wrapperDefinition.getConstructorArgumentValues();
-        args.addIndexedArgumentValue(0, new RuntimeBeanReference(inner));
+        if (innerBeanName != null) {
+            // Legacy opt-in: expose the unwrapped resolver as a named bean.
+            registry.registerBeanDefinition(innerBeanName, innerDefinition);
+            args.addIndexedArgumentValue(0, new RuntimeBeanReference(innerBeanName));
+        }
+        else {
+            // Embed the original definition so the undecorated resolver cannot
+            // be discovered by type scans (see class javadoc).
+            args.addIndexedArgumentValue(0, innerDefinition);
+        }
         args.addIndexedArgumentValue(1, new RuntimeBeanReference(contentProcessorBeanName));
         args.addIndexedArgumentValue(2, new RuntimeBeanReference(decoratorSelectorBeanName));
         args.addIndexedArgumentValue(3, new RuntimeBeanReference(servletContextBeanName));
@@ -151,6 +166,13 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
         return innerBeanName;
     }
 
+    /**
+     * Expose the unwrapped resolver as a separate named bean instead of
+     * embedding it as an anonymous inner-bean definition of the wrapper (the
+     * pre-3.3 behavior). Leaving this unset (the default) keeps the
+     * undecorated resolver out of reach of {@code getBeansOfType} sweeps; see
+     * the class javadoc.
+     */
     public void setInnerBeanName(String innerBeanName) {
         this.innerBeanName = innerBeanName;
     }

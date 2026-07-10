@@ -42,13 +42,13 @@ public class SiteMeshViewResolverPostProcessorTest extends TestCase {
         registry.registerBeanDefinition(name, def);
     }
 
-    public void testTargetRenamedAndPrimaryWrapperRegistered() {
+    public void testTargetEmbeddedAndPrimaryWrapperRegistered() {
         registerTarget("jspViewResolver");
 
         SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
         pp.postProcessBeanDefinitionRegistry(registry);
 
-        assertTrue("original bean should be renamed to jspViewResolverInner",
+        assertFalse("original bean must not be exposed as a separate named bean",
                 registry.containsBeanDefinition("jspViewResolverInner"));
 
         assertTrue("wrapper should be registered under the original name",
@@ -59,8 +59,33 @@ public class SiteMeshViewResolverPostProcessorTest extends TestCase {
         assertTrue("wrapper must be primary", wrapper.isPrimary());
 
         Object arg0 = wrapper.getConstructorArgumentValues().getIndexedArgumentValue(0, null).getValue();
-        assertTrue(arg0 instanceof RuntimeBeanReference);
-        assertEquals("jspViewResolverInner", ((RuntimeBeanReference) arg0).getBeanName());
+        assertTrue("original definition should be embedded as an inner-bean definition",
+                arg0 instanceof BeanDefinition);
+        assertEquals(InternalResourceViewResolver.class.getName(), ((BeanDefinition) arg0).getBeanClassName());
+    }
+
+    /**
+     * The reason the original definition is embedded rather than re-registered
+     * under a separate name: a delegating resolver that collects every
+     * {@link org.springframework.web.servlet.ViewResolver} bean while it
+     * initializes (Spring Boot's ContentNegotiatingViewResolver, for example)
+     * must never be able to discover the undecorated resolver and resolve
+     * views through it, bypassing decoration.
+     */
+    public void testUndecoratedResolverIsInvisibleToTypeScans() {
+        registerTarget("jspViewResolver");
+        registry.registerSingleton("contentProcessor", new TagBasedContentProcessor(new CoreHtmlTagRuleBundle()));
+        registry.registerSingleton("decoratorSelector",
+                (DecoratorSelector<SiteMeshContext>) (content, context) -> new String[0]);
+        registry.registerSingleton("servletContext", new MockServletContext());
+
+        SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
+        pp.postProcessBeanDefinitionRegistry(registry);
+
+        String[] resolverBeans = registry.getBeanNamesForType(org.springframework.web.servlet.ViewResolver.class);
+        assertEquals("only the decorating wrapper may be discoverable", 1, resolverBeans.length);
+        assertEquals("jspViewResolver", resolverBeans[0]);
+        assertTrue(registry.getBean("jspViewResolver") instanceof SiteMeshViewResolver);
     }
 
     public void testGracefulWhenTargetMissing() {
