@@ -100,6 +100,20 @@ subprojects {
   }
 }
 
+// The maven-publish/signing/nexus-publish stack is not configuration-cache
+// compatible; declaring the incompatibility makes publish builds skip the
+// cache instead of failing.
+allprojects {
+  tasks.configureEach { task ->
+    if (task instanceof org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+        || task instanceof org.gradle.api.publish.maven.tasks.GenerateMavenPom
+        || task instanceof org.gradle.plugins.signing.Sign
+        || task.class.name.startsWith('io.github.gradlenexus')) {
+      task.notCompatibleWithConfigurationCache('publishing plugins do not support the configuration cache')
+    }
+  }
+}
+
 nexusPublishing {
   packageGroup.set('org.sitemesh')
   repositories {

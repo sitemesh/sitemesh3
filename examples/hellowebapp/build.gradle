@@ -24,6 +24,18 @@ tasks.matching { it.name == 'jettyRun' }.configureEach {
     }
 }
 
+// Gretty serializes the Project into task state, which the configuration cache
+// forbids; declaring the incompatibility makes Gradle skip the cache for these
+// tasks instead of failing the build. Gretty assigns task groups in its own
+// afterEvaluate, so the check must run after that.
+afterEvaluate {
+    tasks.each { task ->
+        if (task.group?.equalsIgnoreCase('gretty')) {
+            task.notCompatibleWithConfigurationCache('gretty does not support the configuration cache')
+        }
+    }
+}
+
 defaultTasks 'tomcatRun'
 
 ext.title = 'SiteMesh Example Web-app'

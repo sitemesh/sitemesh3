@@ -2,8 +2,6 @@ configurations {
     lexer
 }
 
-sourceSets.main.java.srcDirs += ['build/generated-sources/jflex']
-
 ext.title = 'SiteMesh Library'
 description = 'SiteMesh library'
 
@@ -19,7 +17,14 @@ dependencies {
 }
 
 
-compileJava.doFirst {
-    ant.taskdef classname: 'jflex.anttask.JFlexTask', name: 'jflex', classpath: configurations.lexer.asPath
-    ant.jflex(file: "src/main/java/org/sitemesh/tagprocessor/lexer.flex", destdir: "build/generated-sources/jflex")// "src/main/java/")
+def generateLexer = tasks.register('generateLexer', JavaExec) {
+    def flexFile = file('src/main/java/org/sitemesh/tagprocessor/lexer.flex')
+    def outputDir = layout.buildDirectory.dir('generated-sources/jflex')
+    inputs.file(flexFile)
+    outputs.dir(outputDir)
+    classpath = configurations.lexer
+    mainClass = 'jflex.Main'
+    argumentProviders.add({ ['-d', outputDir.get().asFile.path, flexFile.path] } as CommandLineArgumentProvider)
 }
+
+sourceSets.main.java.srcDir generateLexer
