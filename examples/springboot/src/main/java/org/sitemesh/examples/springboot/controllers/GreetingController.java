@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +52,16 @@ public class GreetingController {
      * response instead.
      */
     @Autowired @Qualifier("jspViewResolver") ViewResolver internalResourceViewResolver;
+
+    /**
+     * The active SiteMesh integration. Decoration of {@link #greetingJson}
+     * responses is only possible in filter mode: a {@code @ResponseBody}
+     * string is written by an {@code HttpMessageConverter} and never passes
+     * through a {@code ViewResolver}, so the default view-resolver
+     * integration cannot decorate it regardless of content type.
+     */
+    @Value("${sitemesh.integration:view-resolver}")
+    private String integration;
 
     /**
      * Redirect root to index.html to avoid Spring Boot's WelcomePageHandlerMapping
@@ -112,8 +123,11 @@ public class GreetingController {
 
     /**
      * Returns a JSON body, demonstrating that SiteMesh does not decorate
-     * non-HTML content types; pass {@code pjax=false} to keep the default
-     * text/html content type and see it decorated.
+     * non-HTML content types. Under the filter integration, pass
+     * {@code pjax=false} to keep the default text/html content type and see
+     * it decorated; under the default view-resolver integration a
+     * {@code @ResponseBody} response is never decorated (see
+     * {@link #integration}).
      *
      * @param pjax when false, leaves the content type as text/html
      * @param model the view model (unused)
@@ -127,6 +141,7 @@ public class GreetingController {
             response.setContentType("text/json");
         }
         // demonstrates SiteMesh does not decorate json by default.
-        return String.format("{ decorated: %s}", pjax != null && pjax.equals(false));
+        boolean decorated = "filter".equals(integration) && pjax != null && pjax.equals(false);
+        return String.format("{ decorated: %s}", decorated);
     }
 }
