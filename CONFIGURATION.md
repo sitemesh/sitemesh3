@@ -51,8 +51,12 @@ sitemesh:
     mappings:
       - path: /admin/*
         decorator: admin.html
+      - path: /board/*
+        decorator: board.html,default.html   # comma-separated decorators are applied as a chain
   dispatchMode: detect            # include | forward | detect — how decorators are dispatched
 ```
+
+`sitemesh.decorator.default` and each mapping's `decorator` accept a comma-separated list of decorators, which are applied as a chain (the content is decorated by the first, the result by the next, and so on) — the same syntax the `<meta name="decorator">` tag supports.
 
 `sitemesh.includeErrorPages` (default `true`) is also shared: in both integrations it controls whether responses with an error status (>= 400) — e.g. Spring Boot's `error` view — are still decorated. `sitemesh.filter.order` (default `29`) applies to the filter integration only.
 
