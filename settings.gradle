@@ -11,8 +11,9 @@ develocity {
 }
 
 rootProject.name = 'sitemesh3'
-include ':sitemesh', ':sitemesh-webfilter', ':sitemesh-examples-hellowebapp', ':sitemesh-examples-springboot', ':spring-boot-starter-sitemesh', ':spring-webmvc-sitemesh', ':sitemesh-examples-javalin'
+include ':sitemesh', ':sitemesh-webfilter', ':sitemesh-examples-hellowebapp', ':sitemesh-examples-springboot', ':spring-boot-starter-sitemesh', ':spring-webmvc-sitemesh', ':sitemesh-examples-javalin', ':sitemesh-examples-struts'
 
 project(':sitemesh-examples-hellowebapp').projectDir = file('examples/hellowebapp')
 project(':sitemesh-examples-springboot').projectDir = file('examples/springboot')
 project(':sitemesh-examples-javalin').projectDir = file('examples/javalin')
+project(':sitemesh-examples-struts').projectDir = file('examples/struts')

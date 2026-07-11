@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 6.5//EN"
+        "https://struts.apache.org/dtds/struts-6.5.dtd">
+<struts>
+    <constant name="struts.devMode" value="false"/>
+    <constant name="struts.action.extension" value="action"/>
+
+    <package name="example" extends="struts-default">
+        <result-types>
+            <!-- Filterless SiteMesh decoration: replaces the default dispatcher
+                 result, which forwards to the JSP and breaks under Tomcat 11+
+                 (suspendWrappedResponseAfterForward) when a decorating filter
+                 wraps the response. -->
+            <result-type name="sitemesh" class="org.sitemesh.examples.struts.SiteMeshResult" default="true"/>
+        </result-types>
+
+        <action name="hello" class="org.sitemesh.examples.struts.HelloAction">
+            <result name="success">/WEB-INF/views/hello.jsp</result>
+        </action>
+
+        <action name="alternative" class="org.sitemesh.examples.struts.HelloAction">
+            <result name="success">
+                <param name="location">/WEB-INF/views/alternative.jsp</param>
+                <param name="decorator">/WEB-INF/decorators/alternative.html</param>
+            </result>
+        </action>
+    </package>
+</struts>

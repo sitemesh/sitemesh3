@@ -1,0 +1,54 @@
+/*
+ * build.gradle for SiteMesh 3 + Apache Struts demo.
+ *
+ * Demonstrates filterless decoration on Struts: a custom SiteMesh Result type
+ * decorates action output without the SiteMesh servlet filter, which makes it
+ * immune to the Tomcat 11+ suspendWrappedResponseAfterForward behavior that
+ * blanks filter-based decoration when Struts forwards to a JSP
+ * (https://github.com/sitemesh/sitemesh3/issues/148,
+ *  https://issues.apache.org/jira/browse/WW-5496).
+ */
+
+plugins {
+    id 'war'
+    id "org.gretty" version "5.0.2"
+}
+
+gretty {
+    contextPath = '/'
+    servletContainer = 'tomcat11'
+    // -PhttpPort=18080 lets the example run alongside other local servers on 8080.
+    httpPort = (project.findProperty('httpPort') ?: 8080) as Integer
+}
+
+// Override jettyRun to use Jetty 12 instead of default Jetty 11
+tasks.matching { it.name == 'jettyRun' }.configureEach {
+    doFirst {
+        gretty.servletContainer = 'jetty12'
+    }
+}
+
+// Gretty serializes the Project into task state, which the configuration cache
+// forbids; declaring the incompatibility makes Gradle skip the cache for these
+// tasks instead of failing the build. Gretty assigns task groups in its own
+// afterEvaluate, so the check must run after that.
+afterEvaluate {
+    tasks.each { task ->
+        if (task.group?.equalsIgnoreCase('gretty')) {
+            task.notCompatibleWithConfigurationCache('gretty does not support the configuration cache')
+        }
+    }
+}
+
+defaultTasks 'tomcatRun'
+
+ext.title = 'SiteMesh Example Struts Web-app'
+description = 'SiteMesh Example: Apache Struts Web-app'
+
+dependencies {
+    implementation 'org.apache.struts:struts2-core:7.2.1'
+    implementation project(':sitemesh')
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
+    runtimeOnly 'org.apache.logging.log4j:log4j-core:2.26.0' // Struts logs via log4j-api
+
+}

@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <title>SiteMesh Struts Example</title>
+  </head>
+  <body>
+    <h1>SiteMesh 3 + Apache Struts</h1>
+    <p>This static page is served directly (undecorated — there is no SiteMesh
+       filter in this app). Decoration happens inside the Struts result type,
+       so only action results are decorated:</p>
+    <ul>
+      <li><a href="hello.action">hello.action</a> — default decorator</li>
+      <li><a href="hello.action?name=SiteMesh">hello.action?name=SiteMesh</a> — with a request parameter</li>
+      <li><a href="alternative.action">alternative.action</a> — per-result decorator override</li>
+    </ul>
+  </body>
+</html>
