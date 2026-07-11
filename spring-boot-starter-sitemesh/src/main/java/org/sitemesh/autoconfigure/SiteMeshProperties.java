@@ -183,13 +183,16 @@ public class SiteMeshProperties {
 
         /**
          * Decorator applied to every path ("/*") unless a more specific
-         * mapping, meta tag or request attribute overrides it.
+         * mapping, meta tag or request attribute overrides it. A
+         * comma-separated list applies the decorators as a chain.
          */
         private String defaultDecorator;
 
         /**
          * Path-to-decorator mappings. Each entry is a map with a "path" key
-         * (e.g. "/admin/*") and a "decorator" key (e.g. "admin.html").
+         * (e.g. "/admin/*") and a "decorator" key (e.g. "admin.html"). A
+         * comma-separated "decorator" value (e.g. "panel.html,admin.html")
+         * applies the decorators as a chain.
          */
         private List<Map<String, String>> mappings;
 
@@ -264,7 +267,8 @@ public class SiteMeshProperties {
         /**
          * The decorator applied to every path ({@code "/*"}).
          *
-         * @return the default decorator, or null (the default) for none
+         * @return the default decorator (a comma-separated list chains
+         *         several), or null (the default) for none
          */
         public String getDefault() {
             return defaultDecorator;
@@ -273,7 +277,8 @@ public class SiteMeshProperties {
         /**
          * Sets the decorator applied to every path ({@code "/*"}).
          *
-         * @param defaultDecorator the default decorator name/path
+         * @param defaultDecorator the default decorator name/path; a
+         *                         comma-separated list chains several
          */
         public void setDefault(String defaultDecorator) {
             this.defaultDecorator = defaultDecorator;
@@ -291,7 +296,9 @@ public class SiteMeshProperties {
         /**
          * Sets the path-to-decorator mappings.
          *
-         * @param mappings the mappings, each with a "path" and a "decorator" key
+         * @param mappings the mappings, each with a "path" and a "decorator"
+         *                 key; a comma-separated "decorator" value chains
+         *                 several decorators
          */
         public void setMappings(List<Map<String, String>> mappings) {
             this.mappings = mappings;

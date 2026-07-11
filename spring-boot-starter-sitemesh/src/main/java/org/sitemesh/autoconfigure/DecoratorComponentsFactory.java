@@ -67,6 +67,10 @@ class DecoratorComponentsFactory {
      * a {@link RequestAttributeDecoratorSelector} when an attribute is set,
      * a plain {@link MetaTagBasedDecoratorSelector} otherwise.
      *
+     * <p>The {@code default} and per-mapping {@code decorator} values accept a
+     * comma-separated list of decorators, applied as a chain — the same syntax
+     * the {@code <meta name="decorator">} tag supports.</p>
+     *
      * @param skipIncompleteMappings whether mapping entries missing a
      *                               {@code path} or {@code decorator} key are
      *                               silently skipped instead of applied as-is
@@ -78,16 +82,20 @@ class DecoratorComponentsFactory {
                 : new MetaTagBasedDecoratorSelector<C>();
         selector.setMetaTagName(decorator.getMetaTag()).setPrefix(decorator.getPrefix());
         if (decorator.getDefault() != null) {
-            selector.put("/*", decorator.getDefault());
+            selector.put("/*", decorator.getDefault().split(","));
         }
         if (decorator.getMappings() != null) {
             for (Map<String, String> mapping : decorator.getMappings()) {
                 String path = mapping.get("path");
-                String decoratorPath = mapping.get("decorator");
-                if (skipIncompleteMappings && (path == null || decoratorPath == null)) {
+                String decoratorPaths = mapping.get("decorator");
+                if (skipIncompleteMappings && (path == null || decoratorPaths == null)) {
                     continue;
                 }
-                selector.put(path, decoratorPath);
+                if (decoratorPaths == null) {
+                    selector.put(path, (String) null);
+                } else {
+                    selector.put(path, decoratorPaths.split(","));
+                }
             }
         }
         return selector;
