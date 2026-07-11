@@ -28,6 +28,7 @@ import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.content.tagrules.TagBasedContentProcessor;
 import org.sitemesh.content.tagrules.TagRuleBundle;
 import org.sitemesh.content.tagrules.decorate.DecoratorTagRuleBundle;
+import org.springframework.util.ClassUtils;
 import org.sitemesh.content.tagrules.html.CoreHtmlTagRuleBundle;
 import org.sitemesh.content.tagrules.html.Sm2TagRuleBundle;
 
@@ -118,11 +119,27 @@ class DecoratorComponentsFactory {
         if (bundleNames == null || bundleNames.isEmpty()) {
             return Collections.emptyList();
         }
-        ObjectFactory objectFactory = new ObjectFactory.Default();
         List<TagRuleBundle> bundles = new ArrayList<>(bundleNames.size());
         for (String bundleName : bundleNames) {
-            bundles.add((TagRuleBundle) objectFactory.create(bundleName));
+            bundles.add((TagRuleBundle) instantiate(bundleName));
         }
         return bundles;
+    }
+
+    /**
+     * Instantiates a configured class name using the class loader Spring would
+     * use for application classes ({@link ClassUtils#getDefaultClassLoader()},
+     * i.e. the thread context class loader with fallbacks) rather than
+     * {@link ObjectFactory.Default}'s bare {@code Class.forName}, which resolves
+     * against this jar's own class loader and cannot see application classes
+     * living in a child or restart class loader (e.g. Spring Boot devtools).
+     */
+    private Object instantiate(String className) {
+        try {
+            return ClassUtils.forName(className, ClassUtils.getDefaultClassLoader())
+                    .getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException | LinkageError e) {
+            throw new IllegalArgumentException("Could not instantiate " + className, e);
+        }
     }
 }
