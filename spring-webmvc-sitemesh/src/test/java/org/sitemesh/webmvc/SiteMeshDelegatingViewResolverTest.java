@@ -11,6 +11,7 @@ package org.sitemesh.webmvc;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -181,6 +182,71 @@ public class SiteMeshDelegatingViewResolverTest extends TestCase {
 
         assertTrue("json must decorate once opted in (case-insensitively): " + resolved,
                 resolved instanceof SiteMeshView);
+    }
+
+    public void testDecoratableMediaTypesNormalizedLikeViewContentTypes() throws Exception {
+        // Programmatic values with whitespace or parameters must behave the
+        // same as the content types views declare (which carry charsets).
+        GenericWebApplicationContext context = new GenericWebApplicationContext();
+        context.registerBean("htmlResolver", ViewResolver.class, () -> resolverFor("greeting", htmlView()));
+
+        SiteMeshDelegatingViewResolver resolver = resolverWith(context);
+        resolver.setDecoratableMediaTypes(java.util.List.of(" text/html;charset=UTF-8 "));
+        View resolved = resolver.resolveViewName("greeting", Locale.ENGLISH);
+
+        assertTrue("parameters and whitespace must not defeat the match: " + resolved,
+                resolved instanceof SiteMeshView);
+        assertEquals(Set.of("text/html"), resolver.getDecoratableMediaTypes());
+    }
+
+    public void testUnparseableDecoratableMediaTypeIsRejected() {
+        SiteMeshDelegatingViewResolver resolver =
+                new SiteMeshDelegatingViewResolver(contentProcessor, decoratorSelector, servletContext);
+
+        try {
+            resolver.setDecoratableMediaTypes(java.util.List.of("   "));
+            fail("expected IllegalArgumentException");
+        } catch (IllegalArgumentException expected) {
+            assertTrue(expected.getMessage().contains("decoratableMediaTypes"));
+        }
+    }
+
+    public void testEachLeafConsultedExactlyTwicePerNameUnderContentNegotiation() throws Exception {
+        // Instrumentation for the one credible cost of the delegate design:
+        // under ContentNegotiatingViewResolver every leaf is consulted once
+        // through the delegate chain and once by the negotiator's own
+        // candidate collection. Real framework resolvers cache views by
+        // name+locale, so the duplicate is a map lookup — but the count is
+        // pinned here so any regression multiplying consultations is caught.
+        final java.util.concurrent.atomic.AtomicInteger baseNameLookups =
+                new java.util.concurrent.atomic.AtomicInteger();
+        View html = htmlView();
+        ViewResolver countingLeaf = (name, locale) -> {
+            if ("greeting".equals(name)) {
+                baseNameLookups.incrementAndGet();
+                return html;
+            }
+            return null;
+        };
+        GenericWebApplicationContext context = new GenericWebApplicationContext();
+        context.registerBean("countingLeaf", ViewResolver.class, () -> countingLeaf);
+        SiteMeshDelegatingViewResolver delegating = resolverWith(context);
+
+        ContentNegotiatingViewResolver cnvr = new ContentNegotiatingViewResolver();
+        cnvr.setContentNegotiationManager(
+                new org.springframework.web.accept.ContentNegotiationManager());
+        cnvr.setViewResolvers(java.util.List.of(delegating, countingLeaf));
+
+        bindRequestWithAccept("text/html");
+        try {
+            View selected = cnvr.resolveViewName("greeting", Locale.ENGLISH);
+
+            assertTrue(selected instanceof SiteMeshView);
+            assertEquals("one consultation via the delegate chain, one via the negotiator",
+                    2, baseNameLookups.get());
+        } finally {
+            org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+        }
     }
 
     public void testContentNegotiationWithJsonRankedFirstStillServesJsonUndecorated() throws Exception {

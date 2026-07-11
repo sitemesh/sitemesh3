@@ -94,6 +94,13 @@ import org.springframework.web.servlet.ViewResolver;
  * media-specific resolvers (Spring Boot's default arrangement) to keep the
  * HTML representation decorated.</p>
  *
+ * <p><strong>Cost.</strong> Under {@code ContentNegotiatingViewResolver}
+ * each leaf resolver is consulted twice per view name: once through this
+ * resolver's delegate chain and once directly by the negotiator's own
+ * candidate collection. Every framework resolver caches resolved views by
+ * name and locale ({@code AbstractCachingViewResolver}), so the second
+ * consultation is a concurrent-map lookup.</p>
+ *
  * <p><strong>Delegates.</strong> Collected lazily on first resolution from
  * all {@link ViewResolver} beans in the context (ancestors included), sorted
  * by their {@code Ordered} semantics, excluding: this resolver itself, any
@@ -197,11 +204,15 @@ public class SiteMeshDelegatingViewResolver extends SiteMeshViewResolver impleme
      * Replace the media types whose views this resolver decorates. Defaults
      * to {@code text/html} and {@code application/xhtml+xml}. Views
      * declaring any other content type pass through undecorated; views
-     * declaring none are always considered decoratable. Compared
-     * case-insensitively, without content-type parameters.
+     * declaring none are always considered decoratable. Entries are
+     * normalized the same way resolved views' content types are: surrounding
+     * whitespace and content-type parameters are ignored
+     * ({@code " text/html;charset=UTF-8 "} registers {@code text/html}) and
+     * comparison is case-insensitive.
      *
      * @param decoratableMediaTypes the media types to decorate; must not be
-     *                              {@code null} or empty
+     *                              {@code null}, empty, or contain
+     *                              unparseable entries
      */
     public void setDecoratableMediaTypes(Collection<String> decoratableMediaTypes) {
         if (decoratableMediaTypes == null || decoratableMediaTypes.isEmpty()) {
@@ -209,7 +220,12 @@ public class SiteMeshDelegatingViewResolver extends SiteMeshViewResolver impleme
         }
         Set<String> normalized = new LinkedHashSet<>();
         for (String mediaType : decoratableMediaTypes) {
-            normalized.add(mediaType.toLowerCase(Locale.ROOT));
+            String type = mediaType != null ? new HttpContentType(mediaType).getType() : null;
+            if (type == null || type.isEmpty()) {
+                throw new IllegalArgumentException("Unparseable media type in decoratableMediaTypes: '"
+                        + mediaType + "'");
+            }
+            normalized.add(type.toLowerCase(Locale.ROOT));
         }
         this.decoratableMediaTypes = Collections.unmodifiableSet(normalized);
     }
