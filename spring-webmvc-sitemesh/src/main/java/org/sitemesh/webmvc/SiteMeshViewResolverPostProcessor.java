@@ -20,12 +20,14 @@ import org.apache.commons.logging.LogFactory;
 import org.sitemesh.webapp.DispatchMode;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.core.Ordered;
+import org.springframework.util.ClassUtils;
 
 /**
  * {@link BeanDefinitionRegistryPostProcessor} that rewrites the
@@ -86,6 +88,12 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
         String wrapperName = siteMeshViewResolverBeanName != null ? siteMeshViewResolverBeanName : targetName;
 
         BeanDefinition innerDefinition = registry.getBeanDefinition(targetName);
+        if (isAlreadyDecorating(innerDefinition, registry)) {
+            // Idempotency: the target already resolves to a SiteMeshViewResolver
+            // (a previous run of this post-processor, or a custom wrapper) -
+            // wrapping again would decorate twice.
+            return;
+        }
         registry.removeBeanDefinition(targetName);
 
         GenericBeanDefinition wrapperDefinition = new GenericBeanDefinition();
@@ -122,6 +130,28 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
      *
      * @return the dispatch mode, never {@code null}
      */
+    /**
+     * Whether the definition already resolves to a {@link SiteMeshViewResolver}.
+     * The class is resolved with the bean class loader the container itself
+     * will use to instantiate the definition, so application classes in a
+     * child or restart class loader (e.g. Spring Boot devtools) are visible
+     * to the check.
+     */
+    private boolean isAlreadyDecorating(BeanDefinition definition, BeanDefinitionRegistry registry) {
+        String className = definition.getBeanClassName();
+        if (className == null) {
+            return false;
+        }
+        ClassLoader loader = registry instanceof ConfigurableBeanFactory beanFactory ?
+                beanFactory.getBeanClassLoader() :
+                ClassUtils.getDefaultClassLoader();
+        try {
+            return SiteMeshViewResolver.class.isAssignableFrom(ClassUtils.forName(className, loader));
+        } catch (ClassNotFoundException | LinkageError e) {
+            return false;
+        }
+    }
+
     public DispatchMode getDispatchMode() {
         return dispatchMode;
     }

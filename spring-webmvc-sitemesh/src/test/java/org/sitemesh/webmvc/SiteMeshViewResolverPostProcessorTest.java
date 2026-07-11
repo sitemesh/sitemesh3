@@ -88,6 +88,18 @@ public class SiteMeshViewResolverPostProcessorTest extends TestCase {
         assertTrue(registry.getBean("jspViewResolver") instanceof SiteMeshViewResolver);
     }
 
+    public void testAlreadyWrappedTargetIsLeftAlone() {
+        GenericBeanDefinition wrapped = new GenericBeanDefinition();
+        wrapped.setBeanClass(SiteMeshViewResolver.class);
+        registry.registerBeanDefinition("jspViewResolver", wrapped);
+
+        SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
+        pp.postProcessBeanDefinitionRegistry(registry);
+
+        assertSame("an already-decorating definition must not be wrapped again",
+                wrapped, registry.getBeanDefinition("jspViewResolver"));
+    }
+
     public void testGracefulWhenTargetMissing() {
         SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
         pp.postProcessBeanDefinitionRegistry(registry); // must not throw
