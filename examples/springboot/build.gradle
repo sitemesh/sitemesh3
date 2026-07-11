@@ -9,7 +9,7 @@ ext.title = 'SiteMesh Example Spring Boot Application'
 description = 'SiteMesh Example: Spring Boot'
 
 // Default: Tomcat. Use -Pcontainer=jetty to run with Jetty
-// Example: ./gradlew :sitemesh-examples-springboot:bootRun -Pcontainer=jetty
+// Example: ./gradlew :examples:springboot:bootRun -Pcontainer=jetty
 def useJetty = project.findProperty('container') == 'jetty'
 
 dependencies {

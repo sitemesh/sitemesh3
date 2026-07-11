@@ -20,11 +20,15 @@ Gradle multi-project build (`settings.gradle`). JDK 17 is enforced via toolchain
 
 ### Running the examples
 
-- Tomcat 11 (default): `./gradlew :sitemesh-examples-hellowebapp:tomcatRun`
-- Jetty 12: `./gradlew :sitemesh-examples-hellowebapp:jettyRun` (overrides gretty to jetty12)
-- Spring Boot on Tomcat (default): `./gradlew :sitemesh-examples-springboot:bootRun`
-- Spring Boot on Jetty: `./gradlew :sitemesh-examples-springboot:bootRun -Pcontainer=jetty`
-- Javalin: `./gradlew :sitemesh-examples-javalin:run`
+Example project paths follow the directory layout (`examples/<name>` -> `:examples:<name>`):
+
+- Tomcat 11 (default): `./gradlew :examples:hellowebapp:tomcatRun`
+- Jetty 12: `./gradlew :examples:hellowebapp:jettyRun` (overrides gretty to jetty12)
+- Spring Boot on Tomcat (default): `./gradlew :examples:springboot:bootRun`
+- Spring Boot on Jetty: `./gradlew :examples:springboot:bootRun -Pcontainer=jetty`
+- Javalin: `./gradlew :examples:javalin:run`
+- Struts on Tomcat 11 / Jetty 12: `./gradlew :examples:struts:tomcatRun` / `:examples:struts:jettyRun`
+- Micronaut (Netty; needs JDK 25): `./gradlew :examples:micronaut:run`
 
 Whenever a change touches response buffering, dispatch, or content-type handling, **run both the Tomcat and Jetty variants** of `hellowebapp` and `springboot` before declaring success. The containers have diverged enough (see below) that one can mask bugs in the other.
 

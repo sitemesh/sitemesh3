@@ -7,7 +7,7 @@ Netty with no servlet API at all.
 
 ## Running
 
-    ./gradlew :sitemesh-examples-micronaut:run
+    ./gradlew :examples:micronaut:run
 
 Then open <http://localhost:8080/>. Set `MICRONAUT_SERVER_PORT` to use a
 different port.

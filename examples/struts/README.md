@@ -6,8 +6,8 @@ Tomcat 12), where the classic filter + Struts combination produces blank pages.
 
 ## Running
 
-    ./gradlew :sitemesh-examples-struts:tomcatRun          # Tomcat 11 (default)
-    ./gradlew :sitemesh-examples-struts:jettyRun           # Jetty 12
+    ./gradlew :examples:struts:tomcatRun          # Tomcat 11 (default)
+    ./gradlew :examples:struts:jettyRun           # Jetty 12
 
 Then open <http://localhost:8080/hello.action>. Use `-PhttpPort=18080` to run
 on a different port.
