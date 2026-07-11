@@ -211,39 +211,64 @@ public class SiteMeshDelegatingViewResolverTest extends TestCase {
         }
     }
 
-    public void testEachLeafConsultedExactlyTwicePerNameUnderContentNegotiation() throws Exception {
-        // Instrumentation for the one credible cost of the delegate design:
-        // under ContentNegotiatingViewResolver every leaf is consulted once
-        // through the delegate chain and once by the negotiator's own
-        // candidate collection. Real framework resolvers cache views by
-        // name+locale, so the duplicate is a map lookup — but the count is
-        // pinned here so any regression multiplying consultations is caught.
-        final java.util.concurrent.atomic.AtomicInteger baseNameLookups =
+    public void testWinningLeafConsultedTwiceForBaseNameUnderContentNegotiation() throws Exception {
+        // Structural regression pin for the one credible cost of the
+        // delegate design: leaves reached by the delegate chain (which stops
+        // at its first non-null result) are consulted again by the
+        // negotiator's own candidate collection, so the WINNING leaf sees
+        // the base name exactly twice — leaves after the winner only once,
+        // and extension-qualified negotiator lookups use different names.
+        // Cached framework resolvers make the repeat a map lookup; this is a
+        // consultation count, not a performance measurement.
+        final java.util.concurrent.atomic.AtomicInteger winnerBaseNameLookups =
+                new java.util.concurrent.atomic.AtomicInteger();
+        final java.util.concurrent.atomic.AtomicInteger postWinnerBaseNameLookups =
                 new java.util.concurrent.atomic.AtomicInteger();
         View html = htmlView();
-        ViewResolver countingLeaf = (name, locale) -> {
-            if ("greeting".equals(name)) {
-                baseNameLookups.incrementAndGet();
-                return html;
+
+        class WinningLeaf implements ViewResolver, Ordered {
+            public View resolveViewName(String name, Locale locale) {
+                if ("greeting".equals(name)) {
+                    winnerBaseNameLookups.incrementAndGet();
+                    return html;
+                }
+                return null;
             }
-            return null;
-        };
+            public int getOrder() { return 1; }
+        }
+        class PostWinnerLeaf implements ViewResolver, Ordered {
+            public View resolveViewName(String name, Locale locale) {
+                if ("greeting".equals(name)) {
+                    postWinnerBaseNameLookups.incrementAndGet();
+                    return htmlView();
+                }
+                return null;
+            }
+            public int getOrder() { return 100; }
+        }
+        ViewResolver winningLeaf = new WinningLeaf();
+        ViewResolver postWinnerLeaf = new PostWinnerLeaf();
+
         GenericWebApplicationContext context = new GenericWebApplicationContext();
-        context.registerBean("countingLeaf", ViewResolver.class, () -> countingLeaf);
+        context.registerBean("winningLeaf", ViewResolver.class, () -> winningLeaf);
+        context.registerBean("postWinnerLeaf", ViewResolver.class, () -> postWinnerLeaf);
         SiteMeshDelegatingViewResolver delegating = resolverWith(context);
 
         ContentNegotiatingViewResolver cnvr = new ContentNegotiatingViewResolver();
         cnvr.setContentNegotiationManager(
                 new org.springframework.web.accept.ContentNegotiationManager());
-        cnvr.setViewResolvers(java.util.List.of(delegating, countingLeaf));
+        cnvr.setViewResolvers(java.util.List.of(delegating, winningLeaf, postWinnerLeaf));
 
         bindRequestWithAccept("text/html");
         try {
             View selected = cnvr.resolveViewName("greeting", Locale.ENGLISH);
 
             assertTrue(selected instanceof SiteMeshView);
-            assertEquals("one consultation via the delegate chain, one via the negotiator",
-                    2, baseNameLookups.get());
+            assertEquals("winner: one consultation via the delegate chain, one via the negotiator",
+                    2, winnerBaseNameLookups.get());
+            assertEquals("post-winner leaf: the delegate chain short-circuits before it, "
+                            + "so only the negotiator consults it",
+                    1, postWinnerBaseNameLookups.get());
         } finally {
             org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
         }

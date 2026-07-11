@@ -95,11 +95,14 @@ import org.springframework.web.servlet.ViewResolver;
  * HTML representation decorated.</p>
  *
  * <p><strong>Cost.</strong> Under {@code ContentNegotiatingViewResolver}
- * each leaf resolver is consulted twice per view name: once through this
- * resolver's delegate chain and once directly by the negotiator's own
- * candidate collection. Every framework resolver caches resolved views by
- * name and locale ({@code AbstractCachingViewResolver}), so the second
- * consultation is a concurrent-map lookup.</p>
+ * resolvers may be consulted more than once: leaves reached by this
+ * resolver's delegate chain (which stops at its first non-null result) are
+ * subsequently consulted directly during the negotiator's own candidate
+ * collection, and the negotiator may additionally query
+ * extension-qualified names. With cached framework resolvers
+ * ({@code AbstractCachingViewResolver} subclasses), repeat resolution of
+ * the same name is normally a cache lookup; custom {@code ViewResolver}
+ * implementations are not required to cache.</p>
  *
  * <p><strong>Delegates.</strong> Collected lazily on first resolution from
  * all {@link ViewResolver} beans in the context (ancestors included), sorted
