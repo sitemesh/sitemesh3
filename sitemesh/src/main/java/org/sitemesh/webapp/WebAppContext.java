@@ -26,6 +26,7 @@ import org.sitemesh.webapp.contentfilter.BasicSelector;
 import org.sitemesh.webapp.contentfilter.HttpServletResponseBuffer;
 import org.sitemesh.webapp.contentfilter.HttpServletRequestFilterable;
 import org.sitemesh.webapp.contentfilter.ResponseMetaData;
+import org.sitemesh.webapp.contentfilter.io.HttpContentType;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
@@ -223,7 +224,9 @@ public class WebAppContext extends BaseSiteMeshContext {
                 return true; // We know we should buffer.
             }
         });
-        responseBuffer.setContentType(response.getContentType()); // Trigger buffering.
+        // Buffer without re-stamping the response's own content type back onto
+        // it (or resetting it via setContentType(null) when none is set yet).
+        responseBuffer.enableBuffering(new HttpContentType(response.getContentType()).getEncoding());
 
         // It's possible that this is reentrant, so we need to take a copy
         // of additional request attributes so we can restore them afterwards.

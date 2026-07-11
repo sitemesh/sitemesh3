@@ -134,9 +134,26 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
      * Enable buffering for this request. Subsequent content will be written to the buffer
      * instead of the original response.
      *
+     * <p>Unlike {@link #setContentType(String)} — which both consults the
+     * {@link Selector} and propagates the content type to the wrapped
+     * response — this method only switches buffering on. It never touches the
+     * wrapped response, leaving the application's first
+     * {@code setContentType} call as the one that reaches the client. Callers
+     * that buffer unconditionally (e.g. decorator dispatches and view-layer
+     * integrations) should use this instead of setting a placeholder content
+     * type: stamping a charset-less default onto the real response suppresses
+     * view technologies that only apply their own content type — and its
+     * configured charset — when none has been set yet.</p>
+     *
+     * <p>While buffering is enabled, further calls have no effect. Note that
+     * calling this after buffering has been disabled (via a
+     * {@link #setContentType(String)} the {@link Selector} rejected, or an
+     * aborting status code) re-enables it — the same semantics the
+     * {@code setContentType} path has always had.</p>
+     *
      * @param encoding Character encoding used to decode the buffered bytes.
      */
-    protected void enableBuffering(String encoding) {
+    public void enableBuffering(String encoding) {
         if (buffer != null) {
             return; // Already buffering.
         }

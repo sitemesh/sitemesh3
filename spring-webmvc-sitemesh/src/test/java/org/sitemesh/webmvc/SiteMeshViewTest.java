@@ -145,6 +145,73 @@ public class SiteMeshViewTest extends TestCase {
         assertTrue(output.indexOf("OUTER[") < output.indexOf("INNERDEC("));
     }
 
+    public void testInnerViewOwnsContentTypeWhenNoneSetYet() throws Exception {
+        // Mimics view technologies (e.g. Grails GSP) that only apply their
+        // configured content type — including the charset — when the response
+        // does not have one yet. Buffering must not pre-stamp a charset-less
+        // default onto the real response, or the view backs off and the
+        // response goes out with the container's locale-derived charset.
+        View inner = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse s) throws IOException {
+                if (s.getContentType() == null) {
+                    s.setContentType("text/html;charset=UTF-8");
+                }
+                s.getWriter().write("<html><head><title>T</title></head><body>Привет</body></html>");
+            }
+        };
+        View decoratorView = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse s) throws IOException {
+                s.getWriter().write("<html><head></head><body>DECORATED:<sitemesh:write property='body'/></body></html>");
+            }
+        };
+        ViewResolver resolver = (name, locale) -> "layout".equals(name) ? decoratorView : null;
+        DecoratorSelector<SiteMeshContext> selector = (c, x) -> new String[] { "layout" };
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setDispatcherType(DispatcherType.REQUEST);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        SiteMeshView view = new SiteMeshView(inner, contentProcessor, selector, servletContext, resolver);
+        view.render(Collections.emptyMap(), request, response);
+
+        assertEquals("text/html;charset=UTF-8", response.getContentType());
+        String output = response.getContentAsString();
+        assertTrue("output should be decorated: " + output, output.contains("DECORATED:"));
+        assertTrue("output should contain inner body: " + output, output.contains("Привет"));
+    }
+
+    public void testDefaultContentTypeRestoredWhenInnerViewSetsNone() throws Exception {
+        // A view that never declares a content type must still produce a
+        // decorated response that declares text/html, matching the behavior
+        // before buffering stopped pre-stamping the default.
+        View inner = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse s) throws IOException {
+                s.getWriter().write("<html><head><title>T</title></head><body>BODY</body></html>");
+            }
+        };
+        View decoratorView = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse s) throws IOException {
+                s.getWriter().write("<html><head></head><body>DECORATED:<sitemesh:write property='body'/></body></html>");
+            }
+        };
+        ViewResolver resolver = (name, locale) -> "layout".equals(name) ? decoratorView : null;
+        DecoratorSelector<SiteMeshContext> selector = (c, x) -> new String[] { "layout" };
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setDispatcherType(DispatcherType.REQUEST);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        SiteMeshView view = new SiteMeshView(inner, contentProcessor, selector, servletContext, resolver);
+        view.render(Collections.emptyMap(), request, response);
+
+        assertEquals("text/html", response.getContentType());
+        assertTrue(response.getContentAsString().contains("DECORATED:"));
+    }
+
     public void testNoDecoratorsWritesOriginalContent() throws Exception {
         View inner = htmlView("<html><head><title>T</title></head><body>RAW</body></html>");
         DecoratorSelector<SiteMeshContext> selector = (c, x) -> new String[0];
@@ -292,6 +359,8 @@ public class SiteMeshViewTest extends TestCase {
         assertEquals("status recorded by the buffer must be re-applied after the inner render",
                 500, response.getStatus());
         assertTrue(response.getContentAsString().contains("RAW-ERROR"));
+        assertEquals("abort pass-through must still declare the text/html default when the view set no content type",
+                "text/html", response.getContentType());
     }
 
     public void testRestoresSwallowedSendErrorStatus() throws Exception {

@@ -32,6 +32,7 @@ import org.sitemesh.webapp.DispatchMode;
 import org.sitemesh.webapp.contentfilter.BasicSelector;
 import org.sitemesh.webapp.contentfilter.HttpServletResponseBuffer;
 import org.sitemesh.webapp.contentfilter.ResponseMetaData;
+import org.sitemesh.webapp.contentfilter.io.HttpContentType;
 
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -303,11 +304,26 @@ public class SiteMeshView implements View {
         SiteMeshViewContext context = createContext(request, response, contentType, metaData);
 
         HttpServletResponseBuffer buffer = new HttpServletResponseBuffer(response, metaData, selector);
-        buffer.setContentType(contentType);
+        // Buffer unconditionally, without stamping the "text/html" default onto
+        // the real response: the inner view must get first claim on the content
+        // type, or view technologies that only apply their configured content
+        // type (and charset) when none is set yet — e.g. Grails GSP's UTF-8
+        // default — back off, and the response goes out with the container's
+        // locale-derived charset instead of the view's.
+        buffer.enableBuffering(new HttpContentType(contentType).getEncoding());
 
         innerView.render(model, request, buffer);
 
         restoreExplicitStatus(buffer, response);
+
+        // The inner view had first claim on the content type; if it declined
+        // to set one, restore the "text/html" default (or whatever was set
+        // before this render) so the response still declares a type — on the
+        // decorated path and on the buffering-abort pass-through path alike.
+        // Best-effort: a committed response can no longer take headers.
+        if (response.getContentType() == null && !response.isCommitted()) {
+            response.setContentType(contentType);
+        }
 
         java.nio.CharBuffer rawBuffer = buffer.getBuffer();
         if (rawBuffer == null) {
@@ -317,6 +333,7 @@ public class SiteMeshView implements View {
             // and any status it set was restored above.
             return;
         }
+
         Content content = contentProcessor.build(rawBuffer, context);
         if (content == null) {
             response.getWriter().append(rawBuffer);
