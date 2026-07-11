@@ -350,19 +350,22 @@ public class SiteMeshProperties {
         /**
          * Bean name of the ViewResolver to wrap in the single-target wrap
          * modes ("bean-definition" / "bean-instance"). Ignored by the
-         * default "all" mode.
+         * default "delegate" mode.
          */
         private String targetBeanName = "jspViewResolver";
 
         /**
-         * How the view-resolver integration installs SiteMesh: "all" wraps
-         * every leaf ViewResolver bean (skipping delegating front-ends such
-         * as ContentNegotiatingViewResolver), "bean-definition" rewrites a
-         * single named bean definition, "bean-instance" wraps a single named
-         * live bean (use for frameworks, e.g. Grails, that register the
-         * resolver late in the lifecycle).
+         * How the view-resolver integration installs SiteMesh: "delegate"
+         * (the default) registers a single non-invasive high-precedence
+         * resolver that delegates to every leaf ViewResolver bean and
+         * decorates what they resolve, leaving all resolver bean identities
+         * untouched; "bean-definition" rewrites a single named bean
+         * definition (the compatibility hook for frameworks requiring early
+         * definition rewriting); "bean-instance" wraps a single named live
+         * bean (for frameworks that register the resolver late in the
+         * lifecycle).
          */
-        private WrapMode wrapMode = WrapMode.ALL;
+        private WrapMode wrapMode = WrapMode.DELEGATE;
 
         /**
          * The bean name of the ViewResolver to wrap in the single-target modes.
@@ -385,7 +388,7 @@ public class SiteMeshProperties {
         /**
          * How the view-resolver integration installs SiteMesh.
          *
-         * @return the configured {@link WrapMode}, {@link WrapMode#ALL} by default
+         * @return the configured {@link WrapMode}, {@link WrapMode#DELEGATE} by default
          */
         public WrapMode getWrapMode() {
             return wrapMode;
@@ -394,7 +397,7 @@ public class SiteMeshProperties {
         /**
          * Sets how the view-resolver integration installs SiteMesh.
          *
-         * @param wrapMode all, bean-definition, or bean-instance
+         * @param wrapMode delegate, bean-definition, or bean-instance
          */
         public void setWrapMode(WrapMode wrapMode) {
             this.wrapMode = wrapMode;
@@ -434,29 +437,35 @@ public class SiteMeshProperties {
 
     /**
      * Strategies the view-resolver integration can use to install
-     * {@link org.sitemesh.webmvc.SiteMeshViewResolver} wrappers. Bound from
+     * SiteMesh decoration. Bound from
      * {@code sitemesh.viewResolver.wrapMode} with Spring Boot's relaxed
-     * binding, so "all", "bean-instance" and "bean-definition" all map to
-     * their respective constants.
+     * binding, so "delegate", "bean-instance" and "bean-definition" all map
+     * to their respective constants.
      */
     public enum WrapMode {
 
         /**
-         * Wrap every leaf ViewResolver bean in the context (the default).
+         * Register a single non-invasive
+         * {@link org.sitemesh.webmvc.SiteMeshDelegatingViewResolver} that
+         * delegates to every leaf ViewResolver bean and decorates what they
+         * resolve, leaving all resolver bean identities untouched (the
+         * default).
          */
-        ALL,
+        DELEGATE,
 
         /**
          * Wrap the single live bean named by
          * {@code sitemesh.viewResolver.targetBeanName} after it is
-         * instantiated.
+         * instantiated. Compatibility hook for frameworks whose resolver is
+         * registered too late for definition rewriting.
          */
         BEAN_INSTANCE,
 
         /**
          * Rewrite the bean definition named by
          * {@code sitemesh.viewResolver.targetBeanName} so it is embedded in
-         * a SiteMeshViewResolver definition.
+         * a SiteMeshViewResolver definition. Compatibility hook for
+         * frameworks requiring early definition rewriting.
          */
         BEAN_DEFINITION
     }

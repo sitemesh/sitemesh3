@@ -53,7 +53,7 @@ public class RequestAttributeDecoratorSelector<C extends SiteMeshContext> extend
             decorator = (String) request.getAttribute(decoratorAttribute);
         }
 
-        return decorator != null? convertPaths(decorator.split(",")) :
+        return decorator != null? convertPaths(DecoratorChains.split(decorator)) :
             super.selectDecoratorPaths(content, siteMeshContext);
     }
 }

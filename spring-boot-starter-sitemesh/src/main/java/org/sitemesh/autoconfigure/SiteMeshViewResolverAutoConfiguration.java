@@ -15,10 +15,14 @@
  */
 package org.sitemesh.autoconfigure;
 
+import jakarta.servlet.ServletContext;
+
 import org.sitemesh.DecoratorSelector;
 import org.sitemesh.SiteMeshContext;
 import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.webmvc.SiteMeshDelegatingViewResolver;
 import org.sitemesh.webmvc.SiteMeshView;
+import org.sitemesh.webmvc.SiteMeshViewResolver;
 import org.sitemesh.webmvc.SiteMeshViewResolverBeanPostProcessor;
 import org.sitemesh.webmvc.SiteMeshViewResolverPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -54,9 +58,13 @@ import org.springframework.web.servlet.ViewResolver;
  *     {@link DecoratorSelector} built from the same
  *     {@code sitemesh.decorator.*} properties that the filter integration
  *     consumes.</li>
- *     <li>Registers a {@link SiteMeshViewResolverPostProcessor} so the
- *     primary {@code ViewResolver} bean is wrapped in a
- *     {@code SiteMeshViewResolver}.</li>
+ *     <li>Registers a {@link SiteMeshDelegatingViewResolver} — a single
+ *     non-invasive high-precedence resolver that delegates to every leaf
+ *     {@code ViewResolver} bean and decorates what they resolve. The
+ *     single-resolver compatibility modes
+ *     ({@code sitemesh.viewResolver.wrapMode = bean-definition} /
+ *     {@code bean-instance}) remain available for frameworks that need to
+ *     wrap one named resolver instead.</li>
  * </ul>
  *
  * <p>The companion {@link SiteMeshAutoConfiguration} (the servlet-filter
@@ -128,34 +136,44 @@ public class SiteMeshViewResolverAutoConfiguration {
     }
 
     /**
-     * Registers a {@link SiteMeshViewResolverBeanPostProcessor} that
-     * wraps every leaf {@link ViewResolver} bean (skipping delegating
-     * front-ends such as {@code ContentNegotiatingViewResolver} and
-     * {@code ViewResolverComposite}) with a
-     * {@link org.sitemesh.webmvc.SiteMeshViewResolver}. This is the
-     * default mode and is required on modern Spring Boot installs where
-     * multiple template-engine resolvers (JSP + Freemarker + Thymeleaf,
-     * etc.) co-exist: any one of them may win view resolution, so each
-     * must return a {@link SiteMeshView}. Controllers that inject a
-     * wrapped resolver by its concrete leaf type must switch to the
-     * {@link ViewResolver} interface — see {@code SiteMeshViewResolverBeanPostProcessor#setWrapAll}.
-     * Opt in to the older single-resolver modes via
+     * Registers the default, non-invasive integration: a single
+     * {@link SiteMeshDelegatingViewResolver} that delegates view resolution
+     * to every leaf {@link ViewResolver} bean in the context and decorates
+     * what they resolve. No resolver bean is replaced or retyped —
+     * controllers that inject a resolver by its concrete class keep working
+     * — and multi-template-engine installs (JSP + Freemarker + Thymeleaf,
+     * etc.) are covered because whichever engine wins resolution, the
+     * winning view is decorated. Opt in to the single-resolver
+     * compatibility modes via
      * {@code sitemesh.viewResolver.wrapMode = bean-definition} or
      * {@code = bean-instance}.
      *
-     * @return the wrap-all bean post processor
+     * <p>Backs off when any {@link SiteMeshViewResolver} bean or SiteMesh
+     * post-processor is already registered — the extension contract for
+     * framework integrations that install their own decoration.</p>
+     *
+     * @param contentProcessor the content processor the resolver's views
+     *                         parse pages with
+     * @param decoratorSelector the decorator selector the resolver's views
+     *                          pick decorators with
+     * @param servletContext the current servlet context
+     * @return the delegating view resolver
      */
     @Bean
-    @ConditionalOnMissingBean(SiteMeshViewResolverBeanPostProcessor.class)
+    @ConditionalOnMissingBean({ SiteMeshViewResolver.class,
+            SiteMeshViewResolverBeanPostProcessor.class,
+            SiteMeshViewResolverPostProcessor.class })
     @ConditionalOnProperty(name = "sitemesh.viewResolver.wrapMode",
-            havingValue = "all", matchIfMissing = true)
-    public static SiteMeshViewResolverBeanPostProcessor siteMeshViewResolverWrapAllBeanPostProcessor(Environment environment) {
-        SiteMeshProperties properties = bindProperties(environment);
-        SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
-        pp.setWrapAll(true);
-        pp.setDispatchMode(properties.getDispatchMode());
-        pp.setIncludeErrorPages(properties.isIncludeErrorPages());
-        return pp;
+            havingValue = "delegate", matchIfMissing = true)
+    public SiteMeshDelegatingViewResolver siteMeshDelegatingViewResolver(
+            ContentProcessor contentProcessor,
+            DecoratorSelector<SiteMeshContext> decoratorSelector,
+            ServletContext servletContext) {
+        SiteMeshDelegatingViewResolver resolver =
+                new SiteMeshDelegatingViewResolver(contentProcessor, decoratorSelector, servletContext);
+        resolver.setDispatchMode(properties.getDispatchMode());
+        resolver.setIncludeErrorPages(properties.isIncludeErrorPages());
+        return resolver;
     }
 
     /**

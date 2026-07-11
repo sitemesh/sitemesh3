@@ -85,17 +85,41 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
         if (innerView == null) {
             return null;
         }
-        if (innerView instanceof SmartView && ((SmartView) innerView).isRedirectView()) {
-            return innerView;
-        }
         if (viewName != null && isLayoutPath(viewName)) {
             return innerView;
         }
-        if (innerView instanceof SiteMeshView) {
-            return innerView;
+        return decorate(innerView);
+    }
+
+    /**
+     * Decorate a view obtained outside this resolver's own
+     * {@link #resolveViewName resolution} — for example a {@link View} a
+     * handler method builds or resolves manually and returns directly, a
+     * flow that bypasses {@code DispatcherServlet}'s resolver chain entirely
+     * and would otherwise go out undecorated. Applies the same rules as
+     * {@link #resolveViewName}: redirect views and views that are already
+     * {@link SiteMeshView}s pass through untouched, and JSP views are
+     * {@linkplain DispatchMode prepared for buffered rendering} on containers
+     * where {@code forward()} is unsafe. (The name-based
+     * {@linkplain #setLayoutPathPrefix layout-path} pass-through cannot apply
+     * here — there is no view name.)
+     *
+     * @param view the view to decorate; may be {@code null}
+     * @return the decorated view, or {@code view} itself when it is
+     *         {@code null}, a redirect, or already decorated
+     */
+    public View decorate(View view) {
+        if (view == null) {
+            return null;
         }
-        prepareForBufferedRender(innerView);
-        return createSiteMeshView(innerView);
+        if (view instanceof SmartView && ((SmartView) view).isRedirectView()) {
+            return view;
+        }
+        if (view instanceof SiteMeshView) {
+            return view;
+        }
+        prepareForBufferedRender(view);
+        return createSiteMeshView(view);
     }
 
     /**
@@ -145,6 +169,28 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
         if (innerView instanceof InternalResourceView resourceView && dispatchMode.useInclude(servletContext)) {
             resourceView.setAlwaysInclude(true);
         }
+    }
+
+    /**
+     * Returns true if {@code bean} is one of Spring's delegating
+     * ViewResolver front-ends that iterate every other ViewResolver bean
+     * ({@code ContentNegotiatingViewResolver} / {@code ViewResolverComposite}).
+     * SiteMesh must neither wrap nor delegate to them: they already consult
+     * the leaf resolvers, so involving them again would decorate twice or
+     * recurse. Matched by class name to avoid a hard dependency on
+     * {@code spring-webmvc}'s view package for callers that don't include it
+     * (the package is on the classpath at runtime in any Spring MVC app, but
+     * class-reference would fail verification in stripped test contexts).
+     */
+    static boolean isDelegatingFrontEnd(Object bean) {
+        for (Class<?> c = bean.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+            String name = c.getName();
+            if ("org.springframework.web.servlet.view.ContentNegotiatingViewResolver".equals(name)
+                    || "org.springframework.web.servlet.view.ViewResolverComposite".equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

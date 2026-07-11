@@ -8,7 +8,10 @@ description = 'SiteMesh Spring Boot Starter'
 dependencies {
     api project(':sitemesh')
     api 'org.springframework.boot:spring-boot-starter-web:4.1.0'
-    implementation project(':spring-webmvc-sitemesh')
+    // api, not implementation: the auto-configuration registers beans of
+    // these types (SiteMeshDelegatingViewResolver et al.) that applications
+    // legitimately inject, e.g. to decorate() manually resolved views.
+    api project(':spring-webmvc-sitemesh')
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:4.1.0'
 

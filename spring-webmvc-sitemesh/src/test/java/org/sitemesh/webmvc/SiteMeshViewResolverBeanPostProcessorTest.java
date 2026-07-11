@@ -133,20 +133,17 @@ public class SiteMeshViewResolverBeanPostProcessorTest extends TestCase {
         assertSame(inner, passthrough);
     }
 
-    public void testWrapAllWrapsAnyLeafResolverAndCounts() {
+    public void testWrapCountSurvivesAfterSingletonsInstantiated() {
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
-        pp.setWrapAll(true);
         pp.setBeanFactory(beanFactory);
 
-        Object first = pp.postProcessAfterInitialization(new InternalResourceViewResolver(), "thymeleafViewResolver");
-        Object second = pp.postProcessAfterInitialization(new InternalResourceViewResolver(), "freeMarkerViewResolver");
+        Object wrapped = pp.postProcessAfterInitialization(new InternalResourceViewResolver(), "jspViewResolver");
 
-        assertTrue(first instanceof SiteMeshViewResolver);
-        assertTrue(second instanceof SiteMeshViewResolver);
-        assertEquals(2, pp.getWrappedCount());
+        assertTrue(wrapped instanceof SiteMeshViewResolver);
+        assertEquals(1, pp.getWrappedCount());
         // should not throw or reset the count
         pp.afterSingletonsInstantiated();
-        assertEquals(2, pp.getWrappedCount());
+        assertEquals(1, pp.getWrappedCount());
     }
 
     public void testIncludeErrorPagesDefaultsToTrueOnWrappedResolver() {
@@ -171,7 +168,6 @@ public class SiteMeshViewResolverBeanPostProcessorTest extends TestCase {
 
     public void testAfterSingletonsInstantiatedWithNothingWrappedDoesNotFail() {
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
-        pp.setWrapAll(true);
         pp.setBeanFactory(beanFactory);
 
         assertEquals(0, pp.getWrappedCount());
@@ -197,14 +193,15 @@ public class SiteMeshViewResolverBeanPostProcessorTest extends TestCase {
                 warningLogged(pp::afterSingletonsInstantiated));
     }
 
-    public void testZeroWrapWarningSuppressedInWrapAllModeWhenAnyDecoratingResolverExists() {
+    public void testZeroWrapWarningSuppressedWhenAnyDecoratingResolverExistsInContext() {
+        // e.g. the default delegate mode registered a SiteMeshDelegatingViewResolver,
+        // or a framework installed its own SiteMeshViewResolver under another name.
         org.springframework.beans.factory.ListableBeanFactory listable =
                 mock(org.springframework.beans.factory.ListableBeanFactory.class);
         when(listable.getBeanNamesForType(SiteMeshViewResolver.class, true, false))
                 .thenReturn(new String[] { "someWrappedResolver" });
 
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
-        pp.setWrapAll(true);
         pp.setBeanFactory(listable);
 
         assertFalse(warningLogged(pp::afterSingletonsInstantiated));

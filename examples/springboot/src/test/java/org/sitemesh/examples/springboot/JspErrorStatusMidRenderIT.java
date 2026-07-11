@@ -33,6 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.sitemesh.webmvc.SiteMeshViewResolver;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -114,15 +115,20 @@ class JspErrorStatusMidRenderIT {
     static class ErrorStatusController {
 
         /**
-         * Resolved through the (SiteMesh-wrapped) {@code jspViewResolver}
-         * bean directly, so permissive template resolvers (Thymeleaf,
-         * FreeMarker) on the example classpath cannot claim the view name.
+         * Resolved through the raw {@code jspViewResolver} bean directly,
+         * so permissive template resolvers (Thymeleaf, FreeMarker) on the
+         * example classpath cannot claim the view name; then decorated
+         * explicitly, since a View returned from a handler bypasses the
+         * resolver chain (and with it SiteMesh's delegating resolver).
          */
         @Autowired @Qualifier("jspViewResolver") ViewResolver jspViewResolver;
 
+        @Autowired SiteMeshViewResolver siteMeshViewResolver;
+
         @GetMapping("/error-status")
         public View errorStatus(HttpServletRequest request) throws Exception {
-            return jspViewResolver.resolveViewName("error-status", request.getLocale());
+            return siteMeshViewResolver.decorate(
+                    jspViewResolver.resolveViewName("error-status", request.getLocale()));
         }
     }
 

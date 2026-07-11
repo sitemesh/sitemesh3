@@ -71,13 +71,4 @@ public class SiteMeshViewResolverAutoConfigurationTest extends TestCase {
         assertEquals(DispatchMode.INCLUDE, pp.getDispatchMode());
     }
 
-    public void testWrapAllModeBindsUserProperties() {
-        SiteMeshViewResolverBeanPostProcessor pp =
-                SiteMeshViewResolverAutoConfiguration.siteMeshViewResolverWrapAllBeanPostProcessor(environment(Map.of(
-                        "sitemesh.dispatch-mode", "include",
-                        "sitemesh.include-error-pages", "false")));
-
-        assertEquals(DispatchMode.INCLUDE, pp.getDispatchMode());
-        assertFalse(pp.isIncludeErrorPages());
-    }
 }

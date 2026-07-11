@@ -63,9 +63,9 @@ public class MetaTagBasedDecoratorSelector<C extends SiteMeshContext> extends Pa
                 .getValue();
 
         if (decorator != null) {
-            // If present, return it. 
+            // If present, return it.
             // Multiple chained decorators can be specified using commas.
-            return convertPaths(decorator.split(","));
+            return convertPaths(DecoratorChains.split(decorator));
         }
 
         // Otherwise, fallback to the standard configuration

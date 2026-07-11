@@ -70,7 +70,6 @@ public class SiteMeshViewResolverBeanPostProcessor
 
     private String targetViewResolverBeanName = "jspViewResolver";
     private final AtomicInteger wrappedCount = new AtomicInteger();
-    private boolean wrapAll;
     private DispatchMode dispatchMode = DispatchMode.DETECT;
     private boolean includeErrorPages = true;
     private String contentProcessorBeanName = "contentProcessor";
@@ -94,20 +93,7 @@ public class SiteMeshViewResolverBeanPostProcessor
         if (bean instanceof SiteMeshViewResolver) {
             return bean;
         }
-        if (wrapAll) {
-            // Skip delegating front-ends (ContentNegotiatingViewResolver /
-            // ViewResolverComposite). They already iterate every other
-            // ViewResolver bean — wrapping them in addition to the leaves
-            // would run decoration twice (once through the front-end,
-            // once through the leaf the front-end picked). The leaf
-            // resolvers alone are what DispatcherServlet resolves views
-            // through in Spring Boot 4 (CNVR delegates to them and picks
-            // by content negotiation), and wrapping each leaf yields a
-            // SiteMeshView no matter which engine wins.
-            if (isDelegatingViewResolver(bean)) {
-                return bean;
-            }
-        } else if (!targetViewResolverBeanName.equals(beanName)) {
+        if (!targetViewResolverBeanName.equals(beanName)) {
             return bean;
         }
         ContentProcessor cp = beanFactory.getBean(contentProcessorBeanName, ContentProcessor.class);
@@ -141,38 +127,34 @@ public class SiteMeshViewResolverBeanPostProcessor
         if (wrappedCount.get() > 0 || isDecoratedElsewhere()) {
             return;
         }
-        if (wrapAll) {
-            log.warn("SiteMesh did not wrap any ViewResolver bean during startup - "
-                    + "no Spring MVC views will be decorated. Check that a template engine "
-                    + "(Thymeleaf, FreeMarker, JSP, ...) is configured, or switch to the "
-                    + "servlet-filter integration (sitemesh.integration=filter).");
-        } else {
-            log.warn("SiteMesh did not wrap the target ViewResolver bean '"
-                    + targetViewResolverBeanName + "' during startup - no Spring MVC views "
-                    + "will be decorated. Check sitemesh.viewResolver.targetBeanName against "
-                    + "your application's ViewResolver bean names, or use the default wrap-all "
-                    + "mode (sitemesh.viewResolver.wrapMode=all).");
-        }
+        log.warn("SiteMesh did not wrap the target ViewResolver bean '"
+                + targetViewResolverBeanName + "' during startup - no Spring MVC views "
+                + "will be decorated. Check sitemesh.viewResolver.targetBeanName against "
+                + "your application's ViewResolver bean names, or use the default delegating "
+                + "mode (sitemesh.viewResolver.wrapMode=delegate).");
     }
 
     /**
      * Whether a {@link SiteMeshViewResolver} is already registered by some
-     * other mechanism, making a zero-wrap startup the expected state rather
-     * than a misconfiguration. Lazy beans are not initialized by this check.
+     * other mechanism — the named target decorated at the bean-definition
+     * level, or any {@link SiteMeshViewResolver}-typed bean (including a
+     * {@link SiteMeshDelegatingViewResolver}) elsewhere in the context —
+     * making a zero-wrap startup the expected state rather than a
+     * misconfiguration. Lazy beans are not initialized by this check.
      */
     private boolean isDecoratedElsewhere() {
         if (beanFactory == null) {
             return false;
         }
-        if (wrapAll) {
-            return beanFactory instanceof ListableBeanFactory listable &&
-                    listable.getBeanNamesForType(SiteMeshViewResolver.class, true, false).length > 0;
-        }
         try {
-            return beanFactory.isTypeMatch(targetViewResolverBeanName, SiteMeshViewResolver.class);
+            if (beanFactory.isTypeMatch(targetViewResolverBeanName, SiteMeshViewResolver.class)) {
+                return true;
+            }
         } catch (NoSuchBeanDefinitionException ignored) {
-            return false;
+            // fall through to the context-wide check
         }
+        return beanFactory instanceof ListableBeanFactory listable &&
+                listable.getBeanNamesForType(SiteMeshViewResolver.class, true, false).length > 0;
     }
 
     /**
@@ -183,27 +165,6 @@ public class SiteMeshViewResolverBeanPostProcessor
      */
     public int getWrappedCount() {
         return wrappedCount.get();
-    }
-
-    /**
-     * Returns true if {@code bean} is one of Spring's delegating
-     * ViewResolver front-ends that iterate every other ViewResolver bean
-     * (and would therefore double-wrap or infinitely recurse if this
-     * post-processor wrapped them). Matched by class name to avoid a
-     * hard dependency on {@code spring-webmvc}'s view package for
-     * callers that don't include it (the package is on the classpath
-     * at runtime in any Spring MVC app, but class-reference would fail
-     * verification in stripped test contexts).
-     */
-    private static boolean isDelegatingViewResolver(Object bean) {
-        for (Class<?> c = bean.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
-            String name = c.getName();
-            if ("org.springframework.web.servlet.view.ContentNegotiatingViewResolver".equals(name)
-                    || "org.springframework.web.servlet.view.ViewResolverComposite".equals(name)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -234,41 +195,6 @@ public class SiteMeshViewResolverBeanPostProcessor
             throw new BeanInstantiationException(siteMeshViewResolverClass,
                     "Constructor threw exception", e.getTargetException());
         }
-    }
-
-    /**
-     * Whether this post-processor wraps every leaf {@link ViewResolver} bean
-     * instead of the single named target. See {@link #setWrapAll(boolean)}.
-     *
-     * @return {@code true} if wrap-all mode is enabled
-     */
-    public boolean isWrapAll() {
-        return wrapAll;
-    }
-
-    /**
-     * When {@code true}, this post-processor wraps every leaf
-     * {@link ViewResolver} bean in the context (skipping delegating
-     * front-ends such as {@code ContentNegotiatingViewResolver} and
-     * {@code ViewResolverComposite}) instead of the single bean named by
-     * {@link #setTargetViewResolverBeanName(String) targetViewResolverBeanName}.
-     * This is the correct mode for multi-template-engine Spring Boot
-     * applications (JSP + Freemarker + Thymeleaf, etc.): any engine
-     * might win view resolution for a given request, so each must return
-     * a {@link SiteMeshView}. Delegating front-ends are skipped because
-     * they already iterate the wrapped leaves. Default {@code false} for
-     * backward compatibility with single-resolver callers.
-     *
-     * <p>Callers that inject leaf resolvers by their concrete type (e.g.
-     * {@code @Autowired InternalResourceViewResolver}) must switch to
-     * the {@link ViewResolver} interface when enabling this mode, since
-     * the wrapped bean is a {@link SiteMeshViewResolver}.</p>
-     *
-     * @param wrapAll {@code true} to wrap every leaf {@link ViewResolver}
-     *                bean, {@code false} to wrap only the named target
-     */
-    public void setWrapAll(boolean wrapAll) {
-        this.wrapAll = wrapAll;
     }
 
     /**
@@ -316,9 +242,8 @@ public class SiteMeshViewResolverBeanPostProcessor
     }
 
     /**
-     * The name of the {@link ViewResolver} bean to wrap when
-     * {@linkplain #isWrapAll() wrap-all} is disabled. Default:
-     * {@code "jspViewResolver"}.
+     * The name of the {@link ViewResolver} bean this post-processor wraps.
+     * Default: {@code "jspViewResolver"}.
      *
      * @return the target view resolver bean name
      */
@@ -327,9 +252,8 @@ public class SiteMeshViewResolverBeanPostProcessor
     }
 
     /**
-     * Set the name of the {@link ViewResolver} bean to wrap when
-     * {@linkplain #isWrapAll() wrap-all} is disabled. A {@code null} value is
-     * ignored, preserving the default.
+     * Set the name of the {@link ViewResolver} bean to wrap. A {@code null}
+     * value is ignored, preserving the default.
      *
      * @param targetViewResolverBeanName the target bean name, or {@code null}
      *                                   to keep the current value

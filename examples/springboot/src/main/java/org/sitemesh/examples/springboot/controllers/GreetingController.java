@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.sitemesh.webmvc.SiteMeshViewResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 
@@ -40,18 +42,23 @@ import java.util.Date;
 public class GreetingController {
 
     /**
-     * Injected as a {@link ViewResolver} so the example works under both
-     * SiteMesh integrations. The {@code @Qualifier("jspViewResolver")}
-     * targets the JSP resolver specifically (so {@link #greetingJsp} keeps
-     * rendering the JSP, not a Thymeleaf template named "greeting").
-     * Under the default view-resolver integration the starter's wrap-all
-     * post-processor returns a SiteMesh-wrapped resolver under this bean
-     * name (which is why the field is typed as the {@code ViewResolver}
-     * interface, not the concrete class); under filter mode it is the raw
-     * {@code InternalResourceViewResolver} and the filter decorates the
-     * response instead.
+     * The JSP resolver, targeted by name so {@link #greetingJsp} renders the
+     * JSP rather than a Thymeleaf template named "greeting". Under the
+     * default view-resolver integration this bean keeps its identity and
+     * concrete type (nothing wraps it); a manually resolved view therefore
+     * bypasses SiteMesh's resolver-level decoration and must be decorated
+     * explicitly — see {@link #siteMeshViewResolver}.
      */
     @Autowired @Qualifier("jspViewResolver") ViewResolver internalResourceViewResolver;
+
+    /**
+     * SiteMesh's own resolver (the delegating resolver in the default
+     * view-resolver integration), used to {@linkplain
+     * SiteMeshViewResolver#decorate decorate} views this controller resolves
+     * manually. Empty under the filter integration, where the filter
+     * decorates the response instead and views must go out untouched.
+     */
+    @Autowired ObjectProvider<SiteMeshViewResolver> siteMeshViewResolver;
 
     /**
      * The active SiteMesh integration. Decoration of {@link #greetingJson}
@@ -103,7 +110,12 @@ public class GreetingController {
     public View greetingJsp(@RequestParam(name="name", required=false, defaultValue="World") String name,
                             Model model, HttpServletRequest request) throws Exception {
         model.addAttribute("name", name);
-        return internalResourceViewResolver.resolveViewName("greeting", request.getLocale());
+        View view = internalResourceViewResolver.resolveViewName("greeting", request.getLocale());
+        // A View returned directly from a handler bypasses the resolver
+        // chain, so ask SiteMesh to decorate it explicitly (no-op holder
+        // under the filter integration, which decorates the response).
+        SiteMeshViewResolver siteMesh = siteMeshViewResolver.getIfAvailable();
+        return siteMesh != null ? siteMesh.decorate(view) : view;
     }
 
     /**
