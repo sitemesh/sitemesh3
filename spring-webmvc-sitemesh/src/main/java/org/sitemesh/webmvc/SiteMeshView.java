@@ -282,7 +282,9 @@ public class SiteMeshView implements View {
      *
      * @param request the current request
      * @param response the real (unbuffered) response
-     * @param contentType the content type of the response being decorated
+     * @param contentType the content type of the response being decorated,
+     *                    as selected by the inner render (or the default
+     *                    when it declined to set one)
      * @param metaData records response metadata (e.g. last-modified) across
      *                 the buffered render
      * @return the context used to dispatch decorator renders
@@ -301,7 +303,6 @@ public class SiteMeshView implements View {
             throws Exception {
         ResponseMetaData metaData = new ResponseMetaData();
         String contentType = response.getContentType() != null ? response.getContentType() : "text/html";
-        SiteMeshViewContext context = createContext(request, response, contentType, metaData);
 
         HttpServletResponseBuffer buffer = new HttpServletResponseBuffer(response, metaData, selector);
         // Buffer unconditionally, without stamping the "text/html" default onto
@@ -333,6 +334,14 @@ public class SiteMeshView implements View {
             // and any status it set was restored above.
             return;
         }
+
+        // Create the context only now, so custom content processors and
+        // decorator selectors observe the content type the render actually
+        // produced — matching the filter integration, which builds its
+        // context from the buffered response — rather than the provisional
+        // pre-render default.
+        String selectedContentType = response.getContentType() != null ? response.getContentType() : contentType;
+        SiteMeshViewContext context = createContext(request, response, selectedContentType, metaData);
 
         Content content = contentProcessor.build(rawBuffer, context);
         if (content == null) {

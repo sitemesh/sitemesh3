@@ -55,6 +55,22 @@ public class DecoratorComponentsFactoryTest extends TestCase {
         assertDecorators(selector, "/anything", "panel.html", "default.html");
     }
 
+    public void testDefaultDecoratorChainTrimsWhitespaceAroundNames() {
+        decorator.setDefault(" panel.html , default.html ");
+
+        MetaTagBasedDecoratorSelector<?> selector = buildSelector(true);
+
+        assertDecorators(selector, "/anything", "panel.html", "default.html");
+    }
+
+    public void testMappingDecoratorChainTrimsAndDropsEmptySegments() {
+        decorator.setMappings(List.of(Map.of("path", "/board/*", "decorator", "board.html, default.html,")));
+
+        MetaTagBasedDecoratorSelector<?> selector = buildSelector(true);
+
+        assertDecorators(selector, "/board/topics", "board.html", "default.html");
+    }
+
     public void testIncompleteMappingIsSkippedWhenRequested() {
         decorator.setMappings(List.of(Map.of("path", "/admin/*")));
 

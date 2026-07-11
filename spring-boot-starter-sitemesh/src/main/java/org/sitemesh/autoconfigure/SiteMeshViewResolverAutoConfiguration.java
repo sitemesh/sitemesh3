@@ -26,7 +26,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.ViewResolver;
 
 /**
@@ -76,14 +78,17 @@ import org.springframework.web.servlet.ViewResolver;
 @EnableConfigurationProperties(SiteMeshProperties.class)
 public class SiteMeshViewResolverAutoConfiguration {
 
-    // Note on lifecycle: when this class produces a
-    // BeanDefinitionRegistryPostProcessor bean (wrapMode=bean-definition), the
-    // enclosing auto-config — and therefore the SiteMeshProperties bean it
-    // injects — is instantiated before the ConfigurationProperties binding
-    // post-processor is registered, so the properties may hold their coded
-    // defaults rather than user-supplied values. This mirrors the previous
-    // @Value-based implementation, whose placeholders equally did not resolve
-    // during early post-processor instantiation.
+    // Note on lifecycle: the post-processor @Bean methods below are static and
+    // bind SiteMeshProperties from the Environment themselves (see
+    // bindProperties). Post-processor beans are instantiated early — a
+    // BeanDefinitionRegistryPostProcessor (wrapMode=bean-definition) before
+    // any BeanPostProcessor exists at all — so an injected SiteMeshProperties
+    // instance could still hold its coded defaults rather than user-supplied
+    // values, and a non-static @Bean method would drag this whole class (and
+    // its dependencies) into that too-early phase. Binder reads the
+    // Environment directly and works in every phase. The injected instance
+    // below is only for the ordinary beans (contentProcessor,
+    // decoratorSelector), which are created after property binding is active.
     private final SiteMeshProperties properties;
 
     /**
@@ -144,7 +149,8 @@ public class SiteMeshViewResolverAutoConfiguration {
     @ConditionalOnMissingBean(SiteMeshViewResolverBeanPostProcessor.class)
     @ConditionalOnProperty(name = "sitemesh.viewResolver.wrapMode",
             havingValue = "all", matchIfMissing = true)
-    public SiteMeshViewResolverBeanPostProcessor siteMeshViewResolverWrapAllBeanPostProcessor() {
+    public static SiteMeshViewResolverBeanPostProcessor siteMeshViewResolverWrapAllBeanPostProcessor(Environment environment) {
+        SiteMeshProperties properties = bindProperties(environment);
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
         pp.setWrapAll(true);
         pp.setDispatchMode(properties.getDispatchMode());
@@ -165,7 +171,8 @@ public class SiteMeshViewResolverAutoConfiguration {
     @ConditionalOnMissingBean(SiteMeshViewResolverPostProcessor.class)
     @ConditionalOnProperty(name = "sitemesh.viewResolver.wrapMode",
             havingValue = "bean-definition")
-    public SiteMeshViewResolverPostProcessor siteMeshViewResolverPostProcessor() {
+    public static SiteMeshViewResolverPostProcessor siteMeshViewResolverPostProcessor(Environment environment) {
+        SiteMeshProperties properties = bindProperties(environment);
         SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
         pp.setTargetViewResolverBeanName(properties.getViewResolver().getTargetBeanName());
         pp.setDispatchMode(properties.getDispatchMode());
@@ -188,12 +195,27 @@ public class SiteMeshViewResolverAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(SiteMeshViewResolverBeanPostProcessor.class)
     @ConditionalOnProperty(name = "sitemesh.viewResolver.wrapMode", havingValue = "bean-instance")
-    public SiteMeshViewResolverBeanPostProcessor siteMeshViewResolverBeanPostProcessor() {
+    public static SiteMeshViewResolverBeanPostProcessor siteMeshViewResolverBeanPostProcessor(Environment environment) {
+        SiteMeshProperties properties = bindProperties(environment);
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
         pp.setTargetViewResolverBeanName(properties.getViewResolver().getTargetBeanName());
         pp.setDispatchMode(properties.getDispatchMode());
         pp.setIncludeErrorPages(properties.isIncludeErrorPages());
         return pp;
+    }
+
+    /**
+     * Bind {@code sitemesh.*} directly from the {@link Environment}. The
+     * post-processor beans above are instantiated before the
+     * ConfigurationProperties binding infrastructure has processed the
+     * injected {@link SiteMeshProperties} bean, so they must not rely on it;
+     * {@link Binder} reads the property sources directly and yields bound
+     * values in every lifecycle phase.
+     */
+    private static SiteMeshProperties bindProperties(Environment environment) {
+        return Binder.get(environment)
+                .bind("sitemesh", SiteMeshProperties.class)
+                .orElseGet(SiteMeshProperties::new);
     }
 
 }

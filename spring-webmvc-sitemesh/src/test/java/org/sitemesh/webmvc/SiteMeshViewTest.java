@@ -182,6 +182,38 @@ public class SiteMeshViewTest extends TestCase {
         assertTrue("output should contain inner body: " + output, output.contains("Привет"));
     }
 
+    public void testContextReceivesContentTypeSelectedByInnerView() throws Exception {
+        // Custom content processors and decorator selectors read the content
+        // type off the context; it must reflect what the render actually
+        // produced, not the provisional pre-render "text/html" default.
+        View inner = new View() {
+            public String getContentType() { return "text/html"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse s) throws IOException {
+                s.setContentType("text/html;charset=UTF-8");
+                s.getWriter().write("<html><head><title>T</title></head><body>BODY</body></html>");
+            }
+        };
+        DecoratorSelector<SiteMeshContext> selector = (c, x) -> new String[0];
+        final String[] seenContentType = { null };
+
+        SiteMeshView view = new SiteMeshView(inner, contentProcessor, selector, servletContext, null) {
+            @Override
+            protected SiteMeshViewContext createContext(HttpServletRequest req,
+                                                        HttpServletResponse resp,
+                                                        String contentType,
+                                                        ResponseMetaData metaData) {
+                seenContentType[0] = contentType;
+                return super.createContext(req, resp, contentType, metaData);
+            }
+        };
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setDispatcherType(DispatcherType.REQUEST);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        view.render(Collections.emptyMap(), request, response);
+
+        assertEquals("text/html;charset=UTF-8", seenContentType[0]);
+    }
+
     public void testDefaultContentTypeRestoredWhenInnerViewSetsNone() throws Exception {
         // A view that never declares a content type must still produce a
         // decorated response that declares text/html, matching the behavior

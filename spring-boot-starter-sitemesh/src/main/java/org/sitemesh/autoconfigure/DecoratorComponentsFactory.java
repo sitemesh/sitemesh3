@@ -82,7 +82,7 @@ class DecoratorComponentsFactory {
                 : new MetaTagBasedDecoratorSelector<C>();
         selector.setMetaTagName(decorator.getMetaTag()).setPrefix(decorator.getPrefix());
         if (decorator.getDefault() != null) {
-            selector.put("/*", decorator.getDefault().split(","));
+            selector.put("/*", splitDecoratorChain(decorator.getDefault()));
         }
         if (decorator.getMappings() != null) {
             for (Map<String, String> mapping : decorator.getMappings()) {
@@ -94,11 +94,29 @@ class DecoratorComponentsFactory {
                 if (decoratorPaths == null) {
                     selector.put(path, (String) null);
                 } else {
-                    selector.put(path, decoratorPaths.split(","));
+                    selector.put(path, splitDecoratorChain(decoratorPaths));
                 }
             }
         }
         return selector;
+    }
+
+    /**
+     * Split a comma-separated decorator chain into individual decorator
+     * names, trimming whitespace around each name and dropping empty
+     * segments — so a natural property value like {@code "inner, outer"}
+     * (or one with a trailing comma) does not produce a decorator name
+     * with a leading space, or an empty one, that then fails to resolve.
+     */
+    private static String[] splitDecoratorChain(String chain) {
+        List<String> names = new ArrayList<>();
+        for (String name : chain.split(",")) {
+            String trimmed = name.trim();
+            if (!trimmed.isEmpty()) {
+                names.add(trimmed);
+            }
+        }
+        return names.toArray(new String[0]);
     }
 
     /**
