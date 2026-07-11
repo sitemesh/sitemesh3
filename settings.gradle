@@ -1,5 +1,8 @@
 plugins {
     id "com.gradle.develocity" version "4.5.0"
+    // Auto-provisions JDK toolchains (e.g. Java 25 for :examples:micronaut)
+    // on machines and CI runners that don't have them installed.
+    id "org.gradle.toolchains.foojay-resolver-convention" version "1.0.0"
 }
 
 develocity {
