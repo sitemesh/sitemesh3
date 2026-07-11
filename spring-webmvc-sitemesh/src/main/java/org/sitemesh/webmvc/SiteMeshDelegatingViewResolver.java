@@ -59,6 +59,18 @@ import org.springframework.web.servlet.ViewResolver;
  * whose {@linkplain SiteMeshView#getContentType() content type} is the inner
  * view's own.</p>
  *
+ * <p><strong>Negotiation scope.</strong> Because
+ * {@code ContentNegotiatingViewResolver} also collects candidates from the
+ * leaf resolvers directly, a request negotiated to an alternative media type
+ * (JSON, XML, PDF, ...) that this resolver's candidate does not serve is
+ * answered by the matching leaf candidate <em>undecorated</em>. That is
+ * deliberate scope, not leakage: HTML layout decoration applies to the
+ * default HTML representation — for a {@code text/html} request the
+ * decorated candidate is the highest-precedence match and always wins —
+ * while alternative representations negotiated for other media types must go
+ * out untouched. (The former wrap-all mode buffered those views too, at the
+ * mercy of the decorator mappings.)</p>
+ *
  * <p><strong>Delegates.</strong> Collected lazily on first resolution from
  * all {@link ViewResolver} beans in the context (ancestors included), sorted
  * by their {@code Ordered} semantics, excluding: this resolver itself, any

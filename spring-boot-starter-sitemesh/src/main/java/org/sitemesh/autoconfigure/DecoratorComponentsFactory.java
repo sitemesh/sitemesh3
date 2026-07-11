@@ -56,6 +56,9 @@ import org.sitemesh.content.tagrules.html.Sm2TagRuleBundle;
  */
 class DecoratorComponentsFactory {
 
+    private static final org.apache.commons.logging.Log log =
+            org.apache.commons.logging.LogFactory.getLog(DecoratorComponentsFactory.class);
+
     private final SiteMeshProperties.Decorator decorator;
 
     DecoratorComponentsFactory(SiteMeshProperties.Decorator decorator) {
@@ -90,6 +93,8 @@ class DecoratorComponentsFactory {
                 String path = mapping.get("path");
                 String decoratorPaths = mapping.get("decorator");
                 if (skipIncompleteMappings && (path == null || decoratorPaths == null)) {
+                    log.warn("Ignoring incomplete sitemesh.decorator.mappings entry " + mapping
+                            + " - each mapping needs both a 'path' and a 'decorator' key.");
                     continue;
                 }
                 if (decoratorPaths == null) {

@@ -142,8 +142,11 @@ public class SiteMeshViewResolverAutoConfiguration {
      * what they resolve. No resolver bean is replaced or retyped —
      * controllers that inject a resolver by its concrete class keep working
      * — and multi-template-engine installs (JSP + Freemarker + Thymeleaf,
-     * etc.) are covered because whichever engine wins resolution, the
-     * winning view is decorated. Opt in to the single-resolver
+     * etc.) are covered: whichever engine wins resolution of the default
+     * HTML representation, the winning view is decorated. Alternative
+     * representations selected by content negotiation for other media types
+     * go out undecorated by design — see
+     * {@link SiteMeshDelegatingViewResolver}. Opt in to the single-resolver
      * compatibility modes via
      * {@code sitemesh.viewResolver.wrapMode = bean-definition} or
      * {@code = bean-instance}.

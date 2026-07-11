@@ -41,7 +41,7 @@ Whenever a change touches response buffering, dispatch, or content-type handling
 - `sitemesh` — the core library. Content-free of servlet runtime deps (`jakarta.servlet-api` is `compileOnly`) so it can also be used offline from the command line / Ant task / Java API.
 - `sitemesh-webfilter` — thin module that exposes the servlet filter integration. Depends on `:sitemesh` via `api`.
 - `spring-webmvc-sitemesh` — plain Spring Web MVC integration (no Boot dependency): `SiteMeshViewResolver` wraps a `ViewResolver` and decorates resolved views with `SiteMeshView` inside MVC rendering, avoiding servlet-response buffering entirely.
-- `spring-boot-starter-sitemesh` — auto-configuration starter for Spring Boot 4.x. **Default integration is `view-resolver`** (wraps every leaf `ViewResolver` via `wrapMode=all`); the classic servlet filter is opt-in via `sitemesh.integration=filter`. Spring Boot properties documented in `CONFIGURATION.md`.
+- `spring-boot-starter-sitemesh` — auto-configuration starter for Spring Boot 4.x. **Default integration is `view-resolver`** (a single non-invasive delegating resolver via `wrapMode=delegate`); the classic servlet filter is opt-in via `sitemesh.integration=filter`. Spring Boot properties documented in `CONFIGURATION.md`.
 - `examples/hellowebapp` — WAR built with the `gretty` plugin; exercises both Tomcat and Jetty against plain servlets + JSP + JSTL.
 - `examples/springboot` — Spring Boot app with Thymeleaf + FreeMarker + JSP views; container swap via `-Pcontainer=jetty`.
 - `examples/javalin` — Javalin + FreeMarker example.

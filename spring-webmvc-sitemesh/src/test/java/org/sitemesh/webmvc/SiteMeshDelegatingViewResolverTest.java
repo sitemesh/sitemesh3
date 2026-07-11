@@ -153,6 +153,65 @@ public class SiteMeshDelegatingViewResolverTest extends TestCase {
         assertSame(redirect, resolver.resolveViewName("redirect-target", Locale.ENGLISH));
     }
 
+    public void testContentNegotiationSelectsDecoratedCandidateForHtml() throws Exception {
+        ContentNegotiatingViewResolver cnvr = negotiatingResolverOverHtmlAndJsonLeaves();
+        bindRequestWithAccept("text/html");
+        try {
+            View selected = cnvr.resolveViewName("greeting", Locale.ENGLISH);
+
+            assertTrue("the decorated candidate must win text/html negotiation: " + selected,
+                    selected instanceof SiteMeshView);
+        } finally {
+            org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+        }
+    }
+
+    public void testContentNegotiationLeavesAlternativeRepresentationsUndecorated() throws Exception {
+        // Deliberate scope: an alternative media type served by a leaf
+        // resolver directly (here JSON) must go out untouched — HTML layout
+        // decoration applies to the default HTML representation only.
+        ContentNegotiatingViewResolver cnvr = negotiatingResolverOverHtmlAndJsonLeaves();
+        bindRequestWithAccept("application/json");
+        try {
+            View selected = cnvr.resolveViewName("greeting", Locale.ENGLISH);
+
+            assertNotNull(selected);
+            assertFalse("alternative representations must not be decorated: " + selected,
+                    selected instanceof SiteMeshView);
+            assertEquals("application/json", selected.getContentType());
+        } finally {
+            org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+        }
+    }
+
+    private ContentNegotiatingViewResolver negotiatingResolverOverHtmlAndJsonLeaves() {
+        View jsonView = new View() {
+            public String getContentType() { return "application/json"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse s) {
+            }
+        };
+        GenericWebApplicationContext context = new GenericWebApplicationContext();
+        context.registerBean("htmlResolver", ViewResolver.class, () -> resolverFor("greeting", htmlView()));
+        context.registerBean("jsonResolver", ViewResolver.class, () -> resolverFor("greeting", jsonView));
+        SiteMeshDelegatingViewResolver delegating = resolverWith(context);
+
+        ContentNegotiatingViewResolver cnvr = new ContentNegotiatingViewResolver();
+        cnvr.setContentNegotiationManager(
+                new org.springframework.web.accept.ContentNegotiationManager());
+        cnvr.setViewResolvers(java.util.List.of(delegating,
+                context.getBean("htmlResolver", ViewResolver.class),
+                context.getBean("jsonResolver", ViewResolver.class)));
+        return cnvr;
+    }
+
+    private static void bindRequestWithAccept(String accept) {
+        org.springframework.mock.web.MockHttpServletRequest request =
+                new org.springframework.mock.web.MockHttpServletRequest();
+        request.addHeader("Accept", accept);
+        org.springframework.web.context.request.RequestContextHolder.setRequestAttributes(
+                new org.springframework.web.context.request.ServletRequestAttributes(request));
+    }
+
     public void testOrderSitsJustAfterContentNegotiation() {
         SiteMeshDelegatingViewResolver resolver =
                 new SiteMeshDelegatingViewResolver(contentProcessor, decoratorSelector, servletContext);
