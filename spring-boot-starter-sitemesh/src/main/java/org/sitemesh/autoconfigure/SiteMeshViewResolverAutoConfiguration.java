@@ -61,6 +61,14 @@ import org.springframework.web.servlet.ViewResolver;
  * integration) requires {@code sitemesh.integration=filter} explicitly, so the
  * two integrations are mutually exclusive by configuration and no filter is
  * registered — or needs suppressing — in this mode.</p>
+ *
+ * <p><strong>Extension contract:</strong> every bean here is guarded by
+ * {@code @ConditionalOnMissingBean} on its type (or name, for the collaborator
+ * beans {@code contentProcessor} / {@code decoratorSelector}), so a framework
+ * integration can substitute its own flavour of any wrap mode by registering a
+ * bean of the corresponding type before this configuration is processed.
+ * Downstream frameworks (e.g. Grails) rely on this; treat the bean types,
+ * names and conditions as public API.</p>
  */
 @AutoConfiguration
 @ConditionalOnProperty(name = "sitemesh.integration", havingValue = "view-resolver", matchIfMissing = true)
