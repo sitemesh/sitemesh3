@@ -16,9 +16,12 @@
 package org.sitemesh.webmvc;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import jakarta.servlet.ServletContext;
 
@@ -28,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sitemesh.DecoratorSelector;
 import org.sitemesh.SiteMeshContext;
 import org.sitemesh.content.ContentProcessor;
+import org.sitemesh.webapp.contentfilter.io.HttpContentType;
 
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
@@ -59,6 +63,19 @@ import org.springframework.web.servlet.ViewResolver;
  * whose {@linkplain SiteMeshView#getContentType() content type} is the inner
  * view's own.</p>
  *
+ * <p><strong>Winner preservation and decoratable media types.</strong> The
+ * delegate chain's first non-null view is exactly the view that would have
+ * won {@code DispatcherServlet}'s resolution without SiteMesh, and this
+ * resolver never changes it — it only decorates it, and only when its
+ * declared content type is {@linkplain #setDecoratableMediaTypes
+ * decoratable} (HTML-family by default; views that declare no content type
+ * are treated as HTML, which is what JSP and template-engine views without
+ * an explicit type render). A winner declaring {@code application/json} or
+ * any other non-HTML type passes through untouched: skipping it to hunt for
+ * an HTML candidate deeper in the chain would let permissive template
+ * resolvers (Thymeleaf resolves any name unless told otherwise) hijack view
+ * names that legitimately belong to media-specific resolvers.</p>
+ *
  * <p><strong>Negotiation scope.</strong> Because
  * {@code ContentNegotiatingViewResolver} also collects candidates from the
  * leaf resolvers directly, a request negotiated to an alternative media type
@@ -66,10 +83,16 @@ import org.springframework.web.servlet.ViewResolver;
  * answered by the matching leaf candidate <em>undecorated</em>. That is
  * deliberate scope, not leakage: HTML layout decoration applies to the
  * default HTML representation — for a {@code text/html} request the
- * decorated candidate is the highest-precedence match and always wins —
- * while alternative representations negotiated for other media types must go
- * out untouched. (The former wrap-all mode buffered those views too, at the
- * mercy of the decorator mappings.)</p>
+ * decorated candidate is the highest-precedence match and wins — while
+ * alternative representations negotiated for other media types must go out
+ * untouched. (The former wrap-all mode buffered those views too, at the
+ * mercy of the decorator mappings.) One corollary of winner preservation:
+ * when a non-HTML resolver outranks the HTML engine for the same view name,
+ * this resolver's candidate is the untouched non-HTML view, and an HTML
+ * request negotiated by {@code ContentNegotiatingViewResolver} falls back to
+ * the leaf's HTML candidate undecorated — rank HTML template engines above
+ * media-specific resolvers (Spring Boot's default arrangement) to keep the
+ * HTML representation decorated.</p>
  *
  * <p><strong>Delegates.</strong> Collected lazily on first resolution from
  * all {@link ViewResolver} beans in the context (ancestors included), sorted
@@ -82,7 +105,12 @@ import org.springframework.web.servlet.ViewResolver;
  */
 public class SiteMeshDelegatingViewResolver extends SiteMeshViewResolver implements ApplicationContextAware {
 
+    private static final Set<String> DEFAULT_DECORATABLE_MEDIA_TYPES =
+            Set.of("text/html", "application/xhtml+xml");
+
     private final DelegateChain chain;
+
+    private Set<String> decoratableMediaTypes = DEFAULT_DECORATABLE_MEDIA_TYPES;
 
     /**
      * Creates the delegating resolver. The delegate resolvers are discovered
@@ -114,6 +142,76 @@ public class SiteMeshDelegatingViewResolver extends SiteMeshViewResolver impleme
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         chain.applicationContext = applicationContext;
+    }
+
+    @Override
+    public View resolveViewName(String viewName, Locale locale) throws Exception {
+        View view = chain.resolveViewName(viewName, locale);
+        if (view == null) {
+            return null;
+        }
+        // Winner preservation: the chain's first match is the view that would
+        // have won without SiteMesh. Decorate it only when it declares a
+        // decoratable (HTML-family) content type — or none at all — and pass
+        // every other representation through untouched.
+        if (!isDecoratable(view)) {
+            return view;
+        }
+        if (viewName != null && isLayoutPath(viewName)) {
+            return view;
+        }
+        return decorate(view);
+    }
+
+    /**
+     * Whether {@code view}'s declared content type is one this resolver
+     * decorates. A view that declares no content type is treated as
+     * decoratable: JSP and template-engine views commonly leave it unset
+     * until render time, and they are exactly the views layout decoration
+     * exists for. Content-type parameters ({@code ;charset=...}) are
+     * ignored.
+     *
+     * @param view the resolved view, never {@code null}
+     * @return {@code true} if the view should be decorated
+     */
+    protected boolean isDecoratable(View view) {
+        String contentType = view.getContentType();
+        if (contentType == null) {
+            return true;
+        }
+        String mimeType = new HttpContentType(contentType).getType();
+        return mimeType == null || decoratableMediaTypes.contains(mimeType.toLowerCase(Locale.ROOT));
+    }
+
+    /**
+     * The media types (without parameters) whose views this resolver
+     * decorates. See {@link #setDecoratableMediaTypes(Collection)}.
+     *
+     * @return the decoratable media types, never {@code null}
+     */
+    public Set<String> getDecoratableMediaTypes() {
+        return decoratableMediaTypes;
+    }
+
+    /**
+     * Replace the media types whose views this resolver decorates. Defaults
+     * to {@code text/html} and {@code application/xhtml+xml}. Views
+     * declaring any other content type pass through undecorated; views
+     * declaring none are always considered decoratable. Compared
+     * case-insensitively, without content-type parameters.
+     *
+     * @param decoratableMediaTypes the media types to decorate; must not be
+     *                              {@code null} or empty
+     */
+    public void setDecoratableMediaTypes(Collection<String> decoratableMediaTypes) {
+        if (decoratableMediaTypes == null || decoratableMediaTypes.isEmpty()) {
+            throw new IllegalArgumentException("decoratableMediaTypes must not be null or empty");
+        }
+        Set<String> normalized = new LinkedHashSet<>();
+        for (String mediaType : decoratableMediaTypes) {
+            normalized.add(mediaType.toLowerCase(Locale.ROOT));
+        }
+        this.decoratableMediaTypes = Collections.unmodifiableSet(normalized);
     }
 
     /**

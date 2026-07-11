@@ -368,6 +368,14 @@ public class SiteMeshProperties {
         private WrapMode wrapMode = WrapMode.DELEGATE;
 
         /**
+         * Media types (without parameters, case-insensitive) whose views the
+         * "delegate" mode decorates. Views declaring any other content type
+         * pass through untouched; views declaring none are always considered
+         * decoratable. Defaults to text/html and application/xhtml+xml.
+         */
+        private List<String> decoratableMediaTypes = List.of("text/html", "application/xhtml+xml");
+
+        /**
          * The bean name of the ViewResolver to wrap in the single-target modes.
          *
          * @return the target bean name, {@code "jspViewResolver"} by default
@@ -401,6 +409,25 @@ public class SiteMeshProperties {
          */
         public void setWrapMode(WrapMode wrapMode) {
             this.wrapMode = wrapMode;
+        }
+
+        /**
+         * The media types whose views the "delegate" mode decorates.
+         *
+         * @return the decoratable media types,
+         *         {@code text/html} and {@code application/xhtml+xml} by default
+         */
+        public List<String> getDecoratableMediaTypes() {
+            return decoratableMediaTypes;
+        }
+
+        /**
+         * Sets the media types whose views the "delegate" mode decorates.
+         *
+         * @param decoratableMediaTypes the media types, without parameters
+         */
+        public void setDecoratableMediaTypes(List<String> decoratableMediaTypes) {
+            this.decoratableMediaTypes = decoratableMediaTypes;
         }
     }
 

@@ -315,9 +315,10 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
      * view under it ({@code "/layouts/foo"}, {@code "/layouts/foo/bar"}).
      * Deliberately does <em>not</em> match sibling paths like
      * {@code "/layoutsManagement/..."} that merely share the prefix
-     * string.
+     * string. Exposed for subclasses that override
+     * {@link #resolveViewName} and need the same pass-through rule.
      */
-    private boolean isLayoutPath(String viewName) {
+    protected boolean isLayoutPath(String viewName) {
         return viewName.equals(layoutPathPrefix)
                 || viewName.startsWith(layoutPathPrefix + "/");
     }

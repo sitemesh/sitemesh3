@@ -176,6 +176,7 @@ public class SiteMeshViewResolverAutoConfiguration {
                 new SiteMeshDelegatingViewResolver(contentProcessor, decoratorSelector, servletContext);
         resolver.setDispatchMode(properties.getDispatchMode());
         resolver.setIncludeErrorPages(properties.isIncludeErrorPages());
+        resolver.setDecoratableMediaTypes(properties.getViewResolver().getDecoratableMediaTypes());
         return resolver;
     }
 

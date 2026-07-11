@@ -153,6 +153,102 @@ public class SiteMeshDelegatingViewResolverTest extends TestCase {
         assertSame(redirect, resolver.resolveViewName("redirect-target", Locale.ENGLISH));
     }
 
+    public void testNonHtmlWinnerPassesThroughUndecorated() throws Exception {
+        // Winner preservation: when a media-specific resolver outranks the
+        // HTML engine for a view name, the delegator must return exactly the
+        // view that would have won without SiteMesh — untouched. Skipping it
+        // to hunt for an HTML candidate deeper in the chain would let
+        // permissive template resolvers hijack the name.
+        View jsonView = jsonView();
+        GenericWebApplicationContext context = new GenericWebApplicationContext();
+        context.registerBean("jsonResolver", ViewResolver.class, () -> orderedResolver("stats", jsonView, 1));
+        context.registerBean("htmlResolver", ViewResolver.class, () -> orderedResolver("stats", htmlView(), 100));
+
+        SiteMeshDelegatingViewResolver resolver = resolverWith(context);
+        View resolved = resolver.resolveViewName("stats", Locale.ENGLISH);
+
+        assertSame("the json winner must pass through undecorated", jsonView, resolved);
+    }
+
+    public void testCustomDecoratableMediaTypesAreHonored() throws Exception {
+        View jsonView = jsonView();
+        GenericWebApplicationContext context = new GenericWebApplicationContext();
+        context.registerBean("jsonResolver", ViewResolver.class, () -> resolverFor("stats", jsonView));
+
+        SiteMeshDelegatingViewResolver resolver = resolverWith(context);
+        resolver.setDecoratableMediaTypes(java.util.List.of("Application/JSON"));
+        View resolved = resolver.resolveViewName("stats", Locale.ENGLISH);
+
+        assertTrue("json must decorate once opted in (case-insensitively): " + resolved,
+                resolved instanceof SiteMeshView);
+    }
+
+    public void testContentNegotiationWithJsonRankedFirstStillServesJsonUndecorated() throws Exception {
+        ContentNegotiatingViewResolver cnvr = negotiatingResolverJsonRankedFirst();
+        bindRequestWithAccept("application/json");
+        try {
+            View selected = cnvr.resolveViewName("greeting", Locale.ENGLISH);
+
+            assertNotNull(selected);
+            assertFalse("json negotiated from a json-first chain must stay undecorated: " + selected,
+                    selected instanceof SiteMeshView);
+            assertEquals("application/json", selected.getContentType());
+        } finally {
+            org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+        }
+    }
+
+    public void testContentNegotiationWithJsonRankedFirstFallsBackToRawHtmlCandidate() throws Exception {
+        // Documented corollary of winner preservation: with a non-HTML
+        // resolver outranking the HTML engine, the delegator's candidate is
+        // the untouched json view, so an HTML request negotiates to the
+        // leaf's HTML candidate undecorated. The remedy is ordering — rank
+        // HTML template engines above media-specific resolvers (Spring
+        // Boot's default arrangement) — not decorating the wrong winner.
+        ContentNegotiatingViewResolver cnvr = negotiatingResolverJsonRankedFirst();
+        bindRequestWithAccept("text/html");
+        try {
+            View selected = cnvr.resolveViewName("greeting", Locale.ENGLISH);
+
+            assertNotNull(selected);
+            assertFalse(selected instanceof SiteMeshView);
+            assertEquals("text/html", selected.getContentType());
+        } finally {
+            org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes();
+        }
+    }
+
+    private ContentNegotiatingViewResolver negotiatingResolverJsonRankedFirst() {
+        GenericWebApplicationContext context = new GenericWebApplicationContext();
+        context.registerBean("jsonResolver", ViewResolver.class, () -> orderedResolver("greeting", jsonView(), 1));
+        context.registerBean("htmlResolver", ViewResolver.class, () -> orderedResolver("greeting", htmlView(), 100));
+        SiteMeshDelegatingViewResolver delegating = resolverWith(context);
+
+        ContentNegotiatingViewResolver cnvr = new ContentNegotiatingViewResolver();
+        cnvr.setContentNegotiationManager(
+                new org.springframework.web.accept.ContentNegotiationManager());
+        cnvr.setViewResolvers(java.util.List.of(delegating,
+                context.getBean("jsonResolver", ViewResolver.class),
+                context.getBean("htmlResolver", ViewResolver.class)));
+        return cnvr;
+    }
+
+    private static View jsonView() {
+        return new View() {
+            public String getContentType() { return "application/json"; }
+            public void render(Map<String, ?> m, HttpServletRequest r, HttpServletResponse s) {
+            }
+        };
+    }
+
+    private static ViewResolver orderedResolver(String viewName, View view, int order) {
+        class OrderedStubResolver implements ViewResolver, Ordered {
+            public View resolveViewName(String name, Locale locale) { return viewName.equals(name) ? view : null; }
+            public int getOrder() { return order; }
+        }
+        return new OrderedStubResolver();
+    }
+
     public void testContentNegotiationSelectsDecoratedCandidateForHtml() throws Exception {
         ContentNegotiatingViewResolver cnvr = negotiatingResolverOverHtmlAndJsonLeaves();
         bindRequestWithAccept("text/html");
