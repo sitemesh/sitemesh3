@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title th:text="'Hello ' + ${name}">Hello</title>
+    <meta name="description" content="A page decorated without any filter.">
+  </head>
+  <body>
+    <p>Hello <b th:text="${name}">World</b>!</p>
+    <p>This page was rendered by Thymeleaf via <code>micronaut-views</code> and
+       decorated by SiteMesh inside a wrapped <code>ViewsRenderer</code> &mdash;
+       no filter, no servlet API, no <code>RequestDispatcher</code>.</p>
+    <p>Try <a href="/?name=SiteMesh">passing a name</a> or the
+       <a href="/meta">meta-tag decorator override</a>.</p>
+  </body>
+</html>

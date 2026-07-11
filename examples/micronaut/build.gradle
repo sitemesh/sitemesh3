@@ -1,0 +1,39 @@
+/*
+ * build.gradle for SiteMesh 3 + Micronaut demo.
+ *
+ * Demonstrates filterless decoration on Micronaut: a highest-precedence
+ * ViewsRenderer decorates @View responses at render time, using only
+ * SiteMesh's servlet-free core. Micronaut runs on Netty, so there is no
+ * servlet filter, no RequestDispatcher, and none of the Tomcat 11+
+ * forward/wrapper problems that affect servlet-based integrations.
+ */
+
+plugins {
+    id 'application'
+}
+
+defaultTasks 'run'
+
+// Micronaut 5 requires Java 25+, so this module overrides the repo-wide
+// Java 17 toolchain set in the root build.gradle.
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(25) }
+}
+
+ext.title = 'SiteMesh Example Micronaut'
+description = 'SiteMesh Example: Micronaut'
+
+application {
+    mainClass = 'org.sitemesh.examples.micronaut.Application'
+}
+
+dependencies {
+    annotationProcessor platform('io.micronaut.platform:micronaut-platform:5.0.4')
+    annotationProcessor 'io.micronaut:micronaut-inject-java'
+    implementation platform('io.micronaut.platform:micronaut-platform:5.0.4')
+    implementation 'io.micronaut:micronaut-http-server-netty'
+    implementation 'io.micronaut.serde:micronaut-serde-jackson' // required by the HTTP server for error responses
+    implementation 'io.micronaut.views:micronaut-views-thymeleaf'
+    implementation project(':sitemesh')
+    runtimeOnly 'ch.qos.logback:logback-classic'
+}
