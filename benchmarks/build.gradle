@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.1.0'
+}
+
+repositories {
+    mavenLocal {
+        content { includeGroup 'org.sitemesh' }
+    }
+    mavenCentral()
+    maven {
+        url = 'https://central.sonatype.com/repository/maven-snapshots'
+        content { includeGroup 'org.sitemesh' }
+        mavenContent { snapshotsOnly() }
+    }
+}
+
+def smVersion = project.findProperty('sitemeshVersion') ?: '3.3.0-SNAPSHOT'
+def withSitemesh = (project.findProperty('withSitemesh') ?: 'true') == 'true'
+
+dependencies {
+    implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    if (withSitemesh) {
+        implementation("org.sitemesh:spring-boot-starter-sitemesh:${smVersion}") {
+            exclude group: 'org.springframework.boot'
+        }
+        implementation "org.sitemesh:sitemesh:${smVersion}"
+        implementation "org.sitemesh:spring-webmvc-sitemesh:${smVersion}"
+    }
+}
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(21) }
+}

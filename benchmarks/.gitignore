@@ -1,0 +1,4 @@
+build/
+sm-bench-*.jar
+*.class
+*.log
