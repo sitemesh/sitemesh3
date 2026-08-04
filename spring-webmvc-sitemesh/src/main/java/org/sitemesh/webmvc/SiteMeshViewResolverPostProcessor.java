@@ -42,8 +42,11 @@ import org.springframework.util.ClassUtils;
  * under {@link #setSiteMeshViewResolverBeanName(String) siteMeshViewResolverBeanName}
  * (which by default replaces the original bean under its own name), with the
  * remaining constructor arguments wired as {@link RuntimeBeanReference
- * references} to the content processor, decorator selector and servlet
- * context beans.</p>
+ * references} to the content processor and decorator selector beans. The
+ * servlet context is not among them: the resolver receives it from the
+ * container through {@link org.springframework.web.context.ServletContextAware},
+ * which keeps the definition free of a reference to a bean that exists only
+ * once the web server has started.</p>
  *
  * <p>Embedding the original definition keeps the undecorated resolver out of
  * reach of {@code getBeansOfType(ViewResolver)} sweeps: a delegating resolver
@@ -114,7 +117,6 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
         }
         args.addIndexedArgumentValue(1, new RuntimeBeanReference(contentProcessorBeanName));
         args.addIndexedArgumentValue(2, new RuntimeBeanReference(decoratorSelectorBeanName));
-        args.addIndexedArgumentValue(3, new RuntimeBeanReference(servletContextBeanName));
         wrapperDefinition.getPropertyValues().add("dispatchMode", dispatchMode);
         wrapperDefinition.getPropertyValues().add("includeErrorPages", includeErrorPages);
 
@@ -309,7 +311,14 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
      * the resolver. Default: {@code "servletContext"}.
      *
      * @return the servlet context bean name
+     * @deprecated the resolver receives its servlet context from the container
+     * through {@link org.springframework.web.context.ServletContextAware}, so
+     * this name is no longer used. Registering the bean definition ahead of the
+     * container start means there is nothing to reference: the servlet context
+     * exists only once the web server has started, which is also why a
+     * reference to it cannot be processed ahead of time.
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     public String getServletContextBeanName() {
         return servletContextBeanName;
     }
@@ -319,7 +328,10 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
      * into the resolver.
      *
      * @param servletContextBeanName the servlet context bean name
+     * @deprecated see {@link #getServletContextBeanName()}; this setting has no
+     * effect.
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     public void setServletContextBeanName(String servletContextBeanName) {
         this.servletContextBeanName = servletContextBeanName;
     }

@@ -25,6 +25,7 @@ import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.webapp.DispatchMode;
 
 import org.springframework.core.Ordered;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.SmartView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -37,14 +38,14 @@ import org.springframework.web.servlet.view.InternalResourceView;
  * are passed through un-wrapped so decorator renders themselves do not
  * trigger nested decoration.
  */
-public class SiteMeshViewResolver implements ViewResolver, Ordered {
+public class SiteMeshViewResolver implements ViewResolver, Ordered, ServletContextAware {
 
     private static final String DEFAULT_LAYOUT_PATH_PREFIX = "/layouts";
 
     private final ViewResolver innerViewResolver;
     private final ContentProcessor contentProcessor;
     private final DecoratorSelector<SiteMeshContext> decoratorSelector;
-    private final ServletContext servletContext;
+    private ServletContext servletContext;
 
     private String layoutPathPrefix = DEFAULT_LAYOUT_PATH_PREFIX;
     private int order;
@@ -53,7 +54,25 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
 
     /**
      * Creates a resolver that wraps {@code innerViewResolver} and decorates
-     * the views it resolves.
+     * the views it resolves, taking its servlet context from the container
+     * through {@link ServletContextAware}.
+     *
+     * @param innerViewResolver the resolver whose views are wrapped
+     * @param contentProcessor parses buffered view output into a
+     *                         {@link org.sitemesh.content.Content}
+     * @param decoratorSelector selects the decorator path(s) for the parsed
+     *                          content
+     */
+    public SiteMeshViewResolver(ViewResolver innerViewResolver,
+                                ContentProcessor contentProcessor,
+                                DecoratorSelector<SiteMeshContext> decoratorSelector) {
+        this(innerViewResolver, contentProcessor, decoratorSelector, null);
+    }
+
+    /**
+     * Creates a resolver with the servlet context supplied directly, for
+     * callers constructing the resolver outside the container's
+     * {@link ServletContextAware} callback.
      *
      * @param innerViewResolver the resolver whose views are wrapped
      * @param contentProcessor parses buffered view output into a
@@ -77,6 +96,20 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered {
         this.order = innerViewResolver instanceof Ordered o
                 ? o.getOrder()
                 : Ordered.LOWEST_PRECEDENCE;
+    }
+
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
+
+    /**
+     * The servlet context this resolver renders against.
+     *
+     * @return the servlet context
+     */
+    protected ServletContext getServletContext() {
+        return servletContext;
     }
 
     @Override
