@@ -15,8 +15,6 @@
  */
 package org.sitemesh.webmvc;
 
-import java.lang.reflect.Constructor;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sitemesh.DecoratorSelector;
@@ -172,18 +170,18 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
      * the cost of a definition that cannot be processed ahead of time — the servlet context bean
      * exists only once the web server has started. Declaring the three-argument constructor is what
      * makes a custom resolver AOT-processable.</p>
+     *
+     * <p>The canonical signature is required exactly. A constructor of the same arity declaring
+     * narrower parameters could not accept the collaborators wired here, and treating it as a match
+     * would drop the servlet context argument and leave no satisfiable constructor at all.</p>
      */
     private boolean hasServletContextFreeConstructor(Class<? extends SiteMeshViewResolver> resolverClass) {
-        for (Constructor<?> constructor : resolverClass.getConstructors()) {
-            Class<?>[] parameterTypes = constructor.getParameterTypes();
-            if (parameterTypes.length == 3
-                    && ViewResolver.class.isAssignableFrom(parameterTypes[0])
-                    && ContentProcessor.class.isAssignableFrom(parameterTypes[1])
-                    && DecoratorSelector.class.isAssignableFrom(parameterTypes[2])) {
-                return true;
-            }
+        try {
+            resolverClass.getConstructor(ViewResolver.class, ContentProcessor.class, DecoratorSelector.class);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
         }
-        return false;
     }
 
     public DispatchMode getDispatchMode() {

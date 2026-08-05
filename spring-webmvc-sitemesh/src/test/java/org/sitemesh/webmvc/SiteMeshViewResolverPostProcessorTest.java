@@ -165,6 +165,49 @@ public class SiteMeshViewResolverPostProcessorTest extends TestCase {
         }
     }
 
+    /**
+     * A custom resolver keeping the legacy four-argument constructor while also declaring a
+     * three-argument one that narrows the inner resolver. The narrow overload cannot accept the
+     * collaborators wired here, so only the four-argument form is usable.
+     */
+    public static class NarrowThreeArgSiteMeshViewResolver extends SiteMeshViewResolver {
+        public NarrowThreeArgSiteMeshViewResolver(
+                InternalResourceViewResolver inner,
+                org.sitemesh.content.ContentProcessor cp,
+                org.sitemesh.DecoratorSelector<org.sitemesh.SiteMeshContext> ds) {
+            super(inner, cp, ds);
+        }
+
+        public NarrowThreeArgSiteMeshViewResolver(
+                org.springframework.web.servlet.ViewResolver inner,
+                org.sitemesh.content.ContentProcessor cp,
+                org.sitemesh.DecoratorSelector<org.sitemesh.SiteMeshContext> ds,
+                jakarta.servlet.ServletContext sc) {
+            super(inner, cp, ds, sc);
+        }
+    }
+
+    /**
+     * The narrow three-argument overload must not be mistaken for the canonical one. Treating it as
+     * a match would drop the servlet context argument, leaving neither constructor satisfiable.
+     */
+    public void testNarrowThreeArgConstructorIsNotMistakenForTheCanonicalOne() {
+        registerTarget("jspViewResolver");
+        registerCollaborators();
+
+        SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
+        pp.setSiteMeshViewResolverClass(NarrowThreeArgSiteMeshViewResolver.class);
+        pp.postProcessBeanDefinitionRegistry(registry);
+
+        BeanDefinition wrapper = registry.getBeanDefinition("jspViewResolver");
+        assertEquals("a narrower three-argument constructor does not make the resolver context-free",
+                new RuntimeBeanReference("servletContext"),
+                wrapper.getConstructorArgumentValues().getIndexedArgumentValue(3, null).getValue());
+
+        SiteMeshViewResolver resolver = registry.getBean("jspViewResolver", SiteMeshViewResolver.class);
+        assertTrue(resolver instanceof NarrowThreeArgSiteMeshViewResolver);
+    }
+
     private void registerCollaborators() {
         registry.registerSingleton("contentProcessor", new TagBasedContentProcessor(new CoreHtmlTagRuleBundle()));
         registry.registerSingleton("decoratorSelector",
