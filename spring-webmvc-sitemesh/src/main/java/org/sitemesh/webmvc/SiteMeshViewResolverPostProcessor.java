@@ -15,8 +15,12 @@
  */
 package org.sitemesh.webmvc;
 
+import java.lang.reflect.Constructor;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sitemesh.DecoratorSelector;
+import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.webapp.DispatchMode;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -28,6 +32,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.core.Ordered;
 import org.springframework.util.ClassUtils;
+import org.springframework.web.servlet.ViewResolver;
 
 /**
  * {@link BeanDefinitionRegistryPostProcessor} that rewrites the
@@ -117,6 +122,9 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
         }
         args.addIndexedArgumentValue(1, new RuntimeBeanReference(contentProcessorBeanName));
         args.addIndexedArgumentValue(2, new RuntimeBeanReference(decoratorSelectorBeanName));
+        if (!hasServletContextFreeConstructor(siteMeshViewResolverClass)) {
+            args.addIndexedArgumentValue(3, new RuntimeBeanReference(servletContextBeanName));
+        }
         wrapperDefinition.getPropertyValues().add("dispatchMode", dispatchMode);
         wrapperDefinition.getPropertyValues().add("includeErrorPages", includeErrorPages);
 
@@ -152,6 +160,30 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
         } catch (ClassNotFoundException | LinkageError e) {
             return false;
         }
+    }
+
+    /**
+     * Whether {@code resolverClass} can be built without being handed a servlet context, which
+     * {@link SiteMeshViewResolver} itself can since it implements {@link
+     * org.springframework.web.context.ServletContextAware}.
+     *
+     * <p>A subclass written against the four-argument constructor alone predates that, so it still
+     * needs the context passed in. Wiring it as a bean reference keeps such a subclass working, at
+     * the cost of a definition that cannot be processed ahead of time — the servlet context bean
+     * exists only once the web server has started. Declaring the three-argument constructor is what
+     * makes a custom resolver AOT-processable.</p>
+     */
+    private boolean hasServletContextFreeConstructor(Class<? extends SiteMeshViewResolver> resolverClass) {
+        for (Constructor<?> constructor : resolverClass.getConstructors()) {
+            Class<?>[] parameterTypes = constructor.getParameterTypes();
+            if (parameterTypes.length == 3
+                    && ViewResolver.class.isAssignableFrom(parameterTypes[0])
+                    && ContentProcessor.class.isAssignableFrom(parameterTypes[1])
+                    && DecoratorSelector.class.isAssignableFrom(parameterTypes[2])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public DispatchMode getDispatchMode() {
@@ -311,14 +343,7 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
      * the resolver. Default: {@code "servletContext"}.
      *
      * @return the servlet context bean name
-     * @deprecated the resolver receives its servlet context from the container
-     * through {@link org.springframework.web.context.ServletContextAware}, so
-     * this name is no longer used. Registering the bean definition ahead of the
-     * container start means there is nothing to reference: the servlet context
-     * exists only once the web server has started, which is also why a
-     * reference to it cannot be processed ahead of time.
      */
-    @Deprecated(since = "3.3.0", forRemoval = true)
     public String getServletContextBeanName() {
         return servletContextBeanName;
     }
@@ -327,11 +352,13 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
      * Set the name of the {@link jakarta.servlet.ServletContext} bean wired
      * into the resolver.
      *
+     * <p>Only consulted for a {@linkplain #setSiteMeshViewResolverClass custom resolver class}
+     * that declares no constructor omitting the servlet context. {@link SiteMeshViewResolver}
+     * itself receives the context from the container through {@link
+     * org.springframework.web.context.ServletContextAware} and is wired without this reference.</p>
+     *
      * @param servletContextBeanName the servlet context bean name
-     * @deprecated see {@link #getServletContextBeanName()}; this setting has no
-     * effect.
      */
-    @Deprecated(since = "3.3.0", forRemoval = true)
     public void setServletContextBeanName(String servletContextBeanName) {
         this.servletContextBeanName = servletContextBeanName;
     }

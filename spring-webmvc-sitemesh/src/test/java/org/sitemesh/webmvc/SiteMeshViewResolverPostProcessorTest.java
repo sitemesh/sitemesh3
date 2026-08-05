@@ -151,6 +151,10 @@ public class SiteMeshViewResolverPostProcessorTest extends TestCase {
                 DispatchMode.INCLUDE, wrapper.getDispatchMode());
     }
 
+    /**
+     * A custom resolver as it could only have been written before the resolver took its servlet
+     * context from the container: the four-argument constructor and nothing else.
+     */
     public static class CustomSiteMeshViewResolver extends SiteMeshViewResolver {
         public CustomSiteMeshViewResolver(
                 org.springframework.web.servlet.ViewResolver inner,
@@ -159,6 +163,51 @@ public class SiteMeshViewResolverPostProcessorTest extends TestCase {
                 jakarta.servlet.ServletContext sc) {
             super(inner, cp, ds, sc);
         }
+    }
+
+    private void registerCollaborators() {
+        registry.registerSingleton("contentProcessor", new TagBasedContentProcessor(new CoreHtmlTagRuleBundle()));
+        registry.registerSingleton("decoratorSelector",
+                (DecoratorSelector<SiteMeshContext>) (content, context) -> new String[0]);
+        registry.registerSingleton("servletContext", new MockServletContext());
+    }
+
+    /**
+     * A subclass declaring only the four-argument constructor predates the resolver taking its
+     * context from the container, so it must still be handed one. Instantiating it is the point:
+     * asserting on the definition alone would not notice a constructor that cannot be satisfied.
+     */
+    public void testCustomResolverWithoutServletContextFreeConstructorStillInstantiates() {
+        registerTarget("jspViewResolver");
+        registerCollaborators();
+
+        SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
+        pp.setSiteMeshViewResolverClass(CustomSiteMeshViewResolver.class);
+        pp.postProcessBeanDefinitionRegistry(registry);
+
+        BeanDefinition wrapper = registry.getBeanDefinition("jspViewResolver");
+        assertEquals("the servlet context must still be wired for a resolver that cannot do without it",
+                new RuntimeBeanReference("servletContext"),
+                wrapper.getConstructorArgumentValues().getIndexedArgumentValue(3, null).getValue());
+
+        SiteMeshViewResolver resolver = registry.getBean("jspViewResolver", SiteMeshViewResolver.class);
+        assertTrue(resolver instanceof CustomSiteMeshViewResolver);
+    }
+
+    /**
+     * The stock resolver declares a constructor without the servlet context, so nothing references
+     * the servlet context bean — which is what allows the definition to be generated ahead of time.
+     */
+    public void testStockResolverIsWiredWithoutAServletContextReference() {
+        registerTarget("jspViewResolver");
+        registerCollaborators();
+
+        SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
+        pp.postProcessBeanDefinitionRegistry(registry);
+
+        BeanDefinition wrapper = registry.getBeanDefinition("jspViewResolver");
+        assertNull("the stock resolver must not reference the servlet context bean",
+                wrapper.getConstructorArgumentValues().getIndexedArgumentValue(3, null));
     }
 
     public void testCustomNames() {
