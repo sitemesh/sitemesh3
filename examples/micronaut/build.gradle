@@ -27,10 +27,12 @@ application {
     mainClass = 'org.sitemesh.examples.micronaut.Application'
 }
 
+def micronautPlatform = 'io.micronaut.platform:micronaut-platform:5.1.0'
+
 dependencies {
-    annotationProcessor platform('io.micronaut.platform:micronaut-platform:5.0.4')
+    annotationProcessor platform(micronautPlatform)
     annotationProcessor 'io.micronaut:micronaut-inject-java'
-    implementation platform('io.micronaut.platform:micronaut-platform:5.0.4')
+    implementation platform(micronautPlatform)
     implementation 'io.micronaut:micronaut-http-server-netty'
     implementation 'io.micronaut.serde:micronaut-serde-jackson' // required by the HTTP server for error responses
     implementation 'io.micronaut.views:micronaut-views-thymeleaf'

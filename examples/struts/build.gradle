@@ -49,6 +49,6 @@ dependencies {
     implementation 'org.apache.struts:struts2-core:7.2.1'
     implementation project(':sitemesh')
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
-    runtimeOnly 'org.apache.logging.log4j:log4j-core:2.26.0' // Struts logs via log4j-api
+    runtimeOnly 'org.apache.logging.log4j:log4j-core:2.26.1' // Struts logs via log4j-api
 
 }
