@@ -35,20 +35,62 @@ import java.nio.CharBuffer;
  */
 public class Buffer {
 
+    /**
+     * Initial character capacity used when the caller gives no size hint.
+     * Large enough that a small page does not repeatedly grow, small enough
+     * to be irrelevant for a response that turns out to be tiny.
+     */
+    public static final int DEFAULT_INITIAL_CAPACITY = 1024;
+
     private final String encoding;
+    private final int initialCapacity;
     private static final CharBuffer EMPTY_BUFFER = CharBuffer.allocate(0);
 
-    private CharArrayWriter bufferedWriter;
+    private ExposedCharArrayWriter bufferedWriter;
     private ByteBufferBuilder byteBufferBuilder;
     private PrintWriter exposedWriter;
     private ServletOutputStream exposedStream;
 
     /**
+     * A {@link CharArrayWriter} that can hand out its backing array directly,
+     * so {@link #toCharBuffer()} can return a view over the accumulated
+     * characters instead of copying them.
+     */
+    private static final class ExposedCharArrayWriter extends CharArrayWriter {
+
+        ExposedCharArrayWriter(int initialSize) {
+            super(initialSize);
+        }
+
+        CharBuffer toCharBufferView() {
+            return CharBuffer.wrap(this.buf, 0, this.count);
+        }
+    }
+
+    /**
+     * Equivalent to {@link #Buffer(String, int)} with
+     * {@link #DEFAULT_INITIAL_CAPACITY}.
+     *
      * @param encoding character encoding used to decode bytes written to the
      *                 {@link ServletOutputStream} into text.
      */
     public Buffer(String encoding) {
+        this(encoding, DEFAULT_INITIAL_CAPACITY);
+    }
+
+    /**
+     * @param encoding character encoding used to decode bytes written to the
+     *                 {@link ServletOutputStream} into text.
+     * @param initialCapacity initial character capacity of the underlying
+     *                        buffer. Sizing this close to the eventual
+     *                        response length avoids the repeated
+     *                        grow-and-copy cycles that dominate the cost of
+     *                        buffering a large page. Values below 1 are
+     *                        replaced with {@link #DEFAULT_INITIAL_CAPACITY}.
+     */
+    public Buffer(String encoding, int initialCapacity) {
         this.encoding = encoding;
+        this.initialCapacity = initialCapacity > 0 ? initialCapacity : DEFAULT_INITIAL_CAPACITY;
     }
 
     /**
@@ -61,7 +103,7 @@ public class Buffer {
             if (byteBufferBuilder != null) {
                 throw new IllegalStateException("response.getWriter() called after response.getOutputStream()");
             }
-            bufferedWriter = new CharArrayWriter(128);
+            bufferedWriter = new ExposedCharArrayWriter(initialCapacity);
             exposedWriter = new PrintWriter(bufferedWriter);
         }
         return exposedWriter;
@@ -124,12 +166,20 @@ public class Buffer {
      * Return the buffered content as text, decoding bytes with the buffer's encoding if
      * the {@link ServletOutputStream} was used.
      *
+     * <p>When the content was written through {@link #getWriter()}, the
+     * returned buffer is a <em>view</em> over the accumulated characters
+     * rather than a copy — avoiding a full page-sized array allocation and
+     * copy on every buffered response. Callers must therefore treat the
+     * result as read-only and must not write to this {@code Buffer} again
+     * while still using it; every caller in SiteMesh reads the buffer only
+     * once the render that filled it has completed.</p>
+     *
      * @return the buffered content (empty if nothing was written).
      * @throws IOException if the byte content cannot be decoded.
      */
     public CharBuffer toCharBuffer() throws IOException {
         if (bufferedWriter != null) {
-            return CharBuffer.wrap(bufferedWriter.toCharArray());
+            return bufferedWriter.toCharBufferView();
         } else if (byteBufferBuilder != null) {
             // TODO: Avoid allocating intermediate ByteBuffers.
             return TextEncoder.encode(byteBufferBuilder.toByteBuffer(), encoding);

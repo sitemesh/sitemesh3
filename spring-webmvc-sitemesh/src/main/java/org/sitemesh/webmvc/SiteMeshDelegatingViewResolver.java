@@ -170,7 +170,7 @@ public class SiteMeshDelegatingViewResolver extends SiteMeshViewResolver impleme
         if (viewName != null && isLayoutPath(viewName)) {
             return view;
         }
-        return decorate(view);
+        return decorate(view, viewName);
     }
 
     /**

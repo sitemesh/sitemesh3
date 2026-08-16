@@ -16,6 +16,8 @@
 package org.sitemesh.webmvc;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.servlet.ServletContext;
 
@@ -46,6 +48,17 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered, ServletConte
     private final ContentProcessor contentProcessor;
     private final DecoratorSelector<SiteMeshContext> decoratorSelector;
     private ServletContext servletContext;
+
+    /**
+     * Ceiling on how many per-view-name {@link RenderSizeEstimate}s to retain.
+     * View names come from a fixed set in every normal application, so this is
+     * never reached; it only stops an application that synthesises unbounded
+     * view names from growing the map without limit. Beyond the cap, views
+     * still render — they just size their buffers from the default.
+     */
+    private static final int MAX_TRACKED_VIEWS = 2048;
+
+    private final Map<String, RenderSizeEstimate> sizeEstimates = new ConcurrentHashMap<>();
 
     private String layoutPathPrefix = DEFAULT_LAYOUT_PATH_PREFIX;
     private int order;
@@ -121,7 +134,7 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered, ServletConte
         if (viewName != null && isLayoutPath(viewName)) {
             return innerView;
         }
-        return decorate(innerView);
+        return decorate(innerView, viewName);
     }
 
     /**
@@ -142,6 +155,26 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered, ServletConte
      *         {@code null}, a redirect, or already decorated
      */
     public View decorate(View view) {
+        return decorate(view, null);
+    }
+
+    /**
+     * As {@link #decorate(View)}, but attaches the {@link RenderSizeEstimate}
+     * tracked for {@code viewName} so the wrapper can size its buffers from
+     * what previous renders of the same view actually produced.
+     *
+     * <p>A new wrapper is constructed on every resolution, so the estimate has
+     * to live out here on the resolver — which is a singleton — rather than in
+     * the wrapper. Passing a {@code null} name (the {@link #decorate(View)}
+     * path, where there is no name to key on) leaves the wrapper with its own
+     * private estimate, which is correct but cannot learn across requests.</p>
+     *
+     * @param view the view to decorate; may be {@code null}
+     * @param viewName the name the view resolved from, or {@code null}
+     * @return the decorated view, or {@code view} itself when it is
+     *         {@code null}, a redirect, or already decorated
+     */
+    protected View decorate(View view, String viewName) {
         if (view == null) {
             return null;
         }
@@ -152,7 +185,31 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered, ServletConte
             return view;
         }
         prepareForBufferedRender(view);
-        return createSiteMeshView(view);
+        SiteMeshView decorated = createSiteMeshView(view);
+        decorated.setSizeEstimate(sizeEstimateFor(viewName));
+        return decorated;
+    }
+
+    /**
+     * The estimate tracked for {@code viewName}, created on first use.
+     *
+     * @param viewName the view name to track, or {@code null} for an unnamed view
+     * @return the shared estimate for that name, or {@code null} when there is
+     *         no name to key on or the cap has been reached — in which case the
+     *         wrapper keeps its own private estimate
+     */
+    private RenderSizeEstimate sizeEstimateFor(String viewName) {
+        if (viewName == null) {
+            return null;
+        }
+        RenderSizeEstimate existing = sizeEstimates.get(viewName);
+        if (existing != null) {
+            return existing;
+        }
+        if (sizeEstimates.size() >= MAX_TRACKED_VIEWS) {
+            return null;
+        }
+        return sizeEstimates.computeIfAbsent(viewName, name -> new RenderSizeEstimate());
     }
 
     /**

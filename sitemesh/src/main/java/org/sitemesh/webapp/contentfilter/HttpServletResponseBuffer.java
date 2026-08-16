@@ -154,10 +154,26 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
      * @param encoding Character encoding used to decode the buffered bytes.
      */
     public void enableBuffering(String encoding) {
+        enableBuffering(encoding, Buffer.DEFAULT_INITIAL_CAPACITY);
+    }
+
+    /**
+     * As {@link #enableBuffering(String)}, but sizes the underlying buffer up
+     * front. Callers that can estimate the response length — for example from
+     * the length of a previous render of the same view — should pass it:
+     * growing a buffer from its default size up to a large page costs a chain
+     * of allocate-and-copy cycles totalling roughly twice the page length.
+     *
+     * @param encoding Character encoding used to decode the buffered bytes.
+     * @param initialCapacity Estimated response length in characters. Values
+     *                        below 1 fall back to
+     *                        {@link Buffer#DEFAULT_INITIAL_CAPACITY}.
+     */
+    public void enableBuffering(String encoding, int initialCapacity) {
         if (buffer != null) {
             return; // Already buffering.
         }
-        buffer = new Buffer(encoding);
+        buffer = new Buffer(encoding, initialCapacity);
         routablePrintWriter.updateDestination(new RoutablePrintWriter.DestinationFactory() {
             public PrintWriter activateDestination() {
                 return buffer.getWriter();
