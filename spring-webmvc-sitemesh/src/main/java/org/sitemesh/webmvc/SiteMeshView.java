@@ -64,6 +64,20 @@ public class SiteMeshView implements View {
     private final BasicSelector selector;
 
     /**
+     * How much output this view is expected to produce, used to size the
+     * buffers each render accumulates into.
+     *
+     * <p>A resolver constructs a fresh {@code SiteMeshView} on every
+     * resolution, so an estimate kept in a field here would reset on every
+     * request and never converge on anything. {@link SiteMeshViewResolver}
+     * therefore owns one estimate per view name and
+     * {@linkplain #setSizeEstimate(RenderSizeEstimate) attaches} it to each
+     * wrapper it creates. The instance allocated here is the fallback for
+     * views decorated outside that path — correct, just unable to learn.</p>
+     */
+    private volatile RenderSizeEstimate sizeEstimate = new RenderSizeEstimate();
+
+    /**
      * Equivalent to the {@link DispatchMode}-taking constructor with
      * {@link DispatchMode#DETECT}.
      *
@@ -154,6 +168,30 @@ public class SiteMeshView implements View {
     @Override
     public String getContentType() {
         return innerView.getContentType();
+    }
+
+    /**
+     * Attach the estimate this view sizes its buffers from. Callers that
+     * create a wrapper per resolution — which is every
+     * {@link SiteMeshViewResolver} — must pass an estimate that outlives the
+     * wrapper, keyed by whatever identifies the view, or the estimate can
+     * never learn anything.
+     *
+     * @param sizeEstimate the estimate to consult and update; {@code null} is
+     *                     ignored, leaving the current one in place
+     */
+    public void setSizeEstimate(RenderSizeEstimate sizeEstimate) {
+        if (sizeEstimate != null) {
+            this.sizeEstimate = sizeEstimate;
+        }
+    }
+
+    /**
+     * @return the estimate this view sizes its buffers from, never {@code null}
+     * @see #setSizeEstimate(RenderSizeEstimate)
+     */
+    public RenderSizeEstimate getSizeEstimate() {
+        return sizeEstimate;
     }
 
     /**
@@ -311,7 +349,8 @@ public class SiteMeshView implements View {
         // type (and charset) when none is set yet — e.g. Grails GSP's UTF-8
         // default — back off, and the response goes out with the container's
         // locale-derived charset instead of the view's.
-        buffer.enableBuffering(new HttpContentType(contentType).getEncoding());
+        RenderSizeEstimate estimate = sizeEstimate;
+        buffer.enableBuffering(new HttpContentType(contentType).getEncoding(), estimate.getContentLength());
 
         innerView.render(model, request, buffer);
 
@@ -340,8 +379,15 @@ public class SiteMeshView implements View {
         // produced — matching the filter integration, which builds its
         // context from the buffered response — rather than the provisional
         // pre-render default.
+        estimate.recordContentLength(rawBuffer.remaining());
+
         String selectedContentType = response.getContentType() != null ? response.getContentType() : contentType;
         SiteMeshViewContext context = createContext(request, response, selectedContentType, metaData);
+        // Seed from the decorated length a previous render measured, so the
+        // hint accounts for the chrome the decorator adds. Before any decorated
+        // render has completed this falls back to the content length — the
+        // right order of magnitude, and still far better than the default.
+        context.setSizeHint(estimate.getDecoratedLengthOrContentLength());
 
         Content content = contentProcessor.build(rawBuffer, context);
         if (content == null) {
@@ -367,6 +413,7 @@ public class SiteMeshView implements View {
                     }
                 }
                 if (decorated != null) {
+                    estimate.recordDecoratedLength(context.getLastDecoratedLength());
                     PrintWriter writer = response.getWriter();
                     decorated.getData().writeValueTo(writer);
                     if (!response.isCommitted()) {

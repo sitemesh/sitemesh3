@@ -34,5 +34,17 @@ public class BenchApp {
             model.addAttribute("n", "World");
             return "bench";
         }
+
+        /**
+         * A page of realistic size (~50 KB — a typical data-listing screen).
+         * Buffering cost scales with response length, so the tiny /bench page
+         * cannot show it; this endpoint is the one to measure buffer changes
+         * against.
+         */
+        @GetMapping("/bench-large")
+        public String benchLarge(Model model) {
+            model.addAttribute("n", "World");
+            return "bench-large";
+        }
     }
 }
