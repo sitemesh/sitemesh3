@@ -27,7 +27,7 @@ application {
     mainClass = 'org.sitemesh.examples.micronaut.Application'
 }
 
-def micronautPlatform = 'io.micronaut.platform:micronaut-platform:5.1.0'
+def micronautPlatform = 'io.micronaut.platform:micronaut-platform:5.1.1'
 
 dependencies {
     annotationProcessor platform(micronautPlatform)
