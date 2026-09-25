@@ -186,6 +186,7 @@ public abstract class BaseSiteMeshBuilder
      * @return this builder instance, for method chaining.
      */
     public BUILDER setTagRuleBundles(TagRuleBundle... bundles) {
+        clearTagRuleBundles();
         addTagRuleBundles(bundles);
         return self();
     }
@@ -202,6 +203,7 @@ public abstract class BaseSiteMeshBuilder
      * @return this builder instance, for method chaining.
      */
     public BUILDER setTagRuleBundles(Iterable<TagRuleBundle> bundles) {
+        clearTagRuleBundles();
         addTagRuleBundles(bundles);
         return self();
     }
