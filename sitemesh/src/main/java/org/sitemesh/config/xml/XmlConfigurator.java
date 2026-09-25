@@ -17,6 +17,7 @@
 package org.sitemesh.config.xml;
 
 import org.sitemesh.DecoratorSelector;
+import org.sitemesh.config.DecoratorChains;
 import org.sitemesh.config.ObjectFactory;
 import org.sitemesh.builder.BaseSiteMeshBuilder;
 import org.sitemesh.content.tagrules.TagRuleBundle;
@@ -25,6 +26,7 @@ import org.w3c.dom.Element;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Configures a SiteMesh builder from an XML config file (typically <code>/WEB-INF/sitemesh3.xml</code>),
@@ -100,12 +102,13 @@ public class XmlConfigurator {
 
     private void addDecoratorPaths(BaseSiteMeshBuilder<?, ?, ?> builder, Xml mapping, String path) {
         List<String> decorators = new ArrayList<String>();
+        // Each value may itself be a comma-separated chain, as in <meta name="decorator">.
         if (mapping.attribute("decorator") != null) {
-            decorators.add(mapping.attribute("decorator"));
+            decorators.addAll(Arrays.asList(DecoratorChains.split(mapping.attribute("decorator"))));
         }
         for (Xml decorator : mapping.children("decorator")) {
             if (decorator.text() != null) {
-                decorators.add(decorator.text());
+                decorators.addAll(Arrays.asList(DecoratorChains.split(decorator.text())));
             }
         }
 

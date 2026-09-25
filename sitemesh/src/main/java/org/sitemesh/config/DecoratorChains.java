@@ -20,8 +20,8 @@ import java.util.List;
 
 /**
  * Parses comma-separated decorator chains — the syntax shared by the
- * {@code <meta name="decorator">} tag, the request-attribute selector, and
- * the configuration properties that feed
+ * {@code <meta name="decorator">} tag, the request-attribute selector, the
+ * XML {@code <mapping>} decorators, and the Spring Boot properties that feed
  * {@link MetaTagBasedDecoratorSelector#put}.
  *
  * <p>All chain sources parse through {@link #split(String)} so they agree on

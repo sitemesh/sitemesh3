@@ -74,8 +74,9 @@
         <xsd:annotation>
             <xsd:documentation>Maps content paths to decorators, or excludes them from decoration.
                 Paths and decorators can be given as attributes or as child elements; child path
-                elements take precedence over the path attribute. Several decorators are applied
-                as a chain. Without a path, the mapping applies to /*.</xsd:documentation>
+                elements take precedence over the path attribute. Several decorators (repeated
+                decorator elements, or a comma-separated list) are applied as a chain. Without a
+                path, the mapping applies to /*.</xsd:documentation>
         </xsd:annotation>
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
             <xsd:element name="path" type="xsd:string"/>

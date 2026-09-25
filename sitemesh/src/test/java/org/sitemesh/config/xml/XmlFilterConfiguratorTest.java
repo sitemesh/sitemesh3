@@ -141,6 +141,20 @@ public class XmlFilterConfiguratorTest extends TestCase {
         assertEquals(CONTENT_WITH_META, webEnvironment.getBody());
     }
 
+    public void testDecoratorAttributeAcceptsChain() throws Exception {
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addFilter("/*", createFilter(
+                        "<sitemesh><mapping path='/*' decorator='inner, outer'/></sitemesh>"))
+                .addStaticContent("/WEB-INF/decorators/inner", "text/html",
+                        "<title>Inner <sitemesh:write property='title'/></title>")
+                .addStaticContent("/WEB-INF/decorators/outer", "text/html", DECORATOR)
+                .addStaticContent("/other", "text/html", CONTENT)
+                .create();
+
+        webEnvironment.doGet("/other");
+        assertEquals("Decorated: Inner Hello world", webEnvironment.getBody());
+    }
+
     public void testReadsConfigThatDeclaresSchemaNamespace() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", createFilter(
