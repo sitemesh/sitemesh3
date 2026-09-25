@@ -16,6 +16,8 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:4.1.1'
 
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.springframework.boot:spring-boot-test:4.1.1'
+    testImplementation 'org.assertj:assertj-core:3.27.7'
 }
 
 // Make the manually maintained META-INF/additional-spring-configuration-metadata.json

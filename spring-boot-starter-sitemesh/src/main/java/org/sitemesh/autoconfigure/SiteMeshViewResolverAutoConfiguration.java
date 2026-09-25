@@ -32,6 +32,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.ViewResolver;
 
@@ -166,8 +167,7 @@ public class SiteMeshViewResolverAutoConfiguration {
     @ConditionalOnMissingBean({ SiteMeshViewResolver.class,
             SiteMeshViewResolverBeanPostProcessor.class,
             SiteMeshViewResolverPostProcessor.class })
-    @ConditionalOnProperty(name = "sitemesh.viewResolver.wrapMode",
-            havingValue = "delegate", matchIfMissing = true)
+    @Conditional(SiteMeshConditions.OnDelegateWrapMode.class)
     public SiteMeshDelegatingViewResolver siteMeshDelegatingViewResolver(
             ContentProcessor contentProcessor,
             DecoratorSelector<SiteMeshContext> decoratorSelector,
@@ -192,8 +192,7 @@ public class SiteMeshViewResolverAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(SiteMeshViewResolverPostProcessor.class)
-    @ConditionalOnProperty(name = "sitemesh.viewResolver.wrapMode",
-            havingValue = "bean-definition")
+    @Conditional(SiteMeshConditions.OnBeanDefinitionWrapMode.class)
     public static SiteMeshViewResolverPostProcessor siteMeshViewResolverPostProcessor(Environment environment) {
         SiteMeshProperties properties = bindProperties(environment);
         SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
@@ -218,7 +217,7 @@ public class SiteMeshViewResolverAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(SiteMeshViewResolverBeanPostProcessor.class)
-    @ConditionalOnProperty(name = "sitemesh.viewResolver.wrapMode", havingValue = "bean-instance")
+    @Conditional(SiteMeshConditions.OnBeanInstanceWrapMode.class)
     public static SiteMeshViewResolverBeanPostProcessor siteMeshViewResolverBeanPostProcessor(Environment environment) {
         SiteMeshProperties properties = bindProperties(environment);
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();
