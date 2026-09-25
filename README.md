@@ -196,10 +196,9 @@ SiteMesh does not care what technologies are used to generate the content or the
 
 Running SiteMesh requires at least:
 
-* JDK 1.8
-* A Servlet 3.x compliant container
-* The SiteMesh runtime library 
-* The SiteMesh library should be downloaded and placed in /WEB-INF/lib/.
+* JDK 17
+* A Jakarta Servlet 6.1 (Jakarta EE 11) container, such as Tomcat 11 or Jetty 12
+* The SiteMesh runtime library, added as described in [Installing](#installing) (or downloaded and placed in /WEB-INF/lib/)
 
 ### Setup
 
@@ -243,7 +242,7 @@ The` <sitemesh:write property="..."/>` tag will be rewritten by SiteMesh to incl
 
 The bare minimum decorator isn't very useful. Let's add some style and a bit of common layout.
 
-Create the file /decorator.html in your web-app, containing:
+Create the file /WEB-INF/decorators/decorator.html in your web-app, containing:
 
 ```html
 <html>
@@ -286,7 +285,7 @@ The configuration file should be created at /WEB-INF/sitemesh3.xml:
   <mapping path="/*" decorator="decorator.html"/>
 </sitemesh>
 ```
-This tells SiteMesh that requests matching the path /* (i.e. all requests) should be decorated with /decorator.html that we just created.
+This tells SiteMesh that requests matching the path /* (i.e. all requests) should be decorated with the decorator.html we just created. Decorator names are resolved against the /WEB-INF/decorators/ prefix, which `<decorator-prefix>` can change.
 
 If you don't like the idea of having to use XML to configure SiteMesh, don't worry - there are alternative mechanisms including directly in WEB-INF/web.xml, programatically through a Java API, through Spring, by naming convention, or any custom way you may choose to plug in. These are explained further in another article.
 
@@ -572,7 +571,7 @@ Use the approach that suits your project.
 
 ### Command line interface
 
-You can invoke the command line interface by running the executable sitemesh.jar. It requires Java 5 but no other dependencies.
+You can invoke the command line interface by running the executable sitemesh.jar. It requires Java 17 but no other dependencies.
 
 Invoking on it's own will output a detailed help message:
 
@@ -586,9 +585,8 @@ The following arguments need to be passed to the command line:
 
 -src	Required	Path to source directory, containing content and decorators
 -dest	Required	Path to destination directory, where decorated content will be written
--dest	Required	Path to destination directory, where decorated content will be written
--config	One of these	Path to configuration file
--decoratorMapping	TODO
+-config	Optional	Path to configuration file (defaults to WEB-INF/sitemesh3.xml in the source directory, if present)
+-decoratorMappings	Optional	Path pattern to decorator mappings, e.g. '/*=/main.html,/page*=/page.html|/main.html' (chain decorators with |)
 FILE1 FILE2 FILE3...	Required	List of content files to apply decorators to. These must be relative to the src directory
 
 **Example**

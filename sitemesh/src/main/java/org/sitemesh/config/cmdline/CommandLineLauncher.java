@@ -136,10 +136,11 @@ public class CommandLineLauncher {
             "  -dest -destdir -destination -out -o [REQUIRED]:\n" +
             "          (required) Destination, where decorated content will be output to.\n" +
             "  -config:\n" +
-            "          (optional) Path to XML configuration file to use if \n" +
+            "          (optional) Path to XML configuration file. Defaults to\n" +
+            "          SOURCE_DIR/WEB-INF/sitemesh3.xml, if present.\n" +
             "  -decoratorMappings:\n" +
             "          (optional) List of mappings of path patterns to decorators. \n" +
-            "          Each entry should consiste of pattern=decorator, separated by\n" +
+            "          Each entry should consist of pattern=decorator, separated by\n" +
             "          commas. If multiple decorators are required, they should be\n" +
             "          delimited with a pipe | char.\n" +
             "  FILES...:\n" +
