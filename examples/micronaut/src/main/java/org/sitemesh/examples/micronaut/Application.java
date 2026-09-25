@@ -23,6 +23,15 @@ import io.micronaut.runtime.Micronaut;
  */
 public class Application {
 
+    /** Creates the application; instances are not used, see {@link #main}. */
+    public Application() {
+    }
+
+    /**
+     * Starts the Micronaut server.
+     *
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         Micronaut.run(Application.class, args);
     }

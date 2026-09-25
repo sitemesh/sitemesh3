@@ -26,12 +26,23 @@ public class HelloAction extends ActionSupport {
 
     private static final long serialVersionUID = 1L;
 
+    /** Name to greet, bound from the {@code name} request parameter. */
     private String name = "World";
 
+    /**
+     * Returns the name to greet.
+     *
+     * @return the name, {@code "World"} unless a request parameter set it
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name to greet.
+     *
+     * @param name the name from the {@code name} request parameter
+     */
     @StrutsParameter
     public void setName(String name) {
         this.name = name;

@@ -187,6 +187,7 @@ public class SiteMeshViewResolverAutoConfiguration {
      * of this variant. Suitable for single-resolver apps (e.g. pure JSP)
      * or frameworks that specifically need bean-definition rewriting.
      *
+     * @param environment the environment to bind {@code sitemesh.*} properties from
      * @return the bean-definition-rewriting post processor
      */
     @Bean
@@ -212,6 +213,7 @@ public class SiteMeshViewResolverAutoConfiguration {
      * BeanDefinitionRegistryPostProcessors} fire, but an instance is later
      * created under the configured bean name.
      *
+     * @param environment the environment to bind {@code sitemesh.*} properties from
      * @return the single-target bean post processor
      */
     @Bean

@@ -407,6 +407,9 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered, ServletConte
      * {@code "/layoutsManagement/..."} that merely share the prefix
      * string. Exposed for subclasses that override
      * {@link #resolveViewName} and need the same pass-through rule.
+     *
+     * @param viewName the view name to test
+     * @return {@code true} if the view is the layout folder or lives under it
      */
     protected boolean isLayoutPath(String viewName) {
         return viewName.equals(layoutPathPrefix)

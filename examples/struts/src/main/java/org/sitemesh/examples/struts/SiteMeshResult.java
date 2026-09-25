@@ -70,6 +70,7 @@ public class SiteMeshResult extends StrutsResultSupport {
     private static final ContentProcessor CONTENT_PROCESSOR =
             new TagBasedContentProcessor(new CoreHtmlTagRuleBundle(), new DecoratorTagRuleBundle());
 
+    /** Path of the decorator applied when the page doesn't name its own. */
     private String decorator = "/WEB-INF/decorators/default.html";
 
     /**

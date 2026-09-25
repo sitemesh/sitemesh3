@@ -184,6 +184,12 @@ public class SiteMeshViewResolverPostProcessor implements BeanDefinitionRegistry
         }
     }
 
+    /**
+     * How the wrapped {@link SiteMeshViewResolver}'s views dispatch
+     * decorators (include vs forward). See {@link DispatchMode}.
+     *
+     * @return the dispatch mode, never {@code null}
+     */
     public DispatchMode getDispatchMode() {
         return dispatchMode;
     }

@@ -34,12 +34,26 @@ public class MicronautSiteMeshContext extends BaseSiteMeshContext {
     /** Renders a decorator view template to a writer. */
     @FunctionalInterface
     public interface DecoratorRenderer {
+        /**
+         * Renders a decorator view.
+         *
+         * @param viewName the decorator's view name
+         * @param out      the writer to render into
+         * @throws IOException if writing fails
+         */
         void render(String viewName, Writer out) throws IOException;
     }
 
     private final String path;
     private final DecoratorRenderer decoratorRenderer;
 
+    /**
+     * Creates a context for decorating a single request.
+     *
+     * @param contentProcessor  parses pages and decorators into properties
+     * @param path              path of the page being decorated
+     * @param decoratorRenderer renders decorator views into the output
+     */
     public MicronautSiteMeshContext(ContentProcessor contentProcessor, String path,
                                     DecoratorRenderer decoratorRenderer) {
         super(contentProcessor);

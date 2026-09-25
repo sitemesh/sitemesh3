@@ -29,12 +29,28 @@ import java.util.Map;
 @Controller
 public class HelloController {
 
+    /** Creates the controller; instantiated by Micronaut. */
+    public HelloController() {
+    }
+
+    /**
+     * Greets the given name via the {@code hello} view.
+     *
+     * @param name the name to greet, {@code "World"} if not supplied
+     * @return the view model
+     */
     @Get("/")
     @View("hello")
     public Map<String, Object> hello(@QueryValue(value = "name", defaultValue = "World") String name) {
         return Map.of("name", name);
     }
 
+    /**
+     * Renders the {@code meta} view, which picks its decorator with a
+     * {@code <meta name="decorator">} tag.
+     *
+     * @return an empty view model
+     */
     @Get("/meta")
     @View("meta")
     public Map<String, Object> meta() {

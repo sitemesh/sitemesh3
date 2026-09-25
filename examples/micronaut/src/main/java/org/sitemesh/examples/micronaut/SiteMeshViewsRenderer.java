@@ -61,6 +61,11 @@ public class SiteMeshViewsRenderer implements ViewsRenderer<Object, HttpRequest<
 
     private final ThymeleafViewsRenderer<Object> delegate;
 
+    /**
+     * Creates the renderer.
+     *
+     * @param delegate the Thymeleaf renderer used for both pages and decorators
+     */
     public SiteMeshViewsRenderer(ThymeleafViewsRenderer<Object> delegate) {
         this.delegate = delegate;
     }
