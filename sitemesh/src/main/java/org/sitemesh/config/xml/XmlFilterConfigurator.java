@@ -24,6 +24,7 @@ import org.w3c.dom.Element;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Configures a SiteMeshFilterBuilder from an XML config file, adding the filter
@@ -108,7 +109,7 @@ public class XmlFilterConfigurator extends XmlConfigurator {
     }
 
     private boolean isTrue(String string) {
-        String lower = string == null ? "" : string.trim().toLowerCase();
+        String lower = string == null ? "" : string.trim().toLowerCase(Locale.ROOT);
         return lower.equals("true") || lower.equals("1") || lower.equals("yes");
     }
 

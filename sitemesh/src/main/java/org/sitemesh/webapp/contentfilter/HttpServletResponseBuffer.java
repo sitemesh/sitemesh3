@@ -276,14 +276,13 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     @Override
     public void setHeader(String name, String value) {
         // Prevent content-length being set if buffering.
-        String lowerName = name.toLowerCase();
-        if (lowerName.equals("content-type")) {
+        if (name.equalsIgnoreCase("content-type")) {
             // ensure ContentType is always set through setContentType()
             // Only process non-null values to avoid disabling buffering when headers are removed
             if (value != null) {
                 setContentType(value);
             }
-        } else if (buffer == null || !lowerName.equals("content-length")) {
+        } else if (buffer == null || !name.equalsIgnoreCase("content-length")) {
             super.setHeader(name, value);
         }
     }

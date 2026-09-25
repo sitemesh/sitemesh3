@@ -18,6 +18,7 @@ package org.sitemesh.webapp;
 
 import jakarta.servlet.ServletContext;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -81,7 +82,7 @@ public enum DispatchMode {
             return fallback;
         }
         try {
-            return valueOf(value.trim().toUpperCase());
+            return valueOf(value.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
             return fallback;
         }

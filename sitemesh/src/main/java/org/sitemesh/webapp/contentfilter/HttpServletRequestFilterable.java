@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Locale;
 
 /**
  * This special HttpServletRequestWrapper is used to allow filtering of the HTTP headers
@@ -90,7 +91,7 @@ public class HttpServletRequestFilterable extends HttpServletRequestWrapper {
      * @return The lower-cased header name.
      */
     protected String normalize(String header){
-        return header.toLowerCase();
+        return header.toLowerCase(Locale.ROOT);
     }
 
     /**

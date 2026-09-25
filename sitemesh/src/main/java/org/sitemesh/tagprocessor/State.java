@@ -19,6 +19,7 @@ package org.sitemesh.tagprocessor;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Acts a registry of {@link TagRule}s to apply whilst the {@link TagProcessor}
@@ -37,7 +38,7 @@ public class State {
      * @param rule    rule to apply to matching tags
      */
     public void addRule(String tagName, TagRule rule) {
-        tagRules.put(tagName.toLowerCase(), rule);
+        tagRules.put(tagName.toLowerCase(Locale.ROOT), rule);
     }
 
     /**

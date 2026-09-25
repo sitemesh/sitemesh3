@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
+import java.util.Locale;
 
 /**
  * @author Joe Walnes
@@ -44,6 +45,27 @@ public class TagProcessorTest extends TestCase {
         processor.process();
         assertEquals("<hello><a href=\"MODIFY-ME\">world</a></hello>",
                 processor.getDefaultBufferContents().toString());
+    }
+
+    public void testMatchesTagNamesIndependentlyOfDefaultLocale() throws IOException {
+        // In the Turkish locale "TITLE".toLowerCase() is "t\u0131tle" (dotless i), which
+        // would stop an upper-case <TITLE> matching the "title" rule.
+        Locale original = Locale.getDefault();
+        Locale.setDefault(Locale.forLanguageTag("tr-TR"));
+        try {
+            TagProcessor processor = new TagProcessor(CharBuffer.wrap("<TITLE>Hello</TITLE>"));
+            final StringBuilder matched = new StringBuilder();
+            processor.addRule("title", new BasicRule() {
+                @Override
+                public void process(Tag tag) {
+                    matched.append(tag.getType()).append(' ');
+                }
+            });
+            processor.process();
+            assertEquals("OPEN CLOSE ", matched.toString());
+        } finally {
+            Locale.setDefault(original);
+        }
     }
 
     public void testCanAddAttributesToCustomTag() throws IOException {

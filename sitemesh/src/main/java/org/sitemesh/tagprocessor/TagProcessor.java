@@ -20,6 +20,7 @@ import org.sitemesh.tagprocessor.util.CharSequenceList;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
+import java.util.Locale;
 
 /**
  * Copies a document from a source to a destination, applying rules on the way
@@ -90,11 +91,11 @@ public class TagProcessor {
         TagTokenizer tokenizer = new TagTokenizer(in, new TagTokenizer.TokenHandler() {
 
             public boolean shouldProcessTag(String name) {
-                return currentState.shouldProcessTag(name.toLowerCase());
+                return currentState.shouldProcessTag(name.toLowerCase(Locale.ROOT));
             }
 
             public void tag(Tag tag) throws IOException {
-                TagRule tagRule = currentState.getRule(tag.getName().toLowerCase());
+                TagRule tagRule = currentState.getRule(tag.getName().toLowerCase(Locale.ROOT));
                 tagRule.setTagProcessorContext(context);
                 tagRule.process(tag);
             }

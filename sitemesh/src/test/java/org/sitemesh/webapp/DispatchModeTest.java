@@ -20,6 +20,7 @@ import jakarta.servlet.ServletContext;
 import junit.framework.TestCase;
 
 import java.lang.reflect.Proxy;
+import java.util.Locale;
 
 /**
  * Unit tests for {@link DispatchMode}, in particular that {@link
@@ -34,6 +35,23 @@ public class DispatchModeTest extends TestCase {
                 DispatchModeTest.class.getClassLoader(),
                 new Class<?>[]{ServletContext.class},
                 (proxy, method, args) -> "getServerInfo".equals(method.getName()) ? serverInfo : null);
+    }
+
+    public void testFromStringIsCaseInsensitive() {
+        assertEquals(DispatchMode.INCLUDE, DispatchMode.fromString(" Include ", DispatchMode.DETECT));
+        assertEquals(DispatchMode.FORWARD, DispatchMode.fromString("FORWARD", DispatchMode.DETECT));
+        assertEquals(DispatchMode.DETECT, DispatchMode.fromString(null, DispatchMode.DETECT));
+    }
+
+    public void testFromStringIndependentOfDefaultLocale() {
+        // In the Turkish locale "include".toUpperCase() is "\u0130NCLUDE" (dotted capital I).
+        Locale original = Locale.getDefault();
+        Locale.setDefault(Locale.forLanguageTag("tr-TR"));
+        try {
+            assertEquals(DispatchMode.INCLUDE, DispatchMode.fromString("include", DispatchMode.DETECT));
+        } finally {
+            Locale.setDefault(original);
+        }
     }
 
     public void testIncludeAlwaysUsesInclude() {

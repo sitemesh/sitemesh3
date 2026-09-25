@@ -17,6 +17,7 @@
 package org.sitemesh.tagprocessor;
 
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * {@link TagRule} that switches the {@link TagProcessor} to a new {@link State} when the opening
@@ -55,7 +56,7 @@ public class StateTransitionRule extends BasicRule {
         if (tag.getType() == Tag.Type.OPEN) {
             lastState = tagProcessorContext.currentState();
             tagProcessorContext.changeState(newState);
-            newState.addRule(tag.getName().toLowerCase(), this);
+            newState.addRule(tag.getName().toLowerCase(Locale.ROOT), this);
         } else if (tag.getType() == Tag.Type.CLOSE && lastState != null) {
             tagProcessorContext.changeState(lastState);
             lastState = null;

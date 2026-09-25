@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -269,7 +270,7 @@ public class ConfigurableSiteMeshFilter implements Filter {
         if (autoReload == null) {
             return AUTO_RELOAD_DEFAULT;
         } else {
-            String lower = autoReload.toLowerCase();
+            String lower = autoReload.toLowerCase(Locale.ROOT);
             return lower.equals("1") || lower.equals("true") || lower.equals("yes");
         }
     }
