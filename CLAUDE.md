@@ -87,7 +87,7 @@ Three mechanisms, all live simultaneously — XML is loaded first, then Java `ap
 - `/WEB-INF/sitemesh3.xml` (auto-reloads on change)
 - `ConfigurableSiteMeshFilter.applyCustomConfiguration(SiteMeshFilterBuilder)` (Java)
 
-Defaults documented in `CONFIGURATION.md`: `decorator-prefix=/WEB-INF/decorators/`, `decorator-selector=MetaTagBasedDecoratorSelector`, `include-error-pages=true`, MIME filter is `text/html` only (override with `setMimeTypes(...)` / `<mime-type>` to decorate XHTML, WAP, etc.).
+Defaults documented in `CONFIGURATION.md`: `decorator-prefix=/WEB-INF/decorators/`, `decorator-selector=MetaTagBasedDecoratorSelector`, `include-error-pages=false` (the Spring Boot starter defaults it to `true`), MIME filter is `text/html` only (override with `setMimeTypes(...)` / `<mime-type>` to decorate XHTML, WAP, etc.).
 
 ## Publishing
 
