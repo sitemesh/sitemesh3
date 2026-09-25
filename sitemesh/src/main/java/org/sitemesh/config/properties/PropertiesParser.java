@@ -18,6 +18,7 @@ package org.sitemesh.config.properties;
 
 import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -51,6 +52,21 @@ class PropertiesParser {
             }
         }
         return null;
+    }
+
+    /**
+     * Return boolean value: true for "true", "yes" or "1" (ignoring case and surrounding
+     * whitespace), false for any other value, the same values the XML configuration accepts.
+     *
+     * Will return null if property is not found, empty or whitespace only.
+     */
+    Boolean getBoolean(String key) {
+        String string = getString(key);
+        if (string == null) {
+            return null;
+        }
+        String lower = string.toLowerCase(Locale.ROOT);
+        return lower.equals("true") || lower.equals("yes") || lower.equals("1");
     }
 
     /**

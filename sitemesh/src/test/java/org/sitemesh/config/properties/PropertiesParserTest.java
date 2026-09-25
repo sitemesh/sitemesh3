@@ -104,6 +104,14 @@ public class PropertiesParserTest extends TestCase {
         return result.toString();
     }
 
+    public void testParsesBooleans() {
+        properties.put("a", " Yes ");
+        properties.put("b", "0");
+        assertEquals(Boolean.TRUE, propertiesParser.getBoolean("a"));
+        assertEquals(Boolean.FALSE, propertiesParser.getBoolean("b"));
+        assertNull(propertiesParser.getBoolean("missing"));
+    }
+
     public void testWarnsAboutEntriesWithoutEquals() {
         // A comma splits entries, so "b.html" becomes an entry of its own rather than a chain.
         properties.put("mappings", "/*=a.html,b.html");

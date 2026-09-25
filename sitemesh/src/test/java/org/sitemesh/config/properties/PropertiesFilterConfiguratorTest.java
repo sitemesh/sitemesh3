@@ -63,6 +63,22 @@ public class PropertiesFilterConfiguratorTest extends PropertiesConfiguratorTest
         assertEquals("Decorated: Hello world", webEnvironment.getBody());
     }
 
+    public void testParsesIncludeErrorPagesLikeXml() {
+        for (String value : new String[] {"true", "TRUE", " yes ", "1"}) {
+            builder = new SiteMeshFilterBuilder();
+            properties.put(PropertiesFilterConfigurator.INCLUDE_ERROR_PAGES_PARAM, value);
+            propertiesConfigurator.configureFilter(builder);
+            assertTrue(value, builder.isIncludeErrorPages());
+        }
+    }
+
+    public void testIncludeErrorPagesCanBeSetToFalse() {
+        builder.setIncludeErrorPages(true);
+        properties.put(PropertiesFilterConfigurator.INCLUDE_ERROR_PAGES_PARAM, "false");
+        propertiesConfigurator.configureFilter(builder);
+        assertFalse(builder.isIncludeErrorPages());
+    }
+
     public void testSetsMimeTypes() {
         properties.put(PropertiesFilterConfigurator.MIME_TYPES_PARAM, "text/foo, application/x-stuff  \n foo/bar");
         propertiesConfigurator.configureCommon(builder);

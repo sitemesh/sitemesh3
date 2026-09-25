@@ -102,9 +102,9 @@ public class PropertiesFilterConfigurator extends PropertiesConfigurator {
         // Filter specific configuration...
         
         // Error page inclusion
-        String includeErrorPagesString = properties.getString(INCLUDE_ERROR_PAGES_PARAM);
-        if ("true".equals(includeErrorPagesString) || "1".equals(includeErrorPagesString)) {
-            builder.setIncludeErrorPages(true);
+        Boolean includeErrorPages = properties.getBoolean(INCLUDE_ERROR_PAGES_PARAM);
+        if (includeErrorPages != null) {
+            builder.setIncludeErrorPages(includeErrorPages);
         }
 
         // Decorator dispatch mode: include | forward | detect
