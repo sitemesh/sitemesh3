@@ -56,5 +56,41 @@
 
         </sitemesh>
     </target>
+    <!-- An include that doesn't start with a wildcard must still pick up the decorator. -->
+    <target name="sitemeshfilesetWithDecoratorNamedInclude">
+
+        <sitemesh destdir="out/sitemeshfilesetWithDecoratorNamedInclude">
+
+            <sitemeshfileset dir="in/sitemeshfilesetWithDecorator"
+                             decorator="decorators/decorator.html">
+                <include name="page1.html"/>
+            </sitemeshfileset>
+
+        </sitemesh>
+    </target>
+
+    <target name="sitemeshfilesetWithDecoratorNoInclude">
+
+        <sitemesh destdir="out/sitemeshfilesetWithDecoratorNoInclude">
+
+            <sitemeshfileset dir="in/sitemeshfilesetWithDecorator"
+                             decorator="decorators/decorator.html">
+                <exclude name="decorators/*"/>
+            </sitemeshfileset>
+
+        </sitemesh>
+    </target>
+
+    <target name="sitemeshfilesetWithoutDecoratorOrConfig">
+
+        <sitemesh destdir="out/sitemeshfilesetWithoutDecoratorOrConfig">
+
+            <sitemeshfileset dir="in/sitemeshfileset">
+                <include name="**/*.html"/>
+                <exclude name="decorators/*"/>
+            </sitemeshfileset>
+
+        </sitemesh>
+    </target>
 
 </project>

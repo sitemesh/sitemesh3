@@ -128,32 +128,23 @@ public class SiteMeshTask extends MatchingTask {
      * @return An instance of SiteMeshOffline.
      */
     protected SiteMeshOffline createSiteMeshOffline(FileSet fileset) {
-        File destintationDir = destDir;
+        File destintationDir = hasDestdir(fileset) ? ((SiteMeshFileSet) fileset).getDestdir() : destDir;
 
         SiteMeshOfflineBuilder builder = new SiteMeshOfflineBuilder();
-        if (isSiteMeshFileSet(fileset)) {
-            SiteMeshFileSet sfs = (SiteMeshFileSet) fileset;
-            if (hasDestdir(fileset)) {
-                destintationDir = sfs.getDestdir();
-            }
-
-            if (sfs.hasDecorator()) {
-                String[] includes = fileset.mergeIncludes(getProject());
-                for (String include : includes) {
-                    builder.addDecoratorPath(include, sfs.getDecorator());
-                }
-            }
-        }
-
         builder.setSourceDirectory(fileset.getDir())
                .setDestinationDirectory(destintationDir);
 
-        if (isSiteMeshFileSetWithoutDecorator(fileset) || config != null) {
+        if (config != null) {
             new XmlOfflineConfigurator(new ObjectFactory.Default(), parseSiteMeshXmlConfig(config))
                     .configureOffline(builder);
         }
 
-
+        if (isSiteMeshFileSet(fileset) && ((SiteMeshFileSet) fileset).hasDecorator()) {
+            // The fileset's includes and excludes already select the files processed here, so its
+            // decorator applies to all of them. (Mapping the include patterns themselves failed,
+            // as they lack the leading '/' of the paths they are matched against.)
+            builder.addDecoratorPath("/*", ((SiteMeshFileSet) fileset).getDecorator());
+        }
 
         applyCustomConfiguration(builder);
 

@@ -614,8 +614,8 @@ The SiteMeshTask defines the following attributes:
 
 The SiteMeshTask can also accept the following child nodes:
 
-1. fileset - The standard Ant FileSet that will use the srcdir of the sitemesh node.
-2. sitemeshfileset - A custom SiteMesh FileSet that supports an additional attribute called "decorator" which can be used to associate a decorator with the given FileSet.
+1. include / exclude - Standard Ant patterns applied to srcdir, as an alternative to the includes and excludes attributes.
+2. sitemeshfileset - A custom SiteMesh FileSet that supports an additional attribute called "decorator" which applies that decorator to every file the FileSet selects, and an optional "destdir".
 
 #### Getting started!
 
@@ -669,7 +669,7 @@ In this example, we're going to process all of the files stored in "project/src"
     <sitemesh srcdir="project/src"
               config="project/sitemesh.xml"
               destdir="project/build"
-              includes="*/.html"
+              includes="**/*.html"
               excludes="decorators/*"/>
   </target>
 
@@ -692,12 +692,12 @@ In the below example, multiple source folders are used by provided a sitemeshfil
               config="config/sitemesh.xml">
 
       <sitemeshfileset dir="documentation">
-        <include name="*/.html"/>
+        <include name="**/*.html"/>
         <exclude name="private/*"/>
       </sitemeshfileset>
 
       <sitemeshfileset dir="presentation">
-        <include name="*/.html"/>
+        <include name="**/*.html"/>
       </sitemeshfileset>
 
     </sitemesh>
