@@ -84,9 +84,15 @@ public class XmlFilterConfigurator extends XmlConfigurator {
 
         // Excludes
         for (Xml mapping : xml.children("mapping")) {
-            String path = mapping.child("path").text(mapping.attribute("path", "/*"));
             if (isTrue(mapping.attribute("exclude")) || !mapping.children("exclude").isEmpty()) {
-                builder.addExcludedPath(path);
+                List<Xml> paths = mapping.children("path");
+                if (!paths.isEmpty()) {
+                    for (Xml path : paths) {
+                        builder.addExcludedPath(path.text());
+                    }
+                } else {
+                    builder.addExcludedPath(mapping.attribute("path", "/*"));
+                }
             }
         }
 

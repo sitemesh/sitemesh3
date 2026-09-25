@@ -427,7 +427,10 @@ Things you can do:
 * Map a default decorator to all paths
 * Map a decorator to a specific path
 * Map multiple decorators to a path - each decorator is applied to the result of the previous
-Exclude a path from being decorated
+* Map a decorator to several paths at once
+* Exclude a path from being decorated
+
+Note: a pattern such as `/admin/*` matches everything below `/admin/` but not `/admin` itself. To cover both, map both paths.
 
 #### XML
 ```xml
@@ -446,6 +449,14 @@ Exclude a path from being decorated
     <decorator>article.html</decorator>
     <decorator>rwo-page-layout.html</decorator>
     <decorator>common.html</decorator>
+  </mapping>
+
+  <!-- A mapping can also list several paths, e.g. a section and its index page.
+       This works for exclude="true" mappings too. -->
+  <mapping>
+    <path>/reports</path>
+    <path>/reports/*</path>
+    <decorator>reports.html</decorator>
   </mapping>
 
   <!-- Exclude path from decoration. -->
@@ -470,6 +481,9 @@ public class MySiteMeshFilter extends ConfigurableSiteMeshFilter {
            .addDecoratorPaths("/articles/*", "article.html",
                                              "two-page-layout.html", 
                                              "common.html")
+           // Map a decorator to a section and its index page.
+           .addDecoratorPath("/reports", "reports.html")
+           .addDecoratorPath("/reports/*", "reports.html")
            // Exclude path from decoration.
            .addExcludedPath("/javadoc/*")
            .addExcludedPath("/brochures/*");
