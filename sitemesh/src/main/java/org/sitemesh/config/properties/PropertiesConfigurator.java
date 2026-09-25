@@ -16,6 +16,7 @@
 
 package org.sitemesh.config.properties;
 
+import org.sitemesh.DecoratorSelector;
 import org.sitemesh.builder.BaseSiteMeshBuilder;
 import org.sitemesh.content.tagrules.TagRuleBundle;
 import org.sitemesh.content.ContentProcessor;
@@ -34,6 +35,8 @@ public class PropertiesConfigurator {
     public static final String CONTENT_PROCESSOR_PARAM = "contentProcessor";
     /** Property name for the mappings of path patterns to decorators. */
     public static final String DECORATOR_MAPPINGS_PARAM = "decoratorMappings";
+    /** Property name for the custom {@link DecoratorSelector} class name. */
+    public static final String DECORATOR_SELECTOR = "decoratorSelector";
 
     private final ObjectFactory objectFactory;
     private final PropertiesParser properties;
@@ -53,7 +56,15 @@ public class PropertiesConfigurator {
      *
      * @param builder builder to configure
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void configureCommon(BaseSiteMeshBuilder<?, ?, ?> builder) {
+
+        // Custom DecoratorSelector
+        String decoratorSelector = properties.getString(DECORATOR_SELECTOR);
+        if (decoratorSelector != null) {
+            ((BaseSiteMeshBuilder) builder).setCustomDecoratorSelector(
+                    (DecoratorSelector) objectFactory.create(decoratorSelector));
+        }
 
         // TagRuleBundles
         String[] ruleSetNames = properties.getStringArray(TAG_RULE_BUNDLES_PARAM);

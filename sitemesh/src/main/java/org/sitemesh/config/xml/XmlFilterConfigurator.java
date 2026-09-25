@@ -16,7 +16,6 @@
 
 package org.sitemesh.config.xml;
 
-import org.sitemesh.DecoratorSelector;
 import org.sitemesh.builder.BaseSiteMeshFilterBuilder;
 import org.sitemesh.config.ObjectFactory;
 import org.sitemesh.webapp.DispatchMode;
@@ -28,9 +27,8 @@ import java.util.Locale;
 
 /**
  * Configures a SiteMeshFilterBuilder from an XML config file, adding the filter
- * specific settings (decorator selector, decorator prefix, error page inclusion,
- * dispatch mode, excludes and mime-types) to the common configuration applied
- * by {@link XmlConfigurator}.
+ * specific settings (error page inclusion, dispatch mode, excludes and mime-types)
+ * to the common configuration applied by {@link XmlConfigurator}.
  *
  * @author Joe Walnes
  */
@@ -56,20 +54,10 @@ public class XmlFilterConfigurator extends XmlConfigurator {
             "rawtypes", "unchecked"
     }) public void configureFilter(BaseSiteMeshFilterBuilder builder) {
 
-        String customDecoratorSelector = xml.child("decorator-selector").text();
-        if (customDecoratorSelector != null) {
-            builder.setCustomDecoratorSelector((DecoratorSelector) getObjectFactory().create(customDecoratorSelector));
-        }
-
         // Common configuration
         configureCommon(builder);
 
         // Filter specific configuration...
-
-        String decoratorPrefix = xml.child("decorator-prefix").text();
-        if (decoratorPrefix != null) {
-            builder.setDecoratorPrefix(decoratorPrefix.trim());
-        }
 
         // Decorator error pages inclusion
         String includeErrorPagesString = xml.child("include-error-pages").text();

@@ -16,7 +16,6 @@
 
 package org.sitemesh.config.properties;
 
-import org.sitemesh.DecoratorSelector;
 import org.sitemesh.builder.BaseSiteMeshFilterBuilder;
 import org.sitemesh.config.ObjectFactory;
 import org.sitemesh.webapp.DispatchMode;
@@ -78,8 +77,6 @@ public class PropertiesFilterConfigurator extends PropertiesConfigurator {
     public static final String INCLUDE_ERROR_PAGES_PARAM = "includeErrorPages";
     /** Property name for the decorator dispatch mode (include, forward or detect). */
     public static final String DISPATCH_MODE_PARAM = "dispatchMode";
-    /** Property name for the custom {@link DecoratorSelector} class name. */
-    public static final String DECORATOR_SELECTOR = "decoratorSelector";
 
     private final PropertiesParser properties;
 
@@ -114,12 +111,6 @@ public class PropertiesFilterConfigurator extends PropertiesConfigurator {
         String dispatchModeString = properties.getString(DISPATCH_MODE_PARAM);
         if (dispatchModeString != null) {
             builder.setDispatchMode(DispatchMode.fromString(dispatchModeString, DispatchMode.DETECT));
-        }
-
-        // decorator selector
-        String decoratorSelector = properties.getString(DECORATOR_SELECTOR);
-        if (decoratorSelector != null) {
-            builder.setCustomDecoratorSelector((DecoratorSelector) getObjectFactory().create(decoratorSelector));
         }
 
         // Excludes

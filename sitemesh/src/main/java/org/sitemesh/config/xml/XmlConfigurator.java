@@ -16,6 +16,7 @@
 
 package org.sitemesh.config.xml;
 
+import org.sitemesh.DecoratorSelector;
 import org.sitemesh.config.ObjectFactory;
 import org.sitemesh.builder.BaseSiteMeshBuilder;
 import org.sitemesh.content.tagrules.TagRuleBundle;
@@ -27,8 +28,8 @@ import java.util.ArrayList;
 
 /**
  * Configures a SiteMesh builder from an XML config file (typically <code>/WEB-INF/sitemesh3.xml</code>),
- * applying the settings common to all builder types (tag rule bundles, content processor
- * and decorator mappings).
+ * applying the settings common to all builder types (tag rule bundles, content processor,
+ * decorator selector, decorator mappings and decorator prefix).
  *
  * @author Joe Walnes
  */
@@ -48,11 +49,20 @@ public class XmlConfigurator {
 
     /**
      * Apply the XML configuration common to all builder types (tag rule bundles,
-     * content processor and decorator mappings) to the builder.
+     * content processor, decorator selector, decorator mappings and decorator prefix)
+     * to the builder.
      *
      * @param builder builder to configure
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void configureCommon(BaseSiteMeshBuilder<?, ?, ?> builder) {
+
+        // Custom DecoratorSelector
+        String customDecoratorSelector = xml.child("decorator-selector").text();
+        if (customDecoratorSelector != null) {
+            ((BaseSiteMeshBuilder) builder).setCustomDecoratorSelector(
+                    (DecoratorSelector) objectFactory.create(customDecoratorSelector));
+        }
 
         // TagRuleBundles
         // TODO: Support clearTagRuleBundles()
@@ -80,6 +90,11 @@ public class XmlConfigurator {
             } else {
                 addDecoratorPaths(builder, mapping, mapping.attribute("path", "/*"));
             }
+        }
+
+        String decoratorPrefix = xml.child("decorator-prefix").text();
+        if (decoratorPrefix != null) {
+            builder.setDecoratorPrefix(decoratorPrefix);
         }
     }
 

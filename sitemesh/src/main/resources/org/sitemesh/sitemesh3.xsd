@@ -18,14 +18,15 @@
             <xsd:choice minOccurs="0" maxOccurs="unbounded">
                 <xsd:element name="decorator-selector" type="xsd:string">
                     <xsd:annotation>
-                        <xsd:documentation>Class name of the DecoratorSelector to use (filter only).
+                        <xsd:documentation>Class name of the DecoratorSelector to use.
                             Default: org.sitemesh.config.MetaTagBasedDecoratorSelector</xsd:documentation>
                     </xsd:annotation>
                 </xsd:element>
                 <xsd:element name="decorator-prefix" type="xsd:string">
                     <xsd:annotation>
-                        <xsd:documentation>Prefix prepended to decorator paths (filter only).
-                            Default: /WEB-INF/decorators/, but none when decorator-selector is set.</xsd:documentation>
+                        <xsd:documentation>Prefix prepended to decorator paths.
+                            Default: /WEB-INF/decorators/ in a web application, but none offline or
+                            when decorator-selector is set.</xsd:documentation>
                     </xsd:annotation>
                 </xsd:element>
                 <xsd:element name="include-error-pages" type="xsd:boolean">

@@ -19,10 +19,14 @@ package org.sitemesh.config.properties;
 import org.sitemesh.builder.BaseSiteMeshOfflineBuilder;
 import org.sitemesh.builder.SiteMeshOfflineBuilder;
 import org.sitemesh.config.ObjectFactory;
+import org.sitemesh.offline.directory.Directory;
 import org.sitemesh.offline.directory.FileSystemDirectory;
+import org.sitemesh.offline.directory.InMemoryDirectory;
 
 import java.util.Map;
 import java.io.File;
+
+import static java.nio.CharBuffer.wrap;
 
 public class PropertiesOfflineConfiguratorTest extends PropertiesConfiguratorTest {
 
@@ -49,6 +53,22 @@ public class PropertiesOfflineConfiguratorTest extends PropertiesConfiguratorTes
 
         assertEquals(new FileSystemDirectory(new File("some/src/dir")), builder.getSourceDirectory());
         assertEquals(new FileSystemDirectory(new File("some/dest/dir")), builder.getDestinationDirectory());
+    }
+
+    public void testAppliesDecoratorSelector() throws Exception {
+        // The default MetaTagBasedDecoratorSelector would pick other.html from the meta tag.
+        Directory sourceDir = new InMemoryDirectory();
+        Directory destinationDir = new InMemoryDirectory();
+        sourceDir.save("/main.html", wrap("Main: <sitemesh:write property='title'/>"));
+        sourceDir.save("/other.html", wrap("Other: <sitemesh:write property='title'/>"));
+        sourceDir.save("/page.html", wrap("<title>Hello</title><meta name='decorator' content='/other.html'>"));
+        properties.put(PropertiesConfigurator.DECORATOR_SELECTOR, "org.sitemesh.config.PathBasedDecoratorSelector");
+        properties.put(PropertiesConfigurator.DECORATOR_MAPPINGS_PARAM, "/*=/main.html");
+
+        propertiesConfigurator.configureOffline(builder);
+        builder.setSourceDirectory(sourceDir).setDestinationDirectory(destinationDir).create().process("/page.html");
+
+        assertEquals("Main: Hello", destinationDir.load("/page.html").toString());
     }
 
     public void testUsesAlternateSourceAndDestDirParamNames() throws Exception {
