@@ -100,8 +100,9 @@ public class SiteMeshView implements View {
      * Equivalent to the full constructor with
      * {@code includeErrorPages = true}: renders that set an error status
      * (&gt;= 400) — e.g. Spring Boot's {@code error} view — are still
-     * buffered and decorated, matching the filter integration's
-     * {@code include-error-pages} default.
+     * buffered and decorated, matching the Spring Boot starter's
+     * {@code sitemesh.includeErrorPages} default. (The servlet filter's
+     * {@code include-error-pages} defaults to {@code false}.)
      *
      * @param innerView the view whose output is buffered and decorated
      * @param contentProcessor parses the buffered output into a {@link Content}

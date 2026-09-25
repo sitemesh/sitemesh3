@@ -352,9 +352,10 @@ public class SiteMeshViewResolver implements ViewResolver, Ordered, ServletConte
     /**
      * Whether views this resolver wraps still buffer and decorate renders
      * that set an error status (&gt;= 400) — e.g. Spring Boot's
-     * {@code error} view. Default {@code true}, matching the filter
-     * integration's {@code include-error-pages} default; the Spring Boot
-     * starter sets it from {@code sitemesh.includeErrorPages}. Set
+     * {@code error} view. Default {@code true}, matching the Spring Boot
+     * starter's {@code sitemesh.includeErrorPages} default, from which the
+     * starter sets it. (The servlet filter's {@code include-error-pages}
+     * defaults to {@code false}.) Set
      * {@code false} to send error responses out undecorated.
      *
      * @param includeErrorPages {@code true} to decorate error responses
