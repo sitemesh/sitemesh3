@@ -37,6 +37,8 @@ public class PropertiesConfigurator {
     public static final String DECORATOR_MAPPINGS_PARAM = "decoratorMappings";
     /** Property name for the custom {@link DecoratorSelector} class name. */
     public static final String DECORATOR_SELECTOR = "decoratorSelector";
+    /** Property name for the prefix prepended to decorator paths. */
+    public static final String DECORATOR_PREFIX_PARAM = "decoratorPrefix";
 
     private final ObjectFactory objectFactory;
     private final PropertiesParser properties;
@@ -86,6 +88,11 @@ public class PropertiesConfigurator {
             for (Map.Entry<String, String[]> entry : decoratorsMappings.entrySet()) {
                 builder.addDecoratorPaths(entry.getKey(), entry.getValue());
             }
+        }
+
+        String decoratorPrefix = properties.getString(DECORATOR_PREFIX_PARAM);
+        if (decoratorPrefix != null) {
+            builder.setDecoratorPrefix(decoratorPrefix);
         }
 
     }

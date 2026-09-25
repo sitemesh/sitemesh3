@@ -35,6 +35,9 @@ import java.util.Map;
  * are required, they should be delimited with a pipe | char (and no whitespace)
  * e.g. <code>/admin/*=/decorators/admin.html, *.secret=/decorators/secret.html|/decorators/common.html</code></p>
  *
+ * <p><b><code>decoratorPrefix</code></b> (optional): The prefix prepended to decorator names.
+ * Defaults to none.</p>
+ *
  * <p><b><code>tagRuleBundles</code></b> (optional): The <i>names</i> of any
  * additional {@link org.sitemesh.content.tagrules.TagRuleBundle}s to install, separated by whitespace or commas.
  * These will be added to the default bundles (as set up in

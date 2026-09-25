@@ -31,6 +31,9 @@ import java.util.Map;
  * e.g. <code>/admin/*=admin.html, *.secret=secret.html|common.html</code>. Decorator names are
  * resolved against the <code>/WEB-INF/decorators/</code> prefix.</p>
  *
+ * <p><b><code>decoratorPrefix</code></b> (optional): The prefix prepended to decorator names.
+ * Defaults to <code>/WEB-INF/decorators/</code>.</p>
+ *
  * <p><b><code>mimeTypes</code></b> (optional): A list of mime-types, separated by whitespace
  * or commas, that should attempt to be decorated. Defaults to <code>text/html</code>.</p>
  *

@@ -79,6 +79,21 @@ public class PropertiesFilterConfiguratorTest extends PropertiesConfiguratorTest
         assertFalse(builder.isIncludeErrorPages());
     }
 
+    public void testSetsDecoratorPrefix() throws Exception {
+        properties.put(PropertiesConfigurator.DECORATOR_MAPPINGS_PARAM, "/*=my-decorator");
+        properties.put(PropertiesConfigurator.DECORATOR_PREFIX_PARAM, "/decorators/");
+        propertiesConfigurator.configureFilter(builder);
+
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addFilter("/*", builder.create())
+                .addStaticContent("/decorators/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/content", "text/html", "<title>Hello world</title>")
+                .create();
+
+        webEnvironment.doGet("/content");
+        assertEquals("Decorated: Hello world", webEnvironment.getBody());
+    }
+
     public void testSetsMimeTypes() {
         properties.put(PropertiesFilterConfigurator.MIME_TYPES_PARAM, "text/foo, application/x-stuff  \n foo/bar");
         propertiesConfigurator.configureCommon(builder);
