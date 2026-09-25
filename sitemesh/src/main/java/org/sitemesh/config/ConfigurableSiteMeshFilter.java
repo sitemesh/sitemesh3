@@ -365,10 +365,12 @@ public class ConfigurableSiteMeshFilter implements Filter {
             if (xmlConfigFile == null) {
                 xmlConfigFile = new File(configFilePath);
             }
+            // Record the timestamp even when the file is missing (0), so that a deleted file
+            // triggers one reload rather than a reload on every request.
+            timestampOfXmlFileAtLastLoad = xmlConfigFile.lastModified();
 
             if (xmlConfigFile.canRead()) {
                 try {
-                    timestampOfXmlFileAtLastLoad = xmlConfigFile.lastModified();
                     logger.config("Loading SiteMesh 3 config file: " + xmlConfigFile.getAbsolutePath());
                     Document document = documentBuilder.parse(xmlConfigFile);
                     return document.getDocumentElement();
