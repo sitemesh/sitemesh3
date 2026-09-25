@@ -20,7 +20,12 @@ import jakarta.servlet.ServletContext;
 import junit.framework.TestCase;
 
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * Unit tests for {@link DispatchMode}, in particular that {@link
@@ -41,6 +46,34 @@ public class DispatchModeTest extends TestCase {
         assertEquals(DispatchMode.INCLUDE, DispatchMode.fromString(" Include ", DispatchMode.DETECT));
         assertEquals(DispatchMode.FORWARD, DispatchMode.fromString("FORWARD", DispatchMode.DETECT));
         assertEquals(DispatchMode.DETECT, DispatchMode.fromString(null, DispatchMode.DETECT));
+    }
+
+    public void testFromStringWarnsAboutUnknownValues() {
+        List<String> warnings = new ArrayList<>();
+        Handler handler = new Handler() {
+            @Override
+            public void publish(LogRecord record) {
+                warnings.add(record.getMessage());
+            }
+
+            @Override
+            public void flush() {
+            }
+
+            @Override
+            public void close() {
+            }
+        };
+        Logger logger = Logger.getLogger(DispatchMode.class.getName());
+        logger.addHandler(handler);
+        try {
+            assertEquals(DispatchMode.DETECT, DispatchMode.fromString("foward", DispatchMode.DETECT));
+            assertEquals(DispatchMode.DETECT, DispatchMode.fromString("  ", DispatchMode.DETECT));
+            assertEquals(1, warnings.size());
+            assertTrue(warnings.get(0), warnings.get(0).contains("'foward'"));
+        } finally {
+            logger.removeHandler(handler);
+        }
     }
 
     public void testFromStringIndependentOfDefaultLocale() {

@@ -19,6 +19,7 @@ package org.sitemesh.webapp;
 import jakarta.servlet.ServletContext;
 
 import java.util.Locale;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,24 +67,29 @@ public enum DispatchMode {
      */
     private static final Pattern TOMCAT_MAJOR_VERSION = Pattern.compile("Apache Tomcat/(\\d+)");
 
+    private static final Logger logger = Logger.getLogger(DispatchMode.class.getName());
+
     /**
      * Parse {@code include}/{@code forward}/{@code detect} (case-insensitive,
      * surrounding whitespace ignored) into a {@link DispatchMode}, returning
-     * {@code fallback} for {@code null}, blank, or unrecognised values. Shared
-     * by every configuration entry point (XML, properties, Spring) so the
-     * lenient-parsing behaviour stays consistent.
+     * {@code fallback} for {@code null}, blank, or unrecognised values, and
+     * logging a warning for an unrecognised one. Used by the XML and properties
+     * configuration; the Spring Boot starter binds the enum itself and fails
+     * startup on an unrecognised value.
      *
      * @param value The configured value to parse (may be null).
      * @param fallback The mode to return when the value cannot be parsed.
      * @return The parsed mode, or {@code fallback}.
      */
     public static DispatchMode fromString(String value, DispatchMode fallback) {
-        if (value == null) {
+        if (value == null || value.trim().isEmpty()) {
             return fallback;
         }
         try {
             return valueOf(value.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
+            logger.warning("Unknown dispatch mode '" + value.trim() + "' (expected include, forward or detect);"
+                    + " using " + fallback + ".");
             return fallback;
         }
     }
