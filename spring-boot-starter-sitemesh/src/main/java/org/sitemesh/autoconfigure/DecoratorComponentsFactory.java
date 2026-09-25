@@ -47,9 +47,6 @@ import org.sitemesh.content.tagrules.html.Sm2TagRuleBundle;
  *     {@link #createCustomTagRuleBundles()} into
  *     {@link org.sitemesh.builder.SiteMeshFilterBuilder}, whose built-in
  *     defaults do <em>not</em> include {@code Sm2TagRuleBundle}.</li>
- *     <li>{@link #buildDecoratorSelector(boolean)} can either skip mapping
- *     entries missing a {@code path}/{@code decorator} key (view-resolver
- *     integration) or apply them verbatim (filter integration).</li>
  *     <li>{@code sitemesh.decorator.exclusions} is a filter-only concept and
  *     stays with the filter builder.</li>
  * </ul>
@@ -73,14 +70,11 @@ class DecoratorComponentsFactory {
      *
      * <p>The {@code default} and per-mapping {@code decorator} values accept a
      * comma-separated list of decorators, applied as a chain — the same syntax
-     * the {@code <meta name="decorator">} tag supports.</p>
-     *
-     * @param skipIncompleteMappings whether mapping entries missing a
-     *                               {@code path} or {@code decorator} key are
-     *                               silently skipped instead of applied as-is
+     * the {@code <meta name="decorator">} tag supports. Mapping entries missing
+     * a {@code path} or {@code decorator} key are skipped with a warning.</p>
      */
     @SuppressWarnings("unchecked")
-    <C extends SiteMeshContext> MetaTagBasedDecoratorSelector<C> buildDecoratorSelector(boolean skipIncompleteMappings) {
+    <C extends SiteMeshContext> MetaTagBasedDecoratorSelector<C> buildDecoratorSelector() {
         MetaTagBasedDecoratorSelector<C> selector = decorator.getAttribute() != null
                 ? new RequestAttributeDecoratorSelector<C>().setDecoratorAttribute(decorator.getAttribute())
                 : new MetaTagBasedDecoratorSelector<C>();
@@ -92,16 +86,12 @@ class DecoratorComponentsFactory {
             for (Map<String, String> mapping : decorator.getMappings()) {
                 String path = mapping.get("path");
                 String decoratorPaths = mapping.get("decorator");
-                if (skipIncompleteMappings && (path == null || decoratorPaths == null)) {
+                if (path == null || decoratorPaths == null) {
                     log.warn("Ignoring incomplete sitemesh.decorator.mappings entry " + mapping
                             + " - each mapping needs both a 'path' and a 'decorator' key.");
                     continue;
                 }
-                if (decoratorPaths == null) {
-                    selector.put(path, (String) null);
-                } else {
-                    selector.put(path, DecoratorChains.split(decoratorPaths));
-                }
+                selector.put(path, DecoratorChains.split(decoratorPaths));
             }
         }
         return selector;

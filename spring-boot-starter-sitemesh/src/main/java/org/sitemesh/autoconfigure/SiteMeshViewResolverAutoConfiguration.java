@@ -132,7 +132,7 @@ public class SiteMeshViewResolverAutoConfiguration {
     @ConditionalOnMissingBean(name = "decoratorSelector")
     public DecoratorSelector<SiteMeshContext> decoratorSelector() {
         return new DecoratorComponentsFactory(properties.getDecorator())
-                .<SiteMeshContext>buildDecoratorSelector(true);
+                .<SiteMeshContext>buildDecoratorSelector();
     }
 
     /**

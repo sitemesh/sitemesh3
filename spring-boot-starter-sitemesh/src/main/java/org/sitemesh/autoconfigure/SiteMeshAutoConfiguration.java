@@ -119,7 +119,7 @@ public class SiteMeshAutoConfiguration {
                              boolean alwaysApply, DispatchMode dispatchMode) {
         DecoratorComponentsFactory factory = new DecoratorComponentsFactory(decorator);
         SiteMeshFilterBuilder builder = new SiteMeshFilterBuilder();
-        MetaTagBasedDecoratorSelector<WebAppContext> decoratorSelector = factory.buildDecoratorSelector(false);
+        MetaTagBasedDecoratorSelector<WebAppContext> decoratorSelector = factory.buildDecoratorSelector();
         builder.setCustomDecoratorSelector(decoratorSelector);
         if (decorator.getExclusions() != null) {
             for (String exclusion : decorator.getExclusions()) {
