@@ -23,7 +23,13 @@ import org.sitemesh.webapp.WebEnvironment;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 public class ConfigurableSiteMeshFilterTest extends TestCase {
 
@@ -70,5 +76,45 @@ public class ConfigurableSiteMeshFilterTest extends TestCase {
         } finally {
             config.delete();
         }
+    }
+
+    public void testWarnsOnlyWhenANamedConfigFileIsMissing() throws Exception {
+        assertEquals(1, warningsWhenLoading("/WEB-INF/missing-sitemesh3.xml").size());
+        assertEquals(0, warningsWhenLoading(ConfigurableSiteMeshFilter.CONFIG_FILE_DEFAULT).size());
+    }
+
+    private static List<String> warningsWhenLoading(final String configFile) throws Exception {
+        final List<String> warnings = new ArrayList<String>();
+        Handler handler = new Handler() {
+            @Override
+            public void publish(LogRecord record) {
+                if (record.getLevel().intValue() >= Level.WARNING.intValue()) {
+                    warnings.add(record.getMessage());
+                }
+            }
+
+            @Override
+            public void flush() {
+            }
+
+            @Override
+            public void close() {
+            }
+        };
+        Logger logger = Logger.getLogger(ConfigurableSiteMeshFilter.class.getName());
+        logger.addHandler(handler);
+        try {
+            new WebEnvironment.Builder()
+                    .addFilter("/*", new ConfigurableSiteMeshFilter() {
+                        @Override
+                        protected String getConfigFileName() {
+                            return configFile;
+                        }
+                    })
+                    .create();
+        } finally {
+            logger.removeHandler(handler);
+        }
+        return warnings;
     }
 }

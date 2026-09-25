@@ -380,8 +380,13 @@ public class ConfigurableSiteMeshFilter implements Filter {
             } else {
                 InputStream stream = loadStream(servletContext, configFilePath);
                 if (stream == null) {
-                    logger.config("No config file present - using defaults and init-params. Tried: "
-                            + xmlConfigFile.getAbsolutePath() + " and ServletContext:" + configFilePath);
+                    String message = "No config file present - using defaults and init-params. Tried: "
+                            + xmlConfigFile.getAbsolutePath() + " and ServletContext:" + configFilePath;
+                    if (CONFIG_FILE_DEFAULT.equals(configFilePath)) {
+                        logger.config(message); // optional: SiteMesh works without one
+                    } else {
+                        logger.warning(message); // a config file was named, so it was expected
+                    }
                     return null;
                 }
                 try {
