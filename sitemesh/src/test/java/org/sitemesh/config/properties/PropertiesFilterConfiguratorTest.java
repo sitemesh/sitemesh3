@@ -19,6 +19,7 @@ package org.sitemesh.config.properties;
 import org.sitemesh.builder.BaseSiteMeshFilterBuilder;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.ObjectFactory;
+import org.sitemesh.webapp.WebEnvironment;
 import org.sitemesh.webapp.contentfilter.Selector;
 
 import java.util.Map;
@@ -44,6 +45,22 @@ public class PropertiesFilterConfiguratorTest extends PropertiesConfiguratorTest
     @Override
     protected PropertiesFilterConfigurator createConfigurator(ObjectFactory objectFactory, Map<String, String> properties) {
         return new PropertiesFilterConfigurator(objectFactory, properties);
+    }
+
+    public void testDecoratorSelectorKeepsDecoratorMappings() throws Exception {
+        properties.put(PropertiesConfigurator.DECORATOR_MAPPINGS_PARAM, "/*=/WEB-INF/decorators/my-decorator");
+        properties.put(PropertiesFilterConfigurator.DECORATOR_SELECTOR,
+                "org.sitemesh.config.RequestAttributeDecoratorSelector");
+        propertiesConfigurator.configureFilter(builder);
+
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addFilter("/*", builder.create())
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/content", "text/html", "<title>Hello world</title>")
+                .create();
+
+        webEnvironment.doGet("/content");
+        assertEquals("Decorated: Hello world", webEnvironment.getBody());
     }
 
     public void testSetsMimeTypes() {

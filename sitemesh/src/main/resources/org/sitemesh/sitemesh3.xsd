@@ -25,7 +25,7 @@
                 <xsd:element name="decorator-prefix" type="xsd:string">
                     <xsd:annotation>
                         <xsd:documentation>Prefix prepended to decorator paths (filter only).
-                            Default: /WEB-INF/decorators/</xsd:documentation>
+                            Default: /WEB-INF/decorators/, but none when decorator-selector is set.</xsd:documentation>
                     </xsd:annotation>
                 </xsd:element>
                 <xsd:element name="include-error-pages" type="xsd:boolean">

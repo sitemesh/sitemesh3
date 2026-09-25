@@ -74,6 +74,14 @@ public class PathMapper<T> {
     }
 
     /**
+     * @param pattern path pattern, exactly as passed to {@link #put(String, Object)}
+     * @return <code>true</code> if a value is mapped to this exact pattern
+     */
+    public boolean containsPattern(String pattern) {
+        return mappings.containsKey(pattern);
+    }
+
+    /**
      * Retrieve appropriate key by matching patterns with supplied path.
      * @param path path to match (null is treated as "/")
      * @return value associated with the best matching pattern, or null if none match

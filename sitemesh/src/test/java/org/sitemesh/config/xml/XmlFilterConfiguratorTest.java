@@ -101,6 +101,22 @@ public class XmlFilterConfiguratorTest extends TestCase {
         assertEquals("Decorated: Hello world", webEnvironment.getBody());
     }
 
+    public void testDecoratorSelectorWithoutPrefixTakesFullDecoratorPaths() throws Exception {
+        // As it always has, a <decorator-selector> without <decorator-prefix> gets no prefix.
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addFilter("/*", createFilter(
+                        "<sitemesh>" +
+                        "  <decorator-selector>org.sitemesh.config.MetaTagBasedDecoratorSelector</decorator-selector>" +
+                        "  <mapping path='/*' decorator='/WEB-INF/decorators/my-decorator'/>" +
+                        "</sitemesh>"))
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", DECORATOR)
+                .addStaticContent("/other", "text/html", CONTENT)
+                .create();
+
+        webEnvironment.doGet("/other");
+        assertEquals("Decorated: Hello world", webEnvironment.getBody());
+    }
+
     public void testReadsConfigThatDeclaresSchemaNamespace() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", createFilter(

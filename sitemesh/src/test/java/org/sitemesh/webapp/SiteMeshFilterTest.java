@@ -18,6 +18,8 @@ package org.sitemesh.webapp;
 
 import org.sitemesh.SiteMeshContext;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
+import org.sitemesh.config.MetaTagBasedDecoratorSelector;
+import org.sitemesh.config.RequestAttributeDecoratorSelector;
 import org.sitemesh.content.ContentProperty;
 import org.sitemesh.content.tagrules.TagRuleBundle;
 import org.sitemesh.content.tagrules.html.ExportTagToContentRule;
@@ -33,6 +35,38 @@ public class SiteMeshFilterTest extends TestCase {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilterBuilder()
                         .addDecoratorPath("/*", "my-decorator")
+                        .create())
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/content", "text/html", "<title>Hello world</title>")
+                .create();
+
+        webEnvironment.doGet("/content");
+        assertEquals("Decorated: Hello world", webEnvironment.getBody());
+    }
+
+    public void testReplacementPathBasedSelectorKeepsMappingsAndPrefix() throws Exception {
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addFilter("/*", new SiteMeshFilterBuilder()
+                        .setDecoratorPrefix("/WEB-INF/decorators/")
+                        .addDecoratorPath("/*", "my-decorator")
+                        .setCustomDecoratorSelector(new RequestAttributeDecoratorSelector<WebAppContext>())
+                        .create())
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/content", "text/html", "<title>Hello world</title>")
+                .create();
+
+        webEnvironment.doGet("/content");
+        assertEquals("Decorated: Hello world", webEnvironment.getBody());
+    }
+
+    public void testReplacementPathBasedSelectorKeepsItsOwnMappingsAndNoPrefix() throws Exception {
+        // A replacement selector has never received the default prefix, so it takes full paths.
+        MetaTagBasedDecoratorSelector<WebAppContext> selector = new MetaTagBasedDecoratorSelector<WebAppContext>();
+        selector.put("/*", "/WEB-INF/decorators/my-decorator");
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addFilter("/*", new SiteMeshFilterBuilder()
+                        .addDecoratorPath("/*", "/other-decorator")
+                        .setCustomDecoratorSelector(selector)
                         .create())
                 .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
                 .addStaticContent("/content", "text/html", "<title>Hello world</title>")

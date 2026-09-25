@@ -27,7 +27,9 @@ import org.sitemesh.config.MetaTagBasedDecoratorSelector;
 import org.sitemesh.config.PathBasedDecoratorSelector;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Common functionality for {@link BaseSiteMeshFilterBuilder} and
@@ -52,12 +54,18 @@ public abstract class BaseSiteMeshBuilder
     private PathBasedDecoratorSelector<CONTEXT> pathBasedDecoratorSelector
             = new MetaTagBasedDecoratorSelector<CONTEXT>();
     private DecoratorSelector<CONTEXT> customDecoratorSelector;
+    // Kept so they can be re-applied if the path based selector is replaced. Only a prefix
+    // set after setupDefaults() is kept: a replacement selector has never received the
+    // default prefix, and configs written for it use full decorator paths.
+    private final Map<String, String[]> decoratorPaths = new LinkedHashMap<>();
+    private String decoratorPrefix;
 
     /**
      * Create the builder, applying the default settings from {@link #setupDefaults()}.
      */
     protected BaseSiteMeshBuilder() {
         setupDefaults();
+        decoratorPrefix = null;
     }
 
     /**
@@ -232,12 +240,14 @@ public abstract class BaseSiteMeshBuilder
      * Set a prefix to append to all decorator paths. The default
      * is <code>/WEB-INF/decorators/"</code>.
      *
-     * <p>Note: prefix is ignored if {@link #setCustomDecoratorSelector(DecoratorSelector)} is called</p>
+     * <p>Note: prefix is ignored if {@link #setCustomDecoratorSelector(DecoratorSelector)} is called
+     * with a selector that is not a {@link PathBasedDecoratorSelector}.</p>
      *
      * @param prefix the prefix to prepend to decorator paths.
      * @return this builder instance, for method chaining.
      */
     public BUILDER setDecoratorPrefix(String prefix) {
+        this.decoratorPrefix = prefix;
         this.pathBasedDecoratorSelector.setPrefix(prefix);
         return self();
     }
@@ -246,15 +256,18 @@ public abstract class BaseSiteMeshBuilder
      * Add multiple decorator paths to be used for a specific content path. Use this to apply multiple
      * decorators to a single page.
      *
-     * <p>Note: If {@link #setCustomDecoratorSelector(DecoratorSelector)} is called,
-     * any decorator paths are ignored, as they are only used by the default
-     * DecoratorSelector implementation.</p>
+     * <p>Note: If {@link #setCustomDecoratorSelector(DecoratorSelector)} is called with a
+     * selector that is not a {@link PathBasedDecoratorSelector}, any decorator paths are
+     * ignored.</p>
      *
      * @param contentPath    the content path the decorators apply to.
      * @param decoratorPaths the decorator paths to apply to the content path.
      * @return this builder instance, for method chaining.
      */
     public BUILDER addDecoratorPaths(String contentPath, String... decoratorPaths) {
+        if (decoratorPaths != null) {
+            this.decoratorPaths.put(contentPath, decoratorPaths);
+        }
         pathBasedDecoratorSelector.put(contentPath, decoratorPaths);
         return self();
     }
@@ -263,25 +276,24 @@ public abstract class BaseSiteMeshBuilder
      * Add multiple decorator paths to be used for a specific content path. Use this to apply multiple
      * decorators to a single page.
      *
-     * <p>Note: If {@link #setCustomDecoratorSelector(DecoratorSelector)} is called,
-     * any decorator paths are ignored, as they are only used by the default
-     * DecoratorSelector implementation.</p>
+     * <p>Note: If {@link #setCustomDecoratorSelector(DecoratorSelector)} is called with a
+     * selector that is not a {@link PathBasedDecoratorSelector}, any decorator paths are
+     * ignored.</p>
      *
      * @param contentPath    the content path the decorators apply to.
      * @param decoratorPaths the decorator paths to apply to the content path.
      * @return this builder instance, for method chaining.
      */
     public BUILDER addDecoratorPaths(String contentPath, List<String> decoratorPaths) {
-        pathBasedDecoratorSelector.put(contentPath, decoratorPaths.toArray(String[]::new));
-        return self();
+        return addDecoratorPaths(contentPath, decoratorPaths.toArray(String[]::new));
     }
 
     /**
      * Add a decorator path to be used for a specific content path.
      *
-     * <p>Note: If {@link #setCustomDecoratorSelector(DecoratorSelector)} is called,
-     * any decorator paths are ignored, as they are only used by the default
-     * DecoratorSelector implementation.</p>
+     * <p>Note: If {@link #setCustomDecoratorSelector(DecoratorSelector)} is called with a
+     * selector that is not a {@link PathBasedDecoratorSelector}, any decorator paths are
+     * ignored.</p>
      *
      * @param contentPath   the content path the decorator applies to.
      * @param decoratorPath the decorator path to apply to the content path.
@@ -293,17 +305,32 @@ public abstract class BaseSiteMeshBuilder
     }
 
     /**
-     * Set a custom {@link DecoratorSelector}. If called and decorator selector is not
+     * Set a custom {@link DecoratorSelector}. If the decorator selector is not an
      * instance of {@link PathBasedDecoratorSelector}, this will override any paths
      * added with {@link #addDecoratorPath(String, String)} and instead delegate to
      * the custom DecoratorSelector.
+     *
+     * <p>A {@link PathBasedDecoratorSelector} (such as {@link MetaTagBasedDecoratorSelector})
+     * replaces the default one and receives the decorator paths added through this builder,
+     * whether they were added before or after, except for content paths it already maps.
+     * It also receives a prefix set with {@link #setDecoratorPrefix(String)}, unless it has a
+     * prefix of its own; the default prefix is not applied to it.</p>
      *
      * @param decoratorSelector the custom DecoratorSelector to use.
      * @return this builder instance, for method chaining.
      */
     public BUILDER setCustomDecoratorSelector(DecoratorSelector<CONTEXT> decoratorSelector) {
         if(decoratorSelector instanceof PathBasedDecoratorSelector) {
-            this.pathBasedDecoratorSelector = (PathBasedDecoratorSelector<CONTEXT>) decoratorSelector;
+            PathBasedDecoratorSelector<CONTEXT> selector = (PathBasedDecoratorSelector<CONTEXT>) decoratorSelector;
+            if (decoratorPrefix != null && selector.getPrefix().isEmpty()) {
+                selector.setPrefix(decoratorPrefix);
+            }
+            decoratorPaths.forEach((contentPath, paths) -> {
+                if (!selector.getPathMapper().containsPattern(contentPath)) {
+                    selector.put(contentPath, paths);
+                }
+            });
+            this.pathBasedDecoratorSelector = selector;
         } else {            
             this.customDecoratorSelector = decoratorSelector;
         }

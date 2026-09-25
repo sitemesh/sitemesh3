@@ -58,6 +58,13 @@ public class PathBasedDecoratorSelector<C extends SiteMeshContext> implements De
     }
 
     /**
+     * @return the prefix prepended to every decorator path returned by this selector
+     */
+    public String getPrefix() {
+        return prefix;
+    }
+
+    /**
      * Map a content path pattern to one or more decorator paths.
      *
      * @param contentPath path pattern to match (see {@link PathMapper})
