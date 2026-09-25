@@ -362,8 +362,12 @@ public class ConfigurableSiteMeshFilter implements Filter {
 
             ServletContext servletContext = filterConfig.getServletContext();
             xmlConfigFile = loadFile(servletContext, configFilePath);
-            if (xmlConfigFile == null) {
-                xmlConfigFile = new File(configFilePath);
+            // Tomcat's getRealPath() maps even an absolute file system path under the web-app
+            // root, returning a path that does not exist rather than null.
+            File absoluteFile = new File(configFilePath);
+            if (xmlConfigFile == null
+                    || (!xmlConfigFile.canRead() && absoluteFile.isAbsolute() && absoluteFile.canRead())) {
+                xmlConfigFile = absoluteFile;
             }
             // Record the timestamp even when the file is missing (0), so that a deleted file
             // triggers one reload rather than a reload on every request.

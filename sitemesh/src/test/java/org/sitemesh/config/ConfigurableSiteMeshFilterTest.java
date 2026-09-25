@@ -17,11 +17,15 @@
 package org.sitemesh.config;
 
 import jakarta.servlet.Filter;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import junit.framework.TestCase;
 import org.sitemesh.webapp.WebEnvironment;
+import org.w3c.dom.Element;
 
 import java.io.File;
+import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,5 +120,25 @@ public class ConfigurableSiteMeshFilterTest extends TestCase {
             logger.removeHandler(handler);
         }
         return warnings;
+    }
+
+    public void testLoadsAbsoluteConfigPathWhenRealPathIsUnderWebAppRoot() throws Exception {
+        // Tomcat maps getRealPath("/abs/sitemesh3.xml") to "<webapp root>/abs/sitemesh3.xml".
+        final File config = File.createTempFile("sitemesh3", ".xml");
+        Files.writeString(config.toPath(), CONFIG);
+        final ServletContext servletContext = (ServletContext) Proxy.newProxyInstance(
+                getClass().getClassLoader(), new Class<?>[] {ServletContext.class},
+                (proxy, method, args) -> "getRealPath".equals(method.getName())
+                        ? "/nonexistent-webapp-root" + args[0] : null);
+        FilterConfig filterConfig = (FilterConfig) Proxy.newProxyInstance(
+                getClass().getClassLoader(), new Class<?>[] {FilterConfig.class},
+                (proxy, method, args) -> "getServletContext".equals(method.getName()) ? servletContext : null);
+        try {
+            Element element = new ConfigurableSiteMeshFilter().loadConfigXml(filterConfig, config.getAbsolutePath());
+            assertNotNull("absolute config file should be found", element);
+            assertEquals("sitemesh", element.getTagName());
+        } finally {
+            config.delete();
+        }
     }
 }
