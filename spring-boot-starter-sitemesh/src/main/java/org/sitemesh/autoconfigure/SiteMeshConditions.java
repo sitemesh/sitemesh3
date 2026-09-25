@@ -16,6 +16,7 @@
 
 package org.sitemesh.autoconfigure;
 
+import org.sitemesh.autoconfigure.SiteMeshProperties.Integration;
 import org.sitemesh.autoconfigure.SiteMeshProperties.WrapMode;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
@@ -29,11 +30,13 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  * exactly as {@link SiteMeshProperties} does. {@code @ConditionalOnProperty} compares raw
  * strings under one spelling of the key, so values that relaxed binding accepts
  * ({@code BEAN_INSTANCE}, or the kebab-case {@code view-resolver.wrap-mode} key) matched
- * no condition and silently registered nothing. Binding keeps the conditions and the bound
- * properties in agreement, and an invalid value fails startup.
+ * no condition and silently registered nothing, and a mistyped integration left SiteMesh
+ * switched off. Binding keeps the conditions and the bound properties in agreement, and an
+ * invalid value fails startup.
  */
 final class SiteMeshConditions {
 
+    static final String INTEGRATION = "sitemesh.integration";
     static final String WRAP_MODE = "sitemesh.view-resolver.wrap-mode";
 
     private SiteMeshConditions() {
@@ -59,6 +62,18 @@ final class SiteMeshConditions {
             ConditionMessage message = ConditionMessage.forCondition("SiteMesh " + name)
                     .because("value is " + value + ", required " + required);
             return new ConditionOutcome(value == required, message);
+        }
+    }
+
+    static final class OnViewResolverIntegration extends EnumPropertyCondition<Integration> {
+        OnViewResolverIntegration() {
+            super(INTEGRATION, Integration.class, Integration.VIEW_RESOLVER, Integration.VIEW_RESOLVER);
+        }
+    }
+
+    static final class OnFilterIntegration extends EnumPropertyCondition<Integration> {
+        OnFilterIntegration() {
+            super(INTEGRATION, Integration.class, Integration.VIEW_RESOLVER, Integration.FILTER);
         }
     }
 

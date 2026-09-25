@@ -22,6 +22,7 @@ import org.sitemesh.webmvc.SiteMeshViewResolverBeanPostProcessor;
 import org.sitemesh.webmvc.SiteMeshViewResolverPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -31,7 +32,33 @@ import org.springframework.context.ApplicationContext;
 public class SiteMeshConditionsTest extends TestCase {
 
     private final WebApplicationContextRunner runner = new WebApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(SiteMeshViewResolverAutoConfiguration.class));
+            .withConfiguration(AutoConfigurations.of(
+                    SiteMeshAutoConfiguration.class, SiteMeshViewResolverAutoConfiguration.class));
+
+    public void testSelectsFilterIntegrationForEverySpelling() {
+        for (String value : new String[] {"filter", "FILTER", "Filter"}) {
+            runner.withPropertyValues("sitemesh.integration=" + value).run(context -> {
+                assertNull(value, context.getStartupFailure());
+                assertEquals(value, 1, context.getBeanNamesForType(FilterRegistrationBean.class).length);
+                assertBeans(context, 0, 0, 0);
+            });
+        }
+    }
+
+    public void testSelectsViewResolverIntegrationForEverySpelling() {
+        for (String value : new String[] {"view-resolver", "VIEW_RESOLVER", "viewResolver"}) {
+            runner.withPropertyValues("sitemesh.integration=" + value).run(context -> {
+                assertNull(value, context.getStartupFailure());
+                assertEquals(value, 0, context.getBeanNamesForType(FilterRegistrationBean.class).length);
+                assertBeans(context, 1, 0, 0);
+            });
+        }
+    }
+
+    public void testInvalidIntegrationFailsStartup() {
+        runner.withPropertyValues("sitemesh.integration=filters").run(context ->
+                assertNotNull(context.getStartupFailure()));
+    }
 
     public void testDefaultsToDelegateWrapMode() {
         runner.run(context -> {

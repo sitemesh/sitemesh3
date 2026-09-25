@@ -41,7 +41,7 @@ public class SiteMeshProperties {
      * decorates static .html resources and non-MVC output but buffers the
      * servlet response (see DispatchMode for Tomcat 11+ caveats).
      */
-    private String integration = "view-resolver";
+    private Integration integration = Integration.VIEW_RESOLVER;
 
     /**
      * How decorators are dispatched to the container: "include", "forward",
@@ -75,18 +75,18 @@ public class SiteMeshProperties {
     /**
      * The active SiteMesh integration.
      *
-     * @return {@code "view-resolver"} (the default) or {@code "filter"}
+     * @return {@link Integration#VIEW_RESOLVER} (the default) or {@link Integration#FILTER}
      */
-    public String getIntegration() {
+    public Integration getIntegration() {
         return integration;
     }
 
     /**
      * Selects the SiteMesh integration to activate.
      *
-     * @param integration {@code "view-resolver"} or {@code "filter"}
+     * @param integration view-resolver or filter
      */
-    public void setIntegration(String integration) {
+    public void setIntegration(Integration integration) {
         this.integration = integration;
     }
 
@@ -460,6 +460,26 @@ public class SiteMeshProperties {
         public void setOrder(int order) {
             this.order = order;
         }
+    }
+
+    /**
+     * The ways the starter can integrate SiteMesh. Bound from
+     * {@code sitemesh.integration} with Spring Boot's relaxed binding, so
+     * "view-resolver" and "filter" map to their respective constants and any
+     * other value fails startup.
+     */
+    public enum Integration {
+
+        /**
+         * Decorate through Spring MVC's ViewResolver/View pipeline (the default).
+         */
+        VIEW_RESOLVER,
+
+        /**
+         * Decorate any text/html servlet response through the classic SiteMesh
+         * servlet filter.
+         */
+        FILTER
     }
 
     /**

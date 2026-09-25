@@ -28,7 +28,6 @@ import org.sitemesh.webmvc.SiteMeshViewResolverPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.Bean;
@@ -82,7 +81,7 @@ import org.springframework.web.servlet.ViewResolver;
  * names and conditions as public API.</p>
  */
 @AutoConfiguration
-@ConditionalOnProperty(name = "sitemesh.integration", havingValue = "view-resolver", matchIfMissing = true)
+@Conditional(SiteMeshConditions.OnViewResolverIntegration.class)
 @ConditionalOnClass({ ViewResolver.class, SiteMeshView.class })
 @EnableConfigurationProperties(SiteMeshProperties.class)
 public class SiteMeshViewResolverAutoConfiguration {
