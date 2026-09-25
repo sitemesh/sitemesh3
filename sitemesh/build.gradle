@@ -35,3 +35,9 @@ tasks.named('jar') {
         attributes('Main-Class': 'org.sitemesh.config.cmdline.CommandLineLauncher')
     }
 }
+
+// The Ant task tests read their build file and fixtures from the source tree rather than from
+// test resources, so declare them as inputs; otherwise editing a fixture leaves the task up to date.
+tasks.named('test') {
+    inputs.dir('src/test/java/org/sitemesh/ant/testproject').withPropertyName('antTestProject')
+}

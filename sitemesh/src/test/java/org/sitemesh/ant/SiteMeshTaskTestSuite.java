@@ -21,6 +21,8 @@ import junit.framework.TestSuite;
 import static junit.framework.Assert.assertEquals;
 import org.apache.tools.ant.BuildFileTest;
 import org.apache.tools.ant.util.FileUtils;
+import org.junit.runner.RunWith;
+import org.junit.runners.AllTests;
 import org.sitemesh.TestUtil;
 
 import java.io.*;
@@ -44,6 +46,7 @@ import java.io.*;
  * @author Richard L. Burton III - SmartCode LLC
  * @author Joe Walnes
  */
+@RunWith(AllTests.class)
 public class SiteMeshTaskTestSuite {
 
     public static Test suite() throws FileNotFoundException {
