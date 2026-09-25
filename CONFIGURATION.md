@@ -60,6 +60,8 @@ sitemesh:
 
 `sitemesh.includeErrorPages` (default `true`) is also shared: in both integrations it controls whether responses with an error status (>= 400) — e.g. Spring Boot's `error` view — are still decorated. `sitemesh.filter.order` (default `29`) applies to the filter integration only.
 
+The two integrations parse pages with slightly different default rules: the view-resolver integration also installs `Sm2TagRuleBundle`, which exposes SiteMesh 2 style properties (`page.XXX` from `<content tag="XXX">` and `<parameter>` blocks, `<html>` attributes, and `frameset`). The filter integration does not; add `org.sitemesh.content.tagrules.html.Sm2TagRuleBundle` to `sitemesh.decorator.tagRuleBundles` if your decorators read those properties.
+
 Note: `sitemesh.decorator.exclusions` applies to the **filter integration only**. The view-resolver integration decides decoration per resolved view and has no path-exclusion concept — a view either resolves through a wrapped `ViewResolver` (and is decorated according to the meta tag / attribute / mappings) or it doesn't.
 
 All `sitemesh.*` properties are bound through a typed `SiteMeshProperties` class, so the starter ships `spring-configuration-metadata.json` and IDEs auto-complete and document the keys. `sitemesh.integration`, `sitemesh.dispatchMode` and `sitemesh.viewResolver.wrapMode` are typed as enums: an unrecognized value fails application startup instead of silently falling back to the default (or, for `sitemesh.integration`, silently switching SiteMesh off).
