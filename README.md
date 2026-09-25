@@ -23,12 +23,12 @@ Currently maintained versions:
 
 ## Installing:
 
-You can either download the release build and simply add the sitemesh jar to your classpath or use Gradle or Maven.
+For a servlet web application, add `sitemesh-webfilter`. It registers the SiteMesh filter on `/*` by itself (via `@WebFilter`), so no `web.xml` entry is needed:
 
 ```gradle
 dependencies {
     // ... other dependencies
-    runtimeOnly 'org.sitemesh:sitemesh:3.3.0-RC1'
+    runtimeOnly 'org.sitemesh:sitemesh-webfilter:3.3.0-RC1'
 }
 ```
 
@@ -37,11 +37,13 @@ dependencies {
     <!-- ... other dependencies -->
     <dependency>
         <groupId>org.sitemesh</groupId>
-        <artifactId>sitemesh</artifactId>
+        <artifactId>sitemesh-webfilter</artifactId>
         <version>3.3.0-RC1</version>
     </dependency>
 </dependencies>
 ```
+
+If you download the jars instead, place both `sitemesh-webfilter` and `sitemesh` in `/WEB-INF/lib`. The core `org.sitemesh:sitemesh` artifact on its own does not register a filter: use it when you declare the filter in `web.xml` yourself (see [Setup](#setup)), register your own `ConfigurableSiteMeshFilter` subclass, or run SiteMesh offline.
 
 or if you are using Spring Boot, use the config free starter (see example application):
 
@@ -77,7 +79,7 @@ repositories {
 ```
 ```gradle
 dependencies {
-    runtimeOnly 'org.sitemesh:sitemesh:3.3.0-SNAPSHOT'
+    runtimeOnly 'org.sitemesh:sitemesh-webfilter:3.3.0-SNAPSHOT'
 }
 ```
 or
@@ -201,7 +203,7 @@ Running SiteMesh requires at least:
 
 ### Setup
 
-Insert the SiteMesh Filter in /WEB-INF/web.xml:
+If you use `sitemesh-webfilter`, the filter is already registered and you can skip this step. With the core `sitemesh` artifact, insert the SiteMesh Filter in /WEB-INF/web.xml:
 
 ```xml
 <web-app>
@@ -343,7 +345,7 @@ As you can see, the <title>, <head> and <body> have been extracted from the cont
 
 A quick recap:
 
-* SiteMesh is installed by dropping the library jar in /WEB-INF/lib and creating a filter (with mapping) in /WEB-INF/web.xml
+* SiteMesh is installed by adding `sitemesh-webfilter` to the webapp, or the core `sitemesh` jar plus a filter (with mapping) in /WEB-INF/web.xml
 * It can be configured by creating a /WEB-INF/sitemesh3.xml file, or through other configuration methods
 * The filter intercepts requests to Content, runs it through the Content Processor and merges with a Decorator
 * The Content is defined by an HTML page, that contains the vanilla HTML content of the site

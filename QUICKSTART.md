@@ -20,18 +20,29 @@ You can get up and running by [installing Gradle](https://gradle.org/install/) t
 ```gradle
 plugins {
     id 'war'
-    id "org.gretty" version "4.0.3"
+    id "org.gretty" version "5.0.2"
 }
 
-gretty.contextPath = '/'
+gretty {
+    contextPath = '/'
+    servletContainer = 'tomcat11'
+}
 
 repositories {
     mavenCentral()
 }
 ```
 
-## Step 2 - Drop in the SiteMesh jar.
-Download [sitemesh-3.2.0-M2.jar](https://github.com/sitemesh/sitemesh3/releases/tag/3.2.0-M2) and place it in the `example/src/main/webapp/WEB-INF/lib` folder.
+## Step 2 - Add SiteMesh.
+Add the following block to the end of your `build.gradle`:
+
+```gradle
+dependencies {
+    runtimeOnly 'org.sitemesh:sitemesh-webfilter:3.3.0-RC1'
+}
+```
+
+`sitemesh-webfilter` registers the SiteMesh filter by itself, so there is no `web.xml` to write. (Not using Gradle? Download the `sitemesh-webfilter` and `sitemesh` jars from [Maven Central](https://central.sonatype.com/namespace/org.sitemesh) and place both in `example/src/main/webapp/WEB-INF/lib`.)
 
 
 ## Step 3 - Create your first decorator. 
@@ -80,29 +91,19 @@ Place the following simple file in the `example/src/main/webapp` folder.  All we
   <body>
     <h1>Hello World!</h1>
     <div class="content">This is a plain html page. or is it?</div>
-  <body>
+  </body>
 </html>
 ```
 
-## Step 5 - Run the server either on Tomcat (`tomcatRun`) or Jetty (`jettyRun`).
+## Step 5 - Run the server.
 ```
-gradle jettyRun
+gradle tomcatRun
 ```
+
+(To run on Jetty instead, set `servletContainer = 'jetty12'` and run `gradle jettyRun`.)
 
 And see your `index.html` transformed:
-[https://localhost:8080/](https://localhost:8080/)
-
-## Step 6 (Optional) - Clean up
-
-Since you are using Gradle, you don't even need the jar.  Go ahead and delete the `example/src/main/webapp/WEB-INF/lib` folder and add the following block to the end of your `build.gradle`
-
-```gradle
-dependencies {
-    implementation 'org:sitemesh:sitemesh:3.2.0-M2'
-}
-```
-
-and gradle will handle downloading SiteMesh and placing it in the right folder.
+[http://localhost:8080/](http://localhost:8080/)
 
 ## Summary
 You have just witnessed the power of decorators in how they eliminate boilerplate code, but SiteMesh is capable of so much more.
