@@ -47,7 +47,8 @@ import java.util.logging.Logger;
  *
  * <h2>Approach 1: Embed configuration as init-params</h2>
  *
- * <p>The minimum required to make this useful is to add a {@code decoratorMappings} init parameter.</p>
+ * <p>The minimum required to make this useful is to add a {@code decoratorMappings} init parameter.
+ * Decorator names are resolved against the <code>/WEB-INF/decorators/</code> prefix.</p>
  *
  * <h3>/WEB-INF/web.xml</h3>
  * <pre>
@@ -57,8 +58,8 @@ import java.util.logging.Logger;
  *    &lt;init-param&gt;
  *      &lt;param-name&gt;decoratorMappings&lt;/param-name&gt;
  *      &lt;param-value&gt;
- *        /*=/decorators/my-decorator.html
- *        /admin/*=/decorators/admin-decorator.html
+ *        /*=my-decorator.html
+ *        /admin/*=admin-decorator.html
  *      &lt;/param-value&gt;
  *    &lt;/init-param&gt;
  *  &lt;/filter&gt;
@@ -69,7 +70,7 @@ import java.util.logging.Logger;
  *  &lt;/filter-mapping&gt;
  * </pre>
  *
- * <h2>Approach 2: Embed configuration as init-params</h2>
+ * <h2>Approach 2: Put the configuration in an XML file</h2>
  *
  * <p>Alternatively the configuration can be specified in a separate XML file. This has the advantage
  * that it can be changed at runtime without having to restart the web-application. Also, the same
@@ -91,8 +92,8 @@ import java.util.logging.Logger;
  * <h3>/WEB-INF/sitemesh3.xml</h3>
  * <pre>
  *  &lt;sitemesh&gt;
- *    &lt;mapping name="/*" decorator="/decorators/my-decorator.html"/&gt;
- *    &lt;mapping name="/admin/*" decorator="/decorators/admin-decorator.html"/&gt;
+ *    &lt;mapping path="/*" decorator="my-decorator.html"/&gt;
+ *    &lt;mapping path="/admin/*" decorator="admin-decorator.html"/&gt;
  *  &lt;/sitemesh&gt;
  * </pre>
  *
@@ -104,7 +105,8 @@ import java.util.logging.Logger;
  * <p><b><code>decoratorMappings</code></b>: A list of mappings of path patterns to decorators.
  * Each entry should consist of pattern=decorator, separated by whitespace or commas. If multiple decorators
  * are required, they should be delimited with a pipe | char (and no whitespace)
- * e.g. <code>/admin/*=/decorators/admin.html, *.secret=/decorators/secret.html|/decorators/common.html</code></p>
+ * e.g. <code>/admin/*=admin.html, *.secret=secret.html|common.html</code>. Decorator names are
+ * resolved against the <code>/WEB-INF/decorators/</code> prefix.</p>
  *
  * <p><b><code>mimeTypes</code></b> (optional): A list of mime-types, separated by whitespace
  * or commas, that should attempt to be decorated. Defaults to <code>text/html</code>.</p>
@@ -130,6 +132,22 @@ import java.util.logging.Logger;
  * <code>include</code>, <code>forward</code>, or <code>detect</code>. Defaults to
  * <code>detect</code> (use <code>include</code> on Tomcat 11+, <code>forward</code>
  * elsewhere). See {@link org.sitemesh.webapp.DispatchMode}.</p>
+ *
+ * <p><b><code>includeErrorPages</code></b> (optional): Whether responses with an error status
+ * (400 and above) are decorated: <code>true</code>, <code>yes</code> or <code>1</code>, or
+ * <code>false</code>. Defaults to <code>false</code>.</p>
+ *
+ * <p><b><code>decoratorSelector</code></b> (optional): The <i>name</i> of the
+ * {@link org.sitemesh.DecoratorSelector} to use. Defaults to
+ * {@link org.sitemesh.config.MetaTagBasedDecoratorSelector}. A selector set this way does not get
+ * the <code>/WEB-INF/decorators/</code> prefix, so its decorator mappings take full paths.</p>
+ *
+ * <p><b><code>configFile</code></b> (optional): The path of the XML config file. Defaults to
+ * <code>/WEB-INF/sitemesh3.xml</code>.</p>
+ *
+ * <p><b><code>autoReload</code></b> (optional): Whether to reload the XML config file when it
+ * changes: <code>true</code>, <code>yes</code> or <code>1</code>, or <code>false</code>.
+ * Defaults to <code>true</code>.</p>
  *
  * <p>Where a <i>name</i> is used, this means the fully qualified class name, which must
  * have a default constructor.</p>
@@ -277,7 +295,7 @@ public class ConfigurableSiteMeshFilter implements Filter {
 
     /**
      * Gets the SiteMesh XML config file name.
-     * Looks for a 'config' property in the Filter init-params.
+     * Looks for a 'configFile' property in the Filter init-params.
      * If not found, defaults to '/WEB-INF/sitemesh3.xml'.
      *
      * @return the config file name.

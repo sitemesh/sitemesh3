@@ -30,18 +30,18 @@ import jakarta.servlet.Filter;
  * <h2>Examples</h2>
  *
  * <pre>
- * // Simplest example...
+ * // Simplest example (decorator names resolve against the /WEB-INF/decorators/ prefix)...
  * Filter siteMeshFilter = new SiteMeshFilterBuilder()
- *     .addDecoratorPath("/*", "/decorator.html")
+ *     .addDecoratorPath("/*", "decorator.html")
  *     .create();
  *
  * // A few more options (shows applying multiple decorators to a single page)...
  * Filter siteMeshFilter = new SiteMeshFilterBuilder()
- *     .addDecoratorPaths("/*", "/decorators/main-layout.html", "/decorators-common-style.html")
- *     .addDecoratorPaths("/admin/*", "/decorators/admin-layout.html", "/decorators-common-style.html")
+ *     .addDecoratorPaths("/*", "main-layout.html", "common-style.html")
+ *     .addDecoratorPaths("/admin/*", "admin-layout.html", "common-style.html")
  *     .addTagRuleBundle(new MyLinkRewriterBundle())
- *     .addExcludePath("/javadoc/*")
- *     .addExcludePath("/portfolio/*")
+ *     .addExcludedPath("/javadoc/*")
+ *     .addExcludedPath("/portfolio/*")
  *     .create();
  *
  * // If you want to get a bit crazy and totally customize SiteMesh...

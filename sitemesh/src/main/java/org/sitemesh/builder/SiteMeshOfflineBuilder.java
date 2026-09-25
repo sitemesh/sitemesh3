@@ -33,23 +33,23 @@ import org.sitemesh.offline.SiteMeshOffline;
  * <pre>
  * // Simplest example...
  * SiteMeshOffline siteMeshOffline = new SiteMeshOfflineBuilder()
- *     .setDirectory("src/html")
+ *     .setSourceDirectory("src/html")
  *     .setDestinationDirectory("dest/html")
  *     .addDecoratorPath("/*", "/decorator.html")
  *     .create();
  *
  * // A few more options (shows applying multiple decorators to a single page)...
  * SiteMeshOffline siteMeshOffline = new SiteMeshOfflineBuilder()
- *     .setDirectory(new File("src/html"))
+ *     .setSourceDirectory(new File("src/html"))
  *     .setDestinationDirectory(new File("dest/html"))
- *     .addDecoratorPaths("/*", "/decorators/main-layout.html", "/decorators-common-style.html")
- *     .addDecoratorPaths("/admin/*", "/decorators/admin-layout.html", "/decorators-common-style.html")
+ *     .addDecoratorPaths("/*", "/decorators/main-layout.html", "/decorators/common-style.html")
+ *     .addDecoratorPaths("/admin/*", "/decorators/admin-layout.html", "/decorators/common-style.html")
  *     .addTagRuleBundle(new MyLinkRewriterBundle())
  *     .create();
  *
  * // If you want to get a bit crazy and totally customize SiteMesh...
  * SiteMeshOffline siteMeshOffline = new SiteMeshOfflineBuilder()
- *     .setDirectory(new MyDirectoryThatLoadsFromDatabase())
+ *     .setSourceDirectory(new MyDirectoryThatLoadsFromDatabase())
  *     .setDestinationDirectory(new InMemoryDirectory())
  *     .setCustomContentProcessor(new MySvgContentProcessor())
  *     .setCustomDecoratorSelector(new MyDatabaseDrivenDecoratorSelector())

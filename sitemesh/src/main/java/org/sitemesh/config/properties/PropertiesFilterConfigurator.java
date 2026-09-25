@@ -28,7 +28,8 @@ import java.util.Map;
  * <p><b><code>decoratorMappings</code></b>: A list of mappings of path patterns to decorators.
  * Each entry should consist of pattern=decorator, separated by whitespace or commas. If multiple decorators
  * are required, they should be delimited with a pipe | char (and no whitespace)
- * e.g. <code>/admin/*=/decorators/admin.html, *.secret=/decorators/secret.html|/decorators/common.html</code></p>
+ * e.g. <code>/admin/*=admin.html, *.secret=secret.html|common.html</code>. Decorator names are
+ * resolved against the <code>/WEB-INF/decorators/</code> prefix.</p>
  *
  * <p><b><code>mimeTypes</code></b> (optional): A list of mime-types, separated by whitespace
  * or commas, that should attempt to be decorated. Defaults to <code>text/html</code>.</p>
@@ -54,6 +55,15 @@ import java.util.Map;
  * <code>include</code>, <code>forward</code>, or <code>detect</code>. Defaults to
  * <code>detect</code> (use <code>include</code> on Tomcat 11+, <code>forward</code>
  * elsewhere). See {@link org.sitemesh.webapp.DispatchMode}.</p>
+ *
+ * <p><b><code>includeErrorPages</code></b> (optional): Whether responses with an error status
+ * (400 and above) are decorated: <code>true</code>, <code>yes</code> or <code>1</code>, or
+ * <code>false</code>. Defaults to <code>false</code>.</p>
+ *
+ * <p><b><code>decoratorSelector</code></b> (optional): The <i>name</i> of the
+ * {@link org.sitemesh.DecoratorSelector} to use. Defaults to
+ * {@link org.sitemesh.config.MetaTagBasedDecoratorSelector}. A selector set this way does not get
+ * the <code>/WEB-INF/decorators/</code> prefix, so its decorator mappings take full paths.</p>
  *
  * <p>Where a <i>name</i> is used, this typically means the fully qualified class name, which must
  * have a default constructor. However, a custom {@link org.sitemesh.config.ObjectFactory} implementation (passed into

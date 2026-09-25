@@ -123,7 +123,9 @@ public abstract class BaseSiteMeshFilterBuilder<BUILDER extends BaseSiteMeshBuil
      * Set if the error pages should be decorated as well.
      * The default is <code>false</code>.
      *
-     * <p>Note: The error pages inclusion is ignored if {@link #setCustomSelector(Selector)} is called.</p>
+     * <p>Note: If {@link #setCustomSelector(Selector)} is called, the custom Selector decides whether
+     * content with an error status is decorated; this setting then only applies to the decorator's
+     * own response.</p>
      *
      * @param includeErrorPages whether error pages should be decorated.
      * @return this builder instance, for method chaining.
