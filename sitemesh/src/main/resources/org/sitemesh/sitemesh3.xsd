@@ -4,58 +4,110 @@
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             elementFormDefault="qualified"
             attributeFormDefault="unqualified"
-            version="3.0.0">
+            version="3.3.0">
+
+    <!--
+        Schema for sitemesh3.xml. SiteMesh does not validate its config against this
+        schema (and reads elements in any order); it exists for editor completion
+        and validation. Single-valued elements that appear more than once are
+        read from their first occurrence.
+    -->
 
     <xsd:element name="sitemesh">
         <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="decorator-selector"
-                             type="xsd:string"
-                             minOccurs="0"/>
-                <xsd:element name="decorator-prefix"
-                             type="xsd:string"
-                             minOccurs="0"/>
-                <xsd:element name="include-error-pages"
-                             type="xsd:boolean"
-                             minOccurs="0"/>
-                <xsd:element name="mapping"
-                             type="config:mapping"
-                             minOccurs="0"/>
-                <xsd:element name="content-processor"
-                             type="config:content-processor"
-                             minOccurs="0"/>
-                <xsd:element name="mime-type" type="xsd:string" minOccurs="0"   maxOccurs="unbounded"/>
-                <xsd:element name="source-dir" type="xsd:string" minOccurs="0"  maxOccurs="unbounded"/>
-                <xsd:element name="dest-dir" type="xsd:string" minOccurs="0"    maxOccurs="unbounded"/>
-            </xsd:sequence>
+            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="decorator-selector" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>Class name of the DecoratorSelector to use (filter only).
+                            Default: org.sitemesh.config.MetaTagBasedDecoratorSelector</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="decorator-prefix" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>Prefix prepended to decorator paths (filter only).
+                            Default: /WEB-INF/decorators/</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="include-error-pages" type="xsd:boolean">
+                    <xsd:annotation>
+                        <xsd:documentation>Whether error responses (status 400 and above) are decorated
+                            (filter only). Default: false</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="dispatch-mode" type="config:dispatch-mode"/>
+                <xsd:element name="mime-type" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>MIME type to decorate (filter only). Repeat for several types;
+                            when present, replaces the default of text/html.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="mapping" type="config:mapping"/>
+                <xsd:element name="content-processor" type="config:content-processor"/>
+            </xsd:choice>
+            <xsd:attribute name="source-dir" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Directory of content to decorate (offline only).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="destination-dir" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Directory decorated content is written to (offline only).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:attributeGroup name="mapping-attribute-group">
+    <xsd:simpleType name="dispatch-mode">
+        <xsd:annotation>
+            <xsd:documentation>How decorators are dispatched (filter only). Default: detect, which uses
+                include on Tomcat 11+ and forward elsewhere.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="include"/>
+            <xsd:enumeration value="forward"/>
+            <xsd:enumeration value="detect"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="mapping">
+        <xsd:annotation>
+            <xsd:documentation>Maps content paths to decorators, or excludes them from decoration.
+                Paths and decorators can be given as attributes or as child elements; child path
+                elements take precedence over the path attribute. Several decorators are applied
+                as a chain. Without a path, the mapping applies to /*.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="path" type="xsd:string"/>
+            <xsd:element name="decorator" type="xsd:string"/>
+            <xsd:element name="exclude">
+                <xsd:annotation>
+                    <xsd:documentation>Excludes the mapping's paths from decoration (filter only).
+                        Its presence is what counts, so it takes no content.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType/>
+            </xsd:element>
+        </xsd:choice>
         <xsd:attribute name="path" type="xsd:string"/>
         <xsd:attribute name="decorator" type="xsd:string"/>
         <xsd:attribute name="exclude" type="xsd:boolean" default="false"/>
-    </xsd:attributeGroup>
-
-    <xsd:complexType name="mapping">
-        <xsd:sequence>
-            <xsd:element name="path" type="xsd:string"/>
-            <xsd:element name="decorator" type="xsd:string"/>
-        </xsd:sequence>
-        <xsd:attributeGroup ref="mapping-attribute-group"/>
     </xsd:complexType>
 
     <xsd:complexType name="content-processor">
-            <xsd:sequence>
-                <xsd:element ref="config:tag-rule-bundle"/>
-            </xsd:sequence>
-            <xsd:attribute name="class" type="xsd:string"/>
+        <xsd:sequence>
+            <xsd:element name="tag-rule-bundle" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>TagRuleBundle added to the default content processor.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="class" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="class" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>Class name of a custom ContentProcessor.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
     </xsd:complexType>
-
-    <xsd:element name="tag-rule-bundle">
-        <xsd:complexType>
-            <xsd:attribute name="class" type="xsd:string"/>
-        </xsd:complexType>
-    </xsd:element>
 
 </xsd:schema>

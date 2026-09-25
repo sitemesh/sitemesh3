@@ -101,6 +101,26 @@ public class XmlFilterConfiguratorTest extends TestCase {
         assertEquals("Decorated: Hello world", webEnvironment.getBody());
     }
 
+    public void testReadsConfigThatDeclaresSchemaNamespace() throws Exception {
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addFilter("/*", createFilter(
+                        "<sitemesh xmlns='http://sitemesh.org/xml/config'" +
+                        "          xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'" +
+                        "          xsi:schemaLocation='http://sitemesh.org/xml/config sitemesh3.xsd'>" +
+                        "  <mapping path='/*' decorator='my-decorator'/>" +
+                        "  <mapping path='/a/*' exclude='true'/>" +
+                        "</sitemesh>"))
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", DECORATOR)
+                .addStaticContent("/a/b", "text/html", CONTENT)
+                .addStaticContent("/other", "text/html", CONTENT)
+                .create();
+
+        webEnvironment.doGet("/a/b");
+        assertEquals(CONTENT, webEnvironment.getBody());
+        webEnvironment.doGet("/other");
+        assertEquals("Decorated: Hello world", webEnvironment.getBody());
+    }
+
     private Filter createFilter(String xml) throws Exception {
         Element element = Xml.getSecureDocumentBuilder()
                 .parse(new InputSource(new StringReader(xml)))
