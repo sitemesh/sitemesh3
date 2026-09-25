@@ -32,6 +32,11 @@ public class XmlTest extends TestCase {
         assertEquals("sheep", xml.child("animal").attribute("type"));
     }
 
+    public void testTrimsTextContents() {
+        Xml xml = new Xml("<doc><path>\n    /reports/*\n  </path></doc>");
+        assertEquals("/reports/*", xml.child("path").text());
+    }
+
     public void testExposesChildrenByTagName() {
         Xml xml = new Xml("<doc> <a id='1'/> <a id='2'/> <b id='3'><a id='4'/></b> <a id='5'/> </doc>");
 

@@ -120,13 +120,14 @@ public class Xml {
     }
 
     /**
-     * Return text content of this element. Returns null if this node does not exist, or it does
-     * not contain text.
+     * Return text content of this element, with leading and trailing whitespace removed so
+     * that pretty-printed values such as <code>&lt;path&gt;\n  /a/*\n&lt;/path&gt;</code> work.
+     * Returns null if this node does not exist.
      *
-     * @return text content, or null
+     * @return trimmed text content, or null
      */
     public String text() {
-        return element == null ? null : element.getTextContent();
+        return element == null ? null : element.getTextContent().trim();
     }
     
     /**

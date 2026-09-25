@@ -117,6 +117,30 @@ public class XmlFilterConfiguratorTest extends TestCase {
         assertEquals("Decorated: Hello world", webEnvironment.getBody());
     }
 
+    public void testReadsPrettyPrintedValues() throws Exception {
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addFilter("/*", createFilter(
+                        "<sitemesh>\n" +
+                        "  <mime-type>\n    application/xhtml+xml\n  </mime-type>\n" +
+                        "  <mapping>\n" +
+                        "    <path>\n      /a/*\n    </path>\n" +
+                        "    <decorator>\n      my-decorator\n    </decorator>\n" +
+                        "  </mapping>\n" +
+                        "  <mapping exclude='true'>\n" +
+                        "    <path>\n      /a/excluded\n    </path>\n" +
+                        "  </mapping>\n" +
+                        "</sitemesh>"))
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", DECORATOR)
+                .addStaticContent("/a/b", "application/xhtml+xml", CONTENT)
+                .addStaticContent("/a/excluded", "application/xhtml+xml", CONTENT_WITH_META)
+                .create();
+
+        webEnvironment.doGet("/a/b");
+        assertEquals("Decorated: Hello world", webEnvironment.getBody());
+        webEnvironment.doGet("/a/excluded");
+        assertEquals(CONTENT_WITH_META, webEnvironment.getBody());
+    }
+
     public void testReadsConfigThatDeclaresSchemaNamespace() throws Exception {
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", createFilter(
