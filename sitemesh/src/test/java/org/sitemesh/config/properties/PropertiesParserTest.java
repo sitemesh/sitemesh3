@@ -18,8 +18,13 @@ package org.sitemesh.config.properties;
 
 import junit.framework.TestCase;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * @author Joe Walnes
@@ -98,4 +103,36 @@ public class PropertiesParserTest extends TestCase {
         }
         return result.toString();
     }
+
+    public void testWarnsAboutEntriesWithoutEquals() {
+        // A comma splits entries, so "b.html" becomes an entry of its own rather than a chain.
+        properties.put("mappings", "/*=a.html,b.html");
+        List<String> warnings = new ArrayList<String>();
+        Handler handler = new Handler() {
+            @Override
+            public void publish(LogRecord record) {
+                warnings.add(record.getMessage());
+            }
+
+            @Override
+            public void flush() {
+            }
+
+            @Override
+            public void close() {
+            }
+        };
+        Logger logger = Logger.getLogger(PropertiesParser.class.getName());
+        logger.addHandler(handler);
+        try {
+            Map<String, String[]> result = propertiesParser.getStringMultiMap("mappings");
+
+            assertEquals(1, result.size());
+            assertEquals(1, warnings.size());
+            assertTrue(warnings.get(0), warnings.get(0).contains("'b.html'"));
+        } finally {
+            logger.removeHandler(handler);
+        }
+    }
+
 }

@@ -18,6 +18,7 @@ package org.sitemesh.config.properties;
 
 import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.logging.Logger;
 
 /**
  * Parses and cleans up string based properties.
@@ -25,6 +26,8 @@ import java.util.LinkedHashMap;
  * @author Joe Walnes
  */
 class PropertiesParser {
+
+    private final static Logger logger = Logger.getLogger(PropertiesParser.class.getName());
 
     private final Map<String, String> properties;
 
@@ -76,6 +79,9 @@ class PropertiesParser {
      * e.g. "a=Apples, b=Bananas|Beef, c=Cherries" or "a=Apples\nb=Bananas\nc=Cherries".
      * The map will retain the order that the entries were defined in.
      *
+     * Entries without an = char are ignored with a warning; they usually come from a stray
+     * space around the = or from separating multiple values with a comma instead of a pipe.
+     *
      * Will return empty map if property is not found or empty.
      */
     Map<String, String[]> getStringMultiMap(String key) {
@@ -88,6 +94,10 @@ class PropertiesParser {
                     String itemKey = split[0];
                     String[] itemValue = split[1].split("\\|");
                     result.put(itemKey, itemValue);
+                } else {
+                    logger.warning("Ignoring '" + entry + "' in the '" + key + "' property: entries must be"
+                            + " key=value with no spaces around the '=', and multiple values are separated"
+                            + " by '|'.");
                 }
             }
         }
