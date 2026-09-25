@@ -28,3 +28,10 @@ def generateLexer = tasks.register('generateLexer', JavaExec) {
 }
 
 sourceSets.main.java.srcDir generateLexer
+
+// Lets `java -jar sitemesh.jar` run the offline command line launcher, as the Maven build did.
+tasks.named('jar') {
+    manifest {
+        attributes('Main-Class': 'org.sitemesh.config.cmdline.CommandLineLauncher')
+    }
+}
