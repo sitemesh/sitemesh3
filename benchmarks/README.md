@@ -105,3 +105,37 @@ M1, so the delegate redesign costs nothing measurable against the version it
 replaces); M1 measures ~3–4% faster than both consistently, i.e. that delta
 arrived with M2's dispatch/status-handling work, not with the 3.3.0 redesign.
 Single rounds can swing ~5% (see SNAPSHOT a vs b) — never conclude from one.
+
+# JMH microbenchmarks (`jmh/`)
+
+`benchmarks/jmh/` is a second, standalone Gradle build holding JMH
+microbenchmarks of individual SiteMesh components. Like the app above it is
+not part of the root build and must never run in CI.
+
+```bash
+./gradlew :sitemesh:jar                        # the SiteMesh jar under test
+./gradlew -p benchmarks/jmh installDist
+benchmarks/jmh/build/install/sitemesh-jmh/bin/sitemesh-jmh -prof gc -rf json -rff /tmp/jmh.json
+```
+
+Arguments are plain JMH ones: a regex selects benchmarks
+(`sitemesh-jmh BufferWriteDecode`), `-p size=16384 -p kind=UTF8_ASCII`
+narrows the parameters, and `-prof gc` adds allocation per operation
+(`gc.alloc.rate.norm`). Each benchmark defaults to 3 forks of 5 × 1 s warmup
+and 5 × 1 s measurement.
+
+To compare two versions, build the harness against each jar with
+`-PsitemeshJar=/path/to/sitemesh.jar` (e.g. one built from a worktree of the
+baseline commit), run both in the same session, alternating, and only trust
+differences larger than JMH's reported error.
+
+- `BufferWriteDecodeBenchmark` — the response-buffer byte path: a fresh
+  `Buffer`, writes through `getOutputStream()`, then `toCharBuffer()`.
+  Parameterised by page size, text kind (UTF-8 ASCII, UTF-8 multibyte,
+  ISO-8859-1) and write pattern (`SINGLE` = Tomcat's DefaultServlet writing a
+  static file in one call, `CHUNK_4K` = Jetty 12's ResourceServlet,
+  `SMALL_128` = piecemeal application writes).
+- `BufferDecodeContextBenchmark` — on the same pages: `toCharBuffer()` alone,
+  `decodeFloor` (decoding bytes that are already contiguous, the most any
+  buffer rewrite could approach) and `TagBasedContentProcessor.build` with the
+  default bundles, to judge the byte path against the parse that follows it.

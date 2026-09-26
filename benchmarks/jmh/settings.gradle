@@ -1,0 +1,3 @@
+// Standalone build: deliberately not included from the root settings.gradle
+// or from ../settings.gradle, so JMH never reaches the published modules or CI.
+rootProject.name = 'sitemesh-jmh'

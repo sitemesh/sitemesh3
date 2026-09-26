@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+// The SiteMesh core jar under test. Defaults to the jar `./gradlew :sitemesh:jar`
+// leaves in this checkout; pass -PsitemeshJar=/path/to/sitemesh.jar to measure
+// another build (e.g. one made from a worktree of the baseline commit).
+def sitemeshJar = file(project.findProperty('sitemeshJar')
+        ?: "${rootDir}/../../sitemesh/build/libs/sitemesh-3.3.0-SNAPSHOT.jar")
+
+dependencies {
+    implementation files(sitemeshJar)
+    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
+    implementation 'org.openjdk.jmh:jmh-core:1.37'
+    annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
+}
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
+}
+
+application {
+    mainClass = 'org.openjdk.jmh.Main'
+}
