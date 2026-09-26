@@ -17,6 +17,15 @@ public final class HtmlCorpus {
         UTF8_ASCII(StandardCharsets.UTF_8, "en",
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                 "Ut enim ad minim veniam"),
+        /**
+         * UTF-8, mostly ASCII with a few multibyte characters per paragraph
+         * (typographic quotes and dashes, accented Latin letters): English or
+         * Western European copy saved as UTF-8.
+         */
+        UTF8_SPARSE(StandardCharsets.UTF_8, "en",
+                "It’s a “smart” page — the café serves crème brûlée; "
+                        + "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                "Ut enim ad minim veniam"),
         /** UTF-8 dominated by 2-, 3- and 4-byte sequences (Cyrillic, CJK, emoji). */
         UTF8_MULTIBYTE(StandardCharsets.UTF_8, "ja",
                 "日本語のテキストは三バイトで符号化されます。Русский текст занимает два байта на символ. 中文内容也很常见。🚀✨🎉 café",

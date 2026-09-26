@@ -121,8 +121,9 @@ benchmarks/jmh/build/install/sitemesh-jmh/bin/sitemesh-jmh -prof gc -rf json -rf
 Arguments are plain JMH ones: a regex selects benchmarks
 (`sitemesh-jmh BufferWriteDecode`), `-p size=16384 -p kind=UTF8_ASCII`
 narrows the parameters, and `-prof gc` adds allocation per operation
-(`gc.alloc.rate.norm`). Each benchmark defaults to 3 forks of 5 × 1 s warmup
-and 5 × 1 s measurement.
+(`gc.alloc.rate.norm`). Benchmarks default to 3 forks of 5 × 1 s warmup and
+5 × 1 s measurement, except `ByteDecodePathBenchmark` (below), which uses 6
+shorter forks.
 
 To compare two versions, build the harness against each jar with
 `-PsitemeshJar=/path/to/sitemesh.jar` (e.g. one built from a worktree of the
@@ -139,3 +140,19 @@ differences larger than JMH's reported error.
   `decodeFloor` (decoding bytes that are already contiguous, the most any
   buffer rewrite could approach) and `TagBasedContentProcessor.build` with the
   default bundles, to judge the byte path against the parse that follows it.
+- `ByteDecodePathBenchmark` — a paired comparison inside one JVM:
+  `toCharBuffer()` against gathering the same 8 KB blocks with
+  `ByteBufferBuilder.toByteBuffer()` and decoding the copy (what
+  `toCharBuffer()` did before it decoded in place). Many short forks spread
+  both over the same stretch of time, which keeps the comparison usable on a
+  machine with other load. On a jar where both paths are the same code the
+  ratio is an A/A check of the noise.
+- `Utf8DecodeStrategyBenchmark` — JDK-only: `CharsetDecoder` against
+  `new String(bytes, UTF_8)` plus `getChars`, an ASCII pre-scan, and a hybrid,
+  for pure-ASCII, mostly-ASCII (`UTF8_SPARSE`) and dense multibyte pages.
+
+`HtmlCorpus` also has a `UTF8_SPARSE` kind: English copy with typographic
+quotes, dashes and a few accented letters, i.e. mostly ASCII. It matters for
+UTF-8 decoding because `CharsetDecoder` leaves its vectorized ASCII fast path
+at the first non-ASCII byte, so such a page decodes nearly as slowly as dense
+multibyte text.
