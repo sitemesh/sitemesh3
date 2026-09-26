@@ -16,6 +16,8 @@
 
 package org.sitemesh.autoconfigure;
 
+import java.lang.annotation.Annotation;
+
 import org.sitemesh.autoconfigure.SiteMeshProperties.Integration;
 import org.sitemesh.autoconfigure.SiteMeshProperties.WrapMode;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
@@ -26,13 +28,14 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
- * Conditions that match on the enum-typed {@code sitemesh.*} properties by binding them
- * exactly as {@link SiteMeshProperties} does. {@code @ConditionalOnProperty} compares raw
- * strings under one spelling of the key, so values that relaxed binding accepts
- * ({@code BEAN_INSTANCE}, or the kebab-case {@code view-resolver.wrap-mode} key) matched
- * no condition and silently registered nothing, and a mistyped integration left SiteMesh
- * switched off. Binding keeps the conditions and the bound properties in agreement, and an
- * invalid value fails startup.
+ * The conditions behind {@link ConditionalOnSiteMeshIntegration} and
+ * {@link ConditionalOnSiteMeshWrapMode}. They match on the enum-typed {@code sitemesh.*}
+ * properties by binding them exactly as {@link SiteMeshProperties} does.
+ * {@code @ConditionalOnProperty} compares raw strings under one spelling of the key, so values
+ * that relaxed binding accepts ({@code BEAN_INSTANCE}, or the kebab-case
+ * {@code view-resolver.wrap-mode} key) matched no condition and silently registered nothing,
+ * and a mistyped integration left SiteMesh switched off. Binding keeps the conditions and the
+ * bound properties in agreement, and an invalid value fails startup.
  */
 final class SiteMeshConditions {
 
@@ -42,56 +45,42 @@ final class SiteMeshConditions {
     private SiteMeshConditions() {
     }
 
+    /**
+     * Matches when the bound property equals the {@code value} of the annotation it backs.
+     */
     abstract static class EnumPropertyCondition<E extends Enum<E>> extends SpringBootCondition {
 
+        private final Class<? extends Annotation> annotation;
         private final String name;
         private final Class<E> type;
         private final E defaultValue;
-        private final E required;
 
-        EnumPropertyCondition(String name, Class<E> type, E defaultValue, E required) {
+        EnumPropertyCondition(Class<? extends Annotation> annotation, String name, Class<E> type, E defaultValue) {
+            this.annotation = annotation;
             this.name = name;
             this.type = type;
             this.defaultValue = defaultValue;
-            this.required = required;
         }
 
         @Override
         public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            E required = metadata.getAnnotations().get(annotation).getEnum("value", type);
             E value = Binder.get(context.getEnvironment()).bind(name, type).orElse(defaultValue);
-            ConditionMessage message = ConditionMessage.forCondition("SiteMesh " + name)
-                    .because("value is " + value + ", required " + required);
+            ConditionMessage message = ConditionMessage.forCondition(annotation, required)
+                    .because(name + " is " + value);
             return new ConditionOutcome(value == required, message);
         }
     }
 
-    static final class OnViewResolverIntegration extends EnumPropertyCondition<Integration> {
-        OnViewResolverIntegration() {
-            super(INTEGRATION, Integration.class, Integration.VIEW_RESOLVER, Integration.VIEW_RESOLVER);
+    static final class OnIntegration extends EnumPropertyCondition<Integration> {
+        OnIntegration() {
+            super(ConditionalOnSiteMeshIntegration.class, INTEGRATION, Integration.class, Integration.VIEW_RESOLVER);
         }
     }
 
-    static final class OnFilterIntegration extends EnumPropertyCondition<Integration> {
-        OnFilterIntegration() {
-            super(INTEGRATION, Integration.class, Integration.VIEW_RESOLVER, Integration.FILTER);
-        }
-    }
-
-    static final class OnDelegateWrapMode extends EnumPropertyCondition<WrapMode> {
-        OnDelegateWrapMode() {
-            super(WRAP_MODE, WrapMode.class, WrapMode.DELEGATE, WrapMode.DELEGATE);
-        }
-    }
-
-    static final class OnBeanDefinitionWrapMode extends EnumPropertyCondition<WrapMode> {
-        OnBeanDefinitionWrapMode() {
-            super(WRAP_MODE, WrapMode.class, WrapMode.DELEGATE, WrapMode.BEAN_DEFINITION);
-        }
-    }
-
-    static final class OnBeanInstanceWrapMode extends EnumPropertyCondition<WrapMode> {
-        OnBeanInstanceWrapMode() {
-            super(WRAP_MODE, WrapMode.class, WrapMode.DELEGATE, WrapMode.BEAN_INSTANCE);
+    static final class OnWrapMode extends EnumPropertyCondition<WrapMode> {
+        OnWrapMode() {
+            super(ConditionalOnSiteMeshWrapMode.class, WRAP_MODE, WrapMode.class, WrapMode.DELEGATE);
         }
     }
 }

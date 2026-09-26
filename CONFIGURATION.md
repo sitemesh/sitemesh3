@@ -66,6 +66,8 @@ Note: `sitemesh.decorator.exclusions` applies to the **filter integration only**
 
 All `sitemesh.*` properties are bound through a typed `SiteMeshProperties` class, so the starter ships `spring-configuration-metadata.json` and IDEs auto-complete and document the keys. `sitemesh.integration`, `sitemesh.dispatchMode` and `sitemesh.viewResolver.wrapMode` are typed as enums: an unrecognized value fails application startup instead of silently falling back to the default (or, for `sitemesh.integration`, silently switching SiteMesh off).
 
+Frameworks that build on the starter (Grails' GSP layouts, for example) can gate their own configuration with `@ConditionalOnSiteMeshIntegration(Integration.VIEW_RESOLVER)` or `@ConditionalOnSiteMeshWrapMode(WrapMode.BEAN_INSTANCE)`, the conditions the starter itself uses. They bind the properties exactly as the starter does, so the framework and the starter always agree on which integration and wrap mode are active.
+
 View-resolver-integration-only properties:
 
 | Property                                | Default           | Description                                                                                                                                                                                                                       |

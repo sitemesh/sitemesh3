@@ -31,7 +31,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.ViewResolver;
 
@@ -78,10 +77,13 @@ import org.springframework.web.servlet.ViewResolver;
  * integration can substitute its own flavour of any wrap mode by registering a
  * bean of the corresponding type before this configuration is processed.
  * Downstream frameworks (e.g. Grails) rely on this; treat the bean types,
- * names and conditions as public API.</p>
+ * names and conditions as public API. A framework that adds configuration of
+ * its own for one integration or wrap mode should gate it with
+ * {@link ConditionalOnSiteMeshIntegration} / {@link ConditionalOnSiteMeshWrapMode},
+ * the conditions used here, so that it always agrees with the starter.</p>
  */
 @AutoConfiguration
-@Conditional(SiteMeshConditions.OnViewResolverIntegration.class)
+@ConditionalOnSiteMeshIntegration(SiteMeshProperties.Integration.VIEW_RESOLVER)
 @ConditionalOnClass({ ViewResolver.class, SiteMeshView.class })
 @EnableConfigurationProperties(SiteMeshProperties.class)
 public class SiteMeshViewResolverAutoConfiguration {
@@ -166,7 +168,7 @@ public class SiteMeshViewResolverAutoConfiguration {
     @ConditionalOnMissingBean({ SiteMeshViewResolver.class,
             SiteMeshViewResolverBeanPostProcessor.class,
             SiteMeshViewResolverPostProcessor.class })
-    @Conditional(SiteMeshConditions.OnDelegateWrapMode.class)
+    @ConditionalOnSiteMeshWrapMode(SiteMeshProperties.WrapMode.DELEGATE)
     public SiteMeshDelegatingViewResolver siteMeshDelegatingViewResolver(
             ContentProcessor contentProcessor,
             DecoratorSelector<SiteMeshContext> decoratorSelector,
@@ -191,7 +193,7 @@ public class SiteMeshViewResolverAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(SiteMeshViewResolverPostProcessor.class)
-    @Conditional(SiteMeshConditions.OnBeanDefinitionWrapMode.class)
+    @ConditionalOnSiteMeshWrapMode(SiteMeshProperties.WrapMode.BEAN_DEFINITION)
     public static SiteMeshViewResolverPostProcessor siteMeshViewResolverPostProcessor(Environment environment) {
         SiteMeshProperties properties = bindProperties(environment);
         SiteMeshViewResolverPostProcessor pp = new SiteMeshViewResolverPostProcessor();
@@ -216,7 +218,7 @@ public class SiteMeshViewResolverAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(SiteMeshViewResolverBeanPostProcessor.class)
-    @Conditional(SiteMeshConditions.OnBeanInstanceWrapMode.class)
+    @ConditionalOnSiteMeshWrapMode(SiteMeshProperties.WrapMode.BEAN_INSTANCE)
     public static SiteMeshViewResolverBeanPostProcessor siteMeshViewResolverBeanPostProcessor(Environment environment) {
         SiteMeshProperties properties = bindProperties(environment);
         SiteMeshViewResolverBeanPostProcessor pp = new SiteMeshViewResolverBeanPostProcessor();

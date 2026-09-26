@@ -29,7 +29,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 
 import java.util.*;
 
@@ -50,7 +49,7 @@ import java.util.*;
  * integration on Tomcat.</p>
  */
 @AutoConfiguration
-@Conditional(SiteMeshConditions.OnFilterIntegration.class)
+@ConditionalOnSiteMeshIntegration(SiteMeshProperties.Integration.FILTER)
 @EnableConfigurationProperties(SiteMeshProperties.class)
 public class SiteMeshAutoConfiguration {
 

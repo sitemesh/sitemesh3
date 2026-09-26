@@ -17,13 +17,18 @@
 package org.sitemesh.autoconfigure;
 
 import junit.framework.TestCase;
+import org.sitemesh.autoconfigure.SiteMeshProperties.Integration;
+import org.sitemesh.autoconfigure.SiteMeshProperties.WrapMode;
 import org.sitemesh.webmvc.SiteMeshDelegatingViewResolver;
 import org.sitemesh.webmvc.SiteMeshViewResolverBeanPostProcessor;
 import org.sitemesh.webmvc.SiteMeshViewResolverPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Checks that the auto-configurations pick their beans from the same property values that
@@ -103,5 +108,68 @@ public class SiteMeshConditionsTest extends TestCase {
         assertEquals(delegating, context.getBeanNamesForType(SiteMeshDelegatingViewResolver.class).length);
         assertEquals(beanDefinition, context.getBeanNamesForType(SiteMeshViewResolverPostProcessor.class).length);
         assertEquals(beanInstance, context.getBeanNamesForType(SiteMeshViewResolverBeanPostProcessor.class).length);
+    }
+
+    // A framework's own configuration, gated the way the starter gates its auto-configurations.
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnSiteMeshIntegration(Integration.VIEW_RESOLVER)
+    static class FrameworkViewResolverConfiguration {
+        @Bean
+        String frameworkViewResolverSupport() {
+            return "view-resolver";
+        }
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    static class FrameworkWrapModeConfiguration {
+        @Bean
+        @ConditionalOnSiteMeshWrapMode(WrapMode.BEAN_INSTANCE)
+        String frameworkBeanInstanceSupport() {
+            return "bean-instance";
+        }
+    }
+
+    public void testIntegrationAnnotationMatchesEverySpellingTheStarterAccepts() {
+        for (String property : new String[] {null, "view-resolver", "VIEW_RESOLVER", "viewResolver"}) {
+            frameworkRunner(property).run(context -> {
+                assertNull(property, context.getStartupFailure());
+                assertTrue(property, context.containsBean("frameworkViewResolverSupport"));
+            });
+        }
+        frameworkRunner("filter").run(context -> {
+            assertNull(context.getStartupFailure());
+            assertFalse(context.containsBean("frameworkViewResolverSupport"));
+        });
+        frameworkRunner("filters").run(context -> assertNotNull(context.getStartupFailure()));
+    }
+
+    public void testIntegrationAnnotationAgreesWithTheStarter() {
+        for (String value : new String[] {"VIEW_RESOLVER", "filter"}) {
+            runner.withUserConfiguration(FrameworkViewResolverConfiguration.class)
+                    .withPropertyValues("sitemesh.integration=" + value)
+                    .run(context -> {
+                        assertNull(value, context.getStartupFailure());
+                        boolean starterViewResolver = context.getBeanNamesForType(SiteMeshDelegatingViewResolver.class).length == 1;
+                        assertEquals(value, starterViewResolver, context.containsBean("frameworkViewResolverSupport"));
+                    });
+        }
+    }
+
+    public void testWrapModeAnnotationMatchesEverySpellingTheStarterAccepts() {
+        for (String property : new String[] {
+                "sitemesh.viewResolver.wrapMode=bean-instance",
+                "sitemesh.view-resolver.wrap-mode=BEAN_INSTANCE"}) {
+            new ApplicationContextRunner().withUserConfiguration(FrameworkWrapModeConfiguration.class)
+                    .withPropertyValues(property)
+                    .run(context -> assertTrue(property, context.containsBean("frameworkBeanInstanceSupport")));
+        }
+        new ApplicationContextRunner().withUserConfiguration(FrameworkWrapModeConfiguration.class)
+                .run(context -> assertFalse(context.containsBean("frameworkBeanInstanceSupport")));
+    }
+
+    private static ApplicationContextRunner frameworkRunner(String integration) {
+        ApplicationContextRunner runner = new ApplicationContextRunner()
+                .withUserConfiguration(FrameworkViewResolverConfiguration.class);
+        return integration == null ? runner : runner.withPropertyValues("sitemesh.integration=" + integration);
     }
 }
