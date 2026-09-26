@@ -31,6 +31,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.CheckedInputStream;
@@ -48,12 +49,12 @@ public class FileSystemDirectory implements Directory {
     private final Charset encoding;
 
     /**
-     * Create a directory rooted at rootDir, using the platform default charset.
+     * Create a directory rooted at rootDir, reading and writing text as UTF-8.
      *
      * @param rootDir root directory on disk
      */
     public FileSystemDirectory(File rootDir) {
-        this(rootDir, Charset.defaultCharset());
+        this(rootDir, StandardCharsets.UTF_8);
     }
 
     /**

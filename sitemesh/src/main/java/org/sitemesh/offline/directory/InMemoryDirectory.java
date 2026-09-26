@@ -22,6 +22,7 @@ import java.nio.CharBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,10 +42,10 @@ public class InMemoryDirectory implements Directory {
     private final Map<String, ByteBuffer> files = new ConcurrentHashMap<String, ByteBuffer>();
 
     /**
-     * Create an in-memory directory using the platform default charset.
+     * Create an in-memory directory, encoding text as UTF-8.
      */
     public InMemoryDirectory() {
-        this(Charset.defaultCharset());
+        this(StandardCharsets.UTF_8);
     }
 
     /**

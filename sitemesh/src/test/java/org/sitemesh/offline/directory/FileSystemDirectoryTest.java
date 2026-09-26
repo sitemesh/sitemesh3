@@ -47,6 +47,11 @@ public class FileSystemDirectoryTest extends DirectoryTest {
         return new FileSystemDirectory(createTempDirForTest(), encoding);
     }
 
+    @Override
+    protected FileSystemDirectory createDirectoryWithDefaultEncoding() {
+        return new FileSystemDirectory(createTempDirForTest());
+    }
+
     private File createTempDirForTest() {
         File tempDir = createTempDir();
         tempDirs.add(tempDir);

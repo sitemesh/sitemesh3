@@ -49,6 +49,11 @@ public abstract class DirectoryTest extends TestCase {
      */
     protected abstract Directory createDirectory(Charset encoding);
 
+    /**
+     * Factory method returning the implementation made with its no-encoding constructor.
+     */
+    protected abstract Directory createDirectoryWithDefaultEncoding();
+
     public void testSavesAndLoadsCharBuffers() throws IOException {
         Directory directory = createDirectory(UTF8);
 
@@ -147,6 +152,18 @@ public abstract class DirectoryTest extends TestCase {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         directory.load("file", Channels.newChannel(out));
         assertBytesEqual(string.getBytes(shiftJis.name()), out.toByteArray());
+    }
+
+    public void testDefaultEncodingIsUtf8WhateverThePlatformDefault() throws IOException {
+        Directory directory = createDirectoryWithDefaultEncoding();
+
+        String string = "\u540d\u524d h\u00e9llo \u2713";
+        directory.save("file", CharBuffer.wrap(string));
+        assertEquals(string, directory.load("file").toString());
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        directory.load("file", Channels.newChannel(out));
+        assertBytesEqual(string.getBytes(UTF8), out.toByteArray());
     }
 
     public void testListsAllFilePaths() throws IOException {

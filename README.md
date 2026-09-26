@@ -571,7 +571,7 @@ Use the approach that suits your project.
 
 ### Command line interface
 
-You can invoke the command line interface by running the executable sitemesh.jar. It requires Java 17 but no other dependencies.
+You can invoke the command line interface by running the executable sitemesh.jar. It requires Java 17 but no other dependencies. Files are read and written as UTF-8.
 
 Invoking on it's own will output a detailed help message:
 
@@ -598,7 +598,7 @@ java -jar sitemesh-3.x.jar -src project/src -config project/sitemesh.xml -dest p
 
 #### Overview
 
-The sitemesh.jar comes prepackaged with a custom Ant task that can be used for offline processing. In the following examples, we're going to look at how to install and use the SiteMeshTask to generate static content in the offline mode.
+The sitemesh.jar comes prepackaged with a custom Ant task that can be used for offline processing. Like the command line, it reads and writes files as UTF-8. In the following examples, we're going to look at how to install and use the SiteMeshTask to generate static content in the offline mode.
 
 #### SiteMeshTask
 

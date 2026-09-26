@@ -31,4 +31,9 @@ public class InMemoryDirectoryTest extends DirectoryTest {
     protected Directory createDirectory(Charset encoding) {
         return new InMemoryDirectory(encoding);
     }
+
+    @Override
+    protected Directory createDirectoryWithDefaultEncoding() {
+        return new InMemoryDirectory();
+    }
 }
