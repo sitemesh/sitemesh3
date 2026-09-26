@@ -50,7 +50,29 @@ public class TextEncoder {
         CharsetDecoder decoder = createDecoder(encoding);
         int encodedLength = (int) (decoder.maxCharsPerByte() * data.limit());
         CharBuffer charBuffer = CharBuffer.allocate(encodedLength);
-        CoderResult coderResult = decoder.decode(data, charBuffer, true);
+        return complete(decoder, charBuffer, decoder.decode(data, charBuffer, true));
+    }
+
+    /**
+     * Decode the bytes held by a {@link ByteBufferBuilder}. Same result, and
+     * same exceptions, as {@code encode(data.toByteBuffer(), encoding)}, but
+     * decodes the builder's blocks in place rather than first copying them all
+     * into one intermediate buffer.
+     *
+     * @param data The bytes to decode.
+     * @param encoding Character encoding to use. If null, the platform default is used.
+     * @return The decoded characters.
+     * @throws IOException If the encoding is unsupported or decoding fails.
+     */
+    static CharBuffer encode(ByteBufferBuilder data, String encoding) throws IOException {
+        CharsetDecoder decoder = createDecoder(encoding);
+        int encodedLength = (int) (decoder.maxCharsPerByte() * data.size());
+        CharBuffer charBuffer = CharBuffer.allocate(encodedLength);
+        return complete(decoder, charBuffer, data.decodeTo(decoder, charBuffer));
+    }
+
+    private static CharBuffer complete(CharsetDecoder decoder, CharBuffer charBuffer, CoderResult coderResult)
+            throws IOException {
         if (!coderResult.isUnderflow()) {
             coderResult.throwException();
         }

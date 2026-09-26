@@ -181,8 +181,7 @@ public class Buffer {
         if (bufferedWriter != null) {
             return bufferedWriter.toCharBufferView();
         } else if (byteBufferBuilder != null) {
-            // TODO: Avoid allocating intermediate ByteBuffers.
-            return TextEncoder.encode(byteBufferBuilder.toByteBuffer(), encoding);
+            return TextEncoder.encode(byteBufferBuilder, encoding);
         } else {
             return EMPTY_BUFFER;
         }
