@@ -49,6 +49,17 @@ subprojects {
     withJavadocJar()
   }
 
+  // Sources contain non-ASCII text. Read (and document) them as UTF-8 rather than the
+  // platform encoding, which is windows-1252 for a JDK 17 build on Windows.
+  tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+  }
+  tasks.withType(Javadoc).configureEach {
+    options.encoding = 'UTF-8'
+    options.docEncoding = 'UTF-8'
+    options.charSet = 'UTF-8'
+  }
+
   // Stamp the version into the jar manifest so Package.getImplementationVersion()
   // resolves at runtime (used by the "SiteMesh <version> initialized" startup log).
   tasks.named('jar') {
