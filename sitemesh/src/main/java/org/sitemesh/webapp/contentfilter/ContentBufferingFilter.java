@@ -255,7 +255,8 @@ public abstract class ContentBufferingFilter implements Filter {
         };
 
         filterChain.doFilter(wrapRequest(request), responseBuffer);
-        if (responseBuffer.getBuffer() == null) {
+        // Check without decoding: processInternally() decodes the buffer, once.
+        if (!responseBuffer.isBuffering()) {
             return;
         }
         if (request.getAttribute(SITEMESH_DECORATED_ATTRIBUTE) != null) {

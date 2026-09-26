@@ -18,6 +18,7 @@ package org.sitemesh.webapp.contentfilter;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -85,6 +86,34 @@ public class ContentBufferingFilterTest extends TestCase {
 
     }
     
+    public void testDecodesBufferedBytesOnce() throws Exception {
+        final int[] decodersAtPostProcess = new int[1];
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addServlet("/filtered", new HttpServlet() {
+                    @Override
+                    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+                        CountingCharsetProvider.DECODERS.set(0);
+                        response.setContentType("text/html;charset=" + CountingCharsetProvider.NAME);
+                        response.getOutputStream().write("Hello world!".getBytes(StandardCharsets.UTF_8));
+                    }
+                })
+                .addFilter("/filtered", new MyContentBufferingFilter() {
+                    @Override
+                    protected boolean postProcess(String contentType, CharBuffer buffer,
+                                                  HttpServletRequest request, HttpServletResponse response, ResponseMetaData metaData)
+                            throws IOException, ServletException {
+                        decodersAtPostProcess[0] = CountingCharsetProvider.DECODERS.get();
+                        response.getOutputStream().print(buffer.toString().toUpperCase());
+                        return true;
+                    }
+                })
+                .create();
+
+        webEnvironment.doGet("/filtered");
+        assertEquals("HELLO WORLD!", webEnvironment.getBody());
+        assertEquals("buffered bytes should be decoded once", 1, decodersAtPostProcess[0]);
+    }
+
     public void testStatusCode404DoesntProcess() throws Exception {
       WebEnvironment webEnvironment = new WebEnvironment.Builder()
       .addStatusCodeFail("/filtered", 404, "text/html", "1")

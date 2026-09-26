@@ -122,6 +122,16 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
     }
 
     /**
+     * Whether content is being buffered, so that {@link #getBuffer()} will not return null.
+     * Unlike calling {@link #getBuffer()}, this does not decode buffered bytes.
+     *
+     * @return True if buffering was enabled.
+     */
+    public boolean isBuffering() {
+        return buffer != null;
+    }
+
+    /**
      * Whether the underlying buffer was written to using {@link #getOutputStream()}
      * (as opposed to {@link #getWriter()}.) If buffering was not enabled, false will be returned.
      *
