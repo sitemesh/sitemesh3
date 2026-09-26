@@ -23,28 +23,11 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Restore gradle.properties
-        env:
-          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-        shell: bash
-        run: |
-          mkdir -p ~/.gradle/
-          echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
-
       - name: Run tests
         run: ./gradlew --no-daemon clean test
 
-      # Snapshot flow (any non-tag push)
-      - name: Publish SNAPSHOT to Central
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        run: ./gradlew --no-daemon publishToSonatype
-
-      # Release flow (tag push)
-      - name: Close and Release to Central
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
-        run: ./gradlew --no-daemon publishToSonatype closeAndReleaseSonatypeStagingRepository
-
-  # The job above tests on JDK 17 and publishes. These run alongside it and publish nothing.
+  # The job above tests on JDK 17; these run alongside it. Only the publish job at the end
+  # publishes, once all of them have passed.
 
   # Run the tests on newer JDKs too; the code is still compiled for 17.
   test-newer-jdks:
@@ -115,3 +98,37 @@ jobs:
         with:
           name: smoke-test-logs
           path: build/smoke-test/
+
+  # Snapshot (branch push) or release (tag push) publishing, only once every test job passed.
+  publish:
+    needs: [ build-gradle-project, test-newer-jdks, springboot-jetty, examples-smoke-test ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17 with cache
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Restore gradle.properties
+        env:
+          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+        shell: bash
+        run: |
+          mkdir -p ~/.gradle/
+          echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
+
+      # Snapshot flow (any non-tag push)
+      - name: Publish SNAPSHOT to Central
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        run: ./gradlew --no-daemon publishToSonatype
+
+      # Release flow (tag push)
+      - name: Close and Release to Central
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        run: ./gradlew --no-daemon publishToSonatype closeAndReleaseSonatypeStagingRepository
