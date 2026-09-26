@@ -10,3 +10,6 @@ build
 /.project
 /.settings
 .DS_Store
+
+# Git worktrees created by Claude Code agents
+.claude/worktrees/
