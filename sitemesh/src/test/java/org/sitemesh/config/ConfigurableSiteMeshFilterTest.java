@@ -55,6 +55,11 @@ public class ConfigurableSiteMeshFilterTest extends TestCase {
                 setups.incrementAndGet();
                 return super.setup();
             }
+
+            @Override
+            protected long getAutoReloadCheckInterval() {
+                return 0; // check on every request
+            }
         };
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", filter)
@@ -77,6 +82,44 @@ public class ConfigurableSiteMeshFilterTest extends TestCase {
             webEnvironment.doGet("/content");
             assertEquals("Decorated: Hello world", webEnvironment.getBody());
             assertEquals(3, setups.get());
+        } finally {
+            config.delete();
+        }
+    }
+
+    public void testChecksForChangesAtMostOncePerInterval() throws Exception {
+        final File config = File.createTempFile("sitemesh3", ".xml");
+        Files.writeString(config.toPath(), CONFIG);
+        final AtomicInteger setups = new AtomicInteger();
+        ConfigurableSiteMeshFilter filter = new ConfigurableSiteMeshFilter() {
+            @Override
+            protected String getConfigFileName() {
+                return config.getAbsolutePath();
+            }
+
+            @Override
+            protected Filter setup() throws ServletException {
+                setups.incrementAndGet();
+                return super.setup();
+            }
+
+            @Override
+            protected long getAutoReloadCheckInterval() {
+                return 60_000;
+            }
+        };
+        WebEnvironment webEnvironment = new WebEnvironment.Builder()
+                .addFilter("/*", filter)
+                .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html", "Decorated: <sitemesh:write property='title'/>")
+                .addStaticContent("/content", "text/html", CONTENT)
+                .create();
+        try {
+            assertTrue(config.delete());
+            for (int i = 0; i < 3; i++) {
+                webEnvironment.doGet("/content");
+                assertEquals("Decorated: Hello world", webEnvironment.getBody());
+            }
+            assertEquals("the change should not be seen until the interval has passed", 1, setups.get());
         } finally {
             config.delete();
         }

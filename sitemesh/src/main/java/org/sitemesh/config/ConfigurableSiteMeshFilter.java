@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -150,7 +151,7 @@ import java.util.logging.Logger;
  *
  * <p><b><code>autoReload</code></b> (optional): Whether to reload the XML config file when it
  * changes: <code>true</code>, <code>yes</code> or <code>1</code>, or <code>false</code>.
- * Defaults to <code>true</code>.</p>
+ * Defaults to <code>true</code>. The file is checked at most once a second.</p>
  *
  * <p>Where a <i>name</i> is used, this means the fully qualified class name, which must
  * have a default constructor.</p>
@@ -177,6 +178,7 @@ public class ConfigurableSiteMeshFilter implements Filter {
     // Modifications of these should be synchronized on configLock (below).
     private volatile Filter filter;
     private volatile long timestampOfXmlFileAtLastLoad;
+    private volatile long lastReloadCheck; // System.nanoTime()
 
     // See above.
     private final Object configLock = new Object();
@@ -193,6 +195,9 @@ public class ConfigurableSiteMeshFilter implements Filter {
     /** Whether auto reloading is enabled if the {@link #AUTO_RELOAD_PARAM} init-param is not set. */
     public static final boolean AUTO_RELOAD_DEFAULT = true;
 
+    /** Default minimum time between checks for a changed config file, in milliseconds. */
+    public static final long AUTO_RELOAD_CHECK_INTERVAL_DEFAULT = 1000;
+
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
         configProperties = getConfigProperties(filterConfig);
@@ -202,6 +207,7 @@ public class ConfigurableSiteMeshFilter implements Filter {
         synchronized (configLock) {
             deployNewFilter(setup());
         }
+        lastReloadCheck = System.nanoTime();
 
         initialized = true;
     }
@@ -294,6 +300,16 @@ public class ConfigurableSiteMeshFilter implements Filter {
             String lower = autoReload.toLowerCase(Locale.ROOT);
             return lower.equals("1") || lower.equals("true") || lower.equals("yes");
         }
+    }
+
+    /**
+     * Minimum time between checks for a changed config file when auto reloading is enabled.
+     * Override to change it; 0 checks on every request.
+     *
+     * @return the interval in milliseconds (defaults to {@link #AUTO_RELOAD_CHECK_INTERVAL_DEFAULT}).
+     */
+    protected long getAutoReloadCheckInterval() {
+        return AUTO_RELOAD_CHECK_INTERVAL_DEFAULT;
     }
 
     /**
@@ -421,11 +437,18 @@ public class ConfigurableSiteMeshFilter implements Filter {
      * @throws ServletException if the new configuration cannot be loaded.
      */
     protected void reloadIfNecessary() throws ServletException {
-        // TODO: Allow finer grained control of reload strategies:
-        // - don't check file timestamp on every single request (once per N seconds).
-        // - periodically check in background, instead of blocking request threads.
+        // TODO: Periodically check in background, instead of blocking request threads.
+        if (!autoReload) {
+            return;
+        }
+        // Check the file's timestamp (a stat() call) at most once per interval, not per request.
+        long now = System.nanoTime();
+        if (now - lastReloadCheck < TimeUnit.MILLISECONDS.toNanos(getAutoReloadCheckInterval())) {
+            return;
+        }
+        lastReloadCheck = now;
 
-        if (autoReload && reloadRequired()) {
+        if (reloadRequired()) {
             synchronized (configLock) { // Double check lock for performance (works in JDK5+, with volatile items).
                 if (reloadRequired()) {
                     deployNewFilter(setup());
