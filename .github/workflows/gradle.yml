@@ -88,3 +88,30 @@ jobs:
 
       - name: Run Spring Boot example tests on Jetty
         run: ./gradlew --no-daemon :examples:springboot:test -Pcontainer=jetty
+
+  # Boots every example on Tomcat and Jetty and checks that pages come back decorated.
+  examples-smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Make sure lsof is available
+        run: command -v lsof || (sudo apt-get update && sudo apt-get install -y lsof)
+
+      - name: Smoke-test the examples
+        run: examples/smoke-test.sh
+
+      - name: Upload smoke-test logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-logs
+          path: build/smoke-test/

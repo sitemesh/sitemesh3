@@ -30,7 +30,7 @@ Example project paths follow the directory layout (`examples/<name>` -> `:exampl
 - Struts on Tomcat 11 / Jetty 12: `./gradlew :examples:struts:tomcatRun` / `:examples:struts:jettyRun`
 - Micronaut (Netty; needs JDK 25): `./gradlew :examples:micronaut:run`
 
-Whenever a change touches response buffering, dispatch, or content-type handling, **run both the Tomcat and Jetty variants** of `hellowebapp` and `springboot` before declaring success. The containers have diverged enough (see below) that one can mask bugs in the other.
+Whenever a change touches response buffering, dispatch, or content-type handling, **run both the Tomcat and Jetty variants** of `hellowebapp` and `springboot` before declaring success. `examples/smoke-test.sh` does this: it boots every example on each of its containers (and Spring Boot in both integrations), checks that pages come back decorated, and stops them again; pass example names to run a subset (`examples/smoke-test.sh hellowebapp springboot`). CI runs it on every push. The containers have diverged enough (see below) that one can mask bugs in the other.
 
 ### JFlex lexer generation
 
