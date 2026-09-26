@@ -93,15 +93,7 @@ public class ByteBufferBuilder {
      */
     public void write(int datum) {
         if (index == blockSize) {
-            // Create new buffer and store current in linked list
-            if (buffers == null)
-                buffers = new LinkedList<byte[]>();
-
-            buffers.addLast(buffer);
-
-            buffer = new byte[blockSize];
-            size += index;
-            index = 0;
+            nextBlock();
         }
 
         // store the byte
@@ -121,19 +113,50 @@ public class ByteBufferBuilder {
         } else if ((offset < 0) || (offset + length > data.length)
                 || (length < 0)) {
             throw new IndexOutOfBoundsException();
+        } else if (index + length < blockSize) {
+            // copy in the subarray
+            System.arraycopy(data, offset, buffer, index, length);
+            index += length;
+        } else if (offset + length < 0 || blockSize == 0) {
+            // offset + length overflowed, slipping past the range check above,
+            // or no block can hold a byte. Keep the original byte-at-a-time
+            // copy for these broken calls, so they still append whatever bytes
+            // exist before failing with an ArrayIndexOutOfBoundsException.
+            for (int i = 0; i < length; i++) {
+                write(data[offset + i]);
+            }
         } else {
-            if (index + length >= blockSize) {
-                // Write byte by byte
-                // TODO: optimize this to use arraycopy's instead
-                for (int i = 0; i < length; i++) {
-                    write(data[offset + i]);
-                }
-            } else {
-                // copy in the subarray
-                System.arraycopy(data, offset, buffer, index, length);
-                index += length;
+            // Fill the current block, then carry on in new ones, copying a
+            // block's worth at a time. Like write(int), a new block is only
+            // started once there is a byte to put in it.
+            int room = blockSize - index;
+            System.arraycopy(data, offset, buffer, index, room);
+            index = blockSize;
+            offset += room;
+            length -= room;
+            while (length > 0) {
+                nextBlock();
+                int count = Math.min(length, blockSize);
+                System.arraycopy(data, offset, buffer, 0, count);
+                index = count;
+                offset += count;
+                length -= count;
             }
         }
+    }
+
+    /**
+     * Store the full current block and start a new, empty one.
+     */
+    private void nextBlock() {
+        if (buffers == null)
+            buffers = new LinkedList<byte[]>();
+
+        buffers.addLast(buffer);
+
+        buffer = new byte[blockSize];
+        size += index;
+        index = 0;
     }
 
     @Override
