@@ -97,6 +97,16 @@ public class BufferStreamTest extends TestCase {
     // Shape of the returned CharBuffer
     // ------------------------------------------------------------------
 
+    public void testDecodesSizesAFloatCannotRepresent() throws IOException {
+        // 2^24 + 1 is the first int a float rounds down; the capacity was computed in float and
+        // came out one char short, so decoding overflowed. Check both decode entry points.
+        byte[] bytes = new byte[(1 << 24) + 1];
+        java.util.Arrays.fill(bytes, (byte) 'a');
+
+        assertEquals(bytes.length, write(bytes, "UTF-8").remaining());
+        assertEquals(bytes.length, TextEncoder.encode(ByteBuffer.wrap(bytes), "UTF-8").remaining());
+    }
+
     public void testReturnsAFreshWritableHeapBufferSizedByMaxCharsPerByte() throws IOException {
         byte[] bytes = ("ab" + THREE_BYTE + FOUR_BYTE).getBytes(StandardCharsets.UTF_8); // 2 + 3 + 4 bytes
 

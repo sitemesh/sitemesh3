@@ -48,7 +48,7 @@ public class TextEncoder {
      */
     public static CharBuffer encode(ByteBuffer data, String encoding) throws IOException {
         CharsetDecoder decoder = createDecoder(encoding);
-        int encodedLength = (int) (decoder.maxCharsPerByte() * data.limit());
+        int encodedLength = capacityFor(decoder, data.limit());
         CharBuffer charBuffer = CharBuffer.allocate(encodedLength);
         return complete(decoder, charBuffer, decoder.decode(data, charBuffer, true));
     }
@@ -66,7 +66,7 @@ public class TextEncoder {
      */
     static CharBuffer encode(ByteBufferBuilder data, String encoding) throws IOException {
         CharsetDecoder decoder = createDecoder(encoding);
-        int encodedLength = (int) (decoder.maxCharsPerByte() * data.size());
+        int encodedLength = capacityFor(decoder, data.size());
         CharBuffer charBuffer = CharBuffer.allocate(encodedLength);
         return complete(decoder, charBuffer, data.decodeTo(decoder, charBuffer));
     }
@@ -82,6 +82,15 @@ public class TextEncoder {
         }
         charBuffer.flip();
         return charBuffer;
+    }
+
+    /**
+     * The most chars {@code byteCount} bytes can decode to. Computed in double: a float
+     * (maxCharsPerByte() * byteCount) cannot represent every int above 2^24, and rounding
+     * down left the buffer too small, so decoding e.g. 16,777,217 ASCII bytes overflowed.
+     */
+    private static int capacityFor(CharsetDecoder decoder, int byteCount) {
+        return (int) Math.ceil((double) decoder.maxCharsPerByte() * byteCount);
     }
 
     private static CharsetDecoder createDecoder(String encoding) throws IOException {
