@@ -38,7 +38,7 @@ Add the following block to the end of your `build.gradle`:
 
 ```gradle
 dependencies {
-    runtimeOnly 'org.sitemesh:sitemesh-webfilter:3.3.0-RC1'
+    runtimeOnly 'org.sitemesh:sitemesh-webfilter:3.3.0-RC2'
 }
 ```
 
