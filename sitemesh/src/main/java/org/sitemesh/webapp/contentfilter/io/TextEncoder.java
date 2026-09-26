@@ -85,6 +85,19 @@ public class TextEncoder {
     }
 
     private static CharsetDecoder createDecoder(String encoding) throws IOException {
+        return charsetFor(encoding).newDecoder()
+                .onMalformedInput(CodingErrorAction.REPLACE)
+                .onUnmappableCharacter(CodingErrorAction.REPLACE);
+    }
+
+    /**
+     * The charset bytes are decoded with for the given encoding.
+     *
+     * @param encoding Character encoding name. If null, the platform default is used.
+     * @return The charset.
+     * @throws IOException If the encoding is unsupported.
+     */
+    static Charset charsetFor(String encoding) throws IOException {
         if (encoding == null) {
             encoding = DEFAULT_ENCODING;
         }
@@ -100,9 +113,7 @@ public class TextEncoder {
                 throw new IOException("Unsupported encoding " + encoding, e);
             }
         }
-        return charset.newDecoder()
-                .onMalformedInput(CodingErrorAction.REPLACE)
-                .onUnmappableCharacter(CodingErrorAction.REPLACE);
+        return charset;
     }
 
 }

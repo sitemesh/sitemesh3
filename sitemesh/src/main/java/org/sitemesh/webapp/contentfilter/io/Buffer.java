@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 
 /**
  * A shared buffer, that can provide an interface as either a {@link PrintWriter}
@@ -153,6 +154,15 @@ public class Buffer {
             };
         }
         return exposedStream;
+    }
+
+    /**
+     * @return the charset bytes written to {@link #getOutputStream()} are decoded with: the
+     *         buffer's encoding, or the platform default if it has none.
+     * @throws IOException if the encoding is unsupported.
+     */
+    public Charset getCharset() throws IOException {
+        return TextEncoder.charsetFor(encoding);
     }
 
     /**

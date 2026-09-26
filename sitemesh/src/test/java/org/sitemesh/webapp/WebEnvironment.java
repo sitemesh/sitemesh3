@@ -68,6 +68,7 @@ public class WebEnvironment {
     private String rawResponse;
     private int status;
     private String body;
+    private byte[] bodyBytes;
     private Map<String,String> headers;
 
     /**
@@ -109,6 +110,7 @@ public class WebEnvironment {
 
         HttpTester.Response resp = HttpTester.parseResponse(response);
         body = resp.getContent();
+        bodyBytes = resp.getContentBytes();
         headers = new HashMap<String, String>();
         for (String header : resp.getFieldNamesCollection()) {
             headers.put(header, resp.get(header));
@@ -136,6 +138,13 @@ public class WebEnvironment {
                     + "\n----- Raw HTTP response -----\n" + getRawResponse());
         }
         return body;
+    }
+
+    /**
+     * @return the undecoded bytes of the last response's body.
+     */
+    public byte[] getBodyBytes() {
+        return bodyBytes;
     }
 
     private String unixLineEndings(String string) {

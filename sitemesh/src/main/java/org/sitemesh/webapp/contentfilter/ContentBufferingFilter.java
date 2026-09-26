@@ -22,6 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.sitemesh.tagprocessor.util.CharSequences;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.CharBuffer;
 import java.util.logging.Logger;
@@ -317,6 +318,9 @@ public abstract class ContentBufferingFilter implements Filter {
 
         // If content was buffered, post-process it.
         boolean processed = false;
+        if (buffer != null && responseBuffer.isBufferStreamBased()) {
+            metaData.setDecodedCharset(responseBuffer.getBufferCharset());
+        }
         if (buffer != null && !responseBuffer.bufferingWasDisabled()) {
             processed = postProcess(responseBuffer.getContentType(), buffer, request, response, metaData);
         }
@@ -344,7 +348,9 @@ public abstract class ContentBufferingFilter implements Filter {
                                  CharBuffer buffer,
                                  HttpServletResponseBuffer responseBuffer) throws IOException {
         if (responseBuffer.isBufferStreamBased()) {
-            PrintWriter writer = new PrintWriter(response.getOutputStream());
+            // Re-encode with the charset the bytes were decoded with, not the JVM default.
+            PrintWriter writer = new PrintWriter(
+                    new OutputStreamWriter(response.getOutputStream(), responseBuffer.getBufferCharset()));
             CharSequences.appendTo(writer, buffer);
             writer.flush(); // Flush writer to underlying outputStream.
             response.getOutputStream().flush();

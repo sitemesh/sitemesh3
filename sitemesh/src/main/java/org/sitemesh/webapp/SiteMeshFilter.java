@@ -19,6 +19,7 @@ package org.sitemesh.webapp;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -134,10 +135,20 @@ public class SiteMeshFilter extends ContentBufferingFilter {
         if (response.containsHeader("Content-Length")) {
             response.setContentLength(-1);
         }
+        // Content written as bytes (e.g. a static file) was decoded with a charset the response
+        // may not declare; Tomcat's writer defaults text/html to ISO-8859-1. Encode the output
+        // with the same charset, so text that charset cannot hold survives.
+        Charset decodedCharset = metaData.getDecodedCharset();
+        if (decodedCharset != null && !decodedCharset.name().equalsIgnoreCase(response.getCharacterEncoding())) {
+            response.setCharacterEncoding(decodedCharset.name());
+        }
         try {
             content.getData().writeValueTo(response.getWriter());
         } catch (IllegalStateException ise) {  // If getOutputStream() has already been called
-            content.getData().writeValueTo(new PrintStream(response.getOutputStream()));
+            String encoding = response.getCharacterEncoding();
+            content.getData().writeValueTo(encoding != null
+                    ? new PrintStream(response.getOutputStream(), false, encoding)
+                    : new PrintStream(response.getOutputStream()));
         }
         return true;
     }

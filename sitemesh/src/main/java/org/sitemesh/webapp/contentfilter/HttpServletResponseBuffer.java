@@ -27,6 +27,7 @@ import jakarta.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 
 /**
  * Wraps an {@link HttpServletResponse}, allowing the output to be buffered. The passed
@@ -128,6 +129,15 @@ public class HttpServletResponseBuffer extends HttpServletResponseWrapper {
      */
     public boolean isBufferStreamBased() {
         return buffer != null && buffer.isUsingStream();
+    }
+
+    /**
+     * @return The charset that bytes written through the output stream are decoded with, or
+     *         null if nothing is being buffered.
+     * @throws IOException If the buffer's encoding is unsupported.
+     */
+    public Charset getBufferCharset() throws IOException {
+        return buffer == null ? null : buffer.getCharset();
     }
 
     /**

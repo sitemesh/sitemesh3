@@ -16,6 +16,8 @@
 
 package org.sitemesh.webapp.contentfilter;
 
+import java.nio.charset.Charset;
+
 /**
  * Holds additional information about the response.
  *
@@ -29,6 +31,8 @@ public class ResponseMetaData {
     // header. If any of them skipped it, then there should be no last-modified for the entire response.
     private int responseCount = 0;
     private int lastModifiedCount = 0;
+
+    private Charset decodedCharset;
 
     /**
      * Record the last-modified value of a dispatched response. The most recent
@@ -47,6 +51,25 @@ public class ResponseMetaData {
      */
     public long getLastModified() {
         return lastModifiedCount == responseCount ? lastModified : -1;
+    }
+
+    /**
+     * Record the charset the buffered content was decoded with, when it was written as bytes.
+     *
+     * @param decodedCharset The charset, or null if the content was written as text.
+     */
+    public void setDecodedCharset(Charset decodedCharset) {
+        this.decodedCharset = decodedCharset;
+    }
+
+    /**
+     * @return The charset the buffered content was decoded with, if it was written as bytes
+     *         through the output stream; null if it was written as text. Output derived from
+     *         the content should be encoded with this charset, which the response may not
+     *         declare itself (for example a static file served as plain {@code text/html}).
+     */
+    public Charset getDecodedCharset() {
+        return decodedCharset;
     }
 
     /**
