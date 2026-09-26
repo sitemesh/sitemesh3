@@ -43,3 +43,48 @@ jobs:
       - name: Close and Release to Central
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: ./gradlew --no-daemon publishToSonatype closeAndReleaseSonatypeStagingRepository
+
+  # The job above tests on JDK 17 and publishes. These run alongside it and publish nothing.
+
+  # Run the tests on newer JDKs too; the code is still compiled for 17.
+  test-newer-jdks:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ '21', '25' ]
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17 and ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: |
+            ${{ matrix.java }}
+            17
+          cache: 'gradle'
+
+      - name: Run tests on JDK ${{ matrix.java }}
+        # fromEnv points Gradle's toolchain lookup at the JDKs set up above.
+        run: >-
+          ./gradlew --no-daemon test -PtestJavaVersion=${{ matrix.java }}
+          -Porg.gradle.java.installations.fromEnv=JAVA_HOME_17_X64,JAVA_HOME_${{ matrix.java }}_X64
+
+  # The default test run covers the Spring Boot example on Tomcat only.
+  springboot-jetty:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Run Spring Boot example tests on Jetty
+        run: ./gradlew --no-daemon :examples:springboot:test -Pcontainer=jetty

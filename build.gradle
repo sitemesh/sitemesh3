@@ -49,6 +49,16 @@ subprojects {
     withJavadocJar()
   }
 
+  // -PtestJavaVersion=21 (say) runs the tests on that JDK; code is still compiled for 17.
+  def testJavaVersion = findProperty('testJavaVersion')
+  if (testJavaVersion) {
+    tasks.withType(Test).configureEach {
+      javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(testJavaVersion as int)
+      }
+    }
+  }
+
   // Sources contain non-ASCII text. Read (and document) them as UTF-8 rather than the
   // platform encoding, which is windows-1252 for a JDK 17 build on Windows.
   tasks.withType(JavaCompile).configureEach {
