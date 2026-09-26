@@ -107,7 +107,7 @@ public class CharSequenceList implements CharSequenceBuffer {
                 // Optimization.
                 ((CharSequenceBuffer) charSequence).writeTo(out);
             } else {
-                out.append(charSequence);
+                CharSequences.appendTo(out, charSequence);
             }
         }
     }

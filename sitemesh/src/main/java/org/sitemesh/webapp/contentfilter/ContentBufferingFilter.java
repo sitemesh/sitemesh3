@@ -19,6 +19,7 @@ package org.sitemesh.webapp.contentfilter;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.sitemesh.tagprocessor.util.CharSequences;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -344,12 +345,12 @@ public abstract class ContentBufferingFilter implements Filter {
                                  HttpServletResponseBuffer responseBuffer) throws IOException {
         if (responseBuffer.isBufferStreamBased()) {
             PrintWriter writer = new PrintWriter(response.getOutputStream());
-            writer.append(buffer);
+            CharSequences.appendTo(writer, buffer);
             writer.flush(); // Flush writer to underlying outputStream.
             response.getOutputStream().flush();
         } else {
             PrintWriter writer = response.getWriter();
-            writer.append(buffer);
+            CharSequences.appendTo(writer, buffer);
             response.getWriter().flush();
         }
     }

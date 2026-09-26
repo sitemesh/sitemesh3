@@ -19,6 +19,8 @@ package org.sitemesh.tagprocessor.util;
 import junit.framework.TestCase;
 
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.CharBuffer;
 
 /**
@@ -53,6 +55,45 @@ public class CharSequenceListTest extends TestCase {
         referenced.append("Some new content");
 
         assertEquals("<start>Some new content<end>", charSequenceList.toString());
+    }
+
+    public void testWritesCharBufferChunksToAWriterUnchanged() throws IOException {
+        CharSequenceList list = new CharSequenceList();
+        list.append(CharBuffer.wrap("<p>x", 3, 4));
+        list.append("-");
+        list.append(CharBuffer.wrap("ab✓cd".toCharArray(), 1, 3));
+        StringWriter writer = new StringWriter();
+        list.writeTo(writer);
+        assertEquals("x-b✓c", writer.toString());
+        assertEquals(list.toString(), writer.toString());
+    }
+
+    public void testWritesArrayBackedChunksToAWriterWithoutStringCopies() throws IOException {
+        CharSequenceList list = new CharSequenceList();
+        list.append(CharBuffer.wrap("<html>".toCharArray()));
+        list.append(CharBuffer.wrap("<body>hi</body>".toCharArray(), 6, 2));
+        final StringBuilder written = new StringBuilder();
+        Writer writer = new Writer() {
+            @Override
+            public void write(char[] cbuf, int off, int len) {
+                written.append(cbuf, off, len);
+            }
+
+            @Override
+            public void write(String str, int off, int len) {
+                fail("expected chunks to be written from their backing arrays, not via a String");
+            }
+
+            @Override
+            public void flush() {
+            }
+
+            @Override
+            public void close() {
+            }
+        };
+        list.writeTo(writer);
+        assertEquals("<html>hi", written.toString());
     }
 
     public void testAllowsIterationOfItems() throws IOException {

@@ -22,6 +22,7 @@ import org.sitemesh.config.PathMapper;
 import org.sitemesh.content.Content;
 import org.sitemesh.content.ContentProcessor;
 import org.sitemesh.content.ContentProperty;
+import org.sitemesh.tagprocessor.util.CharSequences;
 import org.sitemesh.webapp.contentfilter.BasicSelector;
 import org.sitemesh.webapp.contentfilter.HttpServletResponseBuffer;
 import org.sitemesh.webapp.contentfilter.HttpServletRequestFilterable;
@@ -246,7 +247,7 @@ public class WebAppContext extends BaseSiteMeshContext {
 
             // Write out the buffered output.
             CharBuffer buffer = responseBuffer.getBuffer();
-            out.append(buffer);
+            CharSequences.appendTo(out, buffer);
         } catch (ServletException e) {
             //noinspection ThrowableInstanceNeverThrown
             throw (IOException) new IOException("Could not dispatch to decorator").initCause(e);
