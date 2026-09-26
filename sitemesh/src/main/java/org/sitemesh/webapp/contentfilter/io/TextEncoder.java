@@ -36,13 +36,18 @@ import java.nio.charset.UnsupportedCharsetException;
  */
 public class TextEncoder {
 
-    private static final String DEFAULT_ENCODING = System.getProperty("file.encoding");
+    /**
+     * Encoding for bytes whose content type declares no charset. UTF-8 rather than the
+     * platform default, which on JDK 17 varies by OS (windows-1252 on Windows), so a page
+     * decodes the same wherever it runs.
+     */
+    private static final String DEFAULT_ENCODING = "UTF-8";
 
     /**
      * Decode the given bytes to characters using the specified encoding.
      *
      * @param data The bytes to decode.
-     * @param encoding Character encoding to use. If null, the platform default is used.
+     * @param encoding Character encoding to use. If null, UTF-8 is used.
      * @return The decoded characters.
      * @throws IOException If the encoding is unsupported or decoding fails.
      */
@@ -60,7 +65,7 @@ public class TextEncoder {
      * into one intermediate buffer.
      *
      * @param data The bytes to decode.
-     * @param encoding Character encoding to use. If null, the platform default is used.
+     * @param encoding Character encoding to use. If null, UTF-8 is used.
      * @return The decoded characters.
      * @throws IOException If the encoding is unsupported or decoding fails.
      */
@@ -102,7 +107,7 @@ public class TextEncoder {
     /**
      * The charset bytes are decoded with for the given encoding.
      *
-     * @param encoding Character encoding name. If null, the platform default is used.
+     * @param encoding Character encoding name. If null, UTF-8 is used.
      * @return The charset.
      * @throws IOException If the encoding is unsupported.
      */

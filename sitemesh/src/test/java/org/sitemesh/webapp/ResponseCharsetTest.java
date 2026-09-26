@@ -56,11 +56,7 @@ public class ResponseCharsetTest extends TestCase {
     }
 
     public void testDecoratedBytesWithoutDeclaredCharsetKeepTheirCharacters() throws Exception {
-        // Without a declared charset, SiteMesh decodes with the platform default.
-        Charset platform = Charset.forName(System.getProperty("file.encoding"));
-        if (!platform.equals(StandardCharsets.UTF_8)) {
-            return; // the page below needs a charset that can hold it
-        }
+        // Without a declared charset, SiteMesh decodes as UTF-8.
         WebEnvironment webEnvironment = new WebEnvironment.Builder()
                 .addFilter("/*", new SiteMeshFilterBuilder().addDecoratorPath("/*", "my-decorator").create())
                 .addStaticContent("/WEB-INF/decorators/my-decorator", "text/html",
@@ -73,7 +69,7 @@ public class ResponseCharsetTest extends TestCase {
                         // declares no charset.
                         response.setCharacterEncoding("ISO-8859-1");
                         response.setContentType("text/html");
-                        response.getOutputStream().write("<title>\u2713 h\u00e9llo</title>".getBytes(platform));
+                        response.getOutputStream().write("<title>\u2713 h\u00e9llo</title>".getBytes(StandardCharsets.UTF_8));
                     }
                 })
                 .create();

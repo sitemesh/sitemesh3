@@ -158,7 +158,7 @@ public class Buffer {
 
     /**
      * @return the charset bytes written to {@link #getOutputStream()} are decoded with: the
-     *         buffer's encoding, or the platform default if it has none.
+     *         buffer's encoding, or UTF-8 if it has none.
      * @throws IOException if the encoding is unsupported.
      */
     public Charset getCharset() throws IOException {

@@ -604,15 +604,12 @@ public class BufferStreamTest extends TestCase {
     // Encoding names
     // ------------------------------------------------------------------
 
-    public void testNullEncodingDecodesWithTheFileEncoding() throws IOException {
-        Charset fileEncoding = Charset.forName(System.getProperty("file.encoding"));
-        String text = "plain ascii and more";
-        if (fileEncoding.newEncoder().canEncode("héllo")) {
-            text += " héllo";
-        }
-        byte[] bytes = text.getBytes(fileEncoding);
+    public void testNullEncodingDecodesAsUtf8WhateverTheFileEncoding() throws IOException {
+        String text = "plain ascii and more h" + TWO_BYTE + "llo " + THREE_BYTE;
+        byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
 
         assertEquals(text, write(bytes, null).toString());
+        assertEquals(StandardCharsets.UTF_8, new Buffer(null).getCharset());
     }
 
     public void testEncodingNamesAreResolvedCaseInsensitivelyAndByAlias() throws IOException {
