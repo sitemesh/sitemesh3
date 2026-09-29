@@ -17,7 +17,7 @@ Currently maintained versions:
 | Tomcat 8.x, 9.x | Tomcat 10.x, 11.x | Tomcat 11.x |
 |[3.1.x](https://github.com/sitemesh/sitemesh3/tree/3.1.x)|[3.2.x](https://github.com/sitemesh/sitemesh3/tree/3.2.x)| [Master Branch](https://github.com/sitemesh/sitemesh3)|
 |[Java Docs](https://sitemesh.github.io/sitemesh3/javadoc/3.1.x/)|||
-| [Download 3.1.1](https://github.com/sitemesh/sitemesh3/releases/tag/3.1.1) | [Download 3.2.1](https://github.com/sitemesh/sitemesh3/releases/tag/3.2.1)| [Download 3.3.0-RC2](https://github.com/sitemesh/sitemesh3/releases/tag/3.3.0-RC2)|
+| [Download 3.1.1](https://github.com/sitemesh/sitemesh3/releases/tag/3.1.1) | [Download 3.2.1](https://github.com/sitemesh/sitemesh3/releases/tag/3.2.1)| [Download 3.3.0-RC3](https://github.com/sitemesh/sitemesh3/releases/tag/3.3.0-RC3)|
 
 [Website / Documentation (Built with Offline Generator)](https://sitemesh.github.io/sitemesh-website/)
 
@@ -28,7 +28,7 @@ For a servlet web application, add `sitemesh-webfilter`. It registers the SiteMe
 ```gradle
 dependencies {
     // ... other dependencies
-    runtimeOnly 'org.sitemesh:sitemesh-webfilter:3.3.0-RC2'
+    runtimeOnly 'org.sitemesh:sitemesh-webfilter:3.3.0-RC3'
 }
 ```
 
@@ -38,7 +38,7 @@ dependencies {
     <dependency>
         <groupId>org.sitemesh</groupId>
         <artifactId>sitemesh-webfilter</artifactId>
-        <version>3.3.0-RC2</version>
+        <version>3.3.0-RC3</version>
     </dependency>
 </dependencies>
 ```
@@ -50,7 +50,7 @@ or if you are using Spring Boot, use the config free starter (see example applic
 ```gradle
 dependencies {
     // ... other dependencies
-    runtimeOnly 'org.sitemesh:spring-boot-starter-sitemesh:3.3.0-RC2'
+    runtimeOnly 'org.sitemesh:spring-boot-starter-sitemesh:3.3.0-RC3'
 }
 ```
 
@@ -60,12 +60,12 @@ dependencies {
     <dependency>
         <groupId>org.sitemesh</groupId>
         <artifactId>spring-boot-starter-sitemesh</artifactId>
-        <version>3.3.0-RC2</version>
+        <version>3.3.0-RC3</version>
     </dependency>
 </dependencies>
 ```
 
-> ⚠️ **3.3.0-RC2** is a release candidate ahead of 3.3.0. On a 3.3.0 release candidate or a 3.3.0-SNAPSHOT build, note that the starter's default integration changed — see the note below.
+> ⚠️ **3.3.0-RC3** is a release candidate ahead of 3.3.0. On a 3.3.0 release candidate or a 3.3.0-SNAPSHOT build, note that the starter's default integration changed — see the note below.
 
 ### Snapshots:
 If you would like to use the latest features, you can use the latest build from our [snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/org/sitemesh/):
