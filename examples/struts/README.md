@@ -60,5 +60,5 @@ No changes to Struts itself are required — result types are pluggable.
   buffering). This is the workaround described in sitemesh3#148.
 
 * **Struts upstream** — [WW-5496](https://issues.apache.org/jira/browse/WW-5496)
-  tracks a proper fix in Struts (targeted at 7.3.0); as of Struts 7.2.1,
+  tracks a proper fix in Struts (targeted at 7.5.0); as of Struts 7.4.0,
   `ServletDispatcherResult` still always forwards on the initial dispatch.
