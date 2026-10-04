@@ -54,7 +54,12 @@ jobs:
       - name: Commit and Tag Release Version
         run: |
           sed -i "s/^version=.*/version=${RELEASE_VERSION}/" gradle.properties
-          git add gradle.properties
+          # Point the README and QUICKSTART at the release, except for milestones.
+          case "$RELEASE_VERSION" in
+            *-M[0-9]*) ;;
+            *) .github/scripts/update-doc-versions.sh "$RELEASE_VERSION" ;;
+          esac
+          git add -u
           git commit -m "build(release): ${RELEASE_VERSION}"
           git tag -a "${RELEASE_VERSION}" -m "Release version ${RELEASE_VERSION}"
           git push origin HEAD
@@ -78,6 +83,24 @@ jobs:
       - name: Increment to Next Snapshot Version
         run: |
           sed -i "s/^version=.*/version=${NEXT_VERSION}/" gradle.properties
-          git add gradle.properties
+          .github/scripts/update-doc-versions.sh "$NEXT_VERSION"
+          git add -u
           git commit -m "build(release): start ${NEXT_VERSION}"
           git push origin HEAD
+
+      # Pushes made with GITHUB_TOKEN never trigger workflows, so the snapshot bump above
+      # would otherwise not be published until the next push.
+      - name: Trigger Snapshot Publish
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const branch = process.env.GITHUB_REF_NAME;
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'gradle.yml',
+              ref: branch,
+              inputs: {}
+            });
+            console.log(`Triggered Build and Publish workflow on ${branch} for ${process.env.NEXT_VERSION}`);

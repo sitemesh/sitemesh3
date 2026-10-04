@@ -103,10 +103,14 @@ jobs:
   publish:
     needs: [ build-gradle-project, test-newer-jdks, springboot-jetty, examples-smoke-test ]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # create the GitHub release for a tag
 
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # the release notes start from the previous tag
 
       - name: Set up JDK 17 with cache
         uses: actions/setup-java@v4
@@ -132,3 +136,35 @@ jobs:
       - name: Close and Release to Central
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: ./gradlew --no-daemon publishToSonatype closeAndReleaseSonatypeStagingRepository
+
+      # Once the artifacts are released, give the tag a GitHub release with notes generated
+      # from the previous tag; edit them on GitHub afterwards. A release made by hand first
+      # is left alone.
+      - name: Create GitHub Release
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "A GitHub release for $TAG already exists; leaving it alone."
+            exit 0
+          fi
+          flags=(--verify-tag --title "$TAG" --generate-notes)
+          if previous=$(git describe --tags --abbrev=0 "$TAG^" 2> /dev/null); then
+            flags+=(--notes-start-tag "$previous")
+          fi
+          if [[ "$TAG" == *-* ]]; then
+            flags+=(--prerelease)
+          else
+            # Only a release newer than the current latest becomes Latest, so a 3.2.x patch
+            # released after 3.3.0 does not take its place.
+            latest=$(gh release view --json tagName --jq .tagName 2> /dev/null || true)
+            if [ -z "$latest" ] || [ "$(printf '%s\n' "$latest" "$TAG" | sort -V | tail -n 1)" = "$TAG" ]; then
+              flags+=(--latest)
+            else
+              flags+=(--latest=false)
+            fi
+          fi
+          gh release create "$TAG" "${flags[@]}"
